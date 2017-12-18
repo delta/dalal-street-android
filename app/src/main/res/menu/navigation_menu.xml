@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_home"
+            android:icon="@drawable/ic_action_home"
+            android:title="Home"/>
+        <item
+            android:id="@+id/nav_exchange"
+            android:icon="@drawable/ic_action_company"
+            android:title="Stock Exchange" />
+        <item
+            android:id="@+id/nav_company_profile"
+            android:icon="@drawable/ic_action_performance"
+            android:title="Company Profile" />
+
+        <item
+            android:id="@+id/nav_news"
+            android:icon="@drawable/ic_action_news"
+            android:title="News" />
+        <item
+            android:id="@+id/nav_buy_sell"
+            android:title="Buy/Sell"
+            android:icon="@drawable/ic_action_exchange"/>
+
+        <item
+            android:id="@+id/nav_mortgage"
+            android:icon="@drawable/ic_action_mortgage"
+            android:title="Mortgage" />
+        <item
+            android:id="@+id/nav_my_orders"
+            android:title="My orders"
+            android:icon="@drawable/ic_action_orders"/>
+        <item
+            android:id="@+id/nav_transactions"
+            android:icon="@drawable/ic_action_transactions"
+            android:title="Transactions" />
+        <item
+            android:id="@+id/nav_portfolio"
+            android:icon="@drawable/ic_action_portfolio"
+            android:title="Portfolio" />
+        <item
+            android:title="Leaderboard"
+            android:id="@+id/nav_leaderboard"
+            android:icon="@drawable/ic_action_leaderboard"/>
+
+
+
+    </group>
+
+
+</menu>

@@ -1,0 +1,100 @@
+<resources>
+    <string name="app_name">Dalal Street</string>
+
+    <string name="login_text">Login</string>
+    <string name="login_button">Login</string>
+    <string name="email_hint">Email</string>
+    <string name="password_hint">Password</string>
+    <string name="title_activity_home">Home</string>
+
+    <string name="open">Open</string>
+    <string name="close">Close</string>
+
+    <string name="action_settings">Settings</string>
+
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string-array name="companies">
+        <item>Github</item>
+        <item>Apple</item>
+        <item>Yahoo</item>
+        <item>HDFC</item>
+        <item>LG</item>
+        <item>Sony</item>
+        <item>Infosys</item>
+
+    </string-array>
+    <string-array name="orders">
+        <item>Marker order</item>
+        <item>Stoploss order</item>
+        <item>Limit order</item>
+    </string-array>
+
+    <string name="help">
+        Dalal street is a virtual stock exchange game, where the companies sell their stocks to the public at a price
+        \nwhich depends on the company market value and performance.
+        \nThe public then buy or sell the stocks among them for price based on the market events are stock transactions.
+        \nAt the end of the game, the player who makes the most money through the stock exchange wins.
+        \nThe following is a guide explaining the structure of the game and what each feature of the game means.
+
+        \n\n<b>Home</b>
+        \nThe basic details of all the companies like the company\'s stock price and the status
+        \n( whether the company is gaining or losing value in the stock market )
+        \nare shown in the home tab.
+
+        \n\n<b>Stock exchange</b>
+        \nThis is where you play the actual game.
+        \nYou can buy stock or sell stock from other players in the stock exchange.
+        \nWhen buying, you can ask for a particular number of stocks at a particular price.
+        \nIf someone is willing to sell their stocks at your asked price (or lower),
+        \na transaction is made and you get the stocks. An equivalent amount will be deducted from your
+        \nmonetary wealth.
+        \n Here, there is another feature, called the stoploss order.
+        \nIf you provide a stoploss order, the transaction is made even if someone sells the stock for a price
+        \nhigher than your asked price, provided that the margin of difference does
+        \nnot exceed a particular amount.
+        \n\nWhen selling your stocks, you can sell the stocks you already own for a price
+        \ncalled the bid price.
+        \nSimilarly, a match is made if someone is willing to buy those stocks at a price
+        \ngreater then, or equal to the bid price.
+        \nThe stoploss order has a similar kind of function in bidding too.
+
+        \n\n<b>Bank Mortgage</b>
+        \nBank Mortgage can be used to mortgage stocks with the bank at <b>75%(may vary during the course of time)</b>
+        \nof the present price of the mortgaged stocks and later the mortgaged stocks
+        \ncan be bought back from the bank at the stocks current price.
+
+        \n\n<b>Transactions</b>
+        \nThis tab shows all the successful and ongoing transactions that you made.
+        \nIf a transaction is not successful, it means that you bid too high, or you ask too low.
+
+        \n\n<b>Portfolio</b>
+        \nThis Tab shows your profile information, including the number of stocks you have
+        \nfrom every company, the wealth you have as money, and the total wealth you own
+        \n through stocks.
+
+        \n\n<b>News</b>
+        \nThis tab shows all the market events belonging to different companies. This will
+        \nhelp you in determining each company\'s performance, and inturn, give you an idea
+        \nof what stocks to buy\sell.
+        \n Please note that these events are purely fictional and are nowhere related to the
+        \nreal marker conditions
+
+        \n\n<b>Performance</b>
+        \nThis tab contains graphs drawn using the past performance of a given company.
+
+        \n\n<b>Market depth</b>
+        \nMarket depth tells us the different price range for which people have
+        \nasked and bid stocks belonging to a particular company.
+        \nIt contains two histograms for a given company, one for bids and one for asks.
+
+
+        \n\n<b>Do not hesitate to contact us if you face any problems.</b>
+        \nHave a great Pragyan!
+
+    </string>
+    <string name="cash">Cash</string>
+    <string name="stock">Stock</string>
+    <string name="total">Total</string>
+    <string name="username">Username</string>
+    <string name="cash_worth">Cash Worth</string>
+</resources>
