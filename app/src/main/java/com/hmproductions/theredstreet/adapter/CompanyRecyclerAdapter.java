@@ -14,7 +14,6 @@ import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
-
 public class CompanyRecyclerAdapter extends RecyclerView.Adapter<CompanyRecyclerAdapter.MyViewHolder> {
 
     private Context context;
@@ -27,43 +26,41 @@ public class CompanyRecyclerAdapter extends RecyclerView.Adapter<CompanyRecycler
 
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemView = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.company_card, parent, false);
+        View itemView = LayoutInflater.from(context).inflate(R.layout.company_card, parent, false);
 
         return new MyViewHolder(itemView);
     }
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
-        Company company=companyList.get(position);
-        holder.name.setText(company.getCompany_name());
-        holder.worth.setText("₹"+company.getCompany_value());
 
+        Company currentCompany = companyList.get(position);
 
-        Picasso.with(context).load(company.getCompany_image()).into(holder.company_image); //todo : change load to loadfromurl
-        Picasso.with(context).load(company.getCompany_status()).into(holder.status);
+        holder.name.setText(currentCompany.getName());
+        Picasso.with(context).load(currentCompany.getImage()).into(holder.company_image); //todo : change load to loadfromurl
+        Picasso.with(context).load(currentCompany.getStatus()).into(holder.status);
 
+        String worthString = "₹" + currentCompany.getValue();
+        holder.worth.setText(worthString);
     }
 
     @Override
     public int getItemCount() {
+        if (companyList == null || companyList.size() == 0) return 0;
         return companyList.size();
     }
 
+    class MyViewHolder extends RecyclerView.ViewHolder {
 
+        TextView name, worth;
+        ImageView company_image, status;
 
-    public class MyViewHolder extends RecyclerView.ViewHolder {
-        public TextView name,worth;
-        public ImageView company_image,status;
-
-        public MyViewHolder(View view) {
+        MyViewHolder(View view) {
             super(view);
-            name = (TextView) view.findViewById(R.id.company_name);
-            worth = (TextView) view.findViewById(R.id.company_value);
-            company_image = (ImageView) view.findViewById(R.id.company_image);
-            status = (ImageView) view.findViewById(R.id.company_status);
+            name = view.findViewById(R.id.company_name);
+            worth = view.findViewById(R.id.company_value);
+            company_image = view.findViewById(R.id.company_image);
+            status = view.findViewById(R.id.company_status);
         }
     }
-
-
 }

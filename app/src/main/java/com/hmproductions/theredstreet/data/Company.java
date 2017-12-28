@@ -1,55 +1,51 @@
 package com.hmproductions.theredstreet.data;
 
-/**
- * Created by ravi on 28/1/17.
- */
-
 public class Company {
 
-    private String company_name;
-    private String company_value;
-    private int company_image;
-    private int company_status;
+    private String name;
+    private String value;
+    private int image;
+    private int status;
 
     public Company() {
     }
 
-    public Company(String company_name, String company_value, int company_image, int company_status) {
-        this.company_name = company_name;
-        this.company_value = company_value;
-        this.company_image = company_image;
-        this.company_status = company_status;
+    public Company(String name, String value, int image, int status) {
+        this.name = name;
+        this.value = value;
+        this.image = image;
+        this.status = status;
     }
 
-    public String getCompany_name() {
-        return company_name;
+    public String getName() {
+        return name;
     }
 
-    public void setCompany_name(String company_name) {
-        this.company_name = company_name;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public String getCompany_value() {
-        return company_value;
+    public String getValue() {
+        return value;
     }
 
-    public void setCompany_value(String company_value) {
-        this.company_value = company_value;
+    public void setValue(String value) {
+        this.value = value;
     }
 
-    public int getCompany_image() {
-        return company_image;
+    public int getImage() {
+        return image;
     }
 
-    public void setCompany_image(int company_image) {
-        this.company_image = company_image;
+    public void setImage(int image) {
+        this.image = image;
     }
 
-    public int getCompany_status() {
-        return company_status;
+    public int getStatus() {
+        return status;
     }
 
-    public void setCompany_status(int company_status) {
-        this.company_status = company_status;
+    public void setStatus(int status) {
+        this.status = status;
     }
 }

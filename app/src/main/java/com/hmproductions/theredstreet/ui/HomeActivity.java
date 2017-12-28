@@ -18,12 +18,12 @@ import android.widget.Toast;
 
 import com.hmproductions.theredstreet.R;
 import com.hmproductions.theredstreet.fragment.BuySellFragment;
-import com.hmproductions.theredstreet.fragment.CompaniesFragment;
+import com.hmproductions.theredstreet.fragment.HomeFragment;
 import com.hmproductions.theredstreet.fragment.CompanyProfile;
 import com.hmproductions.theredstreet.fragment.LeaderboardFragment;
-import com.hmproductions.theredstreet.fragment.Mortgage;
+import com.hmproductions.theredstreet.fragment.MortgageFragment;
 import com.hmproductions.theredstreet.fragment.MyOrders;
-import com.hmproductions.theredstreet.fragment.News;
+import com.hmproductions.theredstreet.fragment.NewsFragment;
 import com.hmproductions.theredstreet.fragment.PortfolioFragment;
 import com.hmproductions.theredstreet.fragment.StockExchangeFragment;
 import com.hmproductions.theredstreet.fragment.TransactionsFragment;
@@ -64,7 +64,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         BindDrawerViews();
         SetupNavigationDrawer();
 
-        getSupportFragmentManager().beginTransaction().add(R.id.home_activity_fragment_container, new CompaniesFragment()).commit();
+        getSupportFragmentManager().beginTransaction().add(R.id.home_activity_fragment_container, new HomeFragment()).commit();
         updateValues();
     }
 
@@ -125,7 +125,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
         switch (item.getItemId()) {
             case R.id.nav_home:
-                fragment = new CompaniesFragment();
+                fragment = new HomeFragment();
                 break;
             case R.id.nav_exchange:
                 fragment = new StockExchangeFragment();
@@ -134,13 +134,13 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                 fragment = new CompanyProfile();
                 break;
             case R.id.nav_news:
-                fragment = new News();
+                fragment = new NewsFragment();
                 break;
             case R.id.nav_buy_sell:
                 fragment = new BuySellFragment();
                 break;
             case R.id.nav_mortgage:
-                fragment = new Mortgage();
+                fragment = new MortgageFragment();
                 break;
             case R.id.nav_my_orders:
                 fragment = new MyOrders();

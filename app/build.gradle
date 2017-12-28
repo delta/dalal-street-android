@@ -9,6 +9,7 @@ android {
         targetSdkVersion 27
         versionCode 1
         versionName "1.0"
+        multiDexEnabled true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -47,6 +48,11 @@ dependencies {
     compile 'com.weiwangcn.betterspinner:library-material:1.1.0'
     compile 'org.quanqi:mpandroidchart:1.7.5'
     compile 'com.squareup.picasso:picasso:2.5.2'
+
+    // gRPC
+    //compile 'io.grpc:grpc-netty:1.8.0'
+    compile 'io.grpc:grpc-protobuf:1.8.0'
+    compile 'io.grpc:grpc-stub:1.8.0'
 
     // Test Only Dependency
     testCompile 'junit:junit:4.12'

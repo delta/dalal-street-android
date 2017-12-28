@@ -21,14 +21,14 @@ import java.util.List;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class News extends Fragment {
+public class NewsFragment extends Fragment {
 
     RecyclerView recyclerView;
     NewsRecyclerAdapter adapter;
     List<NewsDetails> newsList;
 
 
-    public News() {
+    public NewsFragment() {
         // Required empty public constructor
     }
 
@@ -40,7 +40,7 @@ public class News extends Fragment {
 
         View rootView=inflater.inflate(R.layout.fragment_news, container, false);
 
-        getActivity().setTitle("News");
+        getActivity().setTitle("NewsFragment");
 
         recyclerView=(RecyclerView)rootView.findViewById(R.id.news_view);
 
@@ -74,7 +74,7 @@ public class News extends Fragment {
     public void publish(){
         setValues();
 
-        adapter=new NewsRecyclerAdapter(getActivity(),newsList);
+        adapter=new NewsRecyclerAdapter(newsList);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(),LinearLayoutManager.VERTICAL,false));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(adapter);

@@ -21,7 +21,7 @@
         <LinearLayout
             android:id="@+id/button_bar"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/toolbar_height"
+            android:layout_height="60dp"
             android:layout_below="@id/home_toolbar"
             android:baselineAligned="false"
             android:orientation="horizontal">
@@ -32,7 +32,8 @@
                 android:layout_weight="1"
                 android:background="@android:color/holo_red_dark"
                 android:gravity="center"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:padding="4dp">
 
                 <TextView
                     android:layout_width="match_parent"
@@ -60,7 +61,8 @@
                 android:layout_weight="1"
                 android:background="@android:color/holo_blue_dark"
                 android:gravity="center"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:padding="4dp">
 
                 <TextView
                     android:layout_width="match_parent"
@@ -88,7 +90,8 @@
                 android:layout_weight="1"
                 android:background="@android:color/holo_green_dark"
                 android:gravity="center"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:padding="4dp">
 
                 <TextView
                     android:layout_width="match_parent"

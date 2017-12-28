@@ -4,11 +4,10 @@
 
     <item
         android:id="@+id/action_help"
-        android:title="help"
-        app:showAsAction="never"
-        />
+        android:title="Help"
+        app:showAsAction="never" />
     <item
         android:id="@+id/action_logout"
-        android:title="logout"
+        android:title="@string/logout"
         app:showAsAction="never" />
 </menu>

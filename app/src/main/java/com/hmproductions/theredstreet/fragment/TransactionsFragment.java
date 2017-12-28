@@ -57,9 +57,9 @@ public class TransactionsFragment extends Fragment {
         transactionList=new ArrayList<Transaction>(); //todo : get from service
         transactionList.clear();                   //type,company,number of stocks,stock price,timestamp,total amount
 
-        transactionList.add(new Transaction("Mortgage","Github",50,43,"10:00",-100));
+        transactionList.add(new Transaction("MortgageFragment","Github",50,43,"10:00",-100));
         transactionList.add(new Transaction("Exchange","Github",50,43,"11:00",+50));
-        transactionList.add(new Transaction("Mortgage","Github",50,43,"12:00",-25));
+        transactionList.add(new Transaction("MortgageFragment","Github",50,43,"12:00",-25));
         transactionList.add(new Transaction("Market","Github",50,43,"12:01",+58));
         transactionList.add(new Transaction("Exchange","Github",50,43,"12:02",+75));
     }

@@ -3,31 +3,42 @@ package com.hmproductions.theredstreet.fragment;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ProgressBar;
-import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import com.hmproductions.theredstreet.R;
 import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+
 public class BuySellFragment extends Fragment {
 
-    MaterialBetterSpinner companySpinner,orderSpinner;
-    RadioButton defultButton;
-    TextInputLayout noOfStocksInput,orderPriceInput;
-    EditText noOfStocks,orderPrice;
-    Button bidOrAsk;
-    ProgressBar progressBar;
+    @BindView(R.id.company_spinner)
+    MaterialBetterSpinner companySpinner;
+
+    @BindView(R.id.order_select_spinner)
+    MaterialBetterSpinner orderSpinner;
+
+    @BindView(R.id.buySell_progressBar)
+    ProgressBar buySellProgressBar;
+
+    @BindView(R.id.radioGroupStock)
+    RadioGroup stockRadioGroup;
+
+    @BindView(R.id.noOfStocks_editText)
+    EditText noOfStocksEditText;
+
+    @BindView(R.id.orderPrice_editText)
+    EditText orderPriceEditText;
 
     public BuySellFragment() {
         // Required empty public constructor
@@ -35,96 +46,50 @@ public class BuySellFragment extends Fragment {
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
         View rootView= inflater.inflate(R.layout.fragment_buy_sell, container, false);
-        getActivity().setTitle("Buy / Sell");
 
+        if (getActivity() != null)
+            getActivity().setTitle("Buy / Sell");
+        ButterKnife.bind(this, rootView);
 
-        companySpinner= rootView.findViewById(R.id.company_spinner);
-        orderSpinner= rootView.findViewById(R.id.order_select_spinner);
-        ArrayAdapter<String> arrayAdapter=new ArrayAdapter<String>(getActivity(),android.R.layout.simple_dropdown_item_1line,getResources().getStringArray(R.array.companies));
-        ArrayAdapter<String> arrayAdapter1=new ArrayAdapter<String>(getActivity(),android.R.layout.simple_dropdown_item_1line,getResources().getStringArray(R.array.orders));
-        orderSpinner.setAdapter(arrayAdapter1);
-        companySpinner.setAdapter(arrayAdapter);
+        ArrayAdapter<String> companiesAdapter = new ArrayAdapter<>(getActivity(),android.R.layout.simple_dropdown_item_1line,getResources().getStringArray(R.array.companies));
+        ArrayAdapter<String> orderSelectAdapter = new ArrayAdapter<>(getActivity(),android.R.layout.simple_dropdown_item_1line,getResources().getStringArray(R.array.orders));
 
+        orderSpinner.setAdapter(orderSelectAdapter);
+        companySpinner.setAdapter(companiesAdapter);
 
-        bidOrAsk= rootView.findViewById(R.id.bid_ask);
-        noOfStocks= rootView.findViewById(R.id.no_of_stocks);
-        orderPrice= rootView.findViewById(R.id.order_price);
-        noOfStocksInput= rootView.findViewById(R.id.no_of_stocks_input);
-        orderPriceInput= rootView.findViewById(R.id.order_price_input);
-        defultButton= rootView.findViewById(R.id.radioButton_bid);
-        progressBar= rootView.findViewById(R.id.progressBar);
-
-        progressBar.setVisibility(View.INVISIBLE);
-        defultButton.setChecked(true);
-
-
-        defultButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                if(b){
-                    bidOrAsk.setText("Bid");
-                }
-                else{
-                    bidOrAsk.setText("Ask");
-
-                }
-            }
-        });
-
-        orderSpinner.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                if(adapterView.getItemAtPosition(i).toString().equals("Marker order")){
-                    orderPrice.setEnabled(false);
-
-                }
-                else {
-                    orderPrice.setEnabled(true);
-
-                }
-            }
-        });
-
-        bidOrAsk.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if(companySpinner.getText().toString().trim().isEmpty()){
-                    Toast.makeText(getActivity(), "select a company", Toast.LENGTH_SHORT).show();
-                }
-                else if(orderSpinner.getText().toString().trim().isEmpty()){
-                    Toast.makeText(getActivity(), "select an order", Toast.LENGTH_SHORT).show();
-                }
-                else if(noOfStocks.getText().toString().trim().isEmpty()){
-                    noOfStocksInput.setError("enter the number of stocks");
-                    orderPriceInput.setErrorEnabled(false);
-                }
-                else if (orderPrice.isEnabled()&&orderPrice.getText().toString().trim().isEmpty()){
-                    noOfStocksInput.setErrorEnabled(false);
-                        if (defultButton.isChecked())
-                            orderPriceInput.setError("enter the bid value");
-                        else
-                            orderPriceInput.setError("enter the ask value");
-
-                }
-                else{
-                    orderPriceInput.setErrorEnabled(false);
-                    noOfStocksInput.setErrorEnabled(false);
-                    progressBar.setVisibility(View.VISIBLE);
-                    addtransaction();
-                    progressBar.setVisibility(View.INVISIBLE);
-                    Toast.makeText(getActivity(), "transaction added", Toast.LENGTH_SHORT).show();
-                }
-
-
-            }
-        });
+        orderSpinner.setOnItemClickListener((aV, view, i, l) -> orderPriceEditText.setEnabled(!aV.getItemAtPosition(i).toString().equals("Marker order")));
 
         return rootView;
     }
 
-    public void addtransaction(){
+    @OnClick(R.id.bidAsk_button)
+    void onBidAskButtonClick() {
+        if(companySpinner.getText().toString().trim().isEmpty()){
+            Toast.makeText(getActivity(), "Select a company", Toast.LENGTH_SHORT).show();
+        }
+        else if(orderSpinner.getText().toString().trim().isEmpty()){
+            Toast.makeText(getActivity(), "Select an Order", Toast.LENGTH_SHORT).show();
+        }
+        else if(noOfStocksEditText.getText().toString().trim().isEmpty()){
+            Toast.makeText(getActivity(), "Enter the number of stocks", Toast.LENGTH_SHORT).show();
+        }
+        else if (stockRadioGroup.getCheckedRadioButtonId() == -1){
+            Toast.makeText(getActivity(), "Select order type", Toast.LENGTH_SHORT).show();
+        } else if (orderPriceEditText.isEnabled() && orderPriceEditText.getText().toString().trim().isEmpty()) {
+            Toast.makeText(getActivity(), "Enter the order price", Toast.LENGTH_SHORT).show();
+        }
+        else{
+            addTransaction();
+            Toast.makeText(getActivity(), "Transaction Added", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    public void addTransaction(){
+        buySellProgressBar.setVisibility(View.VISIBLE);
         //todo : add transaction
+        buySellProgressBar.setVisibility(View.INVISIBLE);
     }
 
 }
