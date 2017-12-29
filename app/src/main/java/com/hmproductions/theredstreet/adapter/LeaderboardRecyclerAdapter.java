@@ -12,51 +12,47 @@ import com.hmproductions.theredstreet.R;
 
 import java.util.ArrayList;
 
-/**
- * Created by ravi on 11/2/17.
- */
-
 public class LeaderboardRecyclerAdapter extends RecyclerView.Adapter<LeaderboardRecyclerAdapter.MyViewHolder>{
 
-    ArrayList<LeaderboardDetails> leaderboardDetails;
-    Context context;
+    private ArrayList<LeaderboardDetails> leaderboardDetails = new ArrayList<>();
+    private Context context;
 
-    public LeaderboardRecyclerAdapter(ArrayList<LeaderboardDetails> leaderboardDetails, Context context) {
+    public LeaderboardRecyclerAdapter(Context context, ArrayList<LeaderboardDetails> leaderboardDetails) {
         this.leaderboardDetails = leaderboardDetails;
         this.context = context;
     }
 
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemView = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.leaderboard_list, parent, false);
-
+        View itemView = LayoutInflater.from(context).inflate(R.layout.leaderboard_list_item, parent, false);
         return new LeaderboardRecyclerAdapter.MyViewHolder(itemView);
     }
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
 
-        LeaderboardDetails details=leaderboardDetails.get(position);
-        holder.rank.setText(String.valueOf(details.getRank()));
-        holder.name.setText(details.getName());
-        holder.wealth.setText(String.valueOf(details.getTotal_wealth()));
+        LeaderboardDetails currentLeaderboardDetails = leaderboardDetails.get(position);
+        holder.rankTextView.setText(String.valueOf(currentLeaderboardDetails.getRank()));
+        holder.nameTextView.setText(currentLeaderboardDetails.getName());
+        holder.wealthTextView.setText(String.valueOf(currentLeaderboardDetails.getWealth()));
     }
 
     @Override
     public int getItemCount() {
+        if (leaderboardDetails == null || leaderboardDetails.size() == 0) return 0;
         return leaderboardDetails.size();
     }
 
-    public class MyViewHolder extends RecyclerView.ViewHolder {
-        public TextView rank,name,wealth;
+    class MyViewHolder extends RecyclerView.ViewHolder {
+        
+        TextView rankTextView, nameTextView, wealthTextView;
 
-        public MyViewHolder(View view) {
+        MyViewHolder(View view) {
             super(view);
-            rank=(TextView)view.findViewById(R.id.rank_list);
-            name=(TextView)view.findViewById(R.id.name_list);
-            wealth=(TextView)view.findViewById(R.id.wealth_list);
+            
+            rankTextView = view.findViewById(R.id.rank_textView);
+            nameTextView = view.findViewById(R.id.name_textView);
+            wealthTextView = view.findViewById(R.id.wealth_textView);
         }
     }
-
 }

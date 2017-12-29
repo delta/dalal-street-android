@@ -2,151 +2,122 @@ package com.hmproductions.theredstreet.fragment;
 
 
 import android.os.Bundle;
-import android.support.design.widget.TextInputLayout;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.hmproductions.theredstreet.R;
+import com.hmproductions.theredstreet.data.ExchangeValuesDetails;
 import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner;
 
 import java.util.ArrayList;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class StockExchangeFragment extends Fragment {
 
+    ArrayList<ExchangeValuesDetails> exchangeValues = new ArrayList<>();
+    private ExchangeValuesDetails currentExchange;
 
-    ArrayList<ExchangeValues> exchangeValues;
-
+    @BindView(R.id.company_spinner)
     MaterialBetterSpinner companySpinner;
 
-    TextInputLayout noOfStocksInput;
-    EditText noOfStocks;
+    @BindView(R.id.noOfStocks_editText)
+    EditText noOfStocksEditText;
 
-    TextView stock_value,daily_high,daily_low,stocks_in_market,stocks_in_exchange;
+    @BindView(R.id.currentStockPrice_textView)
+    TextView currentStockPriceTextView;
 
-    Button buy;
+    @BindView(R.id.dailyHigh_textView)
+    TextView daily_high;
+
+    @BindView(R.id.dailyLow_textView)
+    TextView daily_low;
+
+    @BindView(R.id.stocksInMarket_textView)
+    TextView stocks_in_market;
+
+    @BindView(R.id.stocksInExchange_textView)
+    TextView stocks_in_exchange;
 
     public StockExchangeFragment() {
+        // Required empty public constructor
     }
 
-
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.fragment_stock_exchange, container, false);
+        ButterKnife.bind(this, rootView);
 
-        getActivity().setTitle("Stock Exchange");
+        if (getActivity() != null) getActivity().setTitle("Stock Exchange");
 
-        companySpinner=(MaterialBetterSpinner)rootView.findViewById(R.id.company_spinner_exchange);
-        ArrayAdapter<String> arrayAdapter=new ArrayAdapter<String>(getActivity(),android.R.layout.simple_dropdown_item_1line,getResources().getStringArray(R.array.companies));
+        companySpinner = rootView.findViewById(R.id.company_spinner);
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_dropdown_item_1line, getResources().getStringArray(R.array.companies));
         companySpinner.setAdapter(arrayAdapter);
-        companySpinner.setSelection(0);
 
-        buy=(Button)rootView.findViewById(R.id.buy_exchange);
-        stock_value=(TextView)rootView.findViewById(R.id.stock_price_current);
-        daily_high=(TextView)rootView.findViewById(R.id.daily_high);
-        daily_low=(TextView)rootView.findViewById(R.id.daily_low);
-        stocks_in_market=(TextView)rootView.findViewById(R.id.stocks_in_market);
-        stocks_in_exchange=(TextView)rootView.findViewById(R.id.stocks_in_exchange);
+        updateValues();
 
-        noOfStocks=(EditText)rootView.findViewById(R.id.stocks_exchange);
-        noOfStocksInput=(TextInputLayout)rootView.findViewById(R.id.stocks_exchange_input);
+        companySpinner.setOnItemClickListener((adapterView, view, position, id) -> {
 
+            String temporaryTextViewString;
+            currentExchange = exchangeValues.get(position);
 
+            temporaryTextViewString = "Current stock price : " + String.valueOf(currentExchange.getStockValue());
+            currentStockPriceTextView.setText(temporaryTextViewString);
 
-        publish();
+            temporaryTextViewString = "Daily high : " + String.valueOf(currentExchange.getDailyHigh());
+            daily_high.setText(temporaryTextViewString);
 
-        buy.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if(companySpinner.getText().toString().trim().isEmpty()){
-                    Toast.makeText(getActivity(), "Select a company", Toast.LENGTH_SHORT).show();
-                    noOfStocksInput.setErrorEnabled(false);
-                }
-                else if(noOfStocks.getText().toString().trim().isEmpty()){
-                    noOfStocksInput.setError("enter the number of stocks");
-                }
-                else {
-                    noOfStocksInput.setErrorEnabled(false);
-                    Toast.makeText(getActivity(), "stocks bought", Toast.LENGTH_SHORT).show();
-                }
-            }
+            temporaryTextViewString = "Daily low : " + String.valueOf(currentExchange.getDailyLow());
+            daily_low.setText(temporaryTextViewString);
+
+            temporaryTextViewString = "Stocks in market : " + String.valueOf(currentExchange.getStocksInMarket());
+            stocks_in_market.setText(temporaryTextViewString);
+
+            temporaryTextViewString = "Stocks in exchange : " + String.valueOf(currentExchange.getStocksInExchange());
+            stocks_in_exchange.setText(temporaryTextViewString);
+
         });
-
-
 
         return rootView;
     }
 
-    public void setValues(){
-
-        //todo : get from service
-        exchangeValues=new ArrayList<>();
-
-        exchangeValues.add(new ExchangeValues("Github",50,45,55,100,100));
-        exchangeValues.add(new ExchangeValues("Intel",50,45,55,100,100));
-        exchangeValues.add(new ExchangeValues("Apple",50,45,55,100,100));
-        exchangeValues.add(new ExchangeValues("Yahoo",50,45,55,100,100));
-        exchangeValues.add(new ExchangeValues("HDFC",50,45,55,100,100));
-        exchangeValues.add(new ExchangeValues("LG",50,45,55,100,100));
-        exchangeValues.add(new ExchangeValues("Infosys",50,45,55,100,100));
-
-
-
-    }
-
-    public void publish(){
-
-        setValues();
-
-        final String stock_price="Stock price : ";
-        companySpinner.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-
-                for (ExchangeValues k : exchangeValues){
-                    if(adapterView.getItemAtPosition(i).toString().equals(k.company)){
-                        stock_value.setText("Current stock price : "+ String.valueOf(k.stockValue));
-                        daily_high.setText("Daily high : "+ String.valueOf(k.dailyHigh));
-                        daily_low.setText("Daily low : "+ String.valueOf(k.dailyLow));
-                        stocks_in_market.setText("Stocks in market : "+ String.valueOf(k.stocksInMarket));
-                        stocks_in_exchange.setText("Stocks in exchange : "+ String.valueOf(k.stocksInExchange));
-                    }
-                }
-
+    @OnClick(R.id.buyExchange_button)
+    void onBuyExchangeButtonClick() {
+        if (companySpinner.getText().toString().trim().isEmpty()) {
+            Toast.makeText(getActivity(), getString(R.string.pick_a_company), Toast.LENGTH_SHORT).show();
+        } else if (noOfStocksEditText.getText().toString().trim().isEmpty()) {
+            Toast.makeText(getActivity(), "Enter the number of Stocks", Toast.LENGTH_SHORT).show();
+        } else {
+            if (Integer.parseInt(noOfStocksEditText.getText().toString().trim()) < currentExchange.getStocksInMarket()) {
+                Toast.makeText(getActivity(), "Stocks Bought", Toast.LENGTH_SHORT).show();
+                // TODO : Buy stocks
+            } else {
+                Toast.makeText(getActivity(), "Insufficient stocks in market", Toast.LENGTH_SHORT).show();
             }
-        });
-
-
-
-    }
-
-    public class ExchangeValues{
-
-        int stockValue,dailyHigh,dailyLow,stocksInMarket,stocksInExchange;
-        String company;
-
-        public ExchangeValues(String company, int stockValue, int dailyHigh, int dailyLow, int stocksInMarket, int stocksInExchange) {
-            this.stockValue = stockValue;
-            this.dailyHigh = dailyHigh;
-            this.dailyLow = dailyLow;
-            this.stocksInMarket = stocksInMarket;
-            this.stocksInExchange = stocksInExchange;
-            this.company = company;
-        }
-
-        public ExchangeValues() {
         }
     }
 
+    public void updateValues() {
+
+        //TODO : Get from service
+        exchangeValues.clear();
+
+        exchangeValues.add(new ExchangeValuesDetails("Github", 50, 45, 55, 100, 100));
+        exchangeValues.add(new ExchangeValuesDetails("Intel", 50, 45, 55, 100, 100));
+        exchangeValues.add(new ExchangeValuesDetails("Apple", 50, 45, 55, 100, 100));
+        exchangeValues.add(new ExchangeValuesDetails("Yahoo", 50, 45, 55, 100, 100));
+        exchangeValues.add(new ExchangeValuesDetails("HDFC", 50, 45, 55, 100, 100));
+        exchangeValues.add(new ExchangeValuesDetails("LG", 50, 45, 55, 100, 100));
+        exchangeValues.add(new ExchangeValuesDetails("Infosys", 50, 45, 55, 100, 100));
+    }
 }

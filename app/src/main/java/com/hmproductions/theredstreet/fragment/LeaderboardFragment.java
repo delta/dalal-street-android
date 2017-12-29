@@ -2,8 +2,8 @@ package com.hmproductions.theredstreet.fragment;
 
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -11,82 +11,71 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.hmproductions.theredstreet.data.LeaderboardDetails;
 import com.hmproductions.theredstreet.R;
 import com.hmproductions.theredstreet.adapter.LeaderboardRecyclerAdapter;
+import com.hmproductions.theredstreet.data.LeaderboardDetails;
 
 import java.util.ArrayList;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
-/**
- * A simple {@link Fragment} subclass.
- */
 public class LeaderboardFragment extends Fragment {
 
+    @BindView(R.id.leaderboard_recyclerView)
     RecyclerView recyclerView;
-    ArrayList<LeaderboardDetails> details;
-    LeaderboardRecyclerAdapter leaderboardRecyclerAdapter;
 
+    @BindView(R.id.personal_name_textView)
+    TextView personalNameTextView;
 
-    TextView name,rank,wealth;
+    @BindView(R.id.personal_rank_textView)
+    TextView personalRankTextView;
 
+    @BindView(R.id.personal_wealth_textView)
+    TextView personalWealthTextView;
+
+    private ArrayList<LeaderboardDetails> leaderBoardDetailsList = new ArrayList<>();
+    private LeaderboardRecyclerAdapter leaderboardRecyclerAdapter;
 
     public LeaderboardFragment() {
         // Required empty public constructor
     }
 
-
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View rootView=inflater.inflate(R.layout.fragment_leaderboard, container, false);
-        getActivity().setTitle("LeaderboardFragment");
+        ButterKnife.bind(this, rootView);
 
-        recyclerView=(RecyclerView) rootView.findViewById(R.id.leaderboard_display);
-        name=(TextView)rootView.findViewById(R.id.name_list);
-        rank=(TextView)rootView.findViewById(R.id.rank_list);
-        wealth=(TextView)rootView.findViewById(R.id.wealth_list);
+        if (getActivity() != null) getActivity().setTitle("Leaderboard");
 
-        publish();
+        setValues();
+
+        leaderboardRecyclerAdapter = new LeaderboardRecyclerAdapter(getContext(), leaderBoardDetailsList);
+
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        recyclerView.setHasFixedSize(false);
+        recyclerView.setAdapter(leaderboardRecyclerAdapter);
+
+        personalNameTextView.setText("Username");  //todo : add our details
+        personalRankTextView.setText("9");
+        personalWealthTextView.setText("3500");
 
         return rootView;
     }
 
-
     public void setValues(){
-        details=new ArrayList<>(); //todo : get from service
-                                    //position,name,total wealth
-        details.add(new LeaderboardDetails(1,"aaa",5000));
-        details.add(new LeaderboardDetails(2,"bbb",4500));
-        details.add(new LeaderboardDetails(3,"ccc",4400));
-        details.add(new LeaderboardDetails(4,"ddd",4300));
-        details.add(new LeaderboardDetails(5,"eee",4200));
-        details.add(new LeaderboardDetails(6,"fff",4200));
-        details.add(new LeaderboardDetails(7,"ggg",4200));
-        details.add(new LeaderboardDetails(8,"hhh",4200));
-        details.add(new LeaderboardDetails(9,"iii",4200));
-        details.add(new LeaderboardDetails(10,"jjj",4200));
+        leaderBoardDetailsList.clear(); //TODO : Get from service
 
-
-
-
+        leaderBoardDetailsList.add(new LeaderboardDetails(1,"Delta Force",5000));
+        leaderBoardDetailsList.add(new LeaderboardDetails(2,"Pai",4500));
+        leaderBoardDetailsList.add(new LeaderboardDetails(3,"Sibi",4400));
+        leaderBoardDetailsList.add(new LeaderboardDetails(4,"Santhosh",4300));
+        leaderBoardDetailsList.add(new LeaderboardDetails(5,"Thakkar",4200));
+        leaderBoardDetailsList.add(new LeaderboardDetails(6,"Rb",4200));
+        leaderBoardDetailsList.add(new LeaderboardDetails(7,"Jumbo",4200));
+        leaderBoardDetailsList.add(new LeaderboardDetails(8,"Santa",3900));
+        leaderBoardDetailsList.add(new LeaderboardDetails(9,"Username",3500));
+        leaderBoardDetailsList.add(new LeaderboardDetails(10,"Deep",2100));
     }
-
-    public void publish(){
-        setValues();
-
-        leaderboardRecyclerAdapter =new LeaderboardRecyclerAdapter(details,getActivity());
-
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity(),LinearLayoutManager.VERTICAL,false));
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
-        recyclerView.setAdapter(leaderboardRecyclerAdapter);
-
-
-        name.setText("your name");  //todo : add our details
-        rank.setText("8");
-        wealth.setText("3500");
-
-    }
-
 }

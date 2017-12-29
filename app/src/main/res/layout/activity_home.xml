@@ -117,8 +117,8 @@
 
         <Button
             android:id="@+id/drawer_edge_button"
-            android:layout_width="10dp"
-            android:layout_height="150dp"
+            android:layout_width="16dp"
+            android:layout_height="175dp"
             android:layout_alignParentStart="true"
             android:layout_below="@+id/button_bar"
             android:layout_marginEnd="4dp"

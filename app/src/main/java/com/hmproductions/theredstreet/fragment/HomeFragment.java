@@ -73,7 +73,7 @@ public class HomeFragment extends Fragment {
 
         newsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         newsRecyclerView.setHasFixedSize(true);
-        newsRecyclerView.setAdapter(new NewsRecyclerAdapter(newsList));
+        newsRecyclerView.setAdapter(new NewsRecyclerAdapter(getContext(), newsList));
 
         Runnable runnable = new Runnable() {
             @Override

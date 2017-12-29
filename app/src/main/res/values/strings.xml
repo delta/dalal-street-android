@@ -98,11 +98,10 @@
     <string name="username">Username</string>
     <string name="cash_worth">Cash Worth</string>
     <string name="order_type">Order type</string>
-    <string name="pick_a_company">Pick a company</string>
+    <string name="pick_a_company">Pick a Company</string>
     <string name="ask">ASK</string>
     <string name="bid">BID</string>
     <string name="order_price">Order price</string>
-    <string name="number_of_stocks">Number of Stocks</string>
     <string name="retrieve_stocks_from_mortgage">Retrieve stocks from mortgage</string>
     <string name="sell_stocks_to_mortgage">Sell stocks to mortgage</string>
     <string name="sell_retrieve">Sell/Retrieve</string>
@@ -113,5 +112,10 @@
     <string name="ask_market_depth">Ask Market Depth</string>
     <string name="market_depth">Market Depth</string>
     <string name="company_history">Company History</string>
+    <string name="buy_stocks">Buy Stocks</string>
+    <string name="number_of_stocks">Number of Stocks</string>
+    <string name="wealth">WEALTH</string>
+    <string name="name">NAME</string>
+    <string name="rank">RANK</string>
 
 </resources>
