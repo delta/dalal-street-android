@@ -108,4 +108,10 @@
     <string name="sell_retrieve">Sell/Retrieve</string>
     <string name="enter_the_number_of_stocks">Enter the number of stocks</string>
     <string name="logout">Logout</string>
+    <string name="stock_details">Stock Details</string>
+    <string name="bid_market_depth">Bid Market Depth</string>
+    <string name="ask_market_depth">Ask Market Depth</string>
+    <string name="market_depth">Market Depth</string>
+    <string name="company_history">Company History</string>
+
 </resources>

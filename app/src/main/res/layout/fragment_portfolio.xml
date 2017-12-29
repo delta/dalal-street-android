@@ -1,38 +1,24 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="org.pragyan.dalalstreet17.Portfolio">
+    android:layout_height="match_parent">
 
+    <TextView
+        android:id="@+id/stock_details"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:text="@string/stock_details"
+        android:textColor="@android:color/background_dark"
+        android:textSize="35sp" />
 
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/portfolio_recyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/stock_details"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="8dp"
+        android:divider="@android:color/transparent" />
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-
-
-            <TextView
-                android:text="Stock details"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="20dp"
-                android:textSize="35sp"
-                android:id="@+id/stock_details" />
-
-            <ListView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_below="@+id/stock_details"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="20dp"
-                android:divider="@android:color/transparent"
-                android:id="@+id/stock_list"/>
-
-
-        </RelativeLayout>
-
-
-
-</FrameLayout>
+</RelativeLayout>

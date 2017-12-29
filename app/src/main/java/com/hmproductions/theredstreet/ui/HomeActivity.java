@@ -2,6 +2,7 @@ package com.hmproductions.theredstreet.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
@@ -19,7 +20,7 @@ import android.widget.Toast;
 import com.hmproductions.theredstreet.R;
 import com.hmproductions.theredstreet.fragment.BuySellFragment;
 import com.hmproductions.theredstreet.fragment.HomeFragment;
-import com.hmproductions.theredstreet.fragment.CompanyProfile;
+import com.hmproductions.theredstreet.fragment.CompanyProfileFragment;
 import com.hmproductions.theredstreet.fragment.LeaderboardFragment;
 import com.hmproductions.theredstreet.fragment.MortgageFragment;
 import com.hmproductions.theredstreet.fragment.MyOrders;
@@ -30,8 +31,11 @@ import com.hmproductions.theredstreet.fragment.TransactionsFragment;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class HomeActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+
+    private static final long DRAWER_DURATION = 450;
 
     private TextView usernameTextView;
     private String name;
@@ -64,6 +68,8 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         BindDrawerViews();
         SetupNavigationDrawer();
 
+        OpenAndCloseDrawer();
+
         getSupportFragmentManager().beginTransaction().add(R.id.home_activity_fragment_container, new HomeFragment()).commit();
         updateValues();
     }
@@ -87,6 +93,17 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         navigationView.setNavigationItemSelectedListener(this);
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
+    }
+
+    // Opening and closing drawer for UX
+    private void OpenAndCloseDrawer() {
+        drawerLayout.openDrawer(GravityCompat.START, true);
+        new Handler().postDelayed(() -> drawerLayout.closeDrawer(GravityCompat.START, true), DRAWER_DURATION);
+    }
+
+    @OnClick(R.id.drawer_edge_button)
+    void onDrawerButtonClick() {
+        drawerLayout.openDrawer(GravityCompat.START, true);
     }
 
     @Override
@@ -131,7 +148,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                 fragment = new StockExchangeFragment();
                 break;
             case R.id.nav_company_profile:
-                fragment = new CompanyProfile();
+                fragment = new CompanyProfileFragment();
                 break;
             case R.id.nav_news:
                 fragment = new NewsFragment();
