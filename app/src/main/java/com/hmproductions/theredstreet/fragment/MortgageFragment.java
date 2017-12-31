@@ -8,7 +8,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -93,7 +92,7 @@ public class MortgageFragment extends Fragment {
 
         stocksTransaction = Integer.parseInt(stocksEditText.getText().toString().trim());
 
-        if (mortgageRadioGroup.getCheckedRadioButtonId() == R.id.sell_radioButton) {
+        if (mortgageRadioGroup.getCheckedRadioButtonId() == R.id.mortgage_radioButton) {
 
             if (stocksTransaction <= stocksOwned) {
                 stocksOwned -= stocksTransaction; //todo : update in service
@@ -102,7 +101,7 @@ public class MortgageFragment extends Fragment {
                 String ownedString = NO_OF_STOCKS_OWNED_STRING + String.valueOf(stocksOwned);
                 ownedTextView.setText(ownedString);
 
-                String mortgageString = NO_OF_STOCKS_MORTGAGE_STRING + String.valueOf(stocksOwned);
+                String mortgageString = NO_OF_STOCKS_MORTGAGE_STRING + String.valueOf(stocksMortgaged);
                 mortgagedTextView.setText(mortgageString);
 
                 stocksEditText.setText("");
@@ -120,7 +119,7 @@ public class MortgageFragment extends Fragment {
                 String ownedString = NO_OF_STOCKS_OWNED_STRING + String.valueOf(stocksOwned);
                 ownedTextView.setText(ownedString);
 
-                String mortgageString = NO_OF_STOCKS_MORTGAGE_STRING + String.valueOf(stocksOwned);
+                String mortgageString = NO_OF_STOCKS_MORTGAGE_STRING + String.valueOf(stocksMortgaged);
                 mortgagedTextView.setText(mortgageString);
 
                 stocksEditText.setText("");

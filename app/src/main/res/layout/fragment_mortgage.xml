@@ -48,11 +48,11 @@
             android:layout_marginTop="36dp">
 
             <RadioButton
-                android:id="@+id/sell_radioButton"
+                android:id="@+id/mortgage_radioButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="@string/sell_stocks_to_mortgage" />
+                android:text="@string/mortgage_stocks" />
 
             <RadioButton
                 android:id="@+id/retrieve_radioButton"

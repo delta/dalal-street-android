@@ -2,23 +2,16 @@ package com.hmproductions.theredstreet.data;
 
 import android.content.Context;
 
-/**
- * Created by ravi on 18/2/17.
- */
-
 public class Orders {
 
     private Context context;
 
-    private String orderType;
     private boolean bid;
     private int orderPrice;
-    private String company;
-    private String status;
+    private String orderType, company, status;
 
     private Integer[] noOfStocks;
     private String[] price;
-
 
     public Orders(Context context, String orderType, boolean bid, int orderPrice, String company, String status, Integer[] noOfStocks, String[] price) {
         this.context = context;
@@ -29,11 +22,6 @@ public class Orders {
         this.status = status;
         this.noOfStocks = noOfStocks;
         this.price = price;
-
-        //createChart();
-    }
-
-    public Orders() {
     }
 
     public Context getContext() {
@@ -100,6 +88,4 @@ public class Orders {
     public void setPrice(String[] price) {
         this.price = price;
     }
-
-
 }

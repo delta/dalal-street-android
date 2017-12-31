@@ -14,8 +14,7 @@ import com.hmproductions.theredstreet.data.Transaction;
 
 import java.util.List;
 
-public class TransactionRecyclerAdapter extends RecyclerView.Adapter<TransactionRecyclerAdapter.MyViewHolder>{
-
+public class TransactionRecyclerAdapter extends RecyclerView.Adapter<TransactionRecyclerAdapter.MyViewHolder> {
 
     private Context context;
     private List<Transaction> transactionList;
@@ -28,51 +27,49 @@ public class TransactionRecyclerAdapter extends RecyclerView.Adapter<Transaction
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
-        View itemView = LayoutInflater.from(context).inflate(R.layout.transactions, parent, false);
+        View itemView = LayoutInflater.from(context).inflate(R.layout.transactions_list_item, parent, false);
         return new MyViewHolder(itemView);
     }
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
 
-        int size=transactionList.size();
+        Transaction currentTransaction = transactionList.get(position);
 
-        Transaction transaction =transactionList.get(size-position-1);
+        holder.typeTextView.setText("Transaction Type : " + currentTransaction.getType());
+        holder.companyTextView.setText("Company : " + currentTransaction.getCompany());
+        holder.noOfStocksTextView.setText("Numberof stocks : " + String.valueOf(currentTransaction.getNoOfStocks()));
+        holder.priceTextView.setText("Stock price : " + String.valueOf(currentTransaction.getStockPrice()));
+        holder.timeTextView.setText("Time : " + currentTransaction.getTime());
 
-        holder.type.setText("Transaction Type : "+ transaction.getType());
-        holder.company.setText("Company : "+ transaction.getCompany());
-        holder.noOfStocks.setText("Numberof stocks : "+ String.valueOf(transaction.getNoOfStocks()));
-        holder.price.setText("Stock price : "+ String.valueOf(transaction.getStockPrice()));
-        holder.time.setText("Time : "+ transaction.getTime());
-
-        if(transaction.getTotalMoney()>=0){
-            holder.relativeLayout.setBackgroundColor(ContextCompat.getColor(context,R.color.greenTint));
+        if (currentTransaction.getTotalMoney() >= 0) {
+            holder.relativeLayout.setBackgroundColor(ContextCompat.getColor(context, R.color.greenTint));
+        } else {
+            holder.relativeLayout.setBackgroundColor(ContextCompat.getColor(context, R.color.redTint));
         }
-        else{
-            holder.relativeLayout.setBackgroundColor(ContextCompat.getColor(context,R.color.redTint));
-
-        }
-
     }
 
     @Override
     public int getItemCount() {
+        if (transactionList == null || transactionList.size() == 0) return 0;
         return transactionList.size();
     }
 
-    public class MyViewHolder extends RecyclerView.ViewHolder {
-        public TextView type,company,noOfStocks,price,time;
+    class MyViewHolder extends RecyclerView.ViewHolder {
+
+        TextView typeTextView, companyTextView, noOfStocksTextView, priceTextView, timeTextView;
         RelativeLayout relativeLayout;
 
-        public MyViewHolder(View view) {
-            super(view);
-            type=(TextView)view.findViewById(R.id.transaction_type);
-            company=(TextView)view.findViewById(R.id.transaction_company);
-            noOfStocks=(TextView)view.findViewById(R.id.trans_noOfStocks);
-            price=(TextView)view.findViewById(R.id.trans_stockPrice);
-            time=(TextView)view.findViewById(R.id.trans_time);
-            relativeLayout=(RelativeLayout)view.findViewById(R.id.trans);
+        MyViewHolder(View itemView) {
+
+            super(itemView);
+
+            typeTextView = itemView.findViewById(R.id.transactionType_textView);
+            companyTextView = itemView.findViewById(R.id.transactionCompany_textView);
+            noOfStocksTextView = itemView.findViewById(R.id.noOfStocks_textView);
+            priceTextView = itemView.findViewById(R.id.stockPrice_textView);
+            timeTextView = itemView.findViewById(R.id.time_textView);
+            relativeLayout = itemView.findViewById(R.id.list_item_relativeLayout);
         }
     }
-
 }

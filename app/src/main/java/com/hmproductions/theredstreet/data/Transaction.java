@@ -1,14 +1,10 @@
 package com.hmproductions.theredstreet.data;
 
-
 public class Transaction {
 
-    private String type;
-    private String company;
+    private String type, company, time;
     private int noOfStocks;
-    private float stockPrice;
-    private String time;
-    private float totalMoney;
+    private float stockPrice, totalMoney;
 
     public Transaction(String type, String company, int noOfStocks, float stockPrice, String time, float totalMoney) {
         this.type = type;
@@ -19,15 +15,8 @@ public class Transaction {
         this.totalMoney = totalMoney;
     }
 
-    public Transaction() {
-    }
-
     public float getTotalMoney() {
         return totalMoney;
-    }
-
-    public void setTotalMoney(float totalMoney) {
-        this.totalMoney = totalMoney;
     }
 
     public String getType() {
@@ -50,16 +39,8 @@ public class Transaction {
         return noOfStocks;
     }
 
-    public void setNoOfStocks(int noOfStocks) {
-        this.noOfStocks = noOfStocks;
-    }
-
     public float getStockPrice() {
         return stockPrice;
-    }
-
-    public void setStockPrice(float stockPrice) {
-        this.stockPrice = stockPrice;
     }
 
     public String getTime() {

@@ -18,19 +18,13 @@ import com.hmproductions.theredstreet.R;
 import com.hmproductions.theredstreet.data.Orders;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-
-/**
- * Created by ravi on 18/2/17.
- */
 
 public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.MyViewHolder> {
 
     private Context context;
     private List<Orders> orderList;
-
-    public OrdersAdapter() {
-    }
 
     public OrdersAdapter(Context context, List<Orders> orderList) {
         this.context = context;
@@ -40,9 +34,7 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.MyViewHold
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
-        View itemView = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.orders, parent, false);
-
+        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.orders, parent, false);
         return new OrdersAdapter.MyViewHolder(itemView);
     }
 
@@ -53,9 +45,9 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.MyViewHold
 
         holder.type.setText("Order Type : "+orders.getOrderType());
         if(orders.isBid())
-            holder.bidOrAsk.setText("Bid");
+            holder.bidOrAsk.setText(context.getString(R.string.bid));
         else
-            holder.bidOrAsk.setText("Ask");
+            holder.bidOrAsk.setText(context.getString(R.string.ask));
 
         holder.company.setText("Company : "+orders.getCompany());
         holder.status.setText("Status : "+orders.getStatus());
@@ -71,7 +63,6 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.MyViewHold
             holder.cancel.setEnabled(false);
         }
 
-
         holder.pieChart.setUsePercentValues(false);
 
         holder.pieChart.setDrawHoleEnabled(false);
@@ -84,11 +75,9 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.MyViewHold
         for(int i=0;i<orders.getNoOfStocks().length;i++){
             pieY.add(new Entry(orders.getNoOfStocks()[i],i));
         }
-        ArrayList<String> pieX = new ArrayList<String>();
-        for(int i=0;i<orders.getPrice().length;i++){
-            pieX.add(orders.getPrice()[i]);
-        }
 
+        ArrayList<String> pieX = new ArrayList<>();
+        Collections.addAll(pieX, orders.getPrice());
 
         PieDataSet dataSet = new PieDataSet(pieY,"Market share");
         dataSet.setSliceSpace(0);
@@ -104,17 +93,10 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.MyViewHold
 
         PieData data = new PieData(pieX, dataSet);
 
-        //  data.setValueFormatter(new PercentFormatter());
-        //  data.setValueTextSize(11f);
-        //  data.setValueTextColor(Color.GRAY);
-
         holder.pieChart.setDescription("");
         holder.pieChart.animateX(1000);
         holder.pieChart.setData(data);
         holder.pieChart.invalidate();
-
-
-
     }
 
     @Override
@@ -122,24 +104,22 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.MyViewHold
         return orderList.size();
     }
 
-    public class MyViewHolder extends RecyclerView.ViewHolder {
-        public TextView type,bidOrAsk,price,status,company;
-        public Button cancel;
-        public PieChart pieChart;
+    class MyViewHolder extends RecyclerView.ViewHolder {
 
-        public MyViewHolder(View view) {
+        TextView type,bidOrAsk,price,status,company;
+        Button cancel;
+        PieChart pieChart;
+
+        MyViewHolder(View view) {
             super(view);
-            type=(TextView)view.findViewById(R.id.order_type);
-            bidOrAsk=(TextView)view.findViewById(R.id.bidOrAsk);
-            price=(TextView)view.findViewById(R.id.order_price);
-            status=(TextView)view.findViewById(R.id.order_status);
-            company=(TextView)view.findViewById(R.id.order_company);
-            cancel=(Button)view.findViewById(R.id.cancel);
-            pieChart=(PieChart)view.findViewById(R.id.piechart);
+            type= view.findViewById(R.id.order_type);
+            bidOrAsk= view.findViewById(R.id.bidOrAsk);
+            price= view.findViewById(R.id.order_price);
+            status= view.findViewById(R.id.order_status);
+            company= view.findViewById(R.id.order_company);
+            cancel= view.findViewById(R.id.cancel);
+            pieChart= view.findViewById(R.id.piechart);
 
         }
     }
-
-
-
 }

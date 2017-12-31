@@ -103,7 +103,7 @@
     <string name="bid">BID</string>
     <string name="order_price">Order price</string>
     <string name="retrieve_stocks_from_mortgage">Retrieve stocks from mortgage</string>
-    <string name="sell_stocks_to_mortgage">Sell stocks to mortgage</string>
+    <string name="mortgage_stocks">Mortgage stocks</string>
     <string name="sell_retrieve">Sell/Retrieve</string>
     <string name="enter_the_number_of_stocks">Enter the number of stocks</string>
     <string name="logout">Logout</string>

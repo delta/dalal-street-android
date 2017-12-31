@@ -2,6 +2,7 @@ package com.hmproductions.theredstreet.fragment;
 
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -16,35 +17,27 @@ import com.hmproductions.theredstreet.R;
 
 import java.util.ArrayList;
 
-
-/**
- * A simple {@link Fragment} subclass.
- */
-public class MyOrders extends Fragment {
+public class OrdersFragment extends Fragment {
 
     RecyclerView orderView;
     OrdersAdapter adapter;
-
 
     ArrayList<Orders> orders;
     ArrayList<String[]> orderPrice;
     ArrayList<Integer[]> noOfOrders;
 
-
-
-    public MyOrders() {
+    public OrdersFragment() {
         // Required empty public constructor
     }
 
-
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        View rootView=inflater.inflate(R.layout.fragment_my_orders, container, false);
-        getActivity().setTitle("My Orders");
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        orderView=(RecyclerView)rootView.findViewById(R.id.orders_list);
+        View rootView=inflater.inflate(R.layout.fragment_my_orders, container, false);
+
+        if (getActivity() != null) getActivity().setTitle("My Orders");
+
+        orderView = rootView.findViewById(R.id.orders_list);
 
         publish();
 
@@ -83,8 +76,6 @@ public class MyOrders extends Fragment {
         orderPrice.add(new String[]{"₹0"});
         noOfOrders.add(new Integer[]{50});
         orders.add(new Orders(getActivity(),"Limit Order",false,100,"Intel","Not filled",noOfOrders.get(noOfOrders.size()-1),orderPrice.get(orderPrice.size()-1)));
-
-
     }
 
     public void setValues(){
@@ -100,5 +91,4 @@ public class MyOrders extends Fragment {
         orderView.setItemAnimator(new DefaultItemAnimator());
         orderView.setAdapter(adapter);
     }
-
 }

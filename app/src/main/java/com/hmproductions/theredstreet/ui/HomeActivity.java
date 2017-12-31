@@ -18,13 +18,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.hmproductions.theredstreet.R;
+import com.hmproductions.theredstreet.dalalrpc.DalalGrpcClient;
 import com.hmproductions.theredstreet.fragment.BuySellFragment;
-import com.hmproductions.theredstreet.fragment.HomeFragment;
 import com.hmproductions.theredstreet.fragment.CompanyProfileFragment;
+import com.hmproductions.theredstreet.fragment.HomeFragment;
 import com.hmproductions.theredstreet.fragment.LeaderboardFragment;
 import com.hmproductions.theredstreet.fragment.MortgageFragment;
-import com.hmproductions.theredstreet.fragment.MyOrders;
 import com.hmproductions.theredstreet.fragment.NewsFragment;
+import com.hmproductions.theredstreet.fragment.OrdersFragment;
 import com.hmproductions.theredstreet.fragment.PortfolioFragment;
 import com.hmproductions.theredstreet.fragment.StockExchangeFragment;
 import com.hmproductions.theredstreet.fragment.TransactionsFragment;
@@ -63,6 +64,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         ButterKnife.bind(this);
 
         setSupportActionBar(toolbar);
+        if (getSupportActionBar() != null) getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         name = getString(R.string.username);
 
         BindDrawerViews();
@@ -72,6 +74,8 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
         getSupportFragmentManager().beginTransaction().add(R.id.home_activity_fragment_container, new HomeFragment()).commit();
         updateValues();
+
+        //new Handler().postDelayed(DalalGrpcClient::new, 1000);
     }
 
     private void BindDrawerViews() {
@@ -160,7 +164,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                 fragment = new MortgageFragment();
                 break;
             case R.id.nav_my_orders:
-                fragment = new MyOrders();
+                fragment = new OrdersFragment();
                 break;
             case R.id.nav_transactions:
                 fragment = new TransactionsFragment();

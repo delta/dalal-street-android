@@ -1,6 +1,8 @@
 apply plugin: 'com.android.application'
+apply plugin: 'com.google.protobuf'
 
 android {
+
     compileSdkVersion 27
     buildToolsVersion '27.0.1'
     defaultConfig {
@@ -12,9 +14,11 @@ android {
         multiDexEnabled true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
+
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
@@ -22,6 +26,41 @@ android {
     compileOptions {
         targetCompatibility JavaVersion.VERSION_1_8
         sourceCompatibility JavaVersion.VERSION_1_8
+    }
+}
+
+protobuf {
+    protoc {
+        artifact = 'com.google.protobuf:protoc:3.4.0'
+    }
+    plugins {
+        javalite {
+            artifact = "com.google.protobuf:protoc-gen-javalite:3.0.0"
+        }
+        grpc {
+            artifact = 'io.grpc:protoc-gen-grpc-java:1.8.0'
+        }
+    }
+    generateProtoTasks {
+        all().each { task ->
+            task.plugins {
+                javalite {}
+                grpc {
+                    // Options added to --grpc_out
+                    option 'lite'
+                }
+            }
+        }
+    }
+}
+
+// Inform IDEs like IntelliJ IDEA, Eclipse or NetBeans about the generated code.
+sourceSets {
+    main {
+        java {
+            srcDirs 'build/generated/source/proto/main/grpc'
+            srcDirs 'build/generated/source/proto/main/java'
+        }
     }
 }
 
@@ -50,8 +89,8 @@ dependencies {
     compile 'com.squareup.picasso:picasso:2.5.2'
 
     // gRPC
-    //compile 'io.grpc:grpc-netty:1.8.0'
-    compile 'io.grpc:grpc-protobuf:1.8.0'
+    compile 'io.grpc:grpc-okhttp:1.8.0'
+    compile 'io.grpc:grpc-protobuf-lite:1.8.0'
     compile 'io.grpc:grpc-stub:1.8.0'
 
     // Test Only Dependency
