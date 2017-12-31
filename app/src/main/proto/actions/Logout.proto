@@ -1,0 +1,16 @@
+syntax = "proto3";
+package dalalstreet.api.actions;
+
+message LogoutRequest {
+    // No request data
+}
+
+message LogoutResponse {
+    enum StatusCode {
+        OK = 0;
+        InternalServerError = 1;
+        BadRequestError = 2;
+    }
+    StatusCode status_code = 1;
+    string     status_message = 2;
+}

@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+package dalalstreet.api.datastreams;
+
+message MyOrderUpdate {
+    uint32 id = 1;
+    bool   is_ask = 2;
+    uint32 trade_quantity = 3;
+    bool   is_closed = 4;
+}

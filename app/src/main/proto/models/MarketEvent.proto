@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package dalalstreet.api.models;
+
+message MarketEvent {
+    uint32 id = 1;
+    uint32 stock_id = 2;
+    string headline = 3;
+    string text = 4;
+    sint32 emotion_score = 5;
+    bool   is_global = 7;
+    string created_at = 6;
+}

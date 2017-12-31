@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package dalalstreet.api.models;
+
+message LeaderboardRow {
+    uint32 id = 1;
+    uint32 user_id = 2;
+    string user_name = 3;
+    uint32 rank = 4;
+    uint32 cash = 5;
+    uint32 debt = 6;
+    int32  stock_worth = 7;
+    int32  total_worth = 8;
+}

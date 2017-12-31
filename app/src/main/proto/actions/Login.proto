@@ -1,0 +1,32 @@
+syntax = "proto3";
+
+package dalalstreet.api.actions;
+
+import "models/Stock.proto";
+import "models/User.proto";
+
+message LoginRequest {
+    string email = 1;
+    string password = 2;
+}
+
+message LoginResponse {
+    enum StatusCode {
+        OK = 0;
+        InternalServerError = 1;
+        InvalidCredentialsError = 2;
+    }
+    StatusCode status_code = 1;
+    string     status_message = 2;
+
+    string      session_id = 3;
+    models.User user = 4;
+
+    map<uint32, int32>          stocks_owned = 5;
+    map<uint32, models.Stock>   stock_list = 6;
+    map<string, int32>          constants = 7;
+
+    string  market_is_open_hacky_notif = 8;
+    string  market_is_closed_hacky_notif = 9;
+    bool    is_market_open = 10;
+}

@@ -1,0 +1,69 @@
+syntax = "proto3";
+
+package dalalstreet.api;
+
+import "actions/BuyStocksFromExchange.proto";
+import "actions/CancelOrder.proto";
+import "actions/Login.proto";
+import "actions/Logout.proto";
+import "actions/MortgageStocks.proto";
+import "actions/PlaceOrder.proto";
+import "actions/RetrieveMortgageStocks.proto";
+
+import "actions/GetCompanyProfile.proto";
+import "actions/GetMarketEvents.proto";
+import "actions/GetMyOrders.proto";
+import "actions/GetNotifications.proto";
+import "actions/GetTransactions.proto";
+import "actions/GetMortgageDetails.proto";
+import "actions/GetLeaderboard.proto";
+
+import "datastreams/Subscribe.proto";
+import "datastreams/MarketDepth.proto";
+import "datastreams/Transactions.proto";
+import "datastreams/Notifications.proto";
+import "datastreams/StockPrices.proto";
+import "datastreams/StockExchange.proto";
+import "datastreams/MarketEvents.proto";
+import "datastreams/MyOrders.proto";
+
+service DalalActionService {
+	// Stock trading related functions
+    rpc BuyStocksFromExchange(actions.BuyStocksFromExchangeRequest) 	returns (actions.BuyStocksFromExchangeResponse);
+    rpc PlaceOrder(actions.PlaceOrderRequest) 							returns (actions.PlaceOrderResponse);
+	rpc CancelOrder(actions.CancelOrderRequest) 						returns (actions.CancelOrderResponse);
+	rpc MortgageStocks(actions.MortgageStocksRequest) 					returns (actions.MortgageStocksResponse);
+	rpc RetrieveMortgageStocks(actions.RetrieveMortgageStocksRequest) 	returns (actions.RetrieveMortgageStocksResponse);
+
+	// Getting information about transactions, orders, mortgage
+	rpc GetMyOpenOrders(actions.GetMyOpenOrdersRequest)					returns (actions.GetMyOpenOrdersResponse);
+	rpc GetMyClosedAsks(actions.GetMyClosedAsksRequest)					returns (actions.GetMyClosedAsksResponse);
+	rpc GetMyClosedBids(actions.GetMyClosedBidsRequest)					returns (actions.GetMyClosedBidsResponse);
+	rpc GetTransactions(actions.GetTransactionsRequest)   				returns (actions.GetTransactionsResponse);
+	rpc GetMortgageDetails(actions.GetMortgageDetailsRequest) 			returns (actions.GetMortgageDetailsResponse);
+
+	// Getting general information
+	rpc GetCompanyProfile(actions.GetCompanyProfileRequest)				returns (actions.GetCompanyProfileResponse);
+	rpc GetLeaderboard(actions.GetLeaderboardRequest)					returns (actions.GetLeaderboardResponse);
+	rpc GetMarketEvents(actions.GetMarketEventsRequest)     			returns (actions.GetMarketEventsResponse);
+	rpc GetNotifications(actions.GetNotificationsRequest)   			returns (actions.GetNotificationsResponse);
+
+	// Auth
+	rpc Login(actions.LoginRequest) 									returns (actions.LoginResponse);
+	rpc Logout(actions.LogoutRequest) 									returns (actions.LogoutResponse);
+}
+
+service DalalStreamService {
+	// Subscription
+	rpc Subscribe(datastreams.SubscribeRequest) 			returns (datastreams.SubscribeResponse);
+	rpc Unsubscribe(datastreams.UnsubscribeRequest) 		returns (datastreams.UnsubscribeResponse);
+
+	// Datastreams
+	rpc GetMarketDepthUpdates(datastreams.SubscriptionId)	returns (stream datastreams.MarketDepthUpdate);
+	rpc GetMarketEventUpdates(datastreams.SubscriptionId)	returns (stream datastreams.MarketEventUpdate);
+	rpc GetMyOrderUpdates(datastreams.SubscriptionId)		returns (stream datastreams.MyOrderUpdate);
+	rpc GetNotificationUpdates(datastreams.SubscriptionId)	returns (stream datastreams.NotificationUpdate);
+	rpc GetStockExchangeUpdates(datastreams.SubscriptionId)	returns (stream datastreams.StockExchangeUpdate);
+	rpc GetStockPricesUpdates(datastreams.SubscriptionId)	returns (stream datastreams.StockPricesUpdate);
+	rpc GetTransactionUpdates(datastreams.SubscriptionId)	returns (stream datastreams.TransactionUpdate);
+}
