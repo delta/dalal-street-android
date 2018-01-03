@@ -1,5 +1,5 @@
 syntax = "proto3";
-package dalalstreet.api.actions;
+package proto;
 
 import "models/Notification.proto";
 
@@ -16,5 +16,5 @@ message GetNotificationsResponse {
     string     status_message = 2;
 
     bool more_exists = 3;
-    repeated models.Notification notifications = 4;
+    repeated Notification notifications = 4;
 }

@@ -1,9 +1,9 @@
 syntax = "proto3";
 
-package dalalstreet.api.datastreams;
+package proto;
 
 import "models/Notification.proto";
 
 message NotificationUpdate {
-    models.Notification notification = 1;
+    Notification notification = 1;
 }

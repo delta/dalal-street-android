@@ -1,5 +1,5 @@
 syntax = "proto3";
-package dalalstreet.api.actions;
+package proto;
 
 import "models/Transaction.proto";
 
@@ -17,5 +17,5 @@ message GetTransactionsResponse {
     string     status_message = 2;
 
     bool more_exists = 3;
-    repeated models.Transaction transactions = 4;
+    repeated Transaction transactions = 4;
 }

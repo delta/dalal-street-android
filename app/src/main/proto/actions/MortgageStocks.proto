@@ -1,5 +1,5 @@
 syntax = "proto3";
-package dalalstreet.api.actions;
+package proto;
 
 import "models/Transaction.proto";
 
@@ -19,5 +19,5 @@ message MortgageStocksResponse {
     StatusCode status_code = 1;
     string     status_message = 2;
 
-    models.Transaction transaction = 3;
+    Transaction transaction = 3;
 }

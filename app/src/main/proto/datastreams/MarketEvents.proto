@@ -1,9 +1,9 @@
 syntax = "proto3";
 
-package dalalstreet.api.datastreams;
+package proto;
 
 import "models/MarketEvent.proto";
 
 message MarketEventUpdate {
-    models.MarketEvent market_event = 1;
+    MarketEvent market_event = 1;
 }

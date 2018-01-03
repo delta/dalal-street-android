@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package dalalstreet.api.models;
+package proto;
 
 message OrderFill {
   uint32 transaction_id = 1;

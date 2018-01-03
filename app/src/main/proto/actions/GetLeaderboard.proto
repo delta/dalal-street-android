@@ -1,5 +1,5 @@
 syntax = "proto3";
-package dalalstreet.api.actions;
+package proto;
 
 import "models/LeaderboardRow.proto";
 
@@ -18,5 +18,5 @@ message GetLeaderboardResponse {
 
     uint32 my_rank = 3;
     uint32 total_users = 4;
-    repeated models.LeaderboardRow rank_list = 5;  // key: rank, value: leaderboard row
+    repeated LeaderboardRow rank_list = 5;  // key: rank, value: leaderboard row
 }

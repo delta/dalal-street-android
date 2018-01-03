@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package dalalstreet.api.datastreams;
+package proto;
 
 message StockPricesUpdate {
     map<uint32, uint32> prices = 1; // key: stockId, value: price

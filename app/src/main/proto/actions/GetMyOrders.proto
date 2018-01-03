@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package dalalstreet.api.actions;
+package proto;
 
 import "models/Ask.proto";
 import "models/Bid.proto";
@@ -16,8 +16,8 @@ message GetMyOpenOrdersResponse {
     StatusCode status_code = 1;
     string     status_message = 2;
 
-    repeated models.Ask open_ask_orders = 3;
-    repeated models.Bid open_bid_orders = 4;
+    repeated Ask open_ask_orders = 3;
+    repeated Bid open_bid_orders = 4;
 }
 
 // GetMyClosedAsks
@@ -35,7 +35,7 @@ message GetMyClosedAsksResponse {
     string     status_message = 2;
 
     bool                more_exists = 3;
-    repeated models.Ask closed_ask_orders = 4;
+    repeated Ask closed_ask_orders = 4;
 }
 
 // GetMyClosedBids
@@ -53,5 +53,5 @@ message GetMyClosedBidsResponse {
     string     status_message = 2;
 
     bool                more_exists = 3;
-    repeated models.Bid closed_bid_orders = 4;
+    repeated Bid closed_bid_orders = 4;
 }

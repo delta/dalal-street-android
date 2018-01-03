@@ -1,5 +1,5 @@
 syntax = "proto3";
-package dalalstreet.api.actions;
+package proto;
 
 message CancelOrderRequest {
     uint32 order_id = 1;

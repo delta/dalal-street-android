@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package dalalstreet.api.models;
+package proto;
 
 message LeaderboardRow {
     uint32 id = 1;

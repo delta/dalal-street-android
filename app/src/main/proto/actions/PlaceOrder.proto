@@ -1,12 +1,12 @@
 syntax = "proto3";
-package dalalstreet.api.actions;
+package proto;
 
 import "models/OrderType.proto";
 
 message PlaceOrderRequest {
     bool   is_ask = 1;
     uint32 stock_id = 2;
-    models.OrderType order_type = 3;
+    OrderType order_type = 3;
     uint32 price = 4;
     uint32 stock_quantity = 5;
 }

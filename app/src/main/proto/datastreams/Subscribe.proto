@@ -1,5 +1,5 @@
 syntax = "proto3";
-package dalalstreet.api.datastreams;
+package proto;
 
 enum DataStreamType {
     MARKET_DEPTH = 0;
@@ -13,10 +13,10 @@ enum DataStreamType {
 
 message SubscriptionId {
     string id = 1;
-    datastreams.DataStreamType data_stream_type = 2;
+    DataStreamType data_stream_type = 2;
 }
 message SubscribeRequest {
-    datastreams.DataStreamType data_stream_type = 1;
+    DataStreamType data_stream_type = 1;
     string data_stream_id = 2;    // useful for MARKET_DEPTH & maybe some others
 }
 

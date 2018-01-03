@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package dalalstreet.api.models;
+package proto;
 
 message StockHistory {
   uint32 stock_id = 1;

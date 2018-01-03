@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package dalalstreet.api.models;
+package proto;
 
 enum TransactionType {
     FROM_EXCHANGE_TRANSACTION = 0;
