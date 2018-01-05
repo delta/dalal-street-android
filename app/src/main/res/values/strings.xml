@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Dalal Street</string>
 
-    <string name="login_text">Login</string>
+    <string name="login_text">LOGIN</string>
     <string name="login_button">Login</string>
     <string name="email_hint">Email</string>
     <string name="password_hint">Password</string>

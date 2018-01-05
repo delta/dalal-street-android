@@ -74,7 +74,6 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         getSupportFragmentManager().beginTransaction().add(R.id.home_activity_fragment_container, new HomeFragment()).commit();
         updateValues();
 
-        //new Handler().postDelayed(DalalGrpcClient::new, 1000);
     }
 
     private void BindDrawerViews() {
