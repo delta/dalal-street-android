@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.util.DisplayMetrics;
 
+import dalalstreet.api.models.OrderType;
+
 public class MiscellaneousUtils {
 
     public static float convertDpToPixel(Context context, float dp){
@@ -35,4 +37,28 @@ public class MiscellaneousUtils {
             "5+8T\n-----END CERTIFICATE-----";
 
     public static String sessionId = null;
+
+    public static int getStockIdFromCompanyName(Context context, String companyName) {
+
+        String[] companies = context.getResources().getStringArray(R.array.companies);
+
+        for (int i=0 ; i<companies.length ; ++i) {
+            if (companies[i].equalsIgnoreCase(companyName))
+                return i;
+        }
+
+        return -1;
+    }
+
+    public static OrderType getOrderTypeFromName(String orderType) {
+
+        switch (orderType) {
+            
+            case  "Limit Order"           : return OrderType.LIMIT;
+            case  "Market Order"          : return  OrderType.MARKET;
+            case  "Stoploss Order"        : return  OrderType.STOPLOSS;
+            case  "Stoploss Active Order" : return  OrderType.STOPLOSSACTIVE;
+            default: return OrderType.UNRECOGNIZED;
+        }
+    }
 }

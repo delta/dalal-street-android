@@ -1,5 +1,6 @@
 package com.hmproductions.theredstreet.dagger;
 
+import com.hmproductions.theredstreet.fragment.BuySellFragment;
 import com.hmproductions.theredstreet.fragment.CompanyProfileFragment;
 import com.hmproductions.theredstreet.fragment.HomeFragment;
 import com.hmproductions.theredstreet.ui.HomeActivity;
@@ -17,4 +18,5 @@ public interface DalalStreetApplicationComponent {
 
     void inject(CompanyProfileFragment companyProfileFragment);
     void inject(HomeFragment homeFragment);
+    void inject(BuySellFragment buySellFragment);
 }

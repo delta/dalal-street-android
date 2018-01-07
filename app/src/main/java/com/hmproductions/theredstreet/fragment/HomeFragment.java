@@ -97,8 +97,6 @@ public class HomeFragment extends Fragment {
 
     public void setValues() { //todo : get from service,checkout companyAdapter
 
-        
-
         newsList.clear();
         companyList.clear();
 

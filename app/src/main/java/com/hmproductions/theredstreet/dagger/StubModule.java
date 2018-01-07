@@ -1,10 +1,13 @@
 package com.hmproductions.theredstreet.dagger;
 
+import com.hmproductions.theredstreet.MiscellaneousUtils;
+
 import dagger.Module;
 import dagger.Provides;
 import dalalstreet.api.DalalActionServiceGrpc;
 import dalalstreet.api.DalalStreamServiceGrpc;
 import io.grpc.ManagedChannel;
+import io.grpc.Metadata;
 
 @Module (includes = ContextModule.class)
 public class StubModule {
@@ -31,5 +34,14 @@ public class StubModule {
     @DalalStreetApplicationScope
     public DalalStreamServiceGrpc.DalalStreamServiceBlockingStub getDalalStreamBlockingStub(ManagedChannel channel) {
         return DalalStreamServiceGrpc.newBlockingStub(channel);
+    }
+
+    @Provides
+    @DalalStreetApplicationScope
+    public Metadata getStubMetadata() {
+        Metadata metadata = new Metadata();
+        Metadata.Key<String> metadataKey = Metadata.Key.of("session_id", Metadata.ASCII_STRING_MARSHALLER);
+        metadata.put(metadataKey, MiscellaneousUtils.sessionId);
+        return metadata;
     }
 }

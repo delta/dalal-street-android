@@ -17,7 +17,6 @@ import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.hmproductions.theredstreet.MiscellaneousUtils;
 import com.hmproductions.theredstreet.R;
 import com.hmproductions.theredstreet.dagger.ContextModule;
 import com.hmproductions.theredstreet.dagger.DaggerDalalStreetApplicationComponent;
@@ -50,6 +49,9 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     @Inject
     DalalActionServiceGrpc.DalalActionServiceBlockingStub actionServiceBlockingStub;
 
+    @Inject
+    Metadata metadata;
+
     private TextView usernameTextView;
 
     private NavigationView navigationView;
@@ -73,7 +75,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
-        DaggerDalalStreetApplicationComponent.builder().contextModule(new ContextModule(this)).build().inject(this);
+        DaggerDalalStreetApplicationComponent.builder().build().inject(this);
         ButterKnife.bind(this);
 
         setSupportActionBar(toolbar);
@@ -198,9 +200,6 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
     public void logout() {
 
-        Metadata metadata = new Metadata();
-        Metadata.Key<String> metadataKey = Metadata.Key.of("session_id", Metadata.ASCII_STRING_MARSHALLER);
-        metadata.put(metadataKey, MiscellaneousUtils.sessionId);
         MetadataUtils.attachHeaders(actionServiceBlockingStub, metadata);
 
         LogoutResponse logoutResponse = actionServiceBlockingStub.logout(LogoutRequest.newBuilder().build());
