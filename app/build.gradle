@@ -1,5 +1,5 @@
 apply plugin: 'com.android.application'
-apply plugin: 'com.google.protobuf'
+//apply plugin: 'com.google.protobuf'
 
 android {
 
@@ -29,40 +29,40 @@ android {
     }
 }
 
-protobuf {
-    protoc {
-        artifact = 'com.google.protobuf:protoc:3.4.0'
-    }
-    plugins {
-        javalite {
-            artifact = "com.google.protobuf:protoc-gen-javalite:3.0.0"
-        }
-        grpc {
-            artifact = 'io.grpc:protoc-gen-grpc-java:1.8.0'
-        }
-    }
-    generateProtoTasks {
-        all().each { task ->
-            task.plugins {
-                javalite {}
-                grpc {
-                    // Options added to --grpc_out
-                    option 'lite'
-                }
-            }
-        }
-    }
-}
-
-// Inform IDEs like IntelliJ IDEA, Eclipse or NetBeans about the generated code.
-sourceSets {
-    main {
-        java {
-            srcDirs 'build/generated/source/proto/main/grpc'
-            srcDirs 'build/generated/source/proto/main/java'
-        }
-    }
-}
+//protobuf {
+//    protoc {
+//        artifact = 'com.google.protobuf:protoc:3.4.0'
+//    }
+//    plugins {
+//        javalite {
+//            artifact = "com.google.protobuf:protoc-gen-javalite:3.0.0"
+//        }
+//        grpc {
+//            artifact = 'io.grpc:protoc-gen-grpc-java:1.8.0'
+//        }
+//    }
+//    generateProtoTasks {
+//        all().each { task ->
+//            task.plugins {
+//                javalite {}
+//                grpc {
+//                    // Options added to --grpc_out
+//                    option 'lite'
+//                }
+//            }
+//        }
+//    }
+//}
+//
+//// Inform IDEs like IntelliJ IDEA, Eclipse or NetBeans about the generated code.
+//sourceSets {
+//    main {
+//        java {
+//            srcDirs 'build/generated/source/proto/main/grpc'
+//            srcDirs 'build/generated/source/proto/main/java'
+//        }
+//    }
+//}
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])

@@ -5,6 +5,9 @@ import android.support.v4.content.AsyncTaskLoader;
 import android.util.Log;
 
 import com.hmproductions.theredstreet.MiscellaneousUtils;
+import dalalstreet.api.DalalActionServiceGrpc;
+import dalalstreet.api.actions.LoginRequest;
+import dalalstreet.api.actions.LoginResponse;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -24,9 +27,6 @@ import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
 
-import dalalstreet.api.DalalActionServiceGrpc;
-import dalalstreet.api.actions.LoginRequest;
-import dalalstreet.api.actions.LoginResponse;
 import io.grpc.ManagedChannel;
 import io.grpc.okhttp.OkHttpChannelBuilder;
 

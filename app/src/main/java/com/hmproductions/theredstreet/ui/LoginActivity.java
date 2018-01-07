@@ -10,12 +10,12 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.hmproductions.theredstreet.R;
+import dalalstreet.api.actions.LoginRequest;
+import dalalstreet.api.actions.LoginResponse;
 import com.hmproductions.theredstreet.loaders.LoginLoader;
 
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import dalalstreet.api.actions.LoginRequest;
-import dalalstreet.api.actions.LoginResponse;
 
 public class LoginActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<LoginResponse> {
 
@@ -56,8 +56,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderManager.Lo
             getSupportLoaderManager().restartLoader(LOADER_ID, null, this);
         }
     }
-
-
 
     private boolean validateEmail() {
 
