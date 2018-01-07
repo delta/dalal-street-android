@@ -1,6 +1,7 @@
 package com.hmproductions.theredstreet.ui;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -50,6 +51,9 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     DalalActionServiceGrpc.DalalActionServiceBlockingStub actionServiceBlockingStub;
 
     @Inject
+    SharedPreferences preferences;
+
+    @Inject
     Metadata metadata;
 
     private TextView usernameTextView;
@@ -75,7 +79,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
-        DaggerDalalStreetApplicationComponent.builder().build().inject(this);
+        DaggerDalalStreetApplicationComponent.builder().contextModule(new ContextModule(this)).build().inject(this);
         ButterKnife.bind(this);
 
         setSupportActionBar(toolbar);
@@ -206,6 +210,13 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
         if (logoutResponse.getStatusCode().getNumber() == 0 || logoutResponse.getStatusCode().getNumber() == 1) {
             Toast.makeText(this, logoutResponse.getStatusMessage(), Toast.LENGTH_SHORT).show();
+
+            preferences
+                    .edit()
+                    .putString(LoginActivity.USERNAME_KEY, null)
+                    .putString(LoginActivity.SESSION_ID_KEY, null)
+                    .putString(LoginActivity.EMAIL_KEY, null)
+                    .apply();
         } else {
             Toast.makeText(this, "Connection error", Toast.LENGTH_SHORT).show();
         }

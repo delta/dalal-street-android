@@ -14,6 +14,7 @@ import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import com.hmproductions.theredstreet.R;
+import com.hmproductions.theredstreet.dagger.ContextModule;
 import com.hmproductions.theredstreet.dagger.DaggerDalalStreetApplicationComponent;
 import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner;
 
@@ -69,7 +70,7 @@ public class BuySellFragment extends Fragment {
         if (getActivity() != null)
             getActivity().setTitle("Buy / Sell");
 
-        DaggerDalalStreetApplicationComponent.builder().build().inject(this);
+        DaggerDalalStreetApplicationComponent.builder().contextModule(new ContextModule(getContext())).build().inject(this);
         ButterKnife.bind(this, rootView);
 
         ArrayAdapter<String> companiesAdapter = new ArrayAdapter<>(getActivity(),android.R.layout.simple_dropdown_item_1line,getResources().getStringArray(R.array.companies));

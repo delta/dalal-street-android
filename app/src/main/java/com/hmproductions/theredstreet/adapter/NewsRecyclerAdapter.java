@@ -33,13 +33,18 @@ public class NewsRecyclerAdapter extends RecyclerView.Adapter<NewsRecyclerAdapte
     public void onBindViewHolder(MyViewHolder holder, int position) {
 
         holder.headlinesTextView.setText(newsList.get(position).getHeadlines());
+        holder.createdAtTextView.setText(newsList.get(position).getCreatedAt());
 
         if (newsList.get(position).getContent() != null) {
             holder.contentTextView.setText(newsList.get(position).getContent());
             holder.contentTextView.setVisibility(View.VISIBLE);
+            holder.createdAtTextView.setVisibility(View.VISIBLE);
         }
-        else
+        else {
             holder.contentTextView.setVisibility(View.GONE);
+            holder.createdAtTextView.setVisibility(View.GONE);
+
+        }
     }
 
     @Override
@@ -48,15 +53,20 @@ public class NewsRecyclerAdapter extends RecyclerView.Adapter<NewsRecyclerAdapte
         return newsList.size();
     }
 
+    public void swapData(List<NewsDetails> list) {
+        newsList = list;
+        notifyDataSetChanged();
+    }
 
     class MyViewHolder extends RecyclerView.ViewHolder {
 
-        TextView headlinesTextView, contentTextView;
+        TextView headlinesTextView, contentTextView, createdAtTextView;
 
         MyViewHolder(View view) {
             super(view);
-            headlinesTextView= view.findViewById(R.id.news_head);
-            contentTextView= view.findViewById(R.id.news_content);
+            headlinesTextView = view.findViewById(R.id.news_head);
+            contentTextView = view.findViewById(R.id.news_content);
+            createdAtTextView = view.findViewById(R.id.createdAt_textView);
         }
     }
 }

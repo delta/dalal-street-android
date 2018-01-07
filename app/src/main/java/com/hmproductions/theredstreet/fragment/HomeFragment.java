@@ -17,6 +17,8 @@ import android.view.ViewGroup;
 import com.hmproductions.theredstreet.R;
 import com.hmproductions.theredstreet.adapter.CompanyRecyclerAdapter;
 import com.hmproductions.theredstreet.adapter.NewsRecyclerAdapter;
+import com.hmproductions.theredstreet.dagger.ContextModule;
+import com.hmproductions.theredstreet.dagger.DaggerDalalStreetApplicationComponent;
 import com.hmproductions.theredstreet.data.Company;
 import com.hmproductions.theredstreet.data.NewsDetails;
 
@@ -35,6 +37,9 @@ public class HomeFragment extends Fragment {
 
     @Inject
     DalalActionServiceGrpc.DalalActionServiceStub actionServiceStub;
+
+    @Inject
+    NewsRecyclerAdapter newsRecyclerAdapter;
 
     @BindView(R.id.companies_recyclerView)
     RecyclerView companiesRecyclerView;
@@ -59,6 +64,8 @@ public class HomeFragment extends Fragment {
 
         View rootView = inflater.inflate(R.layout.fragment_home, container, false);
         ButterKnife.bind(this, rootView);
+        DaggerDalalStreetApplicationComponent.builder().contextModule(new ContextModule(getContext())).build().inject(this);
+
         if (getActivity() != null)
             getActivity().setTitle("Home");
 
@@ -76,7 +83,7 @@ public class HomeFragment extends Fragment {
 
         newsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         newsRecyclerView.setHasFixedSize(true);
-        newsRecyclerView.setAdapter(new NewsRecyclerAdapter(getContext(), newsList));
+        newsRecyclerView.setAdapter(newsRecyclerAdapter);
 
         Runnable runnable = new Runnable() {
             @Override
@@ -98,6 +105,13 @@ public class HomeFragment extends Fragment {
     public void setValues() { //todo : get from service,checkout companyAdapter
 
         newsList.clear();
+        newsList.add(new NewsDetails("11:12pm Feb 23", "Github makes private repos free!", null));
+        newsList.add(new NewsDetails("7:44pm Feb 13","Apple revokes iphone 7 plus due to faulty cameras", null));
+        newsList.add(new NewsDetails("5:19pm Feb 5","Yahoo employees announce strike due to non payment of salary", null));
+        newsList.add(new NewsDetails("10:30am Feb 2","Sony launches Xperia X conpact priced at 45,000", null));
+        newsList.add(new NewsDetails("2:55pm Jan 31","LG patents new refrigerant for its refrigerator products", null));
+        newsRecyclerAdapter.swapData(newsList);
+
         companyList.clear();
 
         companyList.add(new Company("Github", String.valueOf(50), R.drawable.github2, R.drawable.down_arrow));
@@ -107,13 +121,5 @@ public class HomeFragment extends Fragment {
         companyList.add(new Company("LG", String.valueOf(110), R.drawable.lg2, R.drawable.up_arrow));
         companyList.add(new Company("Sony", String.valueOf(50), R.drawable.sony, R.drawable.down_arrow));
         companyList.add(new Company("Infosys", String.valueOf(50), R.drawable.infosys, R.drawable.down_arrow));
-
-        newsList = new ArrayList<>();
-        newsList.clear();
-        newsList.add(new NewsDetails("Github makes private repos free!", null));
-        newsList.add(new NewsDetails("Apple revokes iphone 7 plus due to faulty cameras", null));
-        newsList.add(new NewsDetails("Yahoo employees announce strike due to non payment of salary", null));
-        newsList.add(new NewsDetails("Sony launches Xperia X conpact priced at 45,000", null));
-        newsList.add(new NewsDetails("LG patents new refrigerant for its refrigerator products", null));
     }
 }

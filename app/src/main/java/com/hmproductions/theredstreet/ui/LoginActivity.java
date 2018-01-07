@@ -1,6 +1,7 @@
 package com.hmproductions.theredstreet.ui;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
@@ -29,9 +30,13 @@ public class LoginActivity extends AppCompatActivity implements LoaderManager.Lo
     @Inject
     DalalActionServiceGrpc.DalalActionServiceBlockingStub stub;
 
+    @Inject
+    SharedPreferences preferences;
+
     private static final int LOADER_ID = 101;
     static final String USERNAME_KEY = "username-key";
-    private static final String EMAIL_KEY = "email-key";
+    public static final String EMAIL_KEY = "email-key";
+    public static final String SESSION_ID_KEY = "session-id-key";
 
     EditText emailEditText,  passwordEditText;
     private LoginRequest loginRequest;
@@ -51,6 +56,17 @@ public class LoginActivity extends AppCompatActivity implements LoaderManager.Lo
 
         emailEditText = findViewById(R.id.email_editText);
         passwordEditText = findViewById(R.id.password_editText);
+
+        String sessionIdInPref = preferences.getString(SESSION_ID_KEY, null);
+        if (sessionIdInPref != null) {
+            MiscellaneousUtils.sessionId = sessionIdInPref;
+
+            Intent intent = new Intent(this, HomeActivity.class);
+            intent.putExtra(USERNAME_KEY, preferences.getString(USERNAME_KEY, null));
+            intent.putExtra(EMAIL_KEY, preferences.getString(EMAIL_KEY, null));
+            startActivity(intent);
+            finish();
+        }
     }
 
     @OnClick(R.id.play_button)

@@ -1,21 +1,17 @@
 package com.hmproductions.theredstreet.data;
 
-/**
- * Created by ravi on 18/2/17.
- */
-
 public class NewsDetails {
 
-    private String headlines;
-    private String content;
+    private String headlines, content, createdAt;
 
 
     public NewsDetails() {
     }
 
-    public NewsDetails(String headlines, String content) {
+    public NewsDetails( String createdAt, String headlines, String content) {
         this.headlines = headlines;
         this.content = content;
+        this.createdAt = createdAt;
     }
 
     public String getContent() {
@@ -32,5 +28,13 @@ public class NewsDetails {
 
     public void setHeadlines(String headlines) {
         this.headlines = headlines;
+    }
+
+    public String getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(String createdAt) {
+        this.createdAt = createdAt;
     }
 }

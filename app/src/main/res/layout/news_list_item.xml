@@ -11,7 +11,7 @@
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:layout_marginStart="4dp"
-        android:text="Headline"
+        android:text=""
         android:textColor="@android:color/background_dark"
         android:textSize="25sp" />
 
@@ -20,17 +20,29 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
-        android:layout_marginStart="4dp"
         android:layout_below="@+id/news_head"
-        android:text=""
+        android:layout_marginStart="4dp"
         android:layout_marginTop="5dp"
+        android:text=""
         android:textColor="@android:color/background_dark" />
+
+    <TextView
+        android:id="@+id/createdAt_textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginEnd="4dp"
+        android:layout_marginTop="2dp"
+        android:text="12:52pm Jan 21"
+        android:textColor="#333333"
+        android:textSize="12sp" />
 
     <View
         android:layout_width="match_parent"
         android:layout_height="1px"
-        android:layout_marginStart="4dp"
         android:layout_below="@+id/news_content"
+        android:layout_marginStart="4dp"
         android:layout_marginTop="10dp"
         android:background="@android:color/darker_gray" />
 
