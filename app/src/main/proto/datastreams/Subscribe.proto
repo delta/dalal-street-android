@@ -1,0 +1,59 @@
+syntax = "proto3";
+
+package proto;
+
+option java_package = "dalalstreet.api.datastreams";
+option java_multiple_files = true;
+
+enum DataStreamType {
+    MARKET_DEPTH = 0;
+    TRANSACTIONS = 1;
+    NOTIFICATIONS = 2;
+    STOCK_PRICES = 3;
+    STOCK_EXCHANGE = 4;
+    MARKET_EVENTS = 5;
+    MY_ORDERS = 6;
+}
+
+message SubscriptionId {
+    string id = 1;
+    DataStreamType data_stream_type = 2;
+}
+message SubscribeRequest {
+    DataStreamType data_stream_type = 1;
+    string data_stream_id = 2;    // useful for MARKET_DEPTH & maybe some others
+}
+
+message SubscribeResponse {
+    enum StatusCode {
+        OK = 0;
+        InternalServerError = 1;
+        InvalidDataStreamId = 3;
+    }
+    StatusCode status_code = 1;
+    string     status_message = 2;
+
+    SubscriptionId subscription_id = 3; // To be used for unsubscribing and for fetching the data.
+                                        // Have to do this because grpc-web doesn't support
+                                        // client-side-streaming.
+                                        // So in order for a client to be able to unsubscribe, we
+                                        // currently have this setup. Three methods:
+                                        // 1. subscribe: subscribe to a stream. Returns subscriptionId
+                                        // 2. getXUpdates(subscriptionId). Actually streams the data.
+                                        // 3. unsubscribe(subscriptionId): unsubscribes the stream, and
+                                        //                                closes the getXUpdates grpc stream.
+}
+
+message UnsubscribeRequest {
+    SubscriptionId subscription_id = 1;
+}
+
+message UnsubscribeResponse {
+    enum StatusCode {
+        OK = 0;
+        InternalServerError = 1;
+        InvalidDataStreamId = 3;
+    }
+    StatusCode status_code = 1;
+    string     status_message = 2;
+}

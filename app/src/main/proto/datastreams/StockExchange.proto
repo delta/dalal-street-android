@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package proto;
+
+option java_package = "dalalstreet.api.datastreams";
+option java_multiple_files = true;
+
+message StockExchangeDataPoint {
+    uint32 price = 1;
+    uint32 stocks_in_exchange = 2;
+    uint32 stocks_in_market = 3;
+}
+
+message StockExchangeUpdate {
+    map<uint32, StockExchangeDataPoint> stocks_in_exchange = 1;
+}

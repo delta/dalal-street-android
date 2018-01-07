@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+package proto;
+
+option java_package = "dalalstreet.api.actions";
+option java_multiple_files = true;
+
+import "models/OrderType.proto";
+
+message PlaceOrderRequest {
+    bool   is_ask = 1;
+    uint32 stock_id = 2;
+    OrderType order_type = 3;
+    uint32 price = 4;
+    uint32 stock_quantity = 5;
+}
+
+message PlaceOrderResponse {
+    enum StatusCode {
+        OK = 0;
+        InternalServerError = 1;
+        MarketClosedError = 2;
+        StockQuantityLimitExceeded = 3; // when stock_quantity in request >= Max allowed
+        NotEnoughStocksError = 4; // when the user does not have enough stocks to sell
+        NotEnoughCashError = 5; // when the user does not have enough cash to buy
+    }
+    StatusCode status_code = 1;
+    string status_message = 2;
+
+    uint32 order_id = 3;
+}

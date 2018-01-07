@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+package proto;
+
+option java_package = "dalalstreet.api.datastreams";
+option java_multiple_files = true;
+
+import "models/Transaction.proto";
+
+message TransactionUpdate {
+    Transaction transaction = 1;
+}

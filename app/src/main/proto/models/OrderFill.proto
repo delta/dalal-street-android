@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+package proto;
+
+option java_package = "dalalstreet.api.models";
+option java_multiple_files = true;
+
+message OrderFill {
+  uint32 transaction_id = 1;
+  uint32 bid_id = 2;
+  uint32 ask_id = 3;
+}

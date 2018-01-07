@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package proto;
+
+option java_package = "dalalstreet.api.models";
+option java_multiple_files = true;
+
+import "models/OrderType.proto";
+
+message Bid {
+  uint32 id = 1;
+  uint32 user_id = 2;
+  uint32 stock_id = 3;
+  uint32 price = 4;
+  OrderType order_type = 5;
+  uint32 stock_quantity = 6;
+  uint32 stock_quantity_fulfilled = 7;
+  bool is_closed = 8;
+  string created_at = 9;
+  string updated_at = 10;
+}

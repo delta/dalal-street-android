@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+package proto;
+
+option java_package = "dalalstreet.api.actions";
+option java_multiple_files = true;
+
+import "models/Notification.proto";
+
+message GetNotificationsRequest {
+    uint32 last_notification_id = 1;
+    uint32 count = 2;
+}
+message GetNotificationsResponse {
+    enum StatusCode {
+        OK = 0;
+        InternalServerError = 1;
+    }
+    StatusCode status_code = 1;
+    string     status_message = 2;
+
+    bool more_exists = 3;
+    repeated Notification notifications = 4;
+}
