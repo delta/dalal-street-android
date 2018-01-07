@@ -33,4 +33,6 @@ public class MiscellaneousUtils {
             "xY01aSxRMQud7e8h/FDMPdTvcFpcnWUB2byRdw7gv5kIjfRsZZSwy/8zODZx/biR\n" +
             "n8lG/ZKeivbUai547FHqdI2qJwv2mElxojG2hLV7sImSg26fuaTyy5+ftP3GH8Yj\n" +
             "5+8T\n-----END CERTIFICATE-----";
+
+    public static String sessionId = null;
 }

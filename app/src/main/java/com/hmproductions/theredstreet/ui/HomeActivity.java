@@ -17,7 +17,10 @@ import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.hmproductions.theredstreet.MiscellaneousUtils;
 import com.hmproductions.theredstreet.R;
+import com.hmproductions.theredstreet.dagger.ContextModule;
+import com.hmproductions.theredstreet.dagger.DaggerDalalStreetApplicationComponent;
 import com.hmproductions.theredstreet.fragment.BuySellFragment;
 import com.hmproductions.theredstreet.fragment.CompanyProfileFragment;
 import com.hmproductions.theredstreet.fragment.HomeFragment;
@@ -29,16 +32,25 @@ import com.hmproductions.theredstreet.fragment.PortfolioFragment;
 import com.hmproductions.theredstreet.fragment.StockExchangeFragment;
 import com.hmproductions.theredstreet.fragment.TransactionsFragment;
 
+import javax.inject.Inject;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import dalalstreet.api.DalalActionServiceGrpc;
+import dalalstreet.api.actions.LogoutRequest;
+import dalalstreet.api.actions.LogoutResponse;
+import io.grpc.Metadata;
+import io.grpc.stub.MetadataUtils;
 
 public class HomeActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private static final long DRAWER_DURATION = 450;
 
+    @Inject
+    DalalActionServiceGrpc.DalalActionServiceBlockingStub actionServiceBlockingStub;
+
     private TextView usernameTextView;
-    private String name;
 
     private NavigationView navigationView;
     private DrawerLayout drawerLayout;
@@ -60,11 +72,12 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+
+        DaggerDalalStreetApplicationComponent.builder().contextModule(new ContextModule(this)).build().inject(this);
         ButterKnife.bind(this);
 
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        name = getString(R.string.username);
 
         BindDrawerViews();
         SetupNavigationDrawer();
@@ -72,8 +85,8 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         OpenAndCloseDrawer();
 
         getSupportFragmentManager().beginTransaction().add(R.id.home_activity_fragment_container, new HomeFragment()).commit();
-        updateValues();
 
+        updateValues();
     }
 
     private void BindDrawerViews() {
@@ -90,7 +103,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     // Adding and setting up Navigation drawer
     private void SetupNavigationDrawer() {
 
-        usernameTextView.setText(name);
+        usernameTextView.setText(getIntent().getStringExtra(LoginActivity.USERNAME_KEY));
 
         navigationView.setNavigationItemSelectedListener(this);
         drawerLayout.addDrawerListener(toggle);
@@ -184,9 +197,22 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     }
 
     public void logout() {
-        Toast.makeText(this, "logged out", Toast.LENGTH_SHORT).show();
+
+        Metadata metadata = new Metadata();
+        Metadata.Key<String> metadataKey = Metadata.Key.of("session_id", Metadata.ASCII_STRING_MARSHALLER);
+        metadata.put(metadataKey, MiscellaneousUtils.sessionId);
+        MetadataUtils.attachHeaders(actionServiceBlockingStub, metadata);
+
+        LogoutResponse logoutResponse = actionServiceBlockingStub.logout(LogoutRequest.newBuilder().build());
+
+        if (logoutResponse.getStatusCode().getNumber() == 0 || logoutResponse.getStatusCode().getNumber() == 1) {
+            Toast.makeText(this, logoutResponse.getStatusMessage(), Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, "Connection error", Toast.LENGTH_SHORT).show();
+        }
+
         Intent intent = new Intent(this, LoginActivity.class);
-        startActivity(intent); //todo : send logout request
+        startActivity(intent);
         finish();
     }
 

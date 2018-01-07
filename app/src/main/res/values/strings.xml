@@ -117,5 +117,6 @@
     <string name="wealth">WEALTH</string>
     <string name="name">NAME</string>
     <string name="rank">RANK</string>
+    <string name="signing_in">Signing In…</string>
 
 </resources>

@@ -23,15 +23,18 @@ import com.hmproductions.theredstreet.data.NewsDetails;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import dalalstreet.api.DalalActionServiceGrpc;
 
-/**
- * A simple {@link Fragment} subclass.
- */
 public class HomeFragment extends Fragment {
 
     private static final int COMPANY_NEWS_DURATION = 3000;
+
+    @Inject
+    DalalActionServiceGrpc.DalalActionServiceStub actionServiceStub;
 
     @BindView(R.id.companies_recyclerView)
     RecyclerView companiesRecyclerView;
@@ -93,6 +96,8 @@ public class HomeFragment extends Fragment {
     }
 
     public void setValues() { //todo : get from service,checkout companyAdapter
+
+        
 
         newsList.clear();
         companyList.clear();

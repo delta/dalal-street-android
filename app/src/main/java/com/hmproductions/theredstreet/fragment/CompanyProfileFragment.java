@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Toast;
 
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.LineChart;
@@ -20,18 +21,34 @@ import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.utils.ColorTemplate;
 import com.hmproductions.theredstreet.R;
+import com.hmproductions.theredstreet.dagger.ContextModule;
+import com.hmproductions.theredstreet.dagger.DaggerDalalStreetApplicationComponent;
 import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner;
 
 import java.util.ArrayList;
 
+import javax.inject.Inject;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import dalalstreet.api.DalalStreamServiceGrpc;
+import dalalstreet.api.datastreams.DataStreamType;
+import dalalstreet.api.datastreams.MarketDepthUpdate;
+import dalalstreet.api.datastreams.SubscribeRequest;
+import dalalstreet.api.datastreams.SubscribeResponse;
+import dalalstreet.api.datastreams.SubscriptionId;
+import dalalstreet.api.datastreams.UnsubscribeRequest;
+import dalalstreet.api.datastreams.UnsubscribeResponse;
+import io.grpc.stub.StreamObserver;
 
 import static com.hmproductions.theredstreet.MiscellaneousUtils.convertDpToPixel;
 
 public class CompanyProfileFragment extends Fragment {
 
     private static final int ANIMATE_DURATION = 1000;
+
+    @Inject
+    DalalStreamServiceGrpc.DalalStreamServiceStub streamServiceStub;
 
     @BindView(R.id.company_spinner)
     MaterialBetterSpinner materialBetterSpinner;
@@ -52,9 +69,11 @@ public class CompanyProfileFragment extends Fragment {
     BarDataSet bidDataset,askDataset;
     BarData bidBarData, askBarData;
 
-    LineChart performance;
+    LineChart performanceLineChart;
     LineData performanceData;
     LineDataSet dataset;
+
+    private SubscriptionId subscriptionId = null;
 
     public CompanyProfileFragment() {
         // Required empty public constructor
@@ -64,6 +83,8 @@ public class CompanyProfileFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View rootView=inflater.inflate(R.layout.fragment_company_profile, container, false);
+
+        DaggerDalalStreetApplicationComponent.builder().contextModule(new ContextModule(getContext())).build().inject(this);
         ButterKnife.bind(this, rootView);
 
         if (getActivity() != null) getActivity().setTitle("Company Profile");
@@ -72,7 +93,9 @@ public class CompanyProfileFragment extends Fragment {
         materialBetterSpinner.setAdapter(arrayAdapter);
         materialBetterSpinner.setSelection(0);
 
-        performance = rootView.findViewById(R.id.history);
+        performanceLineChart = rootView.findViewById(R.id.history);
+
+        updateValues();
 
         publish();
 
@@ -133,15 +156,78 @@ public class CompanyProfileFragment extends Fragment {
         performanceLabels.add("16th");
     }
 
-    public void updateValues(){
+    public void updateValues() {
+
+//        streamServiceStub.subscribe(
+//                SubscribeRequest
+//                        .newBuilder()
+//                        .setDataStreamType(DataStreamType.MARKET_DEPTH)
+//                        .setDataStreamId("marketDepth")
+//                        .build(), new StreamObserver<SubscribeResponse>() {
+//                    @Override
+//                    public void onNext(SubscribeResponse value) {
+//                        if (value.getStatusCode().getNumber() == 0)
+//                            subscriptionId = value.getSubscriptionId();
+//                        else
+//                            Toast.makeText(getContext(), "Server internal error", Toast.LENGTH_SHORT).show();
+//                        onCompleted();
+//                    }
+//
+//                    @Override
+//                    public void onError(Throwable t) {
+//
+//                    }
+//
+//                    @Override
+//                    public void onCompleted() {
+//
+//                    }
+//                });
+//
+//        streamServiceStub.getMarketDepthUpdates(subscriptionId, new StreamObserver<MarketDepthUpdate>() {
+//            @Override
+//            public void onNext(MarketDepthUpdate value) {
+//
+//            }
+//
+//            @Override
+//            public void onError(Throwable t) {
+//
+//            }
+//
+//            @Override
+//            public void onCompleted() {
+//
+//            }
+//        });
+//
+//        streamServiceStub.unsubscribe(
+//                UnsubscribeRequest.newBuilder().setSubscriptionId(subscriptionId).build(),
+//                new StreamObserver<UnsubscribeResponse>() {
+//                    @Override
+//                    public void onNext(UnsubscribeResponse value) {
+//                        if (!(value.getStatusCode().getNumber() == 0))
+//                            Toast.makeText(getContext(), "Server internal error", Toast.LENGTH_SHORT).show();
+//                        onCompleted();
+//                    }
+//
+//                    @Override
+//                    public void onError(Throwable t) {
+//
+//                    }
+//
+//                    @Override
+//                    public void onCompleted() {
+//
+//                    }
+//                });
+
         addBidvalues();
         addAskValues();
         addPerformanceValues();
     }
 
     public void publish(){
-
-        updateValues();
 
         bidDataset=new BarDataSet(bidEntryList,"Bid values");
         bidDataset.setColors(ColorTemplate.PASTEL_COLORS);
@@ -164,14 +250,15 @@ public class CompanyProfileFragment extends Fragment {
         askBarChart.animateY(ANIMATE_DURATION);
 
         dataset=new LineDataSet(performanceEntries,"Company Performance");
-        dataset.setColor(ContextCompat.getColor(getContext(),R.color.colorPrimary));
+        if (getContext() != null)
+            dataset.setColor(ContextCompat.getColor(getContext(),R.color.colorPrimary));
         dataset.setLineWidth(3);
         dataset.setCircleSize(5);
         performanceData=new LineData(performanceLabels,dataset);
-        performance.setDrawLegend(false);
-        performance.setDescription("");
-        performance.animateX(ANIMATE_DURATION);
-        performance.setDescriptionTextSize(convertDpToPixel(getContext(), 20));
-        performance.setData(performanceData);
+        performanceLineChart.setDrawLegend(false);
+        performanceLineChart.setDescription("");
+        performanceLineChart.animateX(ANIMATE_DURATION);
+        performanceLineChart.setDescriptionTextSize(convertDpToPixel(getContext(), 20));
+        performanceLineChart.setData(performanceData);
     }
 }
