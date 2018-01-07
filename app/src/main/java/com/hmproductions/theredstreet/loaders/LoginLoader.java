@@ -26,19 +26,15 @@ import javax.net.ssl.TrustManagerFactory;
 
 import io.grpc.ManagedChannel;
 import io.grpc.okhttp.OkHttpChannelBuilder;
-import io.grpc.stub.StreamObserver;
-import proto.DalalActionServiceGrpc;
-import proto.Login;
 
+public class LoginLoader extends AsyncTaskLoader<LoginResponse> {
 
-public class LoginLoader extends AsyncTaskLoader<Login.LoginResponse> {
-
-    private static final String HOST = "192.168.43.230";
+    private static final String HOST = "10.1.76.143";
     private static final int PORT = 8000;
 
-    private Login.LoginRequest loginRequest;
+    private LoginRequest loginRequest;
 
-    public LoginLoader(Context context, Login.LoginRequest loginRequest) {
+    public LoginLoader(Context context, LoginRequest loginRequest) {
         super(context);
         this.loginRequest = loginRequest;
     }
@@ -49,7 +45,7 @@ public class LoginLoader extends AsyncTaskLoader<Login.LoginResponse> {
     }
 
     @Override
-    public Login.LoginResponse loadInBackground() {
+    public LoginResponse loadInBackground() {
 
         ManagedChannel channel = null;
         try {
@@ -63,7 +59,7 @@ public class LoginLoader extends AsyncTaskLoader<Login.LoginResponse> {
         }
 
         DalalActionServiceGrpc.DalalActionServiceBlockingStub loginStub = DalalActionServiceGrpc.newBlockingStub(channel);
-        Login.LoginResponse loginResponse = loginStub.login(loginRequest);
+        LoginResponse loginResponse = loginStub.login(loginRequest);
 
         Log.v(":::", "authenticated as " + loginResponse.getUser().getName() + "status code = " + String.valueOf(loginResponse.getStatusCode()));
 

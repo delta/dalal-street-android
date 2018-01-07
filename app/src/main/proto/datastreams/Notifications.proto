@@ -1,9 +1,0 @@
-syntax = "proto3";
-
-package proto;
-
-import "models/Notification.proto";
-
-message NotificationUpdate {
-    Notification notification = 1;
-}

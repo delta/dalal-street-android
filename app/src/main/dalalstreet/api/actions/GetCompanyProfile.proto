@@ -1,0 +1,37 @@
+syntax = "proto3";
+
+package dalalstreet.api.actions;
+
+option java_package = "dalalstreet.api.actions";
+option java_multiple_files = true;
+
+import "dalalstreet/api/models/Stock.proto";
+import "dalalstreet/api/models/StockHistory.proto";
+
+enum StockHistoryGranularity {
+    OneDay = 0;       // Granularity will be per-minute
+    ThreeDays = 1;    // Granularity will be per-5-minutes
+    OneWeek = 2;      // Granularity will be per-hour
+    OneMonth = 3;     // Granularity will be per-day
+    ThreeMonths = 4;  // Granularity will be per-day
+    SixMonths = 5;    // Granularity will be per-15-days
+    OneYear = 6;      // Granularity will be per-month
+};
+
+message GetCompanyProfileRequest {
+    uint32                  stock_id = 1;
+    StockHistoryGranularity granularity = 2;
+    bool                    getOnlyHistory = 3;
+}
+
+message GetCompanyProfileResponse {
+    enum StatusCode {
+        OK = 0;
+        InternalServerError = 1;
+    }
+    StatusCode status_code = 1;
+    string     status_message = 2;
+
+    models.Stock                     stock_details = 3;
+    map<string, models.StockHistory> stock_history_map = 4;
+}

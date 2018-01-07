@@ -1,0 +1,72 @@
+syntax = "proto3";
+
+package dalalstreet.api;
+
+option java_multiple_files = true;
+option java_package = "dalalstreet.api";
+
+import "dalalstreet/api/actions/BuyStocksFromExchange.proto";
+import "dalalstreet/api/actions/CancelOrder.proto";
+import "dalalstreet/api/actions/Login.proto";
+import "dalalstreet/api/actions/Logout.proto";
+import "dalalstreet/api/actions/MortgageStocks.proto";
+import "dalalstreet/api/actions/PlaceOrder.proto";
+import "dalalstreet/api/actions/RetrieveMortgageStocks.proto";
+
+import "dalalstreet/api/actions/GetCompanyProfile.proto";
+import "dalalstreet/api/actions/GetMarketEvents.proto";
+import "dalalstreet/api/actions/GetMyOrders.proto";
+import "dalalstreet/api/actions/GetNotifications.proto";
+import "dalalstreet/api/actions/GetTransactions.proto";
+import "dalalstreet/api/actions/GetMortgageDetails.proto";
+import "dalalstreet/api/actions/GetLeaderboard.proto";
+
+import "dalalstreet/api/datastreams/Subscribe.proto";
+import "dalalstreet/api/datastreams/MarketDepth.proto";
+import "dalalstreet/api/datastreams/Transactions.proto";
+import "dalalstreet/api/datastreams/Notifications.proto";
+import "dalalstreet/api/datastreams/StockPrices.proto";
+import "dalalstreet/api/datastreams/StockExchange.proto";
+import "dalalstreet/api/datastreams/MarketEvents.proto";
+import "dalalstreet/api/datastreams/MyOrders.proto";
+
+service DalalActionService {
+	// Stock trading related functions
+	rpc BuyStocksFromExchange(api.actions.BuyStocksFromExchangeRequest) 	returns (api.actions.BuyStocksFromExchangeResponse);
+	rpc PlaceOrder(api.actions.PlaceOrderRequest) 							returns (api.actions.PlaceOrderResponse);
+	rpc CancelOrder(api.actions.CancelOrderRequest) 						returns (api.actions.CancelOrderResponse);
+	rpc MortgageStocks(api.actions.MortgageStocksRequest) 					returns (api.actions.MortgageStocksResponse);
+	rpc RetrieveMortgageStocks(api.actions.RetrieveMortgageStocksRequest) 	returns (api.actions.RetrieveMortgageStocksResponse);
+
+	// Getting information about transactions, orders, mortgage
+	rpc GetMyOpenOrders(api.actions.GetMyOpenOrdersRequest)					returns (api.actions.GetMyOpenOrdersResponse);
+	rpc GetMyClosedAsks(api.actions.GetMyClosedAsksRequest)					returns (api.actions.GetMyClosedAsksResponse);
+	rpc GetMyClosedBids(api.actions.GetMyClosedBidsRequest)					returns (api.actions.GetMyClosedBidsResponse);
+	rpc GetTransactions(api.actions.GetTransactionsRequest)   				returns (api.actions.GetTransactionsResponse);
+	rpc GetMortgageDetails(api.actions.GetMortgageDetailsRequest) 			returns (api.actions.GetMortgageDetailsResponse);
+
+	// Getting general information
+	rpc GetCompanyProfile(api.actions.GetCompanyProfileRequest)				returns (api.actions.GetCompanyProfileResponse);
+	rpc GetLeaderboard(api.actions.GetLeaderboardRequest)					returns (api.actions.GetLeaderboardResponse);
+	rpc GetMarketEvents(api.actions.GetMarketEventsRequest)     			returns (api.actions.GetMarketEventsResponse);
+	rpc GetNotifications(api.actions.GetNotificationsRequest)   			returns (api.actions.GetNotificationsResponse);
+
+	// Auth
+	rpc Login(api.actions.LoginRequest) 									returns (api.actions.LoginResponse);
+	rpc Logout(api.actions.LogoutRequest) 									returns (api.actions.LogoutResponse);
+}
+
+service DalalStreamService {
+	// Subscription
+	rpc Subscribe(api.datastreams.SubscribeRequest) 			returns (api.datastreams.SubscribeResponse);
+	rpc Unsubscribe(api.datastreams.UnsubscribeRequest) 		returns (api.datastreams.UnsubscribeResponse);
+
+	// Datastreams
+	rpc GetMarketDepthUpdates(api.datastreams.SubscriptionId)	returns (stream api.datastreams.MarketDepthUpdate);
+	rpc GetMarketEventUpdates(api.datastreams.SubscriptionId)	returns (stream api.datastreams.MarketEventUpdate);
+	rpc GetMyOrderUpdates(api.datastreams.SubscriptionId)		returns (stream api.datastreams.MyOrderUpdate);
+	rpc GetNotificationUpdates(api.datastreams.SubscriptionId)	returns (stream api.datastreams.NotificationUpdate);
+	rpc GetStockExchangeUpdates(api.datastreams.SubscriptionId)	returns (stream api.datastreams.StockExchangeUpdate);
+	rpc GetStockPricesUpdates(api.datastreams.SubscriptionId)	returns (stream api.datastreams.StockPricesUpdate);
+	rpc GetTransactionUpdates(api.datastreams.SubscriptionId)	returns (stream api.datastreams.TransactionUpdate);
+}

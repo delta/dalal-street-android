@@ -1,9 +1,0 @@
-syntax = "proto3";
-
-package proto;
-
-import "models/Transaction.proto";
-
-message TransactionUpdate {
-    Transaction transaction = 1;
-}

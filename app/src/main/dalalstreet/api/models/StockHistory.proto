@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+package dalalstreet.api.models;
+
+option java_package = "dalalstreet.api.models";
+option java_multiple_files = true;
+
+message StockHistory {
+  uint32 stock_id = 1;
+  uint32 stock_price = 2;
+  string created_at = 3;
+}

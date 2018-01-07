@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package dalalstreet.api.models;
+
+option java_package = "dalalstreet.api.models";
+option java_multiple_files = true;
+
+enum OrderType {
+    LIMIT = 0;
+    MARKET = 1;
+    STOPLOSS = 2;
+    STOPLOSSACTIVE = 3;
+}
