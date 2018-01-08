@@ -69,7 +69,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:text="@string/cash_worth"
+                    android:text="@string/stock_worth"
                     android:textColor="@android:color/background_light"
                     android:textSize="12sp" />
 
@@ -98,7 +98,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:text="@string/cash_worth"
+                    android:text="@string/total_worth"
                     android:textColor="@android:color/background_light"
                     android:textSize="12sp" />
 

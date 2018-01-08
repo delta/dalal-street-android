@@ -3,7 +3,7 @@ package com.hmproductions.theredstreet;
 import android.support.test.espresso.intent.rule.IntentsTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
-import com.hmproductions.theredstreet.ui.HomeActivity;
+import com.hmproductions.theredstreet.ui.MainActivity;
 import com.hmproductions.theredstreet.ui.LoginActivity;
 
 import org.junit.Rule;
@@ -33,6 +33,6 @@ public class LoginBasicTest {
         onView(withId(R.id.play_button)).perform(click());
 
         // Checking if activity has opened
-        intended(hasComponent(HomeActivity.class.getName()));
+        intended(hasComponent(MainActivity.class.getName()));
     }
 }

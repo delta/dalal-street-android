@@ -29,6 +29,7 @@ import dalalstreet.api.models.MarketEvent;
 import io.grpc.Metadata;
 import io.grpc.stub.MetadataUtils;
 
+/* Gets latest news from GetMarketEvents action*/
 public class NewsFragment extends Fragment {
 
     @Inject

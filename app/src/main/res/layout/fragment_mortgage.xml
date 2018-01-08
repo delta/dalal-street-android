@@ -1,99 +1,94 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
 
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:padding="16dp">
 
-    <RelativeLayout
+    <Spinner
+        android:id="@+id/mortgage_companies_spinner"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:padding="16dp">
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="15dp"
+        android:hint="@string/pick_a_company"
+        android:textColorHint="@color/colorAccent" />
 
-        <com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner
-            android:id="@+id/mortgage_companies_spinner"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
-            android:layout_marginTop="15dp"
-            android:hint="@string/pick_a_company"
-            android:textColorHint="@color/colorAccent"
-            app:met_floatingLabel="normal" />
+    <TextView
+        android:id="@+id/stocksOwned_textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/mortgage_companies_spinner"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp"
+        android:text="@string/number_of_stocks_you_own_n_a"
+        android:textSize="15sp" />
 
-        <TextView
-            android:id="@+id/stocksOwned_textView"
+    <TextView
+        android:id="@+id/stocksMortgaged_textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/stocksOwned_textView"
+        android:layout_below="@+id/stocksOwned_textView"
+        android:layout_marginTop="15dp"
+        android:text="@string/number_of_stocks_mortgaged_n_a"
+        android:textSize="15sp" />
+
+    <RadioGroup
+        android:id="@+id/mortgageRadioGroup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/stocksMortgaged_textView"
+        android:layout_below="@+id/stocksMortgaged_textView"
+        android:layout_marginTop="36dp">
+
+        <RadioButton
+            android:id="@+id/mortgage_radioButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_below="@+id/mortgage_companies_spinner"
-            android:layout_marginStart="20dp"
-            android:layout_marginTop="20dp"
-            android:textSize="15sp" />
+            android:layout_weight="1"
+            android:text="@string/mortgage_stocks" />
 
-        <TextView
-            android:id="@+id/stocksMortgaged_textView"
+        <RadioButton
+            android:id="@+id/retrieve_radioButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignStart="@+id/stocksOwned_textView"
-            android:layout_below="@+id/stocksOwned_textView"
-            android:layout_marginTop="15dp"
-            android:textSize="15sp" />
+            android:layout_weight="1"
+            android:text="@string/retrieve_stocks_from_mortgage" />
 
-        <RadioGroup
-            android:id="@+id/mortgageRadioGroup"
+    </RadioGroup>
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/mortgage_stock_input"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/mortgageRadioGroup"
+        android:layout_below="@+id/mortgageRadioGroup"
+        android:layout_marginTop="41dp">
+
+        <EditText
+            android:id="@+id/stocks_editText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignStart="@+id/stocksMortgaged_textView"
-            android:layout_below="@+id/stocksMortgaged_textView"
-            android:layout_marginTop="36dp">
+            android:layout_marginEnd="20dp"
+            android:ems="10"
+            android:hint="@string/enter_the_number_of_stocks"
+            android:inputType="number"
+            android:maxLength="5" />
 
-            <RadioButton
-                android:id="@+id/mortgage_radioButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/mortgage_stocks" />
+    </android.support.design.widget.TextInputLayout>
 
-            <RadioButton
-                android:id="@+id/retrieve_radioButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/retrieve_stocks_from_mortgage" />
+    <Button
+        android:id="@+id/mortgage_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/mortgage_stock_input"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="60dp"
+        android:background="@color/colorPrimary"
+        android:text="@string/sell_retrieve"
+        android:textColor="@android:color/white" />
 
-        </RadioGroup>
+</RelativeLayout>
 
-        <android.support.design.widget.TextInputLayout
-            android:id="@+id/mortgage_stock_input"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignStart="@+id/mortgageRadioGroup"
-            android:layout_below="@+id/mortgageRadioGroup"
-            android:layout_marginTop="41dp">
-
-            <EditText
-                android:id="@+id/stocks_editText"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="20dp"
-                android:ems="10"
-                android:hint="@string/enter_the_number_of_stocks"
-                android:inputType="number"
-                android:maxLength="5" />
-
-        </android.support.design.widget.TextInputLayout>
-
-        <Button
-            android:id="@+id/mortgage_button"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/mortgage_stock_input"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="60dp"
-            android:background="@color/colorPrimary"
-            android:text="@string/sell_retrieve"
-            android:textColor="@android:color/white" />
-
-    </RelativeLayout>
-
-</FrameLayout>

@@ -28,8 +28,8 @@ import io.grpc.okhttp.OkHttpChannelBuilder;
 @Module
 public class ChannelModule {
 
-    //private static final String HOST = "10.1.76.143";
-    private static final String HOST = "192.168.43.230";
+    private static final String HOST = "10.1.76.143";
+//    private static final String HOST = "192.168.43.230";
     private static final int PORT = 8000;
 
     @Provides

@@ -129,5 +129,10 @@
     <string name="my_orders">My Orders</string>
     <string name="transactions">Transactions</string>
     <string name="leaderboard">Leaderboard</string>
+    <string name="stock_worth">Stock Worth</string>
+    <string name="total_worth">Total Worth</string>
+    <string name="number_of_stocks_you_own_n_a">Number of stocks you own : N/A</string>
+    <string name="number_of_stocks_mortgaged_n_a">Number of stocks mortgaged : N/A</string>
+    <string name="breaking_news">Breaking News</string>
 
 </resources>

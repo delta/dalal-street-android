@@ -70,6 +70,7 @@ public class HomeFragment extends Fragment {
             getActivity().setTitle("Home");
 
         setValues();
+        rootView.findViewById(R.id.breakingNewsText).setSelected(true);
 
         companiesAdapter = new CompanyRecyclerAdapter(getContext(), companyList);
         linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);

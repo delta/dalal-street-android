@@ -22,7 +22,7 @@
         </activity>
 
         <activity
-            android:name=".ui.HomeActivity"
+            android:name=".ui.MainActivity"
             android:parentActivityName=".ui.LoginActivity"/>
 
         <activity

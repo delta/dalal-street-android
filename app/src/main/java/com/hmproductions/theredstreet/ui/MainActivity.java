@@ -21,6 +21,7 @@ import android.widget.Toast;
 import com.hmproductions.theredstreet.R;
 import com.hmproductions.theredstreet.dagger.ContextModule;
 import com.hmproductions.theredstreet.dagger.DaggerDalalStreetApplicationComponent;
+import com.hmproductions.theredstreet.data.StockDetails;
 import com.hmproductions.theredstreet.fragment.BuySellFragment;
 import com.hmproductions.theredstreet.fragment.CompanyProfileFragment;
 import com.hmproductions.theredstreet.fragment.HomeFragment;
@@ -31,6 +32,8 @@ import com.hmproductions.theredstreet.fragment.OrdersFragment;
 import com.hmproductions.theredstreet.fragment.PortfolioFragment;
 import com.hmproductions.theredstreet.fragment.StockExchangeFragment;
 import com.hmproductions.theredstreet.fragment.TransactionsFragment;
+
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -43,10 +46,12 @@ import dalalstreet.api.actions.LogoutResponse;
 import io.grpc.Metadata;
 import io.grpc.stub.MetadataUtils;
 
-public class HomeActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private static final long DRAWER_DURATION = 450;
-
+    public static final String CASH_WORTH_KEY = "cash-worth-key";
+    public static final String TOTAL_WORTH_KEY = "total-worth-key";
+    public static final String STOCKS_OWNED_KEY = "stocks-owned-key";
     @Inject
     DalalActionServiceGrpc.DalalActionServiceBlockingStub actionServiceBlockingStub;
 
@@ -61,6 +66,8 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     private NavigationView navigationView;
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle toggle;
+
+    public static List<StockDetails> ownedStockDetails;
 
     @BindView(R.id.stockWorth_textView)
     TextView stockTextView;
@@ -77,10 +84,11 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_home);
+        setContentView(R.layout.activity_main);
 
         DaggerDalalStreetApplicationComponent.builder().contextModule(new ContextModule(this)).build().inject(this);
         ButterKnife.bind(this);
+        MetadataUtils.attachHeaders(actionServiceBlockingStub, metadata);
 
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -90,8 +98,9 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
         OpenAndCloseDrawer();
 
-        getSupportFragmentManager().beginTransaction().add(R.id.home_activity_fragment_container, new HomeFragment()).commit();
+        getSupportFragmentManager().beginTransaction().add(R.id.home_activity_fragment_container, new MortgageFragment()).commit();
 
+        ownedStockDetails = getIntent().getParcelableArrayListExtra(STOCKS_OWNED_KEY);
         updateValues();
     }
 
@@ -204,8 +213,6 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
     public void logout() {
 
-        MetadataUtils.attachHeaders(actionServiceBlockingStub, metadata);
-
         LogoutResponse logoutResponse = actionServiceBlockingStub.logout(LogoutRequest.newBuilder().build());
 
         if (logoutResponse.getStatusCode().getNumber() == 0 || logoutResponse.getStatusCode().getNumber() == 1) {
@@ -216,9 +223,12 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                     .putString(LoginActivity.USERNAME_KEY, null)
                     .putString(LoginActivity.SESSION_ID_KEY, null)
                     .putString(LoginActivity.EMAIL_KEY, null)
+                    .putInt(CASH_WORTH_KEY, -1)
+                    .putInt(TOTAL_WORTH_KEY, -1)
                     .apply();
         } else {
             Toast.makeText(this, "Connection error", Toast.LENGTH_SHORT).show();
+            return;
         }
 
         Intent intent = new Intent(this, LoginActivity.class);
@@ -226,12 +236,11 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         finish();
     }
 
-    // TODO : Update username and net worth via service
     public void updateValues() {
 
-        int cashWorth = 1500;
-        int stockWorth = 2000;
-        int totalWorth = 3500;
+        int cashWorth = getIntent().getIntExtra(CASH_WORTH_KEY, -1);
+        int totalWorth = getIntent().getIntExtra(TOTAL_WORTH_KEY, -1);
+        int stockWorth = totalWorth - cashWorth;
 
         cashTextView.setText(String.valueOf(cashWorth));
         stockTextView.setText(String.valueOf(stockWorth));
@@ -246,5 +255,14 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         } else {
             super.onBackPressed();
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putInt(CASH_WORTH_KEY, Integer.parseInt(cashTextView.getText().toString()));
+        editor.putInt(TOTAL_WORTH_KEY, Integer.parseInt(totalTextView.getText().toString()));
+        editor.apply();
     }
 }

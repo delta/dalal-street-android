@@ -12,11 +12,29 @@
         android:background="@android:color/background_light"
         android:padding="2dp" />
 
+    <TextView
+        android:id="@+id/breakingNewsText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@id/companies_recyclerView"
+        android:layout_margin="6dp"
+        android:ellipsize="marquee"
+        android:fadingEdge="horizontal"
+        android:marqueeRepeatLimit="marquee_forever"
+        android:scrollHorizontally="true"
+        android:singleLine="true"
+        android:text="@string/breaking_news"
+        android:textAllCaps="true"
+        android:textColor="@android:color/holo_red_dark"
+        android:textSize="16sp"
+        android:textStyle="bold|italic" />
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/news_recyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/companies_recyclerView"
+        android:layout_below="@+id/breakingNewsText"
         android:background="@android:color/background_light"
         android:divider="@android:color/transparent"
         android:dividerHeight="5dp"

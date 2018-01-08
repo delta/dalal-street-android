@@ -50,6 +50,12 @@ public class MiscellaneousUtils {
         return -1;
     }
 
+    public static String getCompanyNameFromStockId(Context context, int id) {
+
+        String[] companies = context.getResources().getStringArray(R.array.companies);
+        return companies[id];
+    }
+
     public static OrderType getOrderTypeFromName(String orderType) {
 
         switch (orderType) {
