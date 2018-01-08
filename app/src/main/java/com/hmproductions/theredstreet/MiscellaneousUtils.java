@@ -37,6 +37,7 @@ public class MiscellaneousUtils {
             "5+8T\n-----END CERTIFICATE-----";
 
     public static String sessionId = null;
+    public static String username = null;
 
     public static int getStockIdFromCompanyName(Context context, String companyName) {
 

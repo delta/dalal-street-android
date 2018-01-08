@@ -1,26 +1,47 @@
 package com.hmproductions.theredstreet.fragment;
 
-
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.hmproductions.theredstreet.MiscellaneousUtils;
 import com.hmproductions.theredstreet.R;
 import com.hmproductions.theredstreet.adapter.LeaderboardRecyclerAdapter;
+import com.hmproductions.theredstreet.dagger.ContextModule;
+import com.hmproductions.theredstreet.dagger.DaggerDalalStreetApplicationComponent;
 import com.hmproductions.theredstreet.data.LeaderboardDetails;
 
 import java.util.ArrayList;
 
+import javax.inject.Inject;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import dalalstreet.api.DalalActionServiceGrpc;
+import dalalstreet.api.actions.GetLeaderboardRequest;
+import dalalstreet.api.actions.GetLeaderboardResponse;
+import dalalstreet.api.models.LeaderboardRow;
+import io.grpc.Metadata;
+import io.grpc.stub.MetadataUtils;
 
 public class LeaderboardFragment extends Fragment {
+
+    private static final int LEADERBOARD_SIZE = 15;
+
+    @Inject
+    DalalActionServiceGrpc.DalalActionServiceBlockingStub actionServiceBlockingStub;
+
+    @Inject
+    Metadata metadata;
 
     @BindView(R.id.leaderboard_recyclerView)
     RecyclerView recyclerView;
@@ -35,47 +56,68 @@ public class LeaderboardFragment extends Fragment {
     TextView personalWealthTextView;
 
     private ArrayList<LeaderboardDetails> leaderBoardDetailsList = new ArrayList<>();
-    private LeaderboardRecyclerAdapter leaderboardRecyclerAdapter;
+    AlertDialog loadingDialog;
+    TextView totalWorthTextView;
 
     public LeaderboardFragment() {
         // Required empty public constructor
     }
 
     @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        if (getContext() != null){
+            loadingDialog = new AlertDialog.Builder(getContext())
+                    .setView(R.layout.progress_dialog)
+                    .setCancelable(false)
+                    .create();
+        }
+    }
+
+    @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View rootView=inflater.inflate(R.layout.fragment_leaderboard, container, false);
+
+        totalWorthTextView = container.getRootView().findViewById(R.id.totalWorth_textView);
         ButterKnife.bind(this, rootView);
 
+        DaggerDalalStreetApplicationComponent.builder().contextModule(new ContextModule(getContext())).build().inject(this);
         if (getActivity() != null) getActivity().setTitle("Leaderboard");
 
+        loadingDialog.show();
         setValues();
-
-        leaderboardRecyclerAdapter = new LeaderboardRecyclerAdapter(getContext(), leaderBoardDetailsList);
+        loadingDialog.dismiss();
 
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         recyclerView.setHasFixedSize(false);
-        recyclerView.setAdapter(leaderboardRecyclerAdapter);
-
-        personalNameTextView.setText("Username");  //todo : add our details
-        personalRankTextView.setText("9");
-        personalWealthTextView.setText("3500");
+        recyclerView.setAdapter(new LeaderboardRecyclerAdapter(getContext(), leaderBoardDetailsList));
 
         return rootView;
     }
 
     public void setValues(){
-        leaderBoardDetailsList.clear(); //TODO : Get from service
 
-        leaderBoardDetailsList.add(new LeaderboardDetails(1,"Delta Force",5000));
-        leaderBoardDetailsList.add(new LeaderboardDetails(2,"Pai",4500));
-        leaderBoardDetailsList.add(new LeaderboardDetails(3,"Sibi",4400));
-        leaderBoardDetailsList.add(new LeaderboardDetails(4,"Santhosh",4300));
-        leaderBoardDetailsList.add(new LeaderboardDetails(5,"Thakkar",4200));
-        leaderBoardDetailsList.add(new LeaderboardDetails(6,"Rb",4200));
-        leaderBoardDetailsList.add(new LeaderboardDetails(7,"Jumbo",4200));
-        leaderBoardDetailsList.add(new LeaderboardDetails(8,"Santa",3900));
-        leaderBoardDetailsList.add(new LeaderboardDetails(9,"Username",3500));
-        leaderBoardDetailsList.add(new LeaderboardDetails(10,"Deep",2100));
+        leaderBoardDetailsList.clear();
+
+        MetadataUtils.attachHeaders(actionServiceBlockingStub, metadata);
+        
+        GetLeaderboardResponse leaderboardResponse = actionServiceBlockingStub.getLeaderboard(
+                GetLeaderboardRequest.newBuilder().setCount(LEADERBOARD_SIZE).setStartingId(1).build()
+        );
+
+        if (leaderboardResponse.getStatusCode().getNumber() == 0) {
+            personalRankTextView.setText(String.valueOf(leaderboardResponse.getMyRank()));
+            personalWealthTextView.setText(totalWorthTextView.getText().toString());
+            personalNameTextView.setText(MiscellaneousUtils.username);
+
+            for (int i = 0; i < leaderboardResponse.getRankListCount(); ++i) {
+                LeaderboardRow currentRow = leaderboardResponse.getRankList(i);
+                leaderBoardDetailsList.add(new LeaderboardDetails(currentRow.getRank(), currentRow.getUserName(), currentRow.getTotalWorth()));
+            }
+        } else {
+            Toast.makeText(getContext(), "Internal server error", Toast.LENGTH_SHORT).show();
+        }
     }
 }

@@ -18,6 +18,7 @@ import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.hmproductions.theredstreet.MiscellaneousUtils;
 import com.hmproductions.theredstreet.R;
 import com.hmproductions.theredstreet.dagger.ContextModule;
 import com.hmproductions.theredstreet.dagger.DaggerDalalStreetApplicationComponent;
@@ -41,10 +42,18 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import dalalstreet.api.DalalActionServiceGrpc;
+import dalalstreet.api.DalalStreamServiceGrpc;
 import dalalstreet.api.actions.LogoutRequest;
 import dalalstreet.api.actions.LogoutResponse;
+import dalalstreet.api.datastreams.DataStreamType;
+import dalalstreet.api.datastreams.SubscribeRequest;
+import dalalstreet.api.datastreams.SubscribeResponse;
+import dalalstreet.api.datastreams.SubscriptionId;
+import dalalstreet.api.datastreams.TransactionUpdate;
+import dalalstreet.api.models.TransactionType;
 import io.grpc.Metadata;
 import io.grpc.stub.MetadataUtils;
+import io.grpc.stub.StreamObserver;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -52,8 +61,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public static final String CASH_WORTH_KEY = "cash-worth-key";
     public static final String TOTAL_WORTH_KEY = "total-worth-key";
     public static final String STOCKS_OWNED_KEY = "stocks-owned-key";
+
     @Inject
     DalalActionServiceGrpc.DalalActionServiceBlockingStub actionServiceBlockingStub;
+
+    @Inject
+    DalalStreamServiceGrpc.DalalStreamServiceStub streamServiceStub;
 
     @Inject
     SharedPreferences preferences;
@@ -68,6 +81,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private ActionBarDrawerToggle toggle;
 
     public static List<StockDetails> ownedStockDetails;
+    private SubscriptionId transactionsSubscriptionId;
 
     @BindView(R.id.stockWorth_textView)
     TextView stockTextView;
@@ -89,6 +103,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         DaggerDalalStreetApplicationComponent.builder().contextModule(new ContextModule(this)).build().inject(this);
         ButterKnife.bind(this);
         MetadataUtils.attachHeaders(actionServiceBlockingStub, metadata);
+        MetadataUtils.attachHeaders(streamServiceStub, metadata);
 
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -98,10 +113,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         OpenAndCloseDrawer();
 
-        getSupportFragmentManager().beginTransaction().add(R.id.home_activity_fragment_container, new MortgageFragment()).commit();
+        getSupportFragmentManager().beginTransaction().add(R.id.home_activity_fragment_container, new LeaderboardFragment()).commit();
 
         ownedStockDetails = getIntent().getParcelableArrayListExtra(STOCKS_OWNED_KEY);
         updateValues();
+
+        subscribeToTransactionsStream();
     }
 
     private void BindDrawerViews() {
@@ -119,6 +136,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private void SetupNavigationDrawer() {
 
         usernameTextView.setText(getIntent().getStringExtra(LoginActivity.USERNAME_KEY));
+        MiscellaneousUtils.username = getIntent().getStringExtra(LoginActivity.USERNAME_KEY);
 
         navigationView.setNavigationItemSelectedListener(this);
         drawerLayout.addDrawerListener(toggle);
@@ -220,9 +238,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             preferences
                     .edit()
-                    .putString(LoginActivity.USERNAME_KEY, null)
-                    .putString(LoginActivity.SESSION_ID_KEY, null)
-                    .putString(LoginActivity.EMAIL_KEY, null)
                     .putInt(CASH_WORTH_KEY, -1)
                     .putInt(TOTAL_WORTH_KEY, -1)
                     .apply();
@@ -245,6 +260,59 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         cashTextView.setText(String.valueOf(cashWorth));
         stockTextView.setText(String.valueOf(stockWorth));
         totalTextView.setText(String.valueOf(totalWorth));
+    }
+
+    private void subscribeToTransactionsStream() {
+
+        streamServiceStub.subscribe(
+                SubscribeRequest.newBuilder().setDataStreamType(DataStreamType.TRANSACTIONS).setDataStreamId("").build(),
+                new StreamObserver<SubscribeResponse>() {
+                    @Override
+                    public void onNext(SubscribeResponse value) {
+                        if (value.getStatusCode().getNumber() == 0)
+                            transactionsSubscriptionId = value.getSubscriptionId();
+                        else
+                            Toast.makeText(MainActivity.this , "Server internal error", Toast.LENGTH_SHORT).show();
+                        onCompleted();
+                    }
+
+                    @Override
+                    public void onError(Throwable t) {
+
+                    }
+
+                    @Override
+                    public void onCompleted() {
+
+                    }
+                }
+        );
+
+        streamServiceStub.getTransactionUpdates(transactionsSubscriptionId,
+                new StreamObserver<TransactionUpdate>() {
+                    @Override
+                    public void onNext(TransactionUpdate value) {
+                        // TODO : Fill this method
+                        if (value.getTransaction().getType() == TransactionType.DIVIDEND_TRANSACTION) {
+                            int previousValue = Integer.parseInt(cashTextView.getText().toString());
+                            cashTextView.setText(String.valueOf(previousValue + value.getTransaction().getTotal()));
+                        } else if (value.getTransaction().getType() == TransactionType.ORDER_FILL_TRANSACTION) {
+
+                        } else if (value.getTransaction().getType() == TransactionType.FROM_EXCHANGE_TRANSACTION) {
+
+                        }
+                    }
+
+                    @Override
+                    public void onError(Throwable t) {
+
+                    }
+
+                    @Override
+                    public void onCompleted() {
+
+                    }
+                });
     }
 
     @Override
