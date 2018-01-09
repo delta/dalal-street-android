@@ -80,9 +80,9 @@ public class MortgageFragment extends Fragment {
         ButterKnife.bind(this, rootView);
         if (getActivity() != null) getActivity().setTitle("Mortgage Stocks");
 
+        // TODO : (IMP) Remove unnecessary change of textView
         stockTextView = container.getRootView().findViewById(R.id.stockWorth_textView);
         cashTextView = container.getRootView().findViewById(R.id.cashWorth_textView);
-        stockTextView.setText(String.valueOf(1223));
 
         companySpinner = rootView.findViewById(R.id.mortgage_companies_spinner);
         ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_dropdown_item_1line, getResources().getStringArray(R.array.companies));

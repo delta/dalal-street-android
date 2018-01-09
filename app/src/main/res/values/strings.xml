@@ -134,5 +134,6 @@
     <string name="number_of_stocks_you_own_n_a">Number of stocks you own : N/A</string>
     <string name="number_of_stocks_mortgaged_n_a">Number of stocks mortgaged : N/A</string>
     <string name="breaking_news">Breaking News</string>
+    <string name="no_transactions_found">No transactions found.</string>
 
 </resources>

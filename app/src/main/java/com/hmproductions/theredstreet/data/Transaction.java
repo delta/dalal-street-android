@@ -2,13 +2,13 @@ package com.hmproductions.theredstreet.data;
 
 public class Transaction {
 
-    private String type, company, time;
-    private int noOfStocks;
+    private String time;
+    private int noOfStocks, stockId, type;
     private float stockPrice, totalMoney;
 
-    public Transaction(String type, String company, int noOfStocks, float stockPrice, String time, float totalMoney) {
+    public Transaction(int type, int stockId, int noOfStocks, float stockPrice, String time, float totalMoney) {
         this.type = type;
-        this.company = company;
+        this.stockId = stockId;
         this.noOfStocks = noOfStocks;
         this.stockPrice = stockPrice;
         this.time = time;
@@ -19,20 +19,20 @@ public class Transaction {
         return totalMoney;
     }
 
-    public String getType() {
+    public int getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(int type) {
         this.type = type;
     }
 
-    public String getCompany() {
-        return company;
+    public int getStockId() {
+        return stockId;
     }
 
-    public void setCompany(String company) {
-        this.company = company;
+    public void setStockId(int stockId) {
+        this.stockId = stockId;
     }
 
     public int getNoOfStocks() {

@@ -9,19 +9,39 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 
 import com.hmproductions.theredstreet.R;
 import com.hmproductions.theredstreet.adapter.TransactionRecyclerAdapter;
+import com.hmproductions.theredstreet.dagger.ContextModule;
+import com.hmproductions.theredstreet.dagger.DaggerDalalStreetApplicationComponent;
 import com.hmproductions.theredstreet.data.Transaction;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
+import dalalstreet.api.DalalActionServiceGrpc;
+import dalalstreet.api.actions.GetTransactionsRequest;
+import dalalstreet.api.actions.GetTransactionsResponse;
+import io.grpc.Metadata;
+import io.grpc.stub.MetadataUtils;
+
+/* Uses GetTransactions() to get user's latest transactions */
 public class TransactionsFragment extends Fragment {
 
-    RecyclerView transactionView;
+    @Inject
+    DalalActionServiceGrpc.DalalActionServiceBlockingStub actionServiceStub;
+
+    @Inject
+    Metadata metadata;
+
+    RelativeLayout noTransactionsRelativeLayout;
+    RecyclerView transactionRecyclerView;
 
     private List<Transaction> transactionList = new ArrayList<>();
+    private TransactionRecyclerAdapter adapter;
 
     public TransactionsFragment() {
         // Required empty public constructor
@@ -30,32 +50,52 @@ public class TransactionsFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        View rootView=inflater.inflate(R.layout.fragment_transactions, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_transactions, container, false);
 
+        DaggerDalalStreetApplicationComponent.builder().contextModule(new ContextModule(getContext())).build().inject(this);
         if (getActivity() != null) getActivity().setTitle("TransactionsFragment");
 
-        transactionView = rootView.findViewById(R.id.transactions_recyclerView);
+        MetadataUtils.attachHeaders(actionServiceStub, metadata);
+        adapter = new TransactionRecyclerAdapter(getContext(), null);
+
+        noTransactionsRelativeLayout = rootView.findViewById(R.id.noTransactions_relativeLayout);
+        transactionRecyclerView = rootView.findViewById(R.id.transactions_recyclerView);
 
         setValues();
 
-        TransactionRecyclerAdapter adapter = new TransactionRecyclerAdapter(getActivity(), transactionList);
-
-        transactionView.setLayoutManager(new LinearLayoutManager(getContext()));
-        transactionView.setHasFixedSize(false);
-        transactionView.setAdapter(adapter);
+        transactionRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        transactionRecyclerView.setHasFixedSize(false);
+        transactionRecyclerView.setAdapter(adapter);
 
         return rootView;
     }
 
-    public void setValues(){
+    public void setValues() {
 
-        //TODO : Get from service
         transactionList.clear();
 
-        transactionList.add(new Transaction("MortgageFragment","Github",50,43,"10:00",-100));
-        transactionList.add(new Transaction("Exchange","Yahoo",50,43,"11:00",+50));
-        transactionList.add(new Transaction("MortgageFragment","EA",70,43,"12:00",-25));
-        transactionList.add(new Transaction("Market","Sony",40,43,"12:01",+58));
-        transactionList.add(new Transaction("Exchange","LG",10,43,"12:02",+75));
+        GetTransactionsResponse response =
+                actionServiceStub.getTransactions(GetTransactionsRequest.newBuilder().setCount(0).setLastTransactionId(0).build());
+
+        for (int i = 0; i < response.getTransactionsCount(); ++i) {
+            dalalstreet.api.models.Transaction currentTransaction = response.getTransactions(i);
+            transactionList.add(new Transaction(
+                    currentTransaction.getType().getNumber(),
+                    currentTransaction.getStockId(),
+                    currentTransaction.getStockQuantity(),
+                    currentTransaction.getPrice(),
+                    currentTransaction.getCreatedAt(),
+                    currentTransaction.getTotal()
+            ));
+        }
+
+        if (transactionList == null || transactionList.size() == 0) {
+            transactionRecyclerView.setVisibility(View.GONE);
+            noTransactionsRelativeLayout.setVisibility(View.VISIBLE);
+        } else {
+            adapter.swapData(transactionList);
+            transactionRecyclerView.setVisibility(View.VISIBLE);
+            noTransactionsRelativeLayout.setVisibility(View.GONE);
+        }
     }
 }

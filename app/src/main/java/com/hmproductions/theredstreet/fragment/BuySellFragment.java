@@ -16,6 +16,7 @@ import android.widget.Toast;
 import com.hmproductions.theredstreet.R;
 import com.hmproductions.theredstreet.dagger.ContextModule;
 import com.hmproductions.theredstreet.dagger.DaggerDalalStreetApplicationComponent;
+import com.hmproductions.theredstreet.ui.MainActivity;
 import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner;
 
 import javax.inject.Inject;
@@ -32,6 +33,7 @@ import io.grpc.stub.MetadataUtils;
 import static com.hmproductions.theredstreet.MiscellaneousUtils.getOrderTypeFromName;
 import static com.hmproductions.theredstreet.MiscellaneousUtils.getStockIdFromCompanyName;
 
+/* Uses PlaceOrder() to place buy or ask order */
 public class BuySellFragment extends Fragment {
 
     @Inject
@@ -72,6 +74,7 @@ public class BuySellFragment extends Fragment {
 
         DaggerDalalStreetApplicationComponent.builder().contextModule(new ContextModule(getContext())).build().inject(this);
         ButterKnife.bind(this, rootView);
+        MetadataUtils.attachHeaders(actionServiceBlockingStub, metadata);
 
         ArrayAdapter<String> companiesAdapter = new ArrayAdapter<>(getActivity(),android.R.layout.simple_dropdown_item_1line,getResources().getStringArray(R.array.companies));
         ArrayAdapter<String> orderSelectAdapter = new ArrayAdapter<>(getActivity(),android.R.layout.simple_dropdown_item_1line,getResources().getStringArray(R.array.orderType));
@@ -99,17 +102,24 @@ public class BuySellFragment extends Fragment {
             Toast.makeText(getActivity(), "Select order type", Toast.LENGTH_SHORT).show();
         } else if (orderPriceEditText.isEnabled() && orderPriceEditText.getText().toString().trim().isEmpty()) {
             Toast.makeText(getActivity(), "Enter the order price", Toast.LENGTH_SHORT).show();
+        } else if (stockRadioGroup.getCheckedRadioButtonId() == R.id.ask_radioButton) {
+            int validQuantity = MainActivity.ownedStockDetails.get(getStockIdFromCompanyName(getContext(), companySpinner.getText().toString())).getQuantity();
+            int askingQuantity = Integer.parseInt(noOfStocksEditText.getText().toString());
+
+            if (askingQuantity > validQuantity) {
+                Toast.makeText(getContext(), "You don't have sufficient stocks", Toast.LENGTH_SHORT).show();
+            } else {
+                addTransaction();
+            }
         }
         else{
             addTransaction();
-            Toast.makeText(getActivity(), "Transaction Added", Toast.LENGTH_SHORT).show();
         }
     }
 
     public void addTransaction(){
-        buySellProgressBar.setVisibility(View.VISIBLE);
 
-        MetadataUtils.attachHeaders(actionServiceBlockingStub, metadata);
+        buySellProgressBar.setVisibility(View.VISIBLE);
 
         PlaceOrderResponse orderResponse = actionServiceBlockingStub.placeOrder(
                 PlaceOrderRequest

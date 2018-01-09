@@ -33,6 +33,7 @@ import dalalstreet.api.models.LeaderboardRow;
 import io.grpc.Metadata;
 import io.grpc.stub.MetadataUtils;
 
+/* Uses GetLeaderboard() to set leader board table and to set user's current rank */
 public class LeaderboardFragment extends Fragment {
 
     private static final int LEADERBOARD_SIZE = 15;
@@ -102,7 +103,7 @@ public class LeaderboardFragment extends Fragment {
         leaderBoardDetailsList.clear();
 
         MetadataUtils.attachHeaders(actionServiceBlockingStub, metadata);
-        
+
         GetLeaderboardResponse leaderboardResponse = actionServiceBlockingStub.getLeaderboard(
                 GetLeaderboardRequest.newBuilder().setCount(LEADERBOARD_SIZE).setStartingId(1).build()
         );

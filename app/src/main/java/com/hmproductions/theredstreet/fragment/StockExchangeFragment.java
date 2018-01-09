@@ -13,19 +13,36 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.hmproductions.theredstreet.R;
-import com.hmproductions.theredstreet.data.ExchangeValuesDetails;
+import com.hmproductions.theredstreet.dagger.ContextModule;
+import com.hmproductions.theredstreet.dagger.DaggerDalalStreetApplicationComponent;
 import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner;
 
-import java.util.ArrayList;
+import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import dalalstreet.api.DalalActionServiceGrpc;
+import dalalstreet.api.actions.BuyStocksFromExchangeRequest;
+import dalalstreet.api.actions.BuyStocksFromExchangeResponse;
+import dalalstreet.api.actions.GetCompanyProfileRequest;
+import dalalstreet.api.actions.GetCompanyProfileResponse;
+import dalalstreet.api.actions.StockHistoryGranularity;
+import dalalstreet.api.models.Stock;
+import io.grpc.Metadata;
+import io.grpc.stub.MetadataUtils;
 
+import static com.hmproductions.theredstreet.MiscellaneousUtils.getStockIdFromCompanyName;
+
+/* Uses GetCompanyProfile() for getting stock info
+*  Uses BuyStocksFromExchange() to buy appropriate stocks */
 public class StockExchangeFragment extends Fragment {
 
-    ArrayList<ExchangeValuesDetails> exchangeValues = new ArrayList<>();
-    private ExchangeValuesDetails currentExchange;
+    @Inject
+    DalalActionServiceGrpc.DalalActionServiceBlockingStub actionServiceBlockingStub;
+
+    @Inject
+    Metadata metadata;
 
     @BindView(R.id.company_spinner)
     MaterialBetterSpinner companySpinner;
@@ -48,6 +65,8 @@ public class StockExchangeFragment extends Fragment {
     @BindView(R.id.stocksInExchange_textView)
     TextView stocks_in_exchange;
 
+    private Stock currentStock;
+
     public StockExchangeFragment() {
         // Required empty public constructor
     }
@@ -59,31 +78,40 @@ public class StockExchangeFragment extends Fragment {
         ButterKnife.bind(this, rootView);
 
         if (getActivity() != null) getActivity().setTitle("Stock Exchange");
+        DaggerDalalStreetApplicationComponent.builder().contextModule(new ContextModule(getContext())).build().inject(this);
 
         companySpinner = rootView.findViewById(R.id.company_spinner);
         ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_dropdown_item_1line, getResources().getStringArray(R.array.companies));
         companySpinner.setAdapter(arrayAdapter);
 
-        updateValues();
+        MetadataUtils.attachHeaders(actionServiceBlockingStub, metadata);
 
         companySpinner.setOnItemClickListener((adapterView, view, position, id) -> {
 
-            String temporaryTextViewString;
-            currentExchange = exchangeValues.get(position);
+            GetCompanyProfileResponse companyProfileResponse = actionServiceBlockingStub.getCompanyProfile(
+                    GetCompanyProfileRequest.newBuilder()
+                            .setStockId(position)
+                            .setGranularity(StockHistoryGranularity.OneDay)
+                            .setGetOnlyHistory(false)
+                            .build()
+            );
 
-            temporaryTextViewString = "Current stock price : " + String.valueOf(currentExchange.getStockValue());
+            String temporaryTextViewString;
+            currentStock = companyProfileResponse.getStockDetails();
+
+            temporaryTextViewString = "Current stock price : " + String.valueOf(currentStock.getCurrentPrice());
             currentStockPriceTextView.setText(temporaryTextViewString);
 
-            temporaryTextViewString = "Daily high : " + String.valueOf(currentExchange.getDailyHigh());
+            temporaryTextViewString = "Daily high : " + String.valueOf(currentStock.getDayHigh());
             daily_high.setText(temporaryTextViewString);
 
-            temporaryTextViewString = "Daily low : " + String.valueOf(currentExchange.getDailyLow());
+            temporaryTextViewString = "Daily low : " + String.valueOf(currentStock.getDayLow());
             daily_low.setText(temporaryTextViewString);
 
-            temporaryTextViewString = "Stocks in market : " + String.valueOf(currentExchange.getStocksInMarket());
+            temporaryTextViewString = "Stocks in market : " + String.valueOf(currentStock.getStocksInMarket());
             stocks_in_market.setText(temporaryTextViewString);
 
-            temporaryTextViewString = "Stocks in exchange : " + String.valueOf(currentExchange.getStocksInExchange());
+            temporaryTextViewString = "Stocks in exchange : " + String.valueOf(currentStock.getStocksInExchange());
             stocks_in_exchange.setText(temporaryTextViewString);
 
         });
@@ -93,31 +121,53 @@ public class StockExchangeFragment extends Fragment {
 
     @OnClick(R.id.buyExchange_button)
     void onBuyExchangeButtonClick() {
+
         if (companySpinner.getText().toString().trim().isEmpty()) {
             Toast.makeText(getActivity(), getString(R.string.pick_a_company), Toast.LENGTH_SHORT).show();
         } else if (noOfStocksEditText.getText().toString().trim().isEmpty()) {
             Toast.makeText(getActivity(), "Enter the number of Stocks", Toast.LENGTH_SHORT).show();
         } else {
-            if (Integer.parseInt(noOfStocksEditText.getText().toString().trim()) < currentExchange.getStocksInMarket()) {
+            if (Integer.parseInt(noOfStocksEditText.getText().toString().trim()) <= currentStock.getStocksInExchange()) {
+
+                BuyStocksFromExchangeResponse response = actionServiceBlockingStub.buyStocksFromExchange(
+                        BuyStocksFromExchangeRequest
+                                .newBuilder()
+                                .setStockId(getStockIdFromCompanyName(getContext(), companySpinner.getText().toString()))
+                                .setStockQuantity(Integer.parseInt(noOfStocksEditText.getText().toString()))
+                        .build()
+                );
+
+                switch (response.getStatusCode().getNumber()) {
+
+                    case 0:
+                        Toast.makeText(getContext(), "Stocks bought", Toast.LENGTH_SHORT).show();
+                        break;
+
+                    case 1:
+                        Toast.makeText(getContext(), "Internal server error", Toast.LENGTH_SHORT).show();
+                        break;
+
+                    case 2:
+                        Toast.makeText(getContext(), "Market closed", Toast.LENGTH_SHORT).show();
+                        break;
+
+                    case 4:
+                        Toast.makeText(getContext(), "Insufficient cash", Toast.LENGTH_SHORT).show();
+                        break;
+
+                    case 5:
+                        Toast.makeText(getContext(), "Buy limit exceeded", Toast.LENGTH_SHORT).show();
+                        break;
+
+                    default:
+                        Toast.makeText(getContext(), "Insufficient stocks error", Toast.LENGTH_SHORT).show();
+                        break;
+                }
+
                 Toast.makeText(getActivity(), "Stocks Bought", Toast.LENGTH_SHORT).show();
-                // TODO : Buy stocks
             } else {
                 Toast.makeText(getActivity(), "Insufficient stocks in market", Toast.LENGTH_SHORT).show();
             }
         }
-    }
-
-    public void updateValues() {
-
-        //TODO : Get from service
-        exchangeValues.clear();
-
-        exchangeValues.add(new ExchangeValuesDetails("Github", 50, 45, 55, 100, 100));
-        exchangeValues.add(new ExchangeValuesDetails("Intel", 50, 45, 55, 100, 100));
-        exchangeValues.add(new ExchangeValuesDetails("Apple", 50, 45, 55, 100, 100));
-        exchangeValues.add(new ExchangeValuesDetails("Yahoo", 50, 45, 55, 100, 100));
-        exchangeValues.add(new ExchangeValuesDetails("HDFC", 50, 45, 55, 100, 100));
-        exchangeValues.add(new ExchangeValuesDetails("LG", 50, 45, 55, 100, 100));
-        exchangeValues.add(new ExchangeValuesDetails("Infosys", 50, 45, 55, 100, 100));
     }
 }

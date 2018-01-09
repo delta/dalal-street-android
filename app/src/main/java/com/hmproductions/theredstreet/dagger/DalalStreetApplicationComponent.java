@@ -6,6 +6,8 @@ import com.hmproductions.theredstreet.fragment.HomeFragment;
 import com.hmproductions.theredstreet.fragment.LeaderboardFragment;
 import com.hmproductions.theredstreet.fragment.MortgageFragment;
 import com.hmproductions.theredstreet.fragment.NewsFragment;
+import com.hmproductions.theredstreet.fragment.StockExchangeFragment;
+import com.hmproductions.theredstreet.fragment.TransactionsFragment;
 import com.hmproductions.theredstreet.ui.MainActivity;
 import com.hmproductions.theredstreet.ui.LoginActivity;
 
@@ -25,4 +27,6 @@ public interface DalalStreetApplicationComponent {
     void inject(NewsFragment newsFragment);
     void inject(MortgageFragment mortgageFragment);
     void inject(LeaderboardFragment leaderboardFragment);
+    void inject(StockExchangeFragment stockExchangeFragment);
+    void inject(TransactionsFragment transactionsFragment);
 }

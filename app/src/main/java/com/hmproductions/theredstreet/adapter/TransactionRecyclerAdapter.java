@@ -14,6 +14,8 @@ import com.hmproductions.theredstreet.data.Transaction;
 
 import java.util.List;
 
+import static com.hmproductions.theredstreet.MiscellaneousUtils.getCompanyNameFromStockId;
+
 public class TransactionRecyclerAdapter extends RecyclerView.Adapter<TransactionRecyclerAdapter.MyViewHolder> {
 
     private Context context;
@@ -36,9 +38,9 @@ public class TransactionRecyclerAdapter extends RecyclerView.Adapter<Transaction
 
         Transaction currentTransaction = transactionList.get(position);
 
-        holder.typeTextView.setText("Transaction Type : " + currentTransaction.getType());
-        holder.companyTextView.setText("Company : " + currentTransaction.getCompany());
-        holder.noOfStocksTextView.setText("Numberof stocks : " + String.valueOf(currentTransaction.getNoOfStocks()));
+        holder.typeTextView.setText("Transaction Type : " + String.valueOf(currentTransaction.getType()));
+        holder.companyTextView.setText("Company : " + getCompanyNameFromStockId(context, currentTransaction.getStockId()));
+        holder.noOfStocksTextView.setText("Number of stocks : " + String.valueOf(currentTransaction.getNoOfStocks()));
         holder.priceTextView.setText("Stock price : " + String.valueOf(currentTransaction.getStockPrice()));
         holder.timeTextView.setText("Time : " + currentTransaction.getTime());
 
@@ -53,6 +55,11 @@ public class TransactionRecyclerAdapter extends RecyclerView.Adapter<Transaction
     public int getItemCount() {
         if (transactionList == null || transactionList.size() == 0) return 0;
         return transactionList.size();
+    }
+
+    public void swapData(List<Transaction> newList) {
+        transactionList = newList;
+        notifyDataSetChanged();
     }
 
     class MyViewHolder extends RecyclerView.ViewHolder {
