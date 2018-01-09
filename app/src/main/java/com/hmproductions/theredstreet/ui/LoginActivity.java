@@ -15,6 +15,7 @@ import com.hmproductions.theredstreet.MiscellaneousUtils;
 import com.hmproductions.theredstreet.R;
 import com.hmproductions.theredstreet.dagger.ContextModule;
 import com.hmproductions.theredstreet.dagger.DaggerDalalStreetApplicationComponent;
+import com.hmproductions.theredstreet.data.GlobalStockDetails;
 import com.hmproductions.theredstreet.data.StockDetails;
 import com.hmproductions.theredstreet.loaders.LoginLoader;
 
@@ -28,6 +29,7 @@ import butterknife.OnClick;
 import dalalstreet.api.DalalActionServiceGrpc;
 import dalalstreet.api.actions.LoginRequest;
 import dalalstreet.api.actions.LoginResponse;
+import dalalstreet.api.models.Stock;
 
 public class LoginActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<LoginResponse> {
 
@@ -40,7 +42,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderManager.Lo
     private static final int LOADER_ID = 101;
     public static final String USERNAME_KEY = "username-key";
     public static final String EMAIL_KEY = "email-key";
-    public static final String SESSION_ID_KEY = "session-id-key";
     private static final String PASSWORD_KEY = "password-key";
 
     EditText emailEditText,  passwordEditText;
@@ -133,18 +134,36 @@ public class LoginActivity extends AppCompatActivity implements LoaderManager.Lo
                     .putString(PASSWORD_KEY, passwordEditText.getText().toString())
                     .apply();
 
-            ArrayList<StockDetails> list = new ArrayList<>();
+            ArrayList<StockDetails> stocksOwnedList = new ArrayList<>();
             Map<Integer, Integer> stocksOwnedMap = loginResponse.getStocksOwnedMap();
 
             for (int i=0 ; i<stocksOwnedMap.size() ; ++i) {
-                list.add(new StockDetails(i, stocksOwnedMap.get(i)));
+                stocksOwnedList.add(new StockDetails(i, stocksOwnedMap.get(i)));
+            }
+
+            ArrayList<GlobalStockDetails> globalStockList = new ArrayList<>();
+            Map<Integer, Stock> globalStockMap = loginResponse.getStockListMap();
+
+            for (int i=0 ; i<globalStockMap.size() ; ++i) {
+                Stock currentStockDetails = globalStockMap.get(i);
+                int upOrDown = currentStockDetails.getUpOrDown()?1:0;
+                globalStockList.add(new GlobalStockDetails(
+                        i,
+                        currentStockDetails.getCurrentPrice(),
+                        currentStockDetails.getStocksInMarket(),
+                        currentStockDetails.getStocksInExchange(),
+                        currentStockDetails.getPreviousDayClose(),
+                        upOrDown));
             }
 
             Intent intent = new Intent(this, MainActivity.class);
             intent.putExtra(USERNAME_KEY, loginResponse.getUser().getName());
             intent.putExtra(MainActivity.CASH_WORTH_KEY, loginResponse.getUser().getCash());
             intent.putExtra(MainActivity.TOTAL_WORTH_KEY, loginResponse.getUser().getTotal());
-            intent.putParcelableArrayListExtra(MainActivity.STOCKS_OWNED_KEY, list);
+
+            intent.putParcelableArrayListExtra(MainActivity.STOCKS_OWNED_KEY, stocksOwnedList);
+            intent.putParcelableArrayListExtra(MainActivity.GLOBAL_STOCKS_KEY, globalStockList);
+
             startActivity(intent);
             finish();
         } else {

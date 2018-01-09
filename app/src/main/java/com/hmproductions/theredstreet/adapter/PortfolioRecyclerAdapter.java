@@ -13,6 +13,9 @@ import com.hmproductions.theredstreet.data.PortfolioDetails;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 public class PortfolioRecyclerAdapter extends RecyclerView.Adapter<PortfolioRecyclerAdapter.PortfolioViewHolder> {
 
     private Context context;
@@ -31,7 +34,13 @@ public class PortfolioRecyclerAdapter extends RecyclerView.Adapter<PortfolioRecy
 
     @Override
     public void onBindViewHolder(PortfolioRecyclerAdapter.PortfolioViewHolder holder, int position) {
-        holder.portfolioDetailsTextView.setText(list.get(position).getPortfolioDetails());
+        holder.portfolioCompanyNameTextView.setText(list.get(position).getCompany());
+
+        String temporaryString = ": " + String.valueOf(list.get(position).getNoOfStock());
+        holder.portfolioStockQuantityTextView.setText(temporaryString);
+
+        temporaryString = "(₹" + String.valueOf(list.get(position).getValue()) + " per stock)";
+        holder.portfolioPriceTextView.setText(temporaryString);
     }
 
     @Override
@@ -40,13 +49,25 @@ public class PortfolioRecyclerAdapter extends RecyclerView.Adapter<PortfolioRecy
         return list.size();
     }
 
+    public void swapData(List<PortfolioDetails> list) {
+        this.list = list;
+        notifyDataSetChanged();
+    }
+
     class PortfolioViewHolder extends RecyclerView.ViewHolder {
 
-        private TextView portfolioDetailsTextView;
+        @BindView(R.id.portfolio_company_textView)
+        TextView portfolioCompanyNameTextView;
+
+        @BindView(R.id.portfolio_stockQuantity_textView)
+        TextView portfolioStockQuantityTextView;
+
+        @BindView(R.id.portfolio_price_textView)
+        TextView portfolioPriceTextView;
 
         PortfolioViewHolder(View itemView) {
             super(itemView);
-            portfolioDetailsTextView = itemView.findViewById(R.id.portfolioDetails_textView);
+            ButterKnife.bind(this, itemView);
         }
     }
 }

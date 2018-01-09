@@ -3,14 +3,35 @@
 
     android:orientation="horizontal"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:padding="16dp">
 
     <TextView
-        android:id="@+id/portfolioDetails_textView"
-        android:layout_width="match_parent"
+        android:id="@+id/portfolio_company_textView"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:textColor="@android:color/background_dark"
         android:textSize="20sp"
-        android:padding="12dp"/>
+        android:text="GitHub"
+        android:layout_weight="2" />
+
+    <TextView
+        android:id="@+id/portfolio_stockQuantity_textView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:textColor="@android:color/background_dark"
+        android:textSize="20sp"
+        android:gravity="center"
+        android:text=": 95"
+        android:layout_weight="1" />
+
+    <TextView
+        android:id="@+id/portfolio_price_textView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:textColor="@android:color/background_dark"
+        android:textSize="20sp"
+        android:text="(₹45 per stock)"
+        android:layout_weight="2" />
 
 </LinearLayout>

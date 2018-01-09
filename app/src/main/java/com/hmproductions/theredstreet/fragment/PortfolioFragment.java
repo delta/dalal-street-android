@@ -12,19 +12,24 @@ import android.view.ViewGroup;
 
 import com.hmproductions.theredstreet.R;
 import com.hmproductions.theredstreet.adapter.PortfolioRecyclerAdapter;
+import com.hmproductions.theredstreet.data.GlobalStockDetails;
 import com.hmproductions.theredstreet.data.PortfolioDetails;
+import com.hmproductions.theredstreet.ui.MainActivity;
 
 import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import static com.hmproductions.theredstreet.MiscellaneousUtils.getCompanyNameFromStockId;
+
 public class PortfolioFragment extends Fragment {
 
     @BindView(R.id.portfolio_recyclerView)
     RecyclerView portfolioRecyclerView;
 
-    private ArrayList<PortfolioDetails> portfolioValues = new ArrayList<>();
+    private ArrayList<PortfolioDetails> portfolioList = new ArrayList<>();
+    private PortfolioRecyclerAdapter adapter;
 
     public PortfolioFragment() {
         // Required empty public constructor
@@ -35,12 +40,14 @@ public class PortfolioFragment extends Fragment {
         // Inflate the layout for this fragment
         View rootView=inflater.inflate(R.layout.fragment_portfolio, container, false);
 
-        if (getActivity() != null)  getActivity().setTitle("PortfolioFragment");
+        if (getActivity() != null)  getActivity().setTitle("Portfolio");
         ButterKnife.bind(this, rootView);
+
+        adapter = new PortfolioRecyclerAdapter(getContext(), null);
 
         updateValues();
 
-        portfolioRecyclerView.setAdapter(new PortfolioRecyclerAdapter(getContext(), portfolioValues));
+        portfolioRecyclerView.setAdapter(adapter);
         portfolioRecyclerView.setHasFixedSize(false);
         portfolioRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
@@ -49,16 +56,15 @@ public class PortfolioFragment extends Fragment {
 
     public void updateValues(){
 
-        //TODO : get from service
+        portfolioList.clear();
 
-        portfolioValues.clear();
+        for (GlobalStockDetails currentStockDetail : MainActivity.globalStockDetails) {
+            portfolioList.add(new PortfolioDetails(
+                    getCompanyNameFromStockId(getContext(), currentStockDetail.getStockId()),
+                    currentStockDetail.getQuantityInMarket(), currentStockDetail.getPrice())
+            );
+        }
 
-        portfolioValues.add(new PortfolioDetails("Github",30,20));
-        portfolioValues.add(new PortfolioDetails("Apple",20,80));
-        portfolioValues.add(new PortfolioDetails("Yahoo",45,100));
-        portfolioValues.add(new PortfolioDetails("HDFC",30,20));
-        portfolioValues.add(new PortfolioDetails("LG",15,60));
-        portfolioValues.add(new PortfolioDetails("Sony",25,75));
-        portfolioValues.add(new PortfolioDetails("Infosys",50,35));
+        adapter.swapData(portfolioList);
     }
 }

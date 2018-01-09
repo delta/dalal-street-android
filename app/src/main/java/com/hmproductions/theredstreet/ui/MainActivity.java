@@ -22,6 +22,7 @@ import com.hmproductions.theredstreet.MiscellaneousUtils;
 import com.hmproductions.theredstreet.R;
 import com.hmproductions.theredstreet.dagger.ContextModule;
 import com.hmproductions.theredstreet.dagger.DaggerDalalStreetApplicationComponent;
+import com.hmproductions.theredstreet.data.GlobalStockDetails;
 import com.hmproductions.theredstreet.data.StockDetails;
 import com.hmproductions.theredstreet.fragment.BuySellFragment;
 import com.hmproductions.theredstreet.fragment.CompanyProfileFragment;
@@ -46,6 +47,9 @@ import dalalstreet.api.DalalStreamServiceGrpc;
 import dalalstreet.api.actions.LogoutRequest;
 import dalalstreet.api.actions.LogoutResponse;
 import dalalstreet.api.datastreams.DataStreamType;
+import dalalstreet.api.datastreams.StockExchangeDataPoint;
+import dalalstreet.api.datastreams.StockExchangeUpdate;
+import dalalstreet.api.datastreams.StockPricesUpdate;
 import dalalstreet.api.datastreams.SubscribeRequest;
 import dalalstreet.api.datastreams.SubscribeResponse;
 import dalalstreet.api.datastreams.SubscriptionId;
@@ -55,12 +59,14 @@ import io.grpc.Metadata;
 import io.grpc.stub.MetadataUtils;
 import io.grpc.stub.StreamObserver;
 
+/* Subscribes to GetTransactions*/
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private static final long DRAWER_DURATION = 450;
     public static final String CASH_WORTH_KEY = "cash-worth-key";
     public static final String TOTAL_WORTH_KEY = "total-worth-key";
     public static final String STOCKS_OWNED_KEY = "stocks-owned-key";
+    public static final String GLOBAL_STOCKS_KEY = "global-stocks-key";
 
     @Inject
     DalalActionServiceGrpc.DalalActionServiceBlockingStub actionServiceBlockingStub;
@@ -81,7 +87,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private ActionBarDrawerToggle toggle;
 
     public static List<StockDetails> ownedStockDetails;
-    private SubscriptionId transactionsSubscriptionId;
+    public static List<GlobalStockDetails> globalStockDetails;
+    private SubscriptionId transactionsSubscriptionId, stockPricesSubscriptionId, stockExchangeSubscriptionId;
 
     @BindView(R.id.stockWorth_textView)
     TextView stockTextView;
@@ -113,12 +120,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         OpenAndCloseDrawer();
 
-        getSupportFragmentManager().beginTransaction().add(R.id.home_activity_fragment_container, new StockExchangeFragment()).commit();
+        getSupportFragmentManager().beginTransaction().add(R.id.home_activity_fragment_container, new HomeFragment()).commit();
 
         ownedStockDetails = getIntent().getParcelableArrayListExtra(STOCKS_OWNED_KEY);
+        globalStockDetails = getIntent().getParcelableArrayListExtra(GLOBAL_STOCKS_KEY);
         updateValues();
 
         subscribeToTransactionsStream();
+        subscribeToStockPricesStream();
+        subscribeToStockExchangeStream();
     }
 
     private void BindDrawerViews() {
@@ -300,6 +310,102 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                         } else if (value.getTransaction().getType() == TransactionType.FROM_EXCHANGE_TRANSACTION) {
 
+                        }
+                    }
+
+                    @Override
+                    public void onError(Throwable t) {
+
+                    }
+
+                    @Override
+                    public void onCompleted() {
+
+                    }
+                });
+    }
+
+    private void subscribeToStockPricesStream() {
+        streamServiceStub.subscribe(
+                SubscribeRequest.newBuilder().setDataStreamType(DataStreamType.STOCK_PRICES).setDataStreamId("").build(),
+                new StreamObserver<SubscribeResponse>() {
+                    @Override
+                    public void onNext(SubscribeResponse value) {
+                        if (value.getStatusCode().getNumber() == 0)
+                            stockPricesSubscriptionId = value.getSubscriptionId();
+                        else
+                            Toast.makeText(MainActivity.this , "Server internal error", Toast.LENGTH_SHORT).show();
+                        onCompleted();
+                    }
+
+                    @Override
+                    public void onError(Throwable t) {
+
+                    }
+
+                    @Override
+                    public void onCompleted() {
+
+                    }
+                }
+        );
+
+        streamServiceStub.getStockPricesUpdates(stockPricesSubscriptionId,
+                new StreamObserver<StockPricesUpdate>() {
+                    @Override
+                    public void onNext(StockPricesUpdate value) {
+                        for (int i=0 ; i<value.getPricesCount() ; ++i) {
+                            MainActivity.globalStockDetails.get(i).setPrice(value.getPricesMap().get(i));
+                        }
+                    }
+
+                    @Override
+                    public void onError(Throwable t) {
+
+                    }
+
+                    @Override
+                    public void onCompleted() {
+
+                    }
+                });
+    }
+
+    private void subscribeToStockExchangeStream() {
+        streamServiceStub.subscribe(
+                SubscribeRequest.newBuilder().setDataStreamType(DataStreamType.STOCK_EXCHANGE).setDataStreamId("").build(),
+                new StreamObserver<SubscribeResponse>() {
+                    @Override
+                    public void onNext(SubscribeResponse value) {
+                        if (value.getStatusCode().getNumber() == 0)
+                            stockExchangeSubscriptionId = value.getSubscriptionId();
+                        else
+                            Toast.makeText(MainActivity.this , "Server internal error", Toast.LENGTH_SHORT).show();
+                        onCompleted();
+                    }
+
+                    @Override
+                    public void onError(Throwable t) {
+
+                    }
+
+                    @Override
+                    public void onCompleted() {
+
+                    }
+                }
+        );
+
+        streamServiceStub.getStockExchangeUpdates(stockExchangeSubscriptionId,
+                new StreamObserver<StockExchangeUpdate>() {
+                    @Override
+                    public void onNext(StockExchangeUpdate value) {
+
+                        for (int x=0 ; x<value.getStocksInExchangeCount() ; ++x) {
+                            StockExchangeDataPoint currentDataPoint = value.getStocksInExchangeMap().get(x);
+                            MainActivity.globalStockDetails.get(x).setPrice(currentDataPoint.getPrice());
+                            MainActivity.globalStockDetails.get(x).setQuantityInMarket(currentDataPoint.getStocksInMarket());
+                            MainActivity.globalStockDetails.get(x).setQuantityInExchange(currentDataPoint.getStocksInExchange());
                         }
                     }
 

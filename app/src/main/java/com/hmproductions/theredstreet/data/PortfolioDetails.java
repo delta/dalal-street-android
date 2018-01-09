@@ -11,8 +11,20 @@ public class PortfolioDetails {
         this.value = value;
     }
 
-    public String getPortfolioDetails(){
-        return company + " : "+ String.valueOf(noOfStock)+" ( ₹"+ String.valueOf(value)+" per stock)";
+    public int getNoOfStock() {
+        return noOfStock;
+    }
+
+    public void setNoOfStock(int noOfStock) {
+        this.noOfStock = noOfStock;
+    }
+
+    public int getValue() {
+        return value;
+    }
+
+    public void setValue(int value) {
+        this.value = value;
     }
 
     public String getCompany() {
