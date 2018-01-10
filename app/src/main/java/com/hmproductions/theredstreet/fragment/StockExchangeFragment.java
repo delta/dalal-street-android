@@ -29,8 +29,6 @@ import dalalstreet.api.actions.GetCompanyProfileRequest;
 import dalalstreet.api.actions.GetCompanyProfileResponse;
 import dalalstreet.api.actions.StockHistoryGranularity;
 import dalalstreet.api.models.Stock;
-import io.grpc.Metadata;
-import io.grpc.stub.MetadataUtils;
 
 import static com.hmproductions.theredstreet.MiscellaneousUtils.getStockIdFromCompanyName;
 
@@ -40,9 +38,6 @@ public class StockExchangeFragment extends Fragment {
 
     @Inject
     DalalActionServiceGrpc.DalalActionServiceBlockingStub actionServiceBlockingStub;
-
-    @Inject
-    Metadata metadata;
 
     @BindView(R.id.company_spinner)
     MaterialBetterSpinner companySpinner;
@@ -83,8 +78,6 @@ public class StockExchangeFragment extends Fragment {
         companySpinner = rootView.findViewById(R.id.company_spinner);
         ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_dropdown_item_1line, getResources().getStringArray(R.array.companies));
         companySpinner.setAdapter(arrayAdapter);
-
-        MetadataUtils.attachHeaders(actionServiceBlockingStub, metadata);
 
         companySpinner.setOnItemClickListener((adapterView, view, position, id) -> {
 

@@ -1,12 +1,11 @@
 syntax = "proto3";
 
-package proto;
+package dalalstreet.api.datastreams;
 
-option java_package = "dalalstreet.api.datastreams";
-option java_multiple_files = true;
+option java_multiple_files=true;
 
 import "models/Notification.proto";
 
 message NotificationUpdate {
-    Notification notification = 1;
+    models.Notification notification = 1;
 }

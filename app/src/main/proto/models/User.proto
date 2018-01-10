@@ -1,9 +1,8 @@
 syntax = "proto3";
 
-package proto;
+package dalalstreet.api.models;
 
-option java_package = "dalalstreet.api.models";
-option java_multiple_files = true;
+option java_multiple_files=true;
 
 message User {
   uint32 id = 1;

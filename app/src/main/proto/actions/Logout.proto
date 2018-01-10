@@ -1,9 +1,7 @@
 syntax = "proto3";
+package dalalstreet.api.actions;
 
-package proto;
-
-option java_package = "dalalstreet.api.actions";
-option java_multiple_files = true;
+option java_multiple_files=true;
 
 message LogoutRequest {
     // No request data

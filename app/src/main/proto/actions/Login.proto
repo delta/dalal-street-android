@@ -1,9 +1,8 @@
 syntax = "proto3";
 
-package proto;
+package dalalstreet.api.actions;
 
-option java_package = "dalalstreet.api.actions";
-option java_multiple_files = true;
+option java_multiple_files=true;
 
 import "models/Stock.proto";
 import "models/User.proto";
@@ -23,10 +22,10 @@ message LoginResponse {
     string     status_message = 2;
 
     string      session_id = 3;
-    User user = 4;
+    models.User user = 4;
 
     map<uint32, int32>          stocks_owned = 5;
-    map<uint32, Stock>   stock_list = 6;
+    map<uint32, models.Stock>   stock_list = 6;
     map<string, int32>          constants = 7;
 
     string  market_is_open_hacky_notif = 8;

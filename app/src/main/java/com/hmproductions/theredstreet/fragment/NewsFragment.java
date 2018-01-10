@@ -26,8 +26,6 @@ import dalalstreet.api.DalalActionServiceGrpc;
 import dalalstreet.api.actions.GetMarketEventsRequest;
 import dalalstreet.api.actions.GetMarketEventsResponse;
 import dalalstreet.api.models.MarketEvent;
-import io.grpc.Metadata;
-import io.grpc.stub.MetadataUtils;
 
 /* Gets latest news from GetMarketEvents action*/
 public class NewsFragment extends Fragment {
@@ -37,9 +35,6 @@ public class NewsFragment extends Fragment {
 
     @Inject
     NewsRecyclerAdapter newsRecyclerAdapter;
-
-    @Inject
-    Metadata metadata;
 
     RecyclerView newsRecyclerView;
     List<NewsDetails> newsList = new ArrayList<>();
@@ -70,7 +65,6 @@ public class NewsFragment extends Fragment {
     public void updateNews(){
 
         newsList.clear();
-        MetadataUtils.attachHeaders(actionServiceBlockingStub, metadata);
 
         GetMarketEventsResponse marketEventsResponse = actionServiceBlockingStub.getMarketEvents(
                 GetMarketEventsRequest.newBuilder().setCount(0).setLastEventId(0).build());

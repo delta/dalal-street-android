@@ -30,11 +30,13 @@ import dalalstreet.api.DalalActionServiceGrpc;
 import dalalstreet.api.actions.LoginRequest;
 import dalalstreet.api.actions.LoginResponse;
 import dalalstreet.api.models.Stock;
+import io.grpc.ManagedChannel;
 
 public class LoginActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<LoginResponse> {
 
+    /* Not injecting stub directly into this context to prevent empty/null metadata attached to stub since user has not logged in. */
     @Inject
-    DalalActionServiceGrpc.DalalActionServiceBlockingStub stub;
+    ManagedChannel channel;
 
     @Inject
     SharedPreferences preferences;
@@ -116,6 +118,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderManager.Lo
                 .setEmail(args.getString(EMAIL_KEY))
                 .setPassword(args.getString(PASSWORD_KEY))
                 .build();
+
+        DalalActionServiceGrpc.DalalActionServiceBlockingStub stub = DalalActionServiceGrpc.newBlockingStub(channel);
 
         return new LoginLoader(this, loginRequest, stub);
     }

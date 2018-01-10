@@ -1,9 +1,7 @@
 syntax = "proto3";
+package dalalstreet.api.actions;
 
-package proto;
-
-option java_package = "dalalstreet.api.actions";
-option java_multiple_files = true;
+option java_multiple_files=true;
 
 import "models/Stock.proto";
 import "models/StockHistory.proto";
@@ -32,6 +30,6 @@ message GetCompanyProfileResponse {
     StatusCode status_code = 1;
     string     status_message = 2;
 
-    Stock                     stock_details = 3;
-    map<string, StockHistory> stock_history_map = 4;
+    models.Stock                     stock_details = 3;
+    map<string, models.StockHistory> stock_history_map = 4;
 }

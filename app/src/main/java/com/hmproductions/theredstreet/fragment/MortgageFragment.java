@@ -33,8 +33,6 @@ import dalalstreet.api.actions.MortgageStocksResponse;
 import dalalstreet.api.actions.RetrieveMortgageStocksRequest;
 import dalalstreet.api.actions.RetrieveMortgageStocksResponse;
 import dalalstreet.api.models.Transaction;
-import io.grpc.Metadata;
-import io.grpc.stub.MetadataUtils;
 
 /* Uses GetMortgageDetails() for setting stocksMortgaged (int data member)
 *  Uses MortgageStocks() to mortgage stocks
@@ -47,9 +45,6 @@ public class MortgageFragment extends Fragment {
 
     @Inject
     DalalActionServiceGrpc.DalalActionServiceBlockingStub actionServiceBlockingStub;
-
-    @Inject
-    Metadata metadata;
 
     @BindView(R.id.mortgageRadioGroup)
     RadioGroup mortgageRadioGroup;
@@ -213,8 +208,6 @@ public class MortgageFragment extends Fragment {
     }
 
     public void updateValues(int position) {
-
-        MetadataUtils.attachHeaders(actionServiceBlockingStub, metadata);
 
         GetMortgageDetailsResponse response = actionServiceBlockingStub.getMortgageDetails(GetMortgageDetailsRequest.newBuilder().build());
 

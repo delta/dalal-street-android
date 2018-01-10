@@ -1,9 +1,7 @@
 syntax = "proto3";
+package dalalstreet.api.actions;
 
-package proto;
-
-option java_package = "dalalstreet.api.actions";
-option java_multiple_files = true;
+option java_multiple_files=true;
 
 import "models/MarketEvent.proto";
 
@@ -21,5 +19,5 @@ message GetMarketEventsResponse {
     string     status_message = 2;
 
     bool more_exists = 3;
-    repeated MarketEvent market_events = 4;
+    repeated models.MarketEvent market_events = 4;
 }

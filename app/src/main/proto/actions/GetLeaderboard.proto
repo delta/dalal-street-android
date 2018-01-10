@@ -1,9 +1,7 @@
 syntax = "proto3";
+package dalalstreet.api.actions;
 
-package proto;
-
-option java_package = "dalalstreet.api.actions";
-option java_multiple_files = true;
+option java_multiple_files=true;
 
 import "models/LeaderboardRow.proto";
 
@@ -22,5 +20,5 @@ message GetLeaderboardResponse {
 
     uint32 my_rank = 3;
     uint32 total_users = 4;
-    repeated LeaderboardRow rank_list = 5;  // key: rank, value: leaderboard row
+    repeated models.LeaderboardRow rank_list = 5;  // key: rank, value: leaderboard row
 }

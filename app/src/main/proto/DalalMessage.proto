@@ -1,9 +1,8 @@
 syntax = "proto3";
 
-package proto;
+package dalalstreet.api;
 
-option java_multiple_files = true;
-option java_package = "dalalstreet.api";
+option java_multiple_files=true;
 
 import "actions/BuyStocksFromExchange.proto";
 import "actions/CancelOrder.proto";
@@ -32,41 +31,41 @@ import "datastreams/MyOrders.proto";
 
 service DalalActionService {
 	// Stock trading related functions
-	rpc BuyStocksFromExchange(BuyStocksFromExchangeRequest) 	returns (BuyStocksFromExchangeResponse);
-	rpc PlaceOrder(PlaceOrderRequest) 							returns (PlaceOrderResponse);
-	rpc CancelOrder(CancelOrderRequest) 						returns (CancelOrderResponse);
-	rpc MortgageStocks(MortgageStocksRequest) 					returns (MortgageStocksResponse);
-	rpc RetrieveMortgageStocks(RetrieveMortgageStocksRequest) 	returns (RetrieveMortgageStocksResponse);
+        rpc BuyStocksFromExchange(actions.BuyStocksFromExchangeRequest) 	returns (actions.BuyStocksFromExchangeResponse);
+    	rpc PlaceOrder(actions.PlaceOrderRequest) 							returns (actions.PlaceOrderResponse);
+	rpc CancelOrder(actions.CancelOrderRequest) 						returns (actions.CancelOrderResponse);
+	rpc MortgageStocks(actions.MortgageStocksRequest) 					returns (actions.MortgageStocksResponse);
+	rpc RetrieveMortgageStocks(actions.RetrieveMortgageStocksRequest) 	returns (actions.RetrieveMortgageStocksResponse);
 
 	// Getting information about transactions, orders, mortgage
-	rpc GetMyOpenOrders(GetMyOpenOrdersRequest)					returns (GetMyOpenOrdersResponse);
-	rpc GetMyClosedAsks(GetMyClosedAsksRequest)					returns (GetMyClosedAsksResponse);
-	rpc GetMyClosedBids(GetMyClosedBidsRequest)					returns (GetMyClosedBidsResponse);
-	rpc GetTransactions(GetTransactionsRequest)   				returns (GetTransactionsResponse);
-	rpc GetMortgageDetails(GetMortgageDetailsRequest) 			returns (GetMortgageDetailsResponse);
+	rpc GetMyOpenOrders(actions.GetMyOpenOrdersRequest)					returns (actions.GetMyOpenOrdersResponse);
+	rpc GetMyClosedAsks(actions.GetMyClosedAsksRequest)					returns (actions.GetMyClosedAsksResponse);
+	rpc GetMyClosedBids(actions.GetMyClosedBidsRequest)					returns (actions.GetMyClosedBidsResponse);
+	rpc GetTransactions(actions.GetTransactionsRequest)   				returns (actions.GetTransactionsResponse);
+	rpc GetMortgageDetails(actions.GetMortgageDetailsRequest) 			returns (actions.GetMortgageDetailsResponse);
 
 	// Getting general information
-	rpc GetCompanyProfile(GetCompanyProfileRequest)				returns (GetCompanyProfileResponse);
-	rpc GetLeaderboard(GetLeaderboardRequest)					returns (GetLeaderboardResponse);
-	rpc GetMarketEvents(GetMarketEventsRequest)     			returns (GetMarketEventsResponse);
-	rpc GetNotifications(GetNotificationsRequest)   			returns (GetNotificationsResponse);
+	rpc GetCompanyProfile(actions.GetCompanyProfileRequest)				returns (actions.GetCompanyProfileResponse);
+	rpc GetLeaderboard(actions.GetLeaderboardRequest)					returns (actions.GetLeaderboardResponse);
+	rpc GetMarketEvents(actions.GetMarketEventsRequest)     			returns (actions.GetMarketEventsResponse);
+	rpc GetNotifications(actions.GetNotificationsRequest)   			returns (actions.GetNotificationsResponse);
 
 	// Auth
-	rpc Login(LoginRequest) 									returns (LoginResponse);
-	rpc Logout(LogoutRequest) 									returns (LogoutResponse);
+	rpc Login(actions.LoginRequest) 									returns (actions.LoginResponse);
+	rpc Logout(actions.LogoutRequest) 									returns (actions.LogoutResponse);
 }
 
 service DalalStreamService {
 	// Subscription
-	rpc Subscribe(SubscribeRequest) 			returns (SubscribeResponse);
-	rpc Unsubscribe(UnsubscribeRequest) 		returns (UnsubscribeResponse);
+	rpc Subscribe(datastreams.SubscribeRequest) 			returns (datastreams.SubscribeResponse);
+	rpc Unsubscribe(datastreams.UnsubscribeRequest) 		returns (datastreams.UnsubscribeResponse);
 
 	// Datastreams
-	rpc GetMarketDepthUpdates(SubscriptionId)	returns (stream MarketDepthUpdate);
-	rpc GetMarketEventUpdates(SubscriptionId)	returns (stream MarketEventUpdate);
-	rpc GetMyOrderUpdates(SubscriptionId)		returns (stream MyOrderUpdate);
-	rpc GetNotificationUpdates(SubscriptionId)	returns (stream NotificationUpdate);
-	rpc GetStockExchangeUpdates(SubscriptionId)	returns (stream StockExchangeUpdate);
-	rpc GetStockPricesUpdates(SubscriptionId)	returns (stream StockPricesUpdate);
-	rpc GetTransactionUpdates(SubscriptionId)	returns (stream TransactionUpdate);
+	rpc GetMarketDepthUpdates(datastreams.SubscriptionId)	returns (stream datastreams.MarketDepthUpdate);
+	rpc GetMarketEventUpdates(datastreams.SubscriptionId)	returns (stream datastreams.MarketEventUpdate);
+	rpc GetMyOrderUpdates(datastreams.SubscriptionId)		returns (stream datastreams.MyOrderUpdate);
+	rpc GetNotificationUpdates(datastreams.SubscriptionId)	returns (stream datastreams.NotificationUpdate);
+	rpc GetStockExchangeUpdates(datastreams.SubscriptionId)	returns (stream datastreams.StockExchangeUpdate);
+	rpc GetStockPricesUpdates(datastreams.SubscriptionId)	returns (stream datastreams.StockPricesUpdate);
+	rpc GetTransactionUpdates(datastreams.SubscriptionId)	returns (stream datastreams.TransactionUpdate);
 }

@@ -25,17 +25,12 @@ import javax.inject.Inject;
 import dalalstreet.api.DalalActionServiceGrpc;
 import dalalstreet.api.actions.GetTransactionsRequest;
 import dalalstreet.api.actions.GetTransactionsResponse;
-import io.grpc.Metadata;
-import io.grpc.stub.MetadataUtils;
 
 /* Uses GetTransactions() to get user's latest transactions */
 public class TransactionsFragment extends Fragment {
 
     @Inject
     DalalActionServiceGrpc.DalalActionServiceBlockingStub actionServiceStub;
-
-    @Inject
-    Metadata metadata;
 
     RelativeLayout noTransactionsRelativeLayout;
     RecyclerView transactionRecyclerView;
@@ -55,7 +50,6 @@ public class TransactionsFragment extends Fragment {
         DaggerDalalStreetApplicationComponent.builder().contextModule(new ContextModule(getContext())).build().inject(this);
         if (getActivity() != null) getActivity().setTitle("TransactionsFragment");
 
-        MetadataUtils.attachHeaders(actionServiceStub, metadata);
         adapter = new TransactionRecyclerAdapter(getContext(), null);
 
         noTransactionsRelativeLayout = rootView.findViewById(R.id.noTransactions_relativeLayout);

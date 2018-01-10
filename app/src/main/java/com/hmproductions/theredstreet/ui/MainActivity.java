@@ -55,8 +55,6 @@ import dalalstreet.api.datastreams.SubscribeResponse;
 import dalalstreet.api.datastreams.SubscriptionId;
 import dalalstreet.api.datastreams.TransactionUpdate;
 import dalalstreet.api.models.TransactionType;
-import io.grpc.Metadata;
-import io.grpc.stub.MetadataUtils;
 import io.grpc.stub.StreamObserver;
 
 /* Subscribes to GetTransactions*/
@@ -76,9 +74,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Inject
     SharedPreferences preferences;
-
-    @Inject
-    Metadata metadata;
 
     private TextView usernameTextView;
 
@@ -109,8 +104,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         DaggerDalalStreetApplicationComponent.builder().contextModule(new ContextModule(this)).build().inject(this);
         ButterKnife.bind(this);
-        MetadataUtils.attachHeaders(actionServiceBlockingStub, metadata);
-        MetadataUtils.attachHeaders(streamServiceStub, metadata);
 
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) getSupportActionBar().setDisplayHomeAsUpEnabled(true);

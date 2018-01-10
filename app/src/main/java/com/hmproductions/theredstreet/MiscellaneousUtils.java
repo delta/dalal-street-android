@@ -36,7 +36,7 @@ public class MiscellaneousUtils {
             "n8lG/ZKeivbUai547FHqdI2qJwv2mElxojG2hLV7sImSg26fuaTyy5+ftP3GH8Yj\n" +
             "5+8T\n-----END CERTIFICATE-----";
 
-    public static String sessionId = null;
+    public static String sessionId = "dalalStreetSessionId";
     public static String username = null;
 
     public static int getStockIdFromCompanyName(Context context, String companyName) {

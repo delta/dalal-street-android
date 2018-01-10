@@ -30,8 +30,6 @@ import dalalstreet.api.DalalActionServiceGrpc;
 import dalalstreet.api.actions.GetLeaderboardRequest;
 import dalalstreet.api.actions.GetLeaderboardResponse;
 import dalalstreet.api.models.LeaderboardRow;
-import io.grpc.Metadata;
-import io.grpc.stub.MetadataUtils;
 
 /* Uses GetLeaderboard() to set leader board table and to set user's current rank */
 public class LeaderboardFragment extends Fragment {
@@ -40,9 +38,6 @@ public class LeaderboardFragment extends Fragment {
 
     @Inject
     DalalActionServiceGrpc.DalalActionServiceBlockingStub actionServiceBlockingStub;
-
-    @Inject
-    Metadata metadata;
 
     @BindView(R.id.leaderboard_recyclerView)
     RecyclerView recyclerView;
@@ -101,8 +96,6 @@ public class LeaderboardFragment extends Fragment {
     public void setValues(){
 
         leaderBoardDetailsList.clear();
-
-        MetadataUtils.attachHeaders(actionServiceBlockingStub, metadata);
 
         GetLeaderboardResponse leaderboardResponse = actionServiceBlockingStub.getLeaderboard(
                 GetLeaderboardRequest.newBuilder().setCount(LEADERBOARD_SIZE).setStartingId(1).build()

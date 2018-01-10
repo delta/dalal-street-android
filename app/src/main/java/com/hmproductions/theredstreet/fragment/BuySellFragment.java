@@ -27,8 +27,6 @@ import butterknife.OnClick;
 import dalalstreet.api.DalalActionServiceGrpc;
 import dalalstreet.api.actions.PlaceOrderRequest;
 import dalalstreet.api.actions.PlaceOrderResponse;
-import io.grpc.Metadata;
-import io.grpc.stub.MetadataUtils;
 
 import static com.hmproductions.theredstreet.MiscellaneousUtils.getOrderTypeFromName;
 import static com.hmproductions.theredstreet.MiscellaneousUtils.getStockIdFromCompanyName;
@@ -38,9 +36,6 @@ public class BuySellFragment extends Fragment {
 
     @Inject
     DalalActionServiceGrpc.DalalActionServiceBlockingStub actionServiceBlockingStub;
-
-    @Inject
-    Metadata metadata;
 
     @BindView(R.id.company_spinner)
     MaterialBetterSpinner companySpinner;
@@ -74,7 +69,6 @@ public class BuySellFragment extends Fragment {
 
         DaggerDalalStreetApplicationComponent.builder().contextModule(new ContextModule(getContext())).build().inject(this);
         ButterKnife.bind(this, rootView);
-        MetadataUtils.attachHeaders(actionServiceBlockingStub, metadata);
 
         ArrayAdapter<String> companiesAdapter = new ArrayAdapter<>(getActivity(),android.R.layout.simple_dropdown_item_1line,getResources().getStringArray(R.array.companies));
         ArrayAdapter<String> orderSelectAdapter = new ArrayAdapter<>(getActivity(),android.R.layout.simple_dropdown_item_1line,getResources().getStringArray(R.array.orderType));
