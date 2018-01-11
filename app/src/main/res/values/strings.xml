@@ -135,5 +135,6 @@
     <string name="number_of_stocks_mortgaged_n_a">Number of stocks mortgaged : N/A</string>
     <string name="breaking_news">Breaking News</string>
     <string name="no_transactions_found">No transactions found.</string>
+    <string name="news_not_available">News not available.</string>
 
 </resources>

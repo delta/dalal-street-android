@@ -15,41 +15,39 @@ public class StubModule {
 
     @Provides
     @DalalStreetApplicationScope
-    public DalalActionServiceGrpc.DalalActionServiceStub getDalalActionStub(ManagedChannel channel, Metadata metadata) {
+    public DalalActionServiceGrpc.DalalActionServiceStub getDalalActionStub(ManagedChannel channel) {
         DalalActionServiceGrpc.DalalActionServiceStub stub = DalalActionServiceGrpc.newStub(channel);
-        MetadataUtils.attachHeaders(stub, metadata);
+        stub = MetadataUtils.attachHeaders(stub, getStubMetadata());
         return stub;
     }
 
     @Provides
     @DalalStreetApplicationScope
-    public DalalActionServiceGrpc.DalalActionServiceBlockingStub getDalalActionBlockingStub(ManagedChannel channel, Metadata metadata) {
+    public DalalActionServiceGrpc.DalalActionServiceBlockingStub getDalalActionBlockingStub(ManagedChannel channel) {
         DalalActionServiceGrpc.DalalActionServiceBlockingStub stub = DalalActionServiceGrpc.newBlockingStub(channel);
-        MetadataUtils.attachHeaders(stub, metadata);
+        stub = MetadataUtils.attachHeaders(stub, getStubMetadata());
         return stub;
     }
 
     @Provides
     @DalalStreetApplicationScope
-    public DalalStreamServiceGrpc.DalalStreamServiceStub getDalalStreamStub(ManagedChannel channel, Metadata metadata) {
+    public DalalStreamServiceGrpc.DalalStreamServiceStub getDalalStreamStub(ManagedChannel channel) {
         DalalStreamServiceGrpc.DalalStreamServiceStub stub = DalalStreamServiceGrpc.newStub(channel);
-        MetadataUtils.attachHeaders(stub, metadata);
+        stub = MetadataUtils.attachHeaders(stub, getStubMetadata());
         return stub;
     }
 
     @Provides
     @DalalStreetApplicationScope
-    public DalalStreamServiceGrpc.DalalStreamServiceBlockingStub getDalalStreamBlockingStub(ManagedChannel channel, Metadata metadata) {
+    public DalalStreamServiceGrpc.DalalStreamServiceBlockingStub getDalalStreamBlockingStub(ManagedChannel channel) {
         DalalStreamServiceGrpc.DalalStreamServiceBlockingStub stub = DalalStreamServiceGrpc.newBlockingStub(channel);
-        MetadataUtils.attachHeaders(stub, metadata);
+        stub = MetadataUtils.attachHeaders(stub, getStubMetadata());
         return stub;
     }
-
-    @Provides
-    @DalalStreetApplicationScope
-    public Metadata getStubMetadata() {
+    
+    private Metadata getStubMetadata() {
         Metadata metadata = new Metadata();
-        Metadata.Key<String> metadataKey = Metadata.Key.of("session_id", Metadata.ASCII_STRING_MARSHALLER);
+        Metadata.Key<String> metadataKey = Metadata.Key.of("sessionid", Metadata.ASCII_STRING_MARSHALLER);
         metadata.put(metadataKey, MiscellaneousUtils.sessionId);
         return metadata;
     }

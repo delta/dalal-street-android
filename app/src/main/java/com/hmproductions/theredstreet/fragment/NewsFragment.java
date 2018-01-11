@@ -4,31 +4,32 @@ package com.hmproductions.theredstreet.fragment;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.Loader;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
+import android.widget.TextView;
 
 import com.hmproductions.theredstreet.R;
 import com.hmproductions.theredstreet.adapter.NewsRecyclerAdapter;
 import com.hmproductions.theredstreet.dagger.ContextModule;
 import com.hmproductions.theredstreet.dagger.DaggerDalalStreetApplicationComponent;
 import com.hmproductions.theredstreet.data.NewsDetails;
+import com.hmproductions.theredstreet.loaders.NewsLoader;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
 
 import dalalstreet.api.DalalActionServiceGrpc;
-import dalalstreet.api.actions.GetMarketEventsRequest;
-import dalalstreet.api.actions.GetMarketEventsResponse;
-import dalalstreet.api.models.MarketEvent;
+
+import static com.hmproductions.theredstreet.Constants.NEWS_LOADER_ID;
 
 /* Gets latest news from GetMarketEvents action*/
-public class NewsFragment extends Fragment {
+public class NewsFragment extends Fragment implements LoaderManager.LoaderCallbacks<List<NewsDetails>>{
 
     @Inject
     DalalActionServiceGrpc.DalalActionServiceBlockingStub actionServiceBlockingStub;
@@ -37,7 +38,7 @@ public class NewsFragment extends Fragment {
     NewsRecyclerAdapter newsRecyclerAdapter;
 
     RecyclerView newsRecyclerView;
-    List<NewsDetails> newsList = new ArrayList<>();
+    TextView noNewsTextView;
 
     public NewsFragment() {
         // Required empty public constructor
@@ -52,33 +53,37 @@ public class NewsFragment extends Fragment {
         DaggerDalalStreetApplicationComponent.builder().contextModule(new ContextModule(getContext())).build().inject(this);
 
         newsRecyclerView = rootView.findViewById(R.id.news_recyclerView);
+        noNewsTextView = rootView.findViewById(R.id.noNews_textView);
 
         newsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         newsRecyclerView.setHasFixedSize(false);
         newsRecyclerView.setAdapter(newsRecyclerAdapter);
 
-        updateNews();
+        getActivity().getSupportLoaderManager().restartLoader(NEWS_LOADER_ID, null, this);
 
         return rootView;
     }
 
-    public void updateNews(){
+    @Override
+    public Loader<List<NewsDetails>> onCreateLoader(int id, Bundle args) {
+        return new NewsLoader(getContext(), actionServiceBlockingStub);
+    }
 
-        newsList.clear();
+    @Override
+    public void onLoadFinished(Loader<List<NewsDetails>> loader, List<NewsDetails> data) {
 
-        GetMarketEventsResponse marketEventsResponse = actionServiceBlockingStub.getMarketEvents(
-                GetMarketEventsRequest.newBuilder().setCount(0).setLastEventId(0).build());
-
-        if (marketEventsResponse.getStatusCode().getNumber() == 0) {
-
-            for (MarketEvent currentMarketEvent : marketEventsResponse.getMarketEventsList()) {
-                newsList.add(new NewsDetails(currentMarketEvent.getCreatedAt(), currentMarketEvent.getHeadline(), currentMarketEvent.getText()));
-            }
-
-            newsRecyclerAdapter.swapData(newsList);
-
+        if (data != null && data.size()!=0) {
+            newsRecyclerAdapter.swapData(data);
+            noNewsTextView.setVisibility(View.GONE);
+            newsRecyclerView.setVisibility(View.VISIBLE);
         } else {
-            Toast.makeText(getContext(), "Server error", Toast.LENGTH_SHORT).show();
+            noNewsTextView.setVisibility(View.VISIBLE);
+            newsRecyclerView.setVisibility(View.GONE);
         }
+    }
+
+    @Override
+    public void onLoaderReset(Loader<List<NewsDetails>> loader) {
+        // Do nothing
     }
 }

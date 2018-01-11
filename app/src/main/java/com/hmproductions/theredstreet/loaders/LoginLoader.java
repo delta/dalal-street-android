@@ -7,7 +7,6 @@ import android.util.Log;
 import dalalstreet.api.DalalActionServiceGrpc;
 import dalalstreet.api.actions.LoginRequest;
 import dalalstreet.api.actions.LoginResponse;
-import io.grpc.ManagedChannel;
 
 public class LoginLoader extends AsyncTaskLoader<LoginResponse> {
 
@@ -28,15 +27,7 @@ public class LoginLoader extends AsyncTaskLoader<LoginResponse> {
     @Override
     public LoginResponse loadInBackground() {
 
-        LoginResponse loginResponse = stub.login(loginRequest);
-
-        Log.v(":::", "authenticated as " + loginResponse.getUser().getName() + "session id" + loginResponse.getSessionId() + "status code = " + String.valueOf(loginResponse.getStatusCode()));
-
-        if (stub != null) {
-            ((ManagedChannel)stub.getChannel()).shutdown();
-        }
-
-        return loginResponse;
+        return stub.login(loginRequest);
     }
 
 }

@@ -4,18 +4,26 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 /* Modify definition according to needs; Refer Stock.proto for more attributes */
-public class GlobalStockDetails implements Parcelable{
+public class GlobalStockDetails implements Parcelable {
 
-    private int stockId, price, quantityInMarket, quantityInExchange, previousDayClose;
+    private String fullName, shortName;
+    private int stockId;
+    private int price;
+    private int quantityInMarket;
+    private int quantityInExchange;
+    private int previousDayClose;
     private int up;
 
-    public GlobalStockDetails(int stockId, int price, int quantityInMarket, int quantityInExchange, int previousDayClose, int up) {
+    public GlobalStockDetails(String fullName, String shortName, int stockId, int price, int quantityInMarket, int quantityInExchange, int previousDayClose, int up) {
+        this.fullName = fullName;
+        this.shortName = shortName;
         this.stockId = stockId;
         this.price = price;
         this.quantityInMarket = quantityInMarket;
         this.quantityInExchange = quantityInExchange;
         this.previousDayClose = previousDayClose;
         this.up = up;
+
     }
 
     public int getStockId() {
@@ -64,6 +72,22 @@ public class GlobalStockDetails implements Parcelable{
 
     public void setUp(int up) {
         this.up = up;
+    }
+
+    public String getFullName() {
+        return fullName;
+    }
+
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
+    }
+
+    public String getShortName() {
+        return shortName;
+    }
+
+    public void setShortName(String shortName) {
+        this.shortName = shortName;
     }
 
     private GlobalStockDetails(Parcel in) {

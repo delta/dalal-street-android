@@ -8,6 +8,7 @@ import android.support.v4.content.Loader;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -32,6 +33,8 @@ import dalalstreet.api.actions.LoginResponse;
 import dalalstreet.api.models.Stock;
 import io.grpc.ManagedChannel;
 
+import static com.hmproductions.theredstreet.Constants.LOGIN_LOADER_ID;
+
 public class LoginActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<LoginResponse> {
 
     /* Not injecting stub directly into this context to prevent empty/null metadata attached to stub since user has not logged in. */
@@ -41,10 +44,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderManager.Lo
     @Inject
     SharedPreferences preferences;
 
-    private static final int LOADER_ID = 101;
     public static final String USERNAME_KEY = "username-key";
     public static final String EMAIL_KEY = "email-key";
-    private static final String PASSWORD_KEY = "password-key";
+    static final String PASSWORD_KEY = "password-key";
 
     EditText emailEditText,  passwordEditText;
     private AlertDialog signingInAlertDialog;
@@ -61,6 +63,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderManager.Lo
         setSupportActionBar(toolbar);
         setTitle(getString(R.string.app_name));
 
+        signingInAlertDialog = new AlertDialog.Builder(this).setView(R.layout.progress_dialog).setCancelable(false).create();
+
         emailEditText = findViewById(R.id.email_editText);
         passwordEditText = findViewById(R.id.password_editText);
 
@@ -71,7 +75,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderManager.Lo
             Bundle bundle = new Bundle();
             bundle.putString(EMAIL_KEY, email);
             bundle.putString(PASSWORD_KEY, password);
-            getSupportLoaderManager().restartLoader(LOADER_ID, bundle, this);
+
+            signingInAlertDialog.show();
+            getSupportLoaderManager().restartLoader(LOGIN_LOADER_ID, bundle, this);
         }
     }
 
@@ -81,7 +87,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderManager.Lo
             Bundle bundle = new Bundle();
             bundle.putString(EMAIL_KEY, emailEditText.getText().toString());
             bundle.putString(PASSWORD_KEY, passwordEditText.getText().toString());
-            getSupportLoaderManager().restartLoader(LOADER_ID, bundle, this);
+            getSupportLoaderManager().restartLoader(LOGIN_LOADER_ID, bundle, this);
         }
     }
 
@@ -107,17 +113,14 @@ public class LoginActivity extends AppCompatActivity implements LoaderManager.Lo
 
     @Override
     public Loader<LoginResponse> onCreateLoader(int id, Bundle args) {
-        signingInAlertDialog = new AlertDialog.Builder(this)
-                .setView(R.layout.progress_dialog)
-                .setCancelable(false)
-                .create();
-        signingInAlertDialog.show();
-
+        // TODO : IMP Change login credentials
         LoginRequest loginRequest = LoginRequest
                 .newBuilder()
                 .setEmail(args.getString(EMAIL_KEY))
                 .setPassword(args.getString(PASSWORD_KEY))
                 .build();
+
+        Log.v(":::", "login details - " + args.getString(EMAIL_KEY) + "-" + args.getString(PASSWORD_KEY));
 
         DalalActionServiceGrpc.DalalActionServiceBlockingStub stub = DalalActionServiceGrpc.newBlockingStub(channel);
 
@@ -129,8 +132,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderManager.Lo
 
         signingInAlertDialog.dismiss();
 
-        // TODO : Fix internal error
-        if (loginResponse.getStatusCode().getNumber() == 0 || loginResponse.getStatusCode().getNumber() == 1) {
+        if (loginResponse.getStatusCode().getNumber() == 0) {
 
             MiscellaneousUtils.sessionId = loginResponse.getSessionId();
             preferences.edit()
@@ -148,17 +150,22 @@ public class LoginActivity extends AppCompatActivity implements LoaderManager.Lo
             ArrayList<GlobalStockDetails> globalStockList = new ArrayList<>();
             Map<Integer, Stock> globalStockMap = loginResponse.getStockListMap();
 
-            for (int i=0 ; i<globalStockMap.size() ; ++i) {
-                Stock currentStockDetails = globalStockMap.get(i);
-                int upOrDown = currentStockDetails.getUpOrDown()?1:0;
-                globalStockList.add(new GlobalStockDetails(
-                        i,
-                        currentStockDetails.getCurrentPrice(),
-                        currentStockDetails.getStocksInMarket(),
-                        currentStockDetails.getStocksInExchange(),
-                        currentStockDetails.getPreviousDayClose(),
-                        upOrDown));
-            }
+                for (int q = 0; q < globalStockMap.size(); ++q) {
+                    Stock currentStockDetails = globalStockMap.get(q);
+
+                    if (currentStockDetails != null) {
+                        globalStockList.add(new GlobalStockDetails(
+                                currentStockDetails.getFullName(),
+                                currentStockDetails.getShortName(),
+                                q,
+                                currentStockDetails.getCurrentPrice(),
+                                currentStockDetails.getStocksInMarket(),
+                                currentStockDetails.getStocksInExchange(),
+                                currentStockDetails.getPreviousDayClose(),
+                                currentStockDetails.getUpOrDown() ? 1 : 0));
+                    }
+                }
+
 
             Intent intent = new Intent(this, MainActivity.class);
             intent.putExtra(USERNAME_KEY, loginResponse.getUser().getName());

@@ -57,6 +57,9 @@ import dalalstreet.api.datastreams.TransactionUpdate;
 import dalalstreet.api.models.TransactionType;
 import io.grpc.stub.StreamObserver;
 
+import static com.hmproductions.theredstreet.ui.LoginActivity.EMAIL_KEY;
+import static com.hmproductions.theredstreet.ui.LoginActivity.PASSWORD_KEY;
+
 /* Subscribes to GetTransactions*/
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -236,13 +239,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         LogoutResponse logoutResponse = actionServiceBlockingStub.logout(LogoutRequest.newBuilder().build());
 
-        if (logoutResponse.getStatusCode().getNumber() == 0 || logoutResponse.getStatusCode().getNumber() == 1) {
+        if (logoutResponse.getStatusCode().getNumber() == 0) {
             Toast.makeText(this, logoutResponse.getStatusMessage(), Toast.LENGTH_SHORT).show();
 
             preferences
                     .edit()
-                    .putInt(CASH_WORTH_KEY, -1)
-                    .putInt(TOTAL_WORTH_KEY, -1)
+                    .putString(EMAIL_KEY, null)
+                    .putString(PASSWORD_KEY, null)
                     .apply();
         } else {
             Toast.makeText(this, "Connection error", Toast.LENGTH_SHORT).show();
@@ -428,8 +431,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     protected void onDestroy() {
         super.onDestroy();
         SharedPreferences.Editor editor = preferences.edit();
-        editor.putInt(CASH_WORTH_KEY, Integer.parseInt(cashTextView.getText().toString()));
-        editor.putInt(TOTAL_WORTH_KEY, Integer.parseInt(totalTextView.getText().toString()));
         editor.apply();
     }
 }
