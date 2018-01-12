@@ -1,51 +1,33 @@
 package com.hmproductions.theredstreet.data;
 
+import javax.annotation.Nullable;
+
 public class Company {
 
-    private String name;
-    private String value;
-    private int image;
-    private int status;
+    private String fullName, imageUrl;
+    private int previousDayClose;
+    private boolean up;
 
-    public Company() {
+    public Company(String fullName, @Nullable String imageUrl, int previousDayClose, boolean up) {
+        this.fullName = fullName;
+        this.imageUrl = imageUrl;
+        this.previousDayClose = previousDayClose;
+        this.up = up;
     }
 
-    public Company(String name, String value, int image, int status) {
-        this.name = name;
-        this.value = value;
-        this.image = image;
-        this.status = status;
+    public String getFullName() {
+        return fullName;
     }
 
-    public String getName() {
-        return name;
+    public String getImageUrl() {
+        return imageUrl;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public int getPreviousDayClose() {
+        return previousDayClose;
     }
 
-    public String getValue() {
-        return value;
-    }
-
-    public void setValue(String value) {
-        this.value = value;
-    }
-
-    public int getImage() {
-        return image;
-    }
-
-    public void setImage(int image) {
-        this.image = image;
-    }
-
-    public int getStatus() {
-        return status;
-    }
-
-    public void setStatus(int status) {
-        this.status = status;
+    public boolean isUp() {
+        return up;
     }
 }

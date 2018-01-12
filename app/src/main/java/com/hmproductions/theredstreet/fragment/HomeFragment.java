@@ -1,10 +1,17 @@
 package com.hmproductions.theredstreet.fragment;
 
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.Loader;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PagerSnapHelper;
@@ -13,14 +20,19 @@ import android.support.v7.widget.SnapHelper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 
+import com.hmproductions.theredstreet.Constants;
 import com.hmproductions.theredstreet.R;
 import com.hmproductions.theredstreet.adapter.CompanyRecyclerAdapter;
 import com.hmproductions.theredstreet.adapter.NewsRecyclerAdapter;
 import com.hmproductions.theredstreet.dagger.ContextModule;
 import com.hmproductions.theredstreet.dagger.DaggerDalalStreetApplicationComponent;
 import com.hmproductions.theredstreet.data.Company;
+import com.hmproductions.theredstreet.data.GlobalStockDetails;
 import com.hmproductions.theredstreet.data.NewsDetails;
+import com.hmproductions.theredstreet.loaders.NewsLoader;
+import com.hmproductions.theredstreet.ui.MainActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,15 +43,18 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import dalalstreet.api.DalalActionServiceGrpc;
 
-public class HomeFragment extends Fragment {
+public class HomeFragment extends Fragment implements LoaderManager.LoaderCallbacks<List<NewsDetails>>{
 
     private static final int COMPANY_NEWS_DURATION = 3000;
 
     @Inject
-    DalalActionServiceGrpc.DalalActionServiceStub actionServiceStub;
+    DalalActionServiceGrpc.DalalActionServiceBlockingStub actionServiceBlockingStub;
 
     @Inject
     NewsRecyclerAdapter newsRecyclerAdapter;
+
+    @Inject
+    CompanyRecyclerAdapter companyRecyclerAdapter;
 
     @BindView(R.id.companies_recyclerView)
     RecyclerView companiesRecyclerView;
@@ -47,13 +62,23 @@ public class HomeFragment extends Fragment {
     @BindView(R.id.news_recyclerView)
     RecyclerView newsRecyclerView;
 
-    CompanyRecyclerAdapter companiesAdapter;
+    @BindView(R.id.loadingNews_relativeLayout)
+    RelativeLayout loadingRelativeLayout;
+
     LinearLayoutManager linearLayoutManager;
 
     List<Company> companyList = new ArrayList<>();
-    List<NewsDetails> newsList = new ArrayList<>();
 
     Handler handler = new Handler();
+
+    private BroadcastReceiver refreshNewsListReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (getActivity() != null && intent.getAction() != null && intent.getAction().equalsIgnoreCase(Constants.REFRESH_NEWS_ACTION)) {
+                getActivity().getSupportLoaderManager().restartLoader(Constants.NEWS_LOADER_ID, null, HomeFragment.this);
+            }
+        }
+    };
 
     public HomeFragment() {
         // Required empty public constructor
@@ -69,15 +94,13 @@ public class HomeFragment extends Fragment {
         if (getActivity() != null)
             getActivity().setTitle("Home");
 
-        setValues();
         rootView.findViewById(R.id.breakingNewsText).setSelected(true);
 
-        companiesAdapter = new CompanyRecyclerAdapter(getContext(), companyList);
         linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
 
         companiesRecyclerView.setLayoutManager(linearLayoutManager);
         companiesRecyclerView.setItemAnimator(new DefaultItemAnimator());
-        companiesRecyclerView.setAdapter(companiesAdapter);
+        companiesRecyclerView.setAdapter(companyRecyclerAdapter);
 
         SnapHelper companiesSnapHelper = new PagerSnapHelper();
         companiesSnapHelper.attachToRecyclerView(companiesRecyclerView);
@@ -85,6 +108,8 @@ public class HomeFragment extends Fragment {
         newsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         newsRecyclerView.setHasFixedSize(true);
         newsRecyclerView.setAdapter(newsRecyclerAdapter);
+
+        setValues();
 
         Runnable runnable = new Runnable() {
             @Override
@@ -103,24 +128,63 @@ public class HomeFragment extends Fragment {
         return rootView;
     }
 
-    public void setValues() { //todo : get from service,checkout companyAdapter
+    public void setValues() {
 
-        newsList.clear();
-        newsList.add(new NewsDetails("11:12pm Feb 23", "Github makes private repos free!", null));
-        newsList.add(new NewsDetails("7:44pm Feb 13","Apple revokes iphone 7 plus due to faulty cameras", null));
-        newsList.add(new NewsDetails("5:19pm Feb 5","Yahoo employees announce strike due to non payment of salary", null));
-        newsList.add(new NewsDetails("10:30am Feb 2","Sony launches Xperia X conpact priced at 45,000", null));
-        newsList.add(new NewsDetails("2:55pm Jan 31","LG patents new refrigerant for its refrigerator products", null));
-        newsRecyclerAdapter.swapData(newsList);
+        if (getActivity() != null)
+            getActivity().getSupportLoaderManager().restartLoader(Constants.NEWS_LOADER_ID, null, this);
 
         companyList.clear();
 
-        companyList.add(new Company("Github", String.valueOf(50), R.drawable.github2, R.drawable.down_arrow));
-        companyList.add(new Company("Apple", String.valueOf(100), R.drawable.apple, R.drawable.up_arrow));
-        companyList.add(new Company("Yahoo", String.valueOf(125), R.drawable.yahoo2, R.drawable.down_arrow));
-        companyList.add(new Company("HDFC", String.valueOf(95), R.drawable.hdfc3, R.drawable.down_arrow));
-        companyList.add(new Company("LG", String.valueOf(110), R.drawable.lg2, R.drawable.up_arrow));
-        companyList.add(new Company("Sony", String.valueOf(50), R.drawable.sony, R.drawable.down_arrow));
-        companyList.add(new Company("Infosys", String.valueOf(50), R.drawable.infosys, R.drawable.down_arrow));
+        for (GlobalStockDetails currentStockDetails : MainActivity.globalStockDetails) {
+            companyList.add(new Company(
+                    currentStockDetails.getFullName(),
+                    null,
+                    currentStockDetails.getPreviousDayClose(),
+                    currentStockDetails.getUp()==0));
+        }
+
+        if (companyList != null && companyList.size()!=0) {
+            companyRecyclerAdapter.swapData(companyList);
+        }
+
+    }
+
+    @Override
+    public Loader<List<NewsDetails>> onCreateLoader(int id, Bundle args) {
+        loadingRelativeLayout.setVisibility(View.VISIBLE);
+        newsRecyclerView.setVisibility(View.GONE);
+        return new NewsLoader(getContext(), actionServiceBlockingStub);
+    }
+
+    @Override
+    public void onLoadFinished(Loader<List<NewsDetails>> loader, List<NewsDetails> data) {
+
+        if (data != null && data.size()!=0) {
+            newsRecyclerAdapter.swapData(data);
+        }
+
+        loadingRelativeLayout.setVisibility(View.GONE);
+        newsRecyclerView.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void onLoaderReset(Loader<List<NewsDetails>> loader) {
+        //Do Nothing
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (getContext() != null)
+            LocalBroadcastManager.getInstance(getContext())
+                    .registerReceiver(refreshNewsListReceiver, new IntentFilter(Constants.REFRESH_NEWS_ACTION));
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (getContext() != null)
+            LocalBroadcastManager.getInstance(getContext())
+                    .unregisterReceiver(refreshNewsListReceiver);
     }
 }

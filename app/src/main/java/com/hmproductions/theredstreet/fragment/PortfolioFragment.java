@@ -60,7 +60,7 @@ public class PortfolioFragment extends Fragment {
 
         for (GlobalStockDetails currentStockDetail : MainActivity.globalStockDetails) {
             portfolioList.add(new PortfolioDetails(
-                    getCompanyNameFromStockId(getContext(), currentStockDetail.getStockId()),
+                    getCompanyNameFromStockId(currentStockDetail.getStockId()),
                     currentStockDetail.getQuantityInMarket(), currentStockDetail.getPrice())
             );
         }

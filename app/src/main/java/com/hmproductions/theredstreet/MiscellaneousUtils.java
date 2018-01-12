@@ -4,9 +4,13 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.util.DisplayMetrics;
 
+import com.hmproductions.theredstreet.ui.MainActivity;
+
 import dalalstreet.api.models.OrderType;
 
 public class MiscellaneousUtils {
+
+    public static String[] companyNamesArray = new String[30];
 
     public static float convertDpToPixel(Context context, float dp){
         Resources resources = context.getResources();
@@ -39,29 +43,34 @@ public class MiscellaneousUtils {
     public static String sessionId = "dalalStreetSessionId";
     public static String username = null;
 
-    public static int getStockIdFromCompanyName(Context context, String companyName) {
+    public static void createCompanyArrayFromGlobalStockDetails() {
+        for (int i=0 ; i< MainActivity.globalStockDetails.size() ; ++i) {
+            if (MainActivity.globalStockDetails.get(i) != null) {
+                companyNamesArray[i] = MainActivity.globalStockDetails.get(i).getFullName();
+            }
+        }
+    }
 
-        String[] companies = context.getResources().getStringArray(R.array.companies);
+    public static int getStockIdFromCompanyName(String companyName) {
 
-        for (int i=0 ; i<companies.length ; ++i) {
-            if (companies[i].equalsIgnoreCase(companyName))
+        for (int i=0 ; i<companyNamesArray.length ; ++i) {
+            if (companyNamesArray[i].equalsIgnoreCase(companyName))
                 return i;
         }
 
         return -1;
     }
 
-    public static String getCompanyNameFromStockId(Context context, int id) {
+    public static String getCompanyNameFromStockId(int id) {
 
-        String[] companies = context.getResources().getStringArray(R.array.companies);
-        return companies[id];
+        return companyNamesArray[id];
     }
 
     public static OrderType getOrderTypeFromName(String orderType) {
 
         switch (orderType) {
             
-            case  "Limit Order"           : return OrderType.LIMIT;
+            case  "Limit Order"           : return  OrderType.LIMIT;
             case  "Market Order"          : return  OrderType.MARKET;
             case  "Stoploss Order"        : return  OrderType.STOPLOSS;
             case  "Stoploss Active Order" : return  OrderType.STOPLOSSACTIVE;

@@ -12,7 +12,7 @@ public class GlobalStockDetails implements Parcelable {
     private int quantityInMarket;
     private int quantityInExchange;
     private int previousDayClose;
-    private int up;
+    private int up; // up isn't boolean because Parcelable cannot readBoolean()
 
     public GlobalStockDetails(String fullName, String shortName, int stockId, int price, int quantityInMarket, int quantityInExchange, int previousDayClose, int up) {
         this.fullName = fullName;

@@ -26,7 +26,7 @@ public class CompanyRecyclerAdapter extends RecyclerView.Adapter<CompanyRecycler
 
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemView = LayoutInflater.from(context).inflate(R.layout.company_card, parent, false);
+        View itemView = LayoutInflater.from(context).inflate(R.layout.company_list_item, parent, false);
 
         return new MyViewHolder(itemView);
     }
@@ -35,13 +35,22 @@ public class CompanyRecyclerAdapter extends RecyclerView.Adapter<CompanyRecycler
     public void onBindViewHolder(MyViewHolder holder, int position) {
 
         Company currentCompany = companyList.get(position);
+        int downArrowResourceId = R.drawable.down_arrow;
+        int upArrowResourceId = R.drawable.up_arrow;
 
-        holder.name.setText(currentCompany.getName());
-        Picasso.with(context).load(currentCompany.getImage()).into(holder.company_image); //todo : change load to loadfromurl
-        Picasso.with(context).load(currentCompany.getStatus()).into(holder.status);
+        holder.nameTextView.setText(currentCompany.getFullName());
 
-        String worthString = "₹" + currentCompany.getValue();
-        holder.worth.setText(worthString);
+        Picasso.with(context).load(currentCompany.isUp()? upArrowResourceId : downArrowResourceId).into(holder.arrowImageView);
+
+        String worthString = "₹" + String.valueOf(currentCompany.getPreviousDayClose());
+        holder.previousDayCloseTextView.setText(worthString);
+
+        if (currentCompany.getImageUrl() != null) {
+            Picasso.with(context).load(currentCompany.getImageUrl()).placeholder(R.drawable.rotate_drawable)
+                    .error(R.raw.connection_error).into(holder.companyImageView);
+        } else {
+            Picasso.with(context).load(R.raw.connection_error).into(holder.companyImageView);
+        }
     }
 
     @Override
@@ -50,17 +59,22 @@ public class CompanyRecyclerAdapter extends RecyclerView.Adapter<CompanyRecycler
         return companyList.size();
     }
 
+    public void swapData(List<Company> companyList) {
+        this.companyList = companyList;
+        notifyDataSetChanged();
+    }
+
     class MyViewHolder extends RecyclerView.ViewHolder {
 
-        TextView name, worth;
-        ImageView company_image, status;
+        TextView nameTextView, previousDayCloseTextView;
+        ImageView companyImageView, arrowImageView;
 
         MyViewHolder(View view) {
             super(view);
-            name = view.findViewById(R.id.company_name);
-            worth = view.findViewById(R.id.company_value);
-            company_image = view.findViewById(R.id.company_image);
-            status = view.findViewById(R.id.company_status);
+            nameTextView = view.findViewById(R.id.company_name);
+            previousDayCloseTextView = view.findViewById(R.id.lastDayClose_textView);
+            companyImageView = view.findViewById(R.id.company_imageView);
+            arrowImageView = view.findViewById(R.id.arrow_imageView);
         }
     }
 }

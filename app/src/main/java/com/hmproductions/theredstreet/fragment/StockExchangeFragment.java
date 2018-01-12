@@ -12,6 +12,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.hmproductions.theredstreet.MiscellaneousUtils;
 import com.hmproductions.theredstreet.R;
 import com.hmproductions.theredstreet.dagger.ContextModule;
 import com.hmproductions.theredstreet.dagger.DaggerDalalStreetApplicationComponent;
@@ -76,7 +77,7 @@ public class StockExchangeFragment extends Fragment {
         DaggerDalalStreetApplicationComponent.builder().contextModule(new ContextModule(getContext())).build().inject(this);
 
         companySpinner = rootView.findViewById(R.id.company_spinner);
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_dropdown_item_1line, getResources().getStringArray(R.array.companies));
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_dropdown_item_1line, MiscellaneousUtils.companyNamesArray);
         companySpinner.setAdapter(arrayAdapter);
 
         companySpinner.setOnItemClickListener((adapterView, view, position, id) -> {
@@ -125,7 +126,7 @@ public class StockExchangeFragment extends Fragment {
                 BuyStocksFromExchangeResponse response = actionServiceBlockingStub.buyStocksFromExchange(
                         BuyStocksFromExchangeRequest
                                 .newBuilder()
-                                .setStockId(getStockIdFromCompanyName(getContext(), companySpinner.getText().toString()))
+                                .setStockId(getStockIdFromCompanyName(companySpinner.getText().toString()))
                                 .setStockQuantity(Integer.parseInt(noOfStocksEditText.getText().toString()))
                         .build()
                 );

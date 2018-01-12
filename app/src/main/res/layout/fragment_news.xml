@@ -20,6 +20,7 @@
         android:textColor="@android:color/background_dark"
         android:textAllCaps="true"
         android:visibility="gone"/>
+
 </RelativeLayout>
 
 

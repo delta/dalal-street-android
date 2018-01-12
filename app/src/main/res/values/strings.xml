@@ -136,5 +136,7 @@
     <string name="breaking_news">Breaking News</string>
     <string name="no_transactions_found">No transactions found.</string>
     <string name="news_not_available">News not available.</string>
+    <string name="company_image_description">company_image_view</string>
+    <string name="getting_fresh_news">Getting fresh news…</string>
 
 </resources>

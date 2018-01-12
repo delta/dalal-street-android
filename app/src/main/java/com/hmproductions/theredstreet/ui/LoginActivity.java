@@ -87,6 +87,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderManager.Lo
             Bundle bundle = new Bundle();
             bundle.putString(EMAIL_KEY, emailEditText.getText().toString());
             bundle.putString(PASSWORD_KEY, passwordEditText.getText().toString());
+
+            signingInAlertDialog.show();
             getSupportLoaderManager().restartLoader(LOGIN_LOADER_ID, bundle, this);
         }
     }
@@ -113,14 +115,12 @@ public class LoginActivity extends AppCompatActivity implements LoaderManager.Lo
 
     @Override
     public Loader<LoginResponse> onCreateLoader(int id, Bundle args) {
-        // TODO : IMP Change login credentials
+
         LoginRequest loginRequest = LoginRequest
                 .newBuilder()
                 .setEmail(args.getString(EMAIL_KEY))
                 .setPassword(args.getString(PASSWORD_KEY))
                 .build();
-
-        Log.v(":::", "login details - " + args.getString(EMAIL_KEY) + "-" + args.getString(PASSWORD_KEY));
 
         DalalActionServiceGrpc.DalalActionServiceBlockingStub stub = DalalActionServiceGrpc.newBlockingStub(channel);
 
@@ -135,11 +135,14 @@ public class LoginActivity extends AppCompatActivity implements LoaderManager.Lo
         if (loginResponse.getStatusCode().getNumber() == 0) {
 
             MiscellaneousUtils.sessionId = loginResponse.getSessionId();
+
+            if (!passwordEditText.getText().toString().equals("") || !passwordEditText.getText().toString().isEmpty())
             preferences.edit()
                     .putString(EMAIL_KEY, loginResponse.getUser().getEmail())
                     .putString(PASSWORD_KEY, passwordEditText.getText().toString())
                     .apply();
 
+            // Adding user's stock details
             ArrayList<StockDetails> stocksOwnedList = new ArrayList<>();
             Map<Integer, Integer> stocksOwnedMap = loginResponse.getStocksOwnedMap();
 
@@ -147,6 +150,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderManager.Lo
                 stocksOwnedList.add(new StockDetails(i, stocksOwnedMap.get(i)));
             }
 
+            // Adding global stock details
             ArrayList<GlobalStockDetails> globalStockList = new ArrayList<>();
             Map<Integer, Stock> globalStockMap = loginResponse.getStockListMap();
 

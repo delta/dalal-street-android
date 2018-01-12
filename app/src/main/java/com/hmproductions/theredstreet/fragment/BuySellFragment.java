@@ -13,6 +13,7 @@ import android.widget.ProgressBar;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
+import com.hmproductions.theredstreet.MiscellaneousUtils;
 import com.hmproductions.theredstreet.R;
 import com.hmproductions.theredstreet.dagger.ContextModule;
 import com.hmproductions.theredstreet.dagger.DaggerDalalStreetApplicationComponent;
@@ -70,7 +71,7 @@ public class BuySellFragment extends Fragment {
         DaggerDalalStreetApplicationComponent.builder().contextModule(new ContextModule(getContext())).build().inject(this);
         ButterKnife.bind(this, rootView);
 
-        ArrayAdapter<String> companiesAdapter = new ArrayAdapter<>(getActivity(),android.R.layout.simple_dropdown_item_1line,getResources().getStringArray(R.array.companies));
+        ArrayAdapter<String> companiesAdapter = new ArrayAdapter<>(getActivity(),android.R.layout.simple_dropdown_item_1line, MiscellaneousUtils.companyNamesArray);
         ArrayAdapter<String> orderSelectAdapter = new ArrayAdapter<>(getActivity(),android.R.layout.simple_dropdown_item_1line,getResources().getStringArray(R.array.orderType));
 
         orderSpinner.setAdapter(orderSelectAdapter);
@@ -97,7 +98,7 @@ public class BuySellFragment extends Fragment {
         } else if (orderPriceEditText.isEnabled() && orderPriceEditText.getText().toString().trim().isEmpty()) {
             Toast.makeText(getActivity(), "Enter the order price", Toast.LENGTH_SHORT).show();
         } else if (stockRadioGroup.getCheckedRadioButtonId() == R.id.ask_radioButton) {
-            int validQuantity = MainActivity.ownedStockDetails.get(getStockIdFromCompanyName(getContext(), companySpinner.getText().toString())).getQuantity();
+            int validQuantity = MainActivity.ownedStockDetails.get(getStockIdFromCompanyName(companySpinner.getText().toString())).getQuantity();
             int askingQuantity = Integer.parseInt(noOfStocksEditText.getText().toString());
 
             if (askingQuantity > validQuantity) {
@@ -119,7 +120,7 @@ public class BuySellFragment extends Fragment {
                 PlaceOrderRequest
                         .newBuilder()
                         .setIsAsk(stockRadioGroup.getCheckedRadioButtonId() == R.id.ask_radioButton)
-                        .setStockId(getStockIdFromCompanyName(getContext(), companySpinner.getText().toString()))
+                        .setStockId(getStockIdFromCompanyName(companySpinner.getText().toString()))
                         .setOrderType(getOrderTypeFromName(orderSpinner.getText().toString()))
                         .setPrice(Integer.parseInt(orderPriceEditText.getText().toString()))
                         .setStockQuantity(Integer.parseInt(noOfStocksEditText.getText().toString()))

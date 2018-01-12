@@ -7,17 +7,21 @@ import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.hmproductions.theredstreet.Constants;
 import com.hmproductions.theredstreet.MiscellaneousUtils;
 import com.hmproductions.theredstreet.R;
 import com.hmproductions.theredstreet.dagger.ContextModule;
@@ -47,6 +51,7 @@ import dalalstreet.api.DalalStreamServiceGrpc;
 import dalalstreet.api.actions.LogoutRequest;
 import dalalstreet.api.actions.LogoutResponse;
 import dalalstreet.api.datastreams.DataStreamType;
+import dalalstreet.api.datastreams.MarketEventUpdate;
 import dalalstreet.api.datastreams.StockExchangeDataPoint;
 import dalalstreet.api.datastreams.StockExchangeUpdate;
 import dalalstreet.api.datastreams.StockPricesUpdate;
@@ -69,6 +74,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public static final String STOCKS_OWNED_KEY = "stocks-owned-key";
     public static final String GLOBAL_STOCKS_KEY = "global-stocks-key";
 
+    private static final String LOG_TAG = MainActivity.class.getSimpleName();
+
     @Inject
     DalalActionServiceGrpc.DalalActionServiceBlockingStub actionServiceBlockingStub;
 
@@ -86,7 +93,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     public static List<StockDetails> ownedStockDetails;
     public static List<GlobalStockDetails> globalStockDetails;
-    private SubscriptionId transactionsSubscriptionId, stockPricesSubscriptionId, stockExchangeSubscriptionId;
+    private SubscriptionId transactionsSubscriptionId, stockPricesSubscriptionId, stockExchangeSubscriptionId, marketEventsSubscriptionId;
 
     @BindView(R.id.stockWorth_textView)
     TextView stockTextView;
@@ -99,6 +106,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @BindView(R.id.home_toolbar)
     Toolbar toolbar;
+
+    @BindView(R.id.drawer_edge_button)
+    Button drawerEdgeButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -120,11 +130,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         ownedStockDetails = getIntent().getParcelableArrayListExtra(STOCKS_OWNED_KEY);
         globalStockDetails = getIntent().getParcelableArrayListExtra(GLOBAL_STOCKS_KEY);
+        MiscellaneousUtils.createCompanyArrayFromGlobalStockDetails();
+        Log.v(":::", "global stock details list size = " + String.valueOf(globalStockDetails.size()));
         updateValues();
 
         subscribeToTransactionsStream();
         subscribeToStockPricesStream();
         subscribeToStockExchangeStream();
+        subscribeToMarketEventsUpdateStream();
+
+        StartMakingButtonsTransparent();
     }
 
     private void BindDrawerViews() {
@@ -184,6 +199,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             case R.id.action_logout:
                 logout();
                 return true;
+
+            case android.R.id.home:
+                drawerLayout.openDrawer(GravityCompat.START);  // OPEN DRAWER
+                return true;
         }
 
         return super.onOptionsItemSelected(item);
@@ -240,7 +259,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         LogoutResponse logoutResponse = actionServiceBlockingStub.logout(LogoutRequest.newBuilder().build());
 
         if (logoutResponse.getStatusCode().getNumber() == 0) {
-            Toast.makeText(this, logoutResponse.getStatusMessage(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Logged Out", Toast.LENGTH_SHORT).show();
 
             preferences
                     .edit()
@@ -248,7 +267,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     .putString(PASSWORD_KEY, null)
                     .apply();
         } else {
-            Toast.makeText(this, "Connection error", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Connection Error", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -307,6 +326,52 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         } else if (value.getTransaction().getType() == TransactionType.FROM_EXCHANGE_TRANSACTION) {
 
                         }
+                    }
+
+                    @Override
+                    public void onError(Throwable t) {
+
+                    }
+
+                    @Override
+                    public void onCompleted() {
+
+                    }
+                });
+    }
+
+    private void subscribeToMarketEventsUpdateStream() {
+
+        streamServiceStub.subscribe(
+                SubscribeRequest.newBuilder().setDataStreamType(DataStreamType.MARKET_EVENTS).setDataStreamId("").build(),
+                new StreamObserver<SubscribeResponse>() {
+                    @Override
+                    public void onNext(SubscribeResponse value) {
+                        if (value.getStatusCode().getNumber() == 0)
+                            marketEventsSubscriptionId = value.getSubscriptionId();
+                        else
+                            Toast.makeText(MainActivity.this , "Server internal error", Toast.LENGTH_SHORT).show();
+                        onCompleted();
+                    }
+
+                    @Override
+                    public void onError(Throwable t) {
+
+                    }
+
+                    @Override
+                    public void onCompleted() {
+
+                    }
+                }
+        );
+
+        streamServiceStub.getMarketEventUpdates(marketEventsSubscriptionId,
+                new StreamObserver<MarketEventUpdate>() {
+                    @Override
+                    public void onNext(MarketEventUpdate value) {
+                        Intent refreshNewsIntent = new Intent(Constants.REFRESH_NEWS_ACTION);
+                        LocalBroadcastManager.getInstance(MainActivity.this).sendBroadcast(refreshNewsIntent);
                     }
 
                     @Override
@@ -417,6 +482,24 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 });
     }
 
+    // Starts making drawer button translucent
+    private void StartMakingButtonsTransparent() {
+
+        new Thread() {
+            @Override
+            public void run() {
+                try {
+                    while (drawerEdgeButton.getAlpha() > 0.60) {
+                        Thread.sleep(175);
+                        runOnUiThread(() -> drawerEdgeButton.setAlpha((float) (drawerEdgeButton.getAlpha() - 0.01)));
+                    }
+                } catch (InterruptedException e) {
+                    Log.e(LOG_TAG, "Interrupted Exception");
+                }
+            }
+        }.start();
+    }
+
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
@@ -425,12 +508,5 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         } else {
             super.onBackPressed();
         }
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.apply();
     }
 }

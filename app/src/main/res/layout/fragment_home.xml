@@ -9,7 +9,6 @@
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:layout_marginTop="20dp"
-        android:background="@android:color/background_light"
         android:padding="2dp" />
 
     <TextView
@@ -30,14 +29,47 @@
         android:textSize="16sp"
         android:textStyle="bold|italic" />
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/news_recyclerView"
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/breakingNewsText"
-        android:background="@android:color/background_light"
-        android:divider="@android:color/transparent"
-        android:dividerHeight="5dp"
-        android:paddingTop="12dp" />
+        android:layout_below="@+id/breakingNewsText">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/news_recyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@android:color/background_light"
+            android:divider="@android:color/transparent"
+            android:dividerHeight="5dp"
+            android:paddingTop="12dp" />
+
+        <RelativeLayout
+            android:id="@+id/loadingNews_relativeLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/loadingNews_textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="@string/getting_fresh_news"
+                android:textColor="?colorPrimary"
+                android:textSize="20sp"
+                android:textStyle="italic|bold" />
+
+            <ProgressBar
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_above="@+id/loadingNews_textView"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="8dp"
+                android:indeterminate="true" />
+
+        </RelativeLayout>
+
+    </FrameLayout>
 
 </RelativeLayout>

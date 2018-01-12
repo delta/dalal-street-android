@@ -39,7 +39,7 @@ public class TransactionRecyclerAdapter extends RecyclerView.Adapter<Transaction
         Transaction currentTransaction = transactionList.get(position);
 
         holder.typeTextView.setText("Transaction Type : " + String.valueOf(currentTransaction.getType()));
-        holder.companyTextView.setText("Company : " + getCompanyNameFromStockId(context, currentTransaction.getStockId()));
+        holder.companyTextView.setText("Company : " + getCompanyNameFromStockId(currentTransaction.getStockId()));
         holder.noOfStocksTextView.setText("Number of stocks : " + String.valueOf(currentTransaction.getNoOfStocks()));
         holder.priceTextView.setText("Stock price : " + String.valueOf(currentTransaction.getStockPrice()));
         holder.timeTextView.setText("Time : " + currentTransaction.getTime());
