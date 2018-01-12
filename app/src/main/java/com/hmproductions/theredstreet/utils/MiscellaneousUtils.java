@@ -1,22 +1,31 @@
-package com.hmproductions.theredstreet;
+package com.hmproductions.theredstreet.utils;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.util.DisplayMetrics;
 
-import com.hmproductions.theredstreet.ui.MainActivity;
-
-import dalalstreet.api.models.OrderType;
-
 public class MiscellaneousUtils {
-
-    public static String[] companyNamesArray = new String[30];
 
     public static float convertDpToPixel(Context context, float dp){
         Resources resources = context.getResources();
         DisplayMetrics metrics = resources.getDisplayMetrics();
         return dp * ((float)metrics.densityDpi / DisplayMetrics.DENSITY_DEFAULT);
     }
+
+    public static boolean getConnectionInfo(Context context) {
+        ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (connectivityManager != null) {
+            NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+            return (networkInfo != null && networkInfo.isConnected());
+        } else {
+            return false;
+        }
+    }
+
+    public static String sessionId = "dalalStreetSessionId";
+    public static String username = null;
 
     public static final String SERVER_CERT = "-----BEGIN CERTIFICATE-----\n" +
             "MIIDjzCCAnegAwIBAgIJAON0T+GsNoM0MA0GCSqGSIb3DQEBCwUAMF4xCzAJBgNV\n" +
@@ -39,42 +48,4 @@ public class MiscellaneousUtils {
             "xY01aSxRMQud7e8h/FDMPdTvcFpcnWUB2byRdw7gv5kIjfRsZZSwy/8zODZx/biR\n" +
             "n8lG/ZKeivbUai547FHqdI2qJwv2mElxojG2hLV7sImSg26fuaTyy5+ftP3GH8Yj\n" +
             "5+8T\n-----END CERTIFICATE-----";
-
-    public static String sessionId = "dalalStreetSessionId";
-    public static String username = null;
-
-    public static void createCompanyArrayFromGlobalStockDetails() {
-        for (int i=0 ; i< MainActivity.globalStockDetails.size() ; ++i) {
-            if (MainActivity.globalStockDetails.get(i) != null) {
-                companyNamesArray[i] = MainActivity.globalStockDetails.get(i).getFullName();
-            }
-        }
-    }
-
-    public static int getStockIdFromCompanyName(String companyName) {
-
-        for (int i=0 ; i<companyNamesArray.length ; ++i) {
-            if (companyNamesArray[i].equalsIgnoreCase(companyName))
-                return i;
-        }
-
-        return -1;
-    }
-
-    public static String getCompanyNameFromStockId(int id) {
-
-        return companyNamesArray[id];
-    }
-
-    public static OrderType getOrderTypeFromName(String orderType) {
-
-        switch (orderType) {
-            
-            case  "Limit Order"           : return  OrderType.LIMIT;
-            case  "Market Order"          : return  OrderType.MARKET;
-            case  "Stoploss Order"        : return  OrderType.STOPLOSS;
-            case  "Stoploss Active Order" : return  OrderType.STOPLOSSACTIVE;
-            default: return OrderType.UNRECOGNIZED;
-        }
-    }
 }

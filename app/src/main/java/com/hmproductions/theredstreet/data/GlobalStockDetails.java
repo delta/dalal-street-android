@@ -91,6 +91,8 @@ public class GlobalStockDetails implements Parcelable {
     }
 
     private GlobalStockDetails(Parcel in) {
+        this.fullName = in.readString();
+        this.shortName = in.readString();
         this.stockId = in.readInt();
         this.price = in.readInt();
         this.quantityInMarket = in.readInt();
@@ -106,6 +108,8 @@ public class GlobalStockDetails implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(fullName);
+        dest.writeString(shortName);
         dest.writeInt(stockId);
         dest.writeInt(price);
         dest.writeInt(quantityInMarket);

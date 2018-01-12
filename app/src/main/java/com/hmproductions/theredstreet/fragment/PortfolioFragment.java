@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,7 +22,7 @@ import java.util.ArrayList;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-import static com.hmproductions.theredstreet.MiscellaneousUtils.getCompanyNameFromStockId;
+import static com.hmproductions.theredstreet.utils.StockUtils.getCompanyNameFromStockId;
 
 public class PortfolioFragment extends Fragment {
 
@@ -60,8 +61,8 @@ public class PortfolioFragment extends Fragment {
 
         for (GlobalStockDetails currentStockDetail : MainActivity.globalStockDetails) {
             portfolioList.add(new PortfolioDetails(
-                    getCompanyNameFromStockId(currentStockDetail.getStockId()),
-                    currentStockDetail.getQuantityInMarket(), currentStockDetail.getPrice())
+                    currentStockDetail.getFullName(), currentStockDetail.getShortName(),
+                    currentStockDetail.getQuantityInExchange(), currentStockDetail.getPrice())
             );
         }
 

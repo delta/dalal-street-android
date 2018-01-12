@@ -22,7 +22,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 
-import com.hmproductions.theredstreet.Constants;
+import com.hmproductions.theredstreet.utils.Constants;
 import com.hmproductions.theredstreet.R;
 import com.hmproductions.theredstreet.adapter.CompanyRecyclerAdapter;
 import com.hmproductions.theredstreet.adapter.NewsRecyclerAdapter;

@@ -18,7 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.hmproductions.theredstreet.Constants;
+import com.hmproductions.theredstreet.utils.Constants;
 import com.hmproductions.theredstreet.R;
 import com.hmproductions.theredstreet.adapter.NewsRecyclerAdapter;
 import com.hmproductions.theredstreet.dagger.ContextModule;
@@ -32,7 +32,7 @@ import javax.inject.Inject;
 
 import dalalstreet.api.DalalActionServiceGrpc;
 
-import static com.hmproductions.theredstreet.Constants.NEWS_LOADER_ID;
+import static com.hmproductions.theredstreet.utils.Constants.NEWS_LOADER_ID;
 
 /* Gets latest news from GetMarketEvents action*/
 public class NewsFragment extends Fragment implements LoaderManager.LoaderCallbacks<List<NewsDetails>>{

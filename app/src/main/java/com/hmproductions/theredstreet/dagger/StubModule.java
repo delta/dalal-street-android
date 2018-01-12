@@ -1,6 +1,7 @@
 package com.hmproductions.theredstreet.dagger;
 
-import com.hmproductions.theredstreet.MiscellaneousUtils;
+import com.hmproductions.theredstreet.utils.MiscellaneousUtils;
+import com.hmproductions.theredstreet.utils.StockUtils;
 
 import dagger.Module;
 import dagger.Provides;

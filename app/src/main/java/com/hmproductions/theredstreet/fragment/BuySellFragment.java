@@ -13,7 +13,7 @@ import android.widget.ProgressBar;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
-import com.hmproductions.theredstreet.MiscellaneousUtils;
+import com.hmproductions.theredstreet.utils.StockUtils;
 import com.hmproductions.theredstreet.R;
 import com.hmproductions.theredstreet.dagger.ContextModule;
 import com.hmproductions.theredstreet.dagger.DaggerDalalStreetApplicationComponent;
@@ -29,8 +29,8 @@ import dalalstreet.api.DalalActionServiceGrpc;
 import dalalstreet.api.actions.PlaceOrderRequest;
 import dalalstreet.api.actions.PlaceOrderResponse;
 
-import static com.hmproductions.theredstreet.MiscellaneousUtils.getOrderTypeFromName;
-import static com.hmproductions.theredstreet.MiscellaneousUtils.getStockIdFromCompanyName;
+import static com.hmproductions.theredstreet.utils.StockUtils.getOrderTypeFromName;
+import static com.hmproductions.theredstreet.utils.StockUtils.getStockIdFromCompanyName;
 
 /* Uses PlaceOrder() to place buy or ask order */
 public class BuySellFragment extends Fragment {
@@ -71,7 +71,7 @@ public class BuySellFragment extends Fragment {
         DaggerDalalStreetApplicationComponent.builder().contextModule(new ContextModule(getContext())).build().inject(this);
         ButterKnife.bind(this, rootView);
 
-        ArrayAdapter<String> companiesAdapter = new ArrayAdapter<>(getActivity(),android.R.layout.simple_dropdown_item_1line, MiscellaneousUtils.companyNamesArray);
+        ArrayAdapter<String> companiesAdapter = new ArrayAdapter<>(getActivity(),android.R.layout.simple_dropdown_item_1line, StockUtils.companyNamesArray);
         ArrayAdapter<String> orderSelectAdapter = new ArrayAdapter<>(getActivity(),android.R.layout.simple_dropdown_item_1line,getResources().getStringArray(R.array.orderType));
 
         orderSpinner.setAdapter(orderSelectAdapter);

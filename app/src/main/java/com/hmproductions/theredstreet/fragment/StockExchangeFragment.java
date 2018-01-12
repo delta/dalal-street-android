@@ -12,7 +12,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.hmproductions.theredstreet.MiscellaneousUtils;
+import com.hmproductions.theredstreet.utils.StockUtils;
 import com.hmproductions.theredstreet.R;
 import com.hmproductions.theredstreet.dagger.ContextModule;
 import com.hmproductions.theredstreet.dagger.DaggerDalalStreetApplicationComponent;
@@ -31,7 +31,7 @@ import dalalstreet.api.actions.GetCompanyProfileResponse;
 import dalalstreet.api.actions.StockHistoryGranularity;
 import dalalstreet.api.models.Stock;
 
-import static com.hmproductions.theredstreet.MiscellaneousUtils.getStockIdFromCompanyName;
+import static com.hmproductions.theredstreet.utils.StockUtils.getStockIdFromCompanyName;
 
 /* Uses GetCompanyProfile() for getting stock info
 *  Uses BuyStocksFromExchange() to buy appropriate stocks */
@@ -77,7 +77,7 @@ public class StockExchangeFragment extends Fragment {
         DaggerDalalStreetApplicationComponent.builder().contextModule(new ContextModule(getContext())).build().inject(this);
 
         companySpinner = rootView.findViewById(R.id.company_spinner);
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_dropdown_item_1line, MiscellaneousUtils.companyNamesArray);
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_dropdown_item_1line, StockUtils.companyNamesArray);
         companySpinner.setAdapter(arrayAdapter);
 
         companySpinner.setOnItemClickListener((adapterView, view, position, id) -> {

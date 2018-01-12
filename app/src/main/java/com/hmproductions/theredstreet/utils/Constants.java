@@ -1,4 +1,4 @@
-package com.hmproductions.theredstreet;
+package com.hmproductions.theredstreet.utils;
 
 public class Constants {
 

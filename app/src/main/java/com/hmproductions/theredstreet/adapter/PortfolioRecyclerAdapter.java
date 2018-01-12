@@ -34,12 +34,17 @@ public class PortfolioRecyclerAdapter extends RecyclerView.Adapter<PortfolioRecy
 
     @Override
     public void onBindViewHolder(PortfolioRecyclerAdapter.PortfolioViewHolder holder, int position) {
-        holder.portfolioCompanyNameTextView.setText(list.get(position).getCompany());
+
+        if (list.get(position).getCompany().length() >= 10) {
+            holder.portfolioCompanyNameTextView.setText(list.get(position).getShortName());
+        } else {
+            holder.portfolioCompanyNameTextView.setText(list.get(position).getCompany());
+        }
 
         String temporaryString = ": " + String.valueOf(list.get(position).getNoOfStock());
         holder.portfolioStockQuantityTextView.setText(temporaryString);
 
-        temporaryString = "(₹" + String.valueOf(list.get(position).getValue()) + " per stock)";
+        temporaryString = "(₹" + String.valueOf(list.get(position).getValue()) + "/stock)";
         holder.portfolioPriceTextView.setText(temporaryString);
     }
 

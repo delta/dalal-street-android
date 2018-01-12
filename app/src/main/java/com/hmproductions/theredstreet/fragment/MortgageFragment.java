@@ -15,7 +15,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.hmproductions.theredstreet.MiscellaneousUtils;
+import com.hmproductions.theredstreet.utils.StockUtils;
 import com.hmproductions.theredstreet.R;
 import com.hmproductions.theredstreet.dagger.ContextModule;
 import com.hmproductions.theredstreet.dagger.DaggerDalalStreetApplicationComponent;
@@ -81,7 +81,7 @@ public class MortgageFragment extends Fragment {
         cashTextView = container.getRootView().findViewById(R.id.cashWorth_textView);
 
         companySpinner = rootView.findViewById(R.id.mortgage_companies_spinner);
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_dropdown_item_1line, MiscellaneousUtils.companyNamesArray);
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_dropdown_item_1line, StockUtils.companyNamesArray);
         companySpinner.setAdapter(arrayAdapter);
 
         companySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {

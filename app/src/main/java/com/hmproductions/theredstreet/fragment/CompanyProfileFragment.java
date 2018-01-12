@@ -1,6 +1,5 @@
 package com.hmproductions.theredstreet.fragment;
 
-
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -9,7 +8,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.Toast;
 
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.LineChart;
@@ -20,10 +18,10 @@ import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.utils.ColorTemplate;
-import com.hmproductions.theredstreet.MiscellaneousUtils;
 import com.hmproductions.theredstreet.R;
 import com.hmproductions.theredstreet.dagger.ContextModule;
 import com.hmproductions.theredstreet.dagger.DaggerDalalStreetApplicationComponent;
+import com.hmproductions.theredstreet.utils.StockUtils;
 import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner;
 
 import java.util.ArrayList;
@@ -33,16 +31,9 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import dalalstreet.api.DalalStreamServiceGrpc;
-import dalalstreet.api.datastreams.DataStreamType;
-import dalalstreet.api.datastreams.MarketDepthUpdate;
-import dalalstreet.api.datastreams.SubscribeRequest;
-import dalalstreet.api.datastreams.SubscribeResponse;
 import dalalstreet.api.datastreams.SubscriptionId;
-import dalalstreet.api.datastreams.UnsubscribeRequest;
-import dalalstreet.api.datastreams.UnsubscribeResponse;
-import io.grpc.stub.StreamObserver;
 
-import static com.hmproductions.theredstreet.MiscellaneousUtils.convertDpToPixel;
+import static com.hmproductions.theredstreet.utils.MiscellaneousUtils.convertDpToPixel;
 
 public class CompanyProfileFragment extends Fragment {
 
@@ -90,7 +81,7 @@ public class CompanyProfileFragment extends Fragment {
 
         if (getActivity() != null) getActivity().setTitle("Company Profile");
 
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(getActivity(),android.R.layout.simple_dropdown_item_1line, MiscellaneousUtils.companyNamesArray);
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(getActivity(),android.R.layout.simple_dropdown_item_1line, StockUtils.companyNamesArray);
         materialBetterSpinner.setAdapter(arrayAdapter);
         materialBetterSpinner.setSelection(0);
 

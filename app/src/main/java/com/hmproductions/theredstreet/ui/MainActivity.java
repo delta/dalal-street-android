@@ -21,8 +21,9 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.hmproductions.theredstreet.Constants;
-import com.hmproductions.theredstreet.MiscellaneousUtils;
+import com.hmproductions.theredstreet.utils.Constants;
+import com.hmproductions.theredstreet.utils.MiscellaneousUtils;
+import com.hmproductions.theredstreet.utils.StockUtils;
 import com.hmproductions.theredstreet.R;
 import com.hmproductions.theredstreet.dagger.ContextModule;
 import com.hmproductions.theredstreet.dagger.DaggerDalalStreetApplicationComponent;
@@ -130,7 +131,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         ownedStockDetails = getIntent().getParcelableArrayListExtra(STOCKS_OWNED_KEY);
         globalStockDetails = getIntent().getParcelableArrayListExtra(GLOBAL_STOCKS_KEY);
-        MiscellaneousUtils.createCompanyArrayFromGlobalStockDetails();
+        StockUtils.createCompanyArrayFromGlobalStockDetails();
+
         Log.v(":::", "global stock details list size = " + String.valueOf(globalStockDetails.size()));
         updateValues();
 

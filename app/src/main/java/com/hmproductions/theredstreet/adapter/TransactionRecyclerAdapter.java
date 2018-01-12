@@ -14,7 +14,7 @@ import com.hmproductions.theredstreet.data.Transaction;
 
 import java.util.List;
 
-import static com.hmproductions.theredstreet.MiscellaneousUtils.getCompanyNameFromStockId;
+import static com.hmproductions.theredstreet.utils.StockUtils.getCompanyNameFromStockId;
 
 public class TransactionRecyclerAdapter extends RecyclerView.Adapter<TransactionRecyclerAdapter.MyViewHolder> {
 

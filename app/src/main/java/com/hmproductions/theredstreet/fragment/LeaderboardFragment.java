@@ -13,7 +13,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.hmproductions.theredstreet.MiscellaneousUtils;
+import com.hmproductions.theredstreet.utils.MiscellaneousUtils;
+import com.hmproductions.theredstreet.utils.StockUtils;
 import com.hmproductions.theredstreet.R;
 import com.hmproductions.theredstreet.adapter.LeaderboardRecyclerAdapter;
 import com.hmproductions.theredstreet.dagger.ContextModule;

@@ -12,7 +12,8 @@ import android.util.Log;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.hmproductions.theredstreet.MiscellaneousUtils;
+import com.hmproductions.theredstreet.utils.MiscellaneousUtils;
+import com.hmproductions.theredstreet.utils.StockUtils;
 import com.hmproductions.theredstreet.R;
 import com.hmproductions.theredstreet.dagger.ContextModule;
 import com.hmproductions.theredstreet.dagger.DaggerDalalStreetApplicationComponent;
@@ -33,7 +34,7 @@ import dalalstreet.api.actions.LoginResponse;
 import dalalstreet.api.models.Stock;
 import io.grpc.ManagedChannel;
 
-import static com.hmproductions.theredstreet.Constants.LOGIN_LOADER_ID;
+import static com.hmproductions.theredstreet.utils.Constants.LOGIN_LOADER_ID;
 
 public class LoginActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<LoginResponse> {
 
@@ -48,7 +49,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderManager.Lo
     public static final String EMAIL_KEY = "email-key";
     static final String PASSWORD_KEY = "password-key";
 
-    EditText emailEditText,  passwordEditText;
+    EditText emailEditText, passwordEditText;
     private AlertDialog signingInAlertDialog;
 
     @Override
@@ -137,16 +138,16 @@ public class LoginActivity extends AppCompatActivity implements LoaderManager.Lo
             MiscellaneousUtils.sessionId = loginResponse.getSessionId();
 
             if (!passwordEditText.getText().toString().equals("") || !passwordEditText.getText().toString().isEmpty())
-            preferences.edit()
-                    .putString(EMAIL_KEY, loginResponse.getUser().getEmail())
-                    .putString(PASSWORD_KEY, passwordEditText.getText().toString())
-                    .apply();
+                preferences.edit()
+                        .putString(EMAIL_KEY, loginResponse.getUser().getEmail())
+                        .putString(PASSWORD_KEY, passwordEditText.getText().toString())
+                        .apply();
 
             // Adding user's stock details
             ArrayList<StockDetails> stocksOwnedList = new ArrayList<>();
             Map<Integer, Integer> stocksOwnedMap = loginResponse.getStocksOwnedMap();
 
-            for (int i=0 ; i<stocksOwnedMap.size() ; ++i) {
+            for (int i = 0; i < stocksOwnedMap.size(); ++i) {
                 stocksOwnedList.add(new StockDetails(i, stocksOwnedMap.get(i)));
             }
 
@@ -154,22 +155,22 @@ public class LoginActivity extends AppCompatActivity implements LoaderManager.Lo
             ArrayList<GlobalStockDetails> globalStockList = new ArrayList<>();
             Map<Integer, Stock> globalStockMap = loginResponse.getStockListMap();
 
-                for (int q = 0; q < globalStockMap.size(); ++q) {
-                    Stock currentStockDetails = globalStockMap.get(q);
+            for (int q = 1; q <= globalStockMap.size(); ++q) {
 
-                    if (currentStockDetails != null) {
-                        globalStockList.add(new GlobalStockDetails(
-                                currentStockDetails.getFullName(),
-                                currentStockDetails.getShortName(),
-                                q,
-                                currentStockDetails.getCurrentPrice(),
-                                currentStockDetails.getStocksInMarket(),
-                                currentStockDetails.getStocksInExchange(),
-                                currentStockDetails.getPreviousDayClose(),
-                                currentStockDetails.getUpOrDown() ? 1 : 0));
-                    }
+                Stock currentStockDetails = globalStockMap.get(q);
+
+                if (currentStockDetails != null) {
+                    globalStockList.add(new GlobalStockDetails(
+                            currentStockDetails.getFullName(),
+                            currentStockDetails.getShortName(),
+                            q,
+                            currentStockDetails.getCurrentPrice(),
+                            currentStockDetails.getStocksInMarket(),
+                            currentStockDetails.getStocksInExchange(),
+                            currentStockDetails.getPreviousDayClose(),
+                            currentStockDetails.getUpOrDown() ? 1 : 0));
                 }
-
+            }
 
             Intent intent = new Intent(this, MainActivity.class);
             intent.putExtra(USERNAME_KEY, loginResponse.getUser().getName());
