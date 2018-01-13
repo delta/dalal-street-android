@@ -78,11 +78,7 @@ public class LeaderboardFragment extends Fragment implements LoaderManager.Loade
 
         if (getContext() != null){
             View dialogView = LayoutInflater.from(getContext()).inflate(R.layout.progress_dialog, null);
-<<<<<<< HEAD
             ((TextView) dialogView.findViewById(R.id.progressDialog_textView)).setText(R.string.loading_leaderboard);
-=======
-            ((TextView) dialogView.findViewById(R.id.progressDialog_textView)).setText(R.string.loading);
->>>>>>> Add LeaderBoard Loader
             loadingDialog = new AlertDialog.Builder(getContext())
                     .setView(dialogView)
                     .setCancelable(false)
