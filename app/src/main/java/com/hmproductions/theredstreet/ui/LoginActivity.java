@@ -12,14 +12,13 @@ import android.util.Log;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.hmproductions.theredstreet.utils.MiscellaneousUtils;
-import com.hmproductions.theredstreet.utils.StockUtils;
 import com.hmproductions.theredstreet.R;
 import com.hmproductions.theredstreet.dagger.ContextModule;
 import com.hmproductions.theredstreet.dagger.DaggerDalalStreetApplicationComponent;
 import com.hmproductions.theredstreet.data.GlobalStockDetails;
 import com.hmproductions.theredstreet.data.StockDetails;
 import com.hmproductions.theredstreet.loaders.LoginLoader;
+import com.hmproductions.theredstreet.utils.MiscellaneousUtils;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -76,6 +75,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderManager.Lo
             Bundle bundle = new Bundle();
             bundle.putString(EMAIL_KEY, email);
             bundle.putString(PASSWORD_KEY, password);
+
+            emailEditText.setText(email);
+            passwordEditText.setText(password);
 
             signingInAlertDialog.show();
             getSupportLoaderManager().restartLoader(LOGIN_LOADER_ID, bundle, this);
@@ -144,11 +146,13 @@ public class LoginActivity extends AppCompatActivity implements LoaderManager.Lo
                         .apply();
 
             // Adding user's stock details
-            ArrayList<StockDetails> stocksOwnedList = new ArrayList<>();
+            ArrayList<StockDetails> stocksOwnedList = new ArrayList<>(30);
             Map<Integer, Integer> stocksOwnedMap = loginResponse.getStocksOwnedMap();
 
-            for (int i = 0; i < stocksOwnedMap.size(); ++i) {
-                stocksOwnedList.add(new StockDetails(i, stocksOwnedMap.get(i)));
+            for (int i = 1; i <= 30; ++i) {
+                if (stocksOwnedMap.containsKey(i)) {
+                    stocksOwnedList.add(new StockDetails(i, stocksOwnedMap.get(i)));
+                }
             }
 
             // Adding global stock details

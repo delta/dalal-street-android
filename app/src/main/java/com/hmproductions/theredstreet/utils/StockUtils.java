@@ -1,6 +1,7 @@
 package com.hmproductions.theredstreet.utils;
 
 import com.hmproductions.theredstreet.data.GlobalStockDetails;
+import com.hmproductions.theredstreet.data.StockDetails;
 import com.hmproductions.theredstreet.ui.MainActivity;
 
 import java.util.ArrayList;
@@ -10,7 +11,6 @@ import dalalstreet.api.models.OrderType;
 
 public class StockUtils {
 
-    public static ArrayList<String> companyNamesArray = new ArrayList<>();
     private static List<StockIdCompanyName> stockIdCompanyNameList;
 
     public static void createCompanyArrayFromGlobalStockDetails() {
@@ -19,7 +19,7 @@ public class StockUtils {
         for (int i=0 ; i< MainActivity.globalStockDetails.size() ; ++i) {
             if (MainActivity.globalStockDetails.get(i) != null) {
                 GlobalStockDetails currentStockDetails = MainActivity.globalStockDetails.get(i);
-                companyNamesArray.add(currentStockDetails.getFullName()) ;
+
 
                 stockIdCompanyNameList.add(new StockIdCompanyName(currentStockDetails.getStockId(), currentStockDetails.getFullName()));
             }
@@ -42,6 +42,14 @@ public class StockUtils {
                 return stockIdCompanyName.getCompanyName();
         }
         return "";
+    }
+
+    public static String[] getCompanyNamesArray() {
+        String[] companyNames = new String[stockIdCompanyNameList.size()];
+        for (int i=0 ; i<stockIdCompanyNameList.size() ; ++i) {
+            companyNames[i] = stockIdCompanyNameList.get(i).getCompanyName();
+        }
+        return companyNames;
     }
 
     public static OrderType getOrderTypeFromName(String orderType) {
@@ -73,5 +81,15 @@ public class StockUtils {
         String getCompanyName() {
             return companyName;
         }
+    }
+
+    public static int getQuantityFromCompanyName(List<StockDetails> list, String companyName) {
+        int stockId = getStockIdFromCompanyName(companyName);
+
+        for (StockDetails stockDetails : list) {
+            if (stockDetails.getStockId() == stockId)
+                return stockDetails.getQuantity();
+        }
+        return 0;
     }
 }

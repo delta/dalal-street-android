@@ -26,8 +26,8 @@ public class LoginBasicTest {
     @Test
     public void clickFAB_opensQuizActivity() {
 
-        onView(withId(R.id.email_editText)).perform(typeText("harshmahajan20@yahoo.in"));
-        onView(withId(R.id.password_editText)).perform(typeText("deltaforce"));
+        onView(withId(R.id.email_editText)).perform(typeText("deltaforce@nitt.edu"));
+        onView(withId(R.id.password_editText)).perform(typeText("d3ltar0x"));
 
         // Checking if button is displayed and performing click
         onView(withId(R.id.play_button)).perform(click());
