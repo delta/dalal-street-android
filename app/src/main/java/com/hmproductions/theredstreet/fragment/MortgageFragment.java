@@ -4,7 +4,6 @@ package com.hmproductions.theredstreet.fragment;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -126,8 +125,6 @@ public class MortgageFragment extends Fragment {
                                 .setStockQuantity(Integer.parseInt(stocksEditText.getText().toString()))
                                 .build()
                 );
-
-                Log.v(":::", String.valueOf(mortgageStocksResponse.getStatusCodeValue()));
 
                 if (mortgageStocksResponse.getStatusCode().getNumber() == 0) {
                     Toast.makeText(getContext(), "Transaction successful", Toast.LENGTH_SHORT).show();

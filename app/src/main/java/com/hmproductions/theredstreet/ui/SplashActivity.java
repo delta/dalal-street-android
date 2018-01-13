@@ -5,9 +5,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -17,7 +15,6 @@ import com.hmproductions.theredstreet.dagger.DaggerDalalStreetApplicationCompone
 import com.hmproductions.theredstreet.data.GlobalStockDetails;
 import com.hmproductions.theredstreet.data.StockDetails;
 import com.hmproductions.theredstreet.loaders.LoginLoader;
-import com.hmproductions.theredstreet.ui.LoginActivity;
 import com.hmproductions.theredstreet.utils.MiscellaneousUtils;
 
 import java.util.ArrayList;
@@ -109,12 +106,7 @@ public class SplashActivity extends AppCompatActivity implements LoaderManager.L
 
 
     private void setText(final CharSequence text) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-             splashText.setText(text);
-            }
-        });
+        runOnUiThread(() -> splashText.setText(text));
     }
 
 
@@ -150,8 +142,10 @@ public class SplashActivity extends AppCompatActivity implements LoaderManager.L
             ArrayList<StockDetails> stocksOwnedList = new ArrayList<>();
             Map<Integer, Integer> stocksOwnedMap = loginResponse.getStocksOwnedMap();
 
-            for (int i = 0; i < stocksOwnedMap.size(); ++i) {
-                stocksOwnedList.add(new StockDetails(i, stocksOwnedMap.get(i)));
+            for (int i = 1; i <= 30; ++i) {
+                if (stocksOwnedMap.containsKey(i)) {
+                    stocksOwnedList.add(new StockDetails(i, stocksOwnedMap.get(i)));
+                }
             }
 
             // Adding global stock details
@@ -186,7 +180,7 @@ public class SplashActivity extends AppCompatActivity implements LoaderManager.L
             startActivity(intent);
             finish();
         } else {
-            Toast.makeText(this, "Error Fetching Data", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Invalid Credentials", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -194,8 +188,4 @@ public class SplashActivity extends AppCompatActivity implements LoaderManager.L
     public void onLoaderReset(Loader<LoginResponse> loader) {
 
     }
-
-
-
-
 }

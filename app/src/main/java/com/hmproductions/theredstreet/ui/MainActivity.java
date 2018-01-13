@@ -94,7 +94,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     public static List<StockDetails> ownedStockDetails;
     public static List<GlobalStockDetails> globalStockDetails;
-    private SubscriptionId stockPricesSubscriptionId, stockExchangeSubscriptionId, marketEventsSubscriptionId;
 
     @BindView(R.id.stockWorth_textView)
     TextView stockTextView;
@@ -125,7 +124,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         BindDrawerViews();
         SetupNavigationDrawer();
 
-        //OpenAndCloseDrawer();
+        OpenAndCloseDrawer();
 
         getSupportFragmentManager().beginTransaction().add(R.id.home_activity_fragment_container, new HomeFragment()).commit();
 
@@ -136,9 +135,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         updateValues();
 
         getTransactionSubscriptionId();
-        subscribeToStockPricesStream();
-        subscribeToStockExchangeStream();
-        subscribeToMarketEventsUpdateStream();
+        getStockPricesSubscriptionId();
+        getStockExchangeSubscriptionId();
+        getMarketEventsSubscriptionId();
 
         StartMakingButtonsTransparent();
     }
@@ -166,10 +165,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     // Opening and closing drawer for UX
-   /* private void OpenAndCloseDrawer() {
+    private void OpenAndCloseDrawer() {
         drawerLayout.openDrawer(GravityCompat.START, true);
         new Handler().postDelayed(() -> drawerLayout.closeDrawer(GravityCompat.START, true), DRAWER_DURATION);
-    }*/
+    }
 
     @OnClick(R.id.drawer_edge_button)
     void onDrawerButtonClick() {
@@ -288,14 +287,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         totalTextView.setText(String.valueOf(totalWorth));
     }
 
+    // Subscribes to transaction stream and gets updates
     private void getTransactionSubscriptionId() {
         streamServiceStub.subscribe(
                 SubscribeRequest.newBuilder().setDataStreamType(DataStreamType.TRANSACTIONS).setDataStreamId("").build(),
                 new StreamObserver<SubscribeResponse>() {
                     @Override
                     public void onNext(SubscribeResponse value) {
-                        if (value.getStatusCode().getNumber() == 0)
+                        if (value.getStatusCode().getNumber() == 0) {
                             subscribeToTransactionsStream(value.getSubscriptionId());
+                            Log.v(":::", "transaction subscription id =" + value.getSubscriptionId().getId());
+                        }
                         else
                             Toast.makeText(MainActivity.this , "Server internal error", Toast.LENGTH_SHORT).show();
                         onCompleted();
@@ -358,15 +360,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 });
     }
 
-    private void subscribeToMarketEventsUpdateStream() {
-
+    // Subscribes to market events stream and gets updates
+    private void getMarketEventsSubscriptionId() {
         streamServiceStub.subscribe(
                 SubscribeRequest.newBuilder().setDataStreamType(DataStreamType.MARKET_EVENTS).setDataStreamId("").build(),
                 new StreamObserver<SubscribeResponse>() {
                     @Override
                     public void onNext(SubscribeResponse value) {
-                        if (value.getStatusCode().getNumber() == 0)
-                            marketEventsSubscriptionId = value.getSubscriptionId();
+                        if (value.getStatusCode().getNumber() == 0) {
+                            subscribeToMarketEventsUpdateStream(value.getSubscriptionId());
+                        }
                         else
                             Toast.makeText(MainActivity.this , "Server internal error", Toast.LENGTH_SHORT).show();
                         onCompleted();
@@ -383,6 +386,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     }
                 }
         );
+    }
+
+    private void subscribeToMarketEventsUpdateStream(SubscriptionId marketEventsSubscriptionId) {
 
         streamServiceStub.getMarketEventUpdates(marketEventsSubscriptionId,
                 new StreamObserver<MarketEventUpdate>() {
@@ -404,14 +410,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 });
     }
 
-    private void subscribeToStockPricesStream() {
+    // Subscribes to stock prices stream and gets updates
+    private void getStockPricesSubscriptionId() {
         streamServiceStub.subscribe(
                 SubscribeRequest.newBuilder().setDataStreamType(DataStreamType.STOCK_PRICES).setDataStreamId("").build(),
                 new StreamObserver<SubscribeResponse>() {
                     @Override
                     public void onNext(SubscribeResponse value) {
-                        if (value.getStatusCode().getNumber() == 0)
-                            stockPricesSubscriptionId = value.getSubscriptionId();
+                        if (value.getStatusCode().getNumber() == 0) {
+                            subscribeToStockPricesStream(value.getSubscriptionId());
+                        }
                         else
                             Toast.makeText(MainActivity.this , "Server internal error", Toast.LENGTH_SHORT).show();
                         onCompleted();
@@ -428,13 +436,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     }
                 }
         );
+    }
 
+    private void subscribeToStockPricesStream(SubscriptionId stockPricesSubscriptionId) {
         streamServiceStub.getStockPricesUpdates(stockPricesSubscriptionId,
                 new StreamObserver<StockPricesUpdate>() {
                     @Override
                     public void onNext(StockPricesUpdate value) {
-                        for (int i=0 ; i<value.getPricesCount() ; ++i) {
-                            MainActivity.globalStockDetails.get(i).setPrice(value.getPricesMap().get(i));
+                        for (int i=1 ; i<=30 ; ++i) {
+                            if (value.getPricesMap().containsKey(i)) {
+                                globalStockDetails.get(i-1).setPrice(value.getPricesMap().get(i));
+                            }
                         }
                     }
 
@@ -450,14 +462,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 });
     }
 
-    private void subscribeToStockExchangeStream() {
+    // Subscribes to stock exchange stream and gets updates globalStockDetails
+    private void getStockExchangeSubscriptionId() {
         streamServiceStub.subscribe(
                 SubscribeRequest.newBuilder().setDataStreamType(DataStreamType.STOCK_EXCHANGE).setDataStreamId("").build(),
                 new StreamObserver<SubscribeResponse>() {
                     @Override
                     public void onNext(SubscribeResponse value) {
                         if (value.getStatusCode().getNumber() == 0)
-                            stockExchangeSubscriptionId = value.getSubscriptionId();
+                            subscribeToStockExchangeStream(value.getSubscriptionId());
                         else
                             Toast.makeText(MainActivity.this , "Server internal error", Toast.LENGTH_SHORT).show();
                         onCompleted();
@@ -474,6 +487,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     }
                 }
         );
+    }
+
+    private void subscribeToStockExchangeStream(SubscriptionId stockExchangeSubscriptionId) {
 
         streamServiceStub.getStockExchangeUpdates(stockExchangeSubscriptionId,
                 new StreamObserver<StockExchangeUpdate>() {
