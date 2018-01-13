@@ -125,7 +125,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         BindDrawerViews();
         SetupNavigationDrawer();
 
-        //OpenAndCloseDrawer();
+        OpenAndCloseDrawer();
 
         getSupportFragmentManager().beginTransaction().add(R.id.home_activity_fragment_container, new HomeFragment()).commit();
 
@@ -166,10 +166,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     // Opening and closing drawer for UX
-   /* private void OpenAndCloseDrawer() {
+    private void OpenAndCloseDrawer() {
         drawerLayout.openDrawer(GravityCompat.START, true);
         new Handler().postDelayed(() -> drawerLayout.closeDrawer(GravityCompat.START, true), DRAWER_DURATION);
-    }*/
+    }
 
     @OnClick(R.id.drawer_edge_button)
     void onDrawerButtonClick() {
