@@ -10,7 +10,7 @@ import dalalstreet.api.models.OrderType;
 
 public class StockUtils {
 
-    public static String[] companyNamesArray = new String[30];
+    public static ArrayList<String> companyNamesArray = new ArrayList<>();
     private static List<StockIdCompanyName> stockIdCompanyNameList;
 
     public static void createCompanyArrayFromGlobalStockDetails() {
@@ -19,7 +19,7 @@ public class StockUtils {
         for (int i=0 ; i< MainActivity.globalStockDetails.size() ; ++i) {
             if (MainActivity.globalStockDetails.get(i) != null) {
                 GlobalStockDetails currentStockDetails = MainActivity.globalStockDetails.get(i);
-                companyNamesArray[i] = currentStockDetails.getFullName();
+                companyNamesArray.add(currentStockDetails.getFullName()) ;
 
                 stockIdCompanyNameList.add(new StockIdCompanyName(currentStockDetails.getStockId(), currentStockDetails.getFullName()));
             }
