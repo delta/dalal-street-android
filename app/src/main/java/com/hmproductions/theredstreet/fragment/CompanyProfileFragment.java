@@ -81,7 +81,7 @@ public class CompanyProfileFragment extends Fragment {
 
         if (getActivity() != null) getActivity().setTitle("Company Profile");
 
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(getActivity(),android.R.layout.simple_dropdown_item_1line, StockUtils.companyNamesArray);
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(getActivity(),android.R.layout.simple_dropdown_item_1line, StockUtils.getCompanyNamesArray());
         materialBetterSpinner.setAdapter(arrayAdapter);
         materialBetterSpinner.setSelection(0);
 

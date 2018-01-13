@@ -13,11 +13,11 @@ import android.widget.ProgressBar;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
-import com.hmproductions.theredstreet.utils.StockUtils;
 import com.hmproductions.theredstreet.R;
 import com.hmproductions.theredstreet.dagger.ContextModule;
 import com.hmproductions.theredstreet.dagger.DaggerDalalStreetApplicationComponent;
 import com.hmproductions.theredstreet.ui.MainActivity;
+import com.hmproductions.theredstreet.utils.StockUtils;
 import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner;
 
 import javax.inject.Inject;
@@ -30,6 +30,7 @@ import dalalstreet.api.actions.PlaceOrderRequest;
 import dalalstreet.api.actions.PlaceOrderResponse;
 
 import static com.hmproductions.theredstreet.utils.StockUtils.getOrderTypeFromName;
+import static com.hmproductions.theredstreet.utils.StockUtils.getQuantityFromCompanyName;
 import static com.hmproductions.theredstreet.utils.StockUtils.getStockIdFromCompanyName;
 
 /* Uses PlaceOrder() to place buy or ask order */
@@ -71,7 +72,7 @@ public class BuySellFragment extends Fragment {
         DaggerDalalStreetApplicationComponent.builder().contextModule(new ContextModule(getContext())).build().inject(this);
         ButterKnife.bind(this, rootView);
 
-        ArrayAdapter<String> companiesAdapter = new ArrayAdapter<>(getActivity(),android.R.layout.simple_dropdown_item_1line, StockUtils.companyNamesArray);
+        ArrayAdapter<String> companiesAdapter = new ArrayAdapter<>(getActivity(),android.R.layout.simple_dropdown_item_1line, StockUtils.getCompanyNamesArray());
         ArrayAdapter<String> orderSelectAdapter = new ArrayAdapter<>(getActivity(),android.R.layout.simple_dropdown_item_1line,getResources().getStringArray(R.array.orderType));
 
         orderSpinner.setAdapter(orderSelectAdapter);
@@ -98,7 +99,7 @@ public class BuySellFragment extends Fragment {
         } else if (orderPriceEditText.isEnabled() && orderPriceEditText.getText().toString().trim().isEmpty()) {
             Toast.makeText(getActivity(), "Enter the order price", Toast.LENGTH_SHORT).show();
         } else if (stockRadioGroup.getCheckedRadioButtonId() == R.id.ask_radioButton) {
-            int validQuantity = MainActivity.ownedStockDetails.get(getStockIdFromCompanyName(companySpinner.getText().toString())).getQuantity();
+            int validQuantity = getQuantityFromCompanyName(MainActivity.ownedStockDetails, companySpinner.getText().toString());
             int askingQuantity = Integer.parseInt(noOfStocksEditText.getText().toString());
 
             if (askingQuantity > validQuantity) {

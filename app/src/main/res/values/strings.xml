@@ -114,7 +114,7 @@
     <string name="ask_market_depth">Ask Market Depth</string>
     <string name="market_depth">Market Depth</string>
     <string name="company_history">Company History</string>
-    <string name="buy_stocks">Buy Stocks</string>
+    <string name="buy_stocks">Buy Stocks from Exchange</string>
     <string name="number_of_stocks">Number of Stocks</string>
     <string name="wealth">WEALTH</string>
     <string name="name">NAME</string>

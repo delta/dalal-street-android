@@ -3,6 +3,8 @@ package com.hmproductions.theredstreet.data;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import javax.annotation.Nullable;
+
 public class StockDetails implements Parcelable{
 
     private int stockId, quantity;

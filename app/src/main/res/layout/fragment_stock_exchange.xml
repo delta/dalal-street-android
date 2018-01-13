@@ -20,7 +20,8 @@
         android:layout_alignParentStart="true"
         android:layout_below="@+id/company_spinner"
         android:layout_marginTop="15dp"
-        android:text="No company Selected"
+        android:textStyle="italic"
+        android:text="No Company Selected"
         android:textColor="@android:color/background_dark"
         android:textSize="20sp" />
 
@@ -63,6 +64,15 @@
         android:layout_marginTop="15dp"
         android:textColor="@android:color/background_dark"
         android:textSize="20sp" />
+
+    <ProgressBar
+        android:id="@+id/stockExchange_progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_marginEnd="2dp"
+        android:indeterminate="true"
+        android:visibility="gone" />
 
     <android.support.design.widget.TextInputLayout
         android:id="@+id/stocks_exchange_input"

@@ -21,9 +21,6 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.hmproductions.theredstreet.utils.Constants;
-import com.hmproductions.theredstreet.utils.MiscellaneousUtils;
-import com.hmproductions.theredstreet.utils.StockUtils;
 import com.hmproductions.theredstreet.R;
 import com.hmproductions.theredstreet.dagger.ContextModule;
 import com.hmproductions.theredstreet.dagger.DaggerDalalStreetApplicationComponent;
@@ -39,6 +36,9 @@ import com.hmproductions.theredstreet.fragment.OrdersFragment;
 import com.hmproductions.theredstreet.fragment.PortfolioFragment;
 import com.hmproductions.theredstreet.fragment.StockExchangeFragment;
 import com.hmproductions.theredstreet.fragment.TransactionsFragment;
+import com.hmproductions.theredstreet.utils.Constants;
+import com.hmproductions.theredstreet.utils.MiscellaneousUtils;
+import com.hmproductions.theredstreet.utils.StockUtils;
 
 import java.util.List;
 
@@ -94,7 +94,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     public static List<StockDetails> ownedStockDetails;
     public static List<GlobalStockDetails> globalStockDetails;
-    private SubscriptionId transactionsSubscriptionId, stockPricesSubscriptionId, stockExchangeSubscriptionId, marketEventsSubscriptionId;
+    private SubscriptionId stockPricesSubscriptionId, stockExchangeSubscriptionId, marketEventsSubscriptionId;
 
     @BindView(R.id.stockWorth_textView)
     TextView stockTextView;
@@ -133,10 +133,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         globalStockDetails = getIntent().getParcelableArrayListExtra(GLOBAL_STOCKS_KEY);
         StockUtils.createCompanyArrayFromGlobalStockDetails();
 
-        Log.v(":::", "global stock details list size = " + String.valueOf(globalStockDetails.size()));
         updateValues();
 
-        subscribeToTransactionsStream();
+        getTransactionSubscriptionId();
         subscribeToStockPricesStream();
         subscribeToStockExchangeStream();
         subscribeToMarketEventsUpdateStream();
@@ -289,15 +288,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         totalTextView.setText(String.valueOf(totalWorth));
     }
 
-    private void subscribeToTransactionsStream() {
-
+    private void getTransactionSubscriptionId() {
         streamServiceStub.subscribe(
                 SubscribeRequest.newBuilder().setDataStreamType(DataStreamType.TRANSACTIONS).setDataStreamId("").build(),
                 new StreamObserver<SubscribeResponse>() {
                     @Override
                     public void onNext(SubscribeResponse value) {
                         if (value.getStatusCode().getNumber() == 0)
-                            transactionsSubscriptionId = value.getSubscriptionId();
+                            subscribeToTransactionsStream(value.getSubscriptionId());
                         else
                             Toast.makeText(MainActivity.this , "Server internal error", Toast.LENGTH_SHORT).show();
                         onCompleted();
@@ -314,18 +312,36 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     }
                 }
         );
+    }
+
+    private void subscribeToTransactionsStream(SubscriptionId transactionsSubscriptionId) {
 
         streamServiceStub.getTransactionUpdates(transactionsSubscriptionId,
                 new StreamObserver<TransactionUpdate>() {
                     @Override
                     public void onNext(TransactionUpdate value) {
-                        // TODO : Fill this method
-                        if (value.getTransaction().getType() == TransactionType.DIVIDEND_TRANSACTION) {
-                            int previousValue = Integer.parseInt(cashTextView.getText().toString());
-                            cashTextView.setText(String.valueOf(previousValue + value.getTransaction().getTotal()));
-                        } else if (value.getTransaction().getType() == TransactionType.ORDER_FILL_TRANSACTION) {
 
-                        } else if (value.getTransaction().getType() == TransactionType.FROM_EXCHANGE_TRANSACTION) {
+                        dalalstreet.api.models.Transaction transaction = value.getTransaction();
+                        // TODO : Fill this method
+                        if (transaction.getType() == TransactionType.DIVIDEND_TRANSACTION) {
+                            int previousValue = Integer.parseInt(cashTextView.getText().toString());
+                            cashTextView.setText(String.valueOf(previousValue + transaction.getTotal()));
+
+                        } else if (transaction.getType() == TransactionType.ORDER_FILL_TRANSACTION) {
+
+                        } else if (transaction.getType() == TransactionType.FROM_EXCHANGE_TRANSACTION) {
+                            int previousCash = Integer.parseInt(cashTextView.getText().toString());
+                            int previousStock = Integer.parseInt(stockTextView.getText().toString());
+
+                            int newStockValue = previousStock + transaction.getTotal();
+                            int newCashValue = previousCash - transaction.getTotal();
+
+                            stockTextView.setText(String.valueOf(newStockValue));
+                            cashTextView.setText(String.valueOf(newCashValue));
+
+                            updateOwnedStockIdAndQuantity(transaction.getStockId(), transaction.getStockQuantity());
+
+                        } else if (transaction.getType() == TransactionType.MORTGAGE_TRANSACTION) {
 
                         }
                     }
@@ -482,6 +498,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                     }
                 });
+    }
+
+    private void updateOwnedStockIdAndQuantity(int stockId, int stockQuantity) {
+        for (StockDetails currentOwnedStockDetails : ownedStockDetails) {
+            if (currentOwnedStockDetails.getStockId() == stockId) {
+                currentOwnedStockDetails.setQuantity(stockQuantity);
+                return;
+            }
+        }
     }
 
     // Starts making drawer button translucent

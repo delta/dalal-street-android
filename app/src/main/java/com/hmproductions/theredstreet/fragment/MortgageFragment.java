@@ -4,6 +4,7 @@ package com.hmproductions.theredstreet.fragment;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,11 +16,11 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.hmproductions.theredstreet.utils.StockUtils;
 import com.hmproductions.theredstreet.R;
 import com.hmproductions.theredstreet.dagger.ContextModule;
 import com.hmproductions.theredstreet.dagger.DaggerDalalStreetApplicationComponent;
 import com.hmproductions.theredstreet.ui.MainActivity;
+import com.hmproductions.theredstreet.utils.StockUtils;
 
 import javax.inject.Inject;
 
@@ -33,7 +34,8 @@ import dalalstreet.api.actions.MortgageStocksRequest;
 import dalalstreet.api.actions.MortgageStocksResponse;
 import dalalstreet.api.actions.RetrieveMortgageStocksRequest;
 import dalalstreet.api.actions.RetrieveMortgageStocksResponse;
-import dalalstreet.api.models.Transaction;
+
+import static com.hmproductions.theredstreet.utils.StockUtils.getQuantityFromCompanyName;
 
 /* Uses GetMortgageDetails() for setting stocksMortgaged (int data member)
 *  Uses MortgageStocks() to mortgage stocks
@@ -61,7 +63,6 @@ public class MortgageFragment extends Fragment {
 
     int stocksOwned = 0, stocksMortgaged = 0, stocksTransaction;
     Spinner companySpinner;
-    TextView cashTextView, stockTextView;
 
     public MortgageFragment() {
         // Required empty public constructor
@@ -76,18 +77,14 @@ public class MortgageFragment extends Fragment {
         ButterKnife.bind(this, rootView);
         if (getActivity() != null) getActivity().setTitle("Mortgage Stocks");
 
-        // TODO : (IMP) Remove unnecessary change of textView
-        stockTextView = container.getRootView().findViewById(R.id.stockWorth_textView);
-        cashTextView = container.getRootView().findViewById(R.id.cashWorth_textView);
-
         companySpinner = rootView.findViewById(R.id.mortgage_companies_spinner);
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_dropdown_item_1line, StockUtils.companyNamesArray);
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_dropdown_item_1line, StockUtils.getCompanyNamesArray());
         companySpinner.setAdapter(arrayAdapter);
 
         companySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                updateValues(position);
+                updateValues(position+1, companySpinner.getSelectedItem().toString());
             }
 
             @Override
@@ -122,34 +119,29 @@ public class MortgageFragment extends Fragment {
         if (mortgageRadioGroup.getCheckedRadioButtonId() == R.id.mortgage_radioButton) {
 
             if (stocksTransaction <= stocksOwned) {
-                stocksOwned -= stocksTransaction;
-                stocksMortgaged += stocksTransaction;
-
-                String ownedString = NO_OF_STOCKS_OWNED_STRING + String.valueOf(stocksOwned);
-                ownedTextView.setText(ownedString);
-
-                String mortgageString = NO_OF_STOCKS_MORTGAGE_STRING + String.valueOf(stocksMortgaged);
-                mortgagedTextView.setText(mortgageString);
-
-                stocksEditText.setText("");
-
                 MortgageStocksResponse mortgageStocksResponse = actionServiceBlockingStub.mortgageStocks(
                         MortgageStocksRequest
                                 .newBuilder()
-                                .setStockId(companySpinner.getSelectedItemPosition())
+                                .setStockId(companySpinner.getSelectedItemPosition()+1)
                                 .setStockQuantity(Integer.parseInt(stocksEditText.getText().toString()))
                                 .build()
                 );
 
+                Log.v(":::", String.valueOf(mortgageStocksResponse.getStatusCodeValue()));
+
                 if (mortgageStocksResponse.getStatusCode().getNumber() == 0) {
+                    Toast.makeText(getContext(), "Transaction successful", Toast.LENGTH_SHORT).show();
 
-                    Transaction currentTransaction = mortgageStocksResponse.getTransaction();
-                    int mortgageValue = currentTransaction.getStockQuantity() * currentTransaction.getPrice();
+                    stocksOwned -= stocksTransaction;
+                    stocksMortgaged += stocksTransaction;
 
-                    cashTextView.setText(String.valueOf(Integer.parseInt(cashTextView.getText().toString()) + mortgageValue));
-                    stockTextView.setText(String.valueOf(Integer.parseInt(stockTextView.getText().toString()) - mortgageValue));
+                    String ownedString = NO_OF_STOCKS_OWNED_STRING + String.valueOf(stocksOwned);
+                    ownedTextView.setText(ownedString);
 
-                    MainActivity.ownedStockDetails.get(companySpinner.getSelectedItemPosition()).setQuantity(stocksOwned);
+                    String mortgageString = NO_OF_STOCKS_MORTGAGE_STRING + String.valueOf(stocksMortgaged);
+                    mortgagedTextView.setText(mortgageString);
+
+                    stocksEditText.setText("");
 
                 } else if (mortgageStocksResponse.getStatusCode().getNumber() == 2) {
                     Toast.makeText(getContext(), "Market is Closed", Toast.LENGTH_SHORT).show();
@@ -164,35 +156,27 @@ public class MortgageFragment extends Fragment {
         } else if (mortgageRadioGroup.getCheckedRadioButtonId() == R.id.retrieve_radioButton) {
 
             if (stocksTransaction <= stocksMortgaged && stocksMortgaged >= 0) {
-                stocksOwned += stocksTransaction;
-                stocksMortgaged -= stocksTransaction;
-
-                String ownedString = NO_OF_STOCKS_OWNED_STRING + String.valueOf(stocksOwned);
-                ownedTextView.setText(ownedString);
-
-                String mortgageString = NO_OF_STOCKS_MORTGAGE_STRING + String.valueOf(stocksMortgaged);
-                mortgagedTextView.setText(mortgageString);
-
-                stocksEditText.setText("");
-
                 RetrieveMortgageStocksResponse retrieveStocksResponse = actionServiceBlockingStub.retrieveMortgageStocks(
                         RetrieveMortgageStocksRequest
                                 .newBuilder()
-                                // TODO : Check getSelectedItemPositionValue() if it is 0 or 1 for first position
-                                .setStockId(companySpinner.getSelectedItemPosition())
+                                .setStockId(companySpinner.getSelectedItemPosition()+1)
                                 .setStockQuantity(Integer.parseInt(stocksEditText.getText().toString()))
                                 .build()
                 );
 
                 if (retrieveStocksResponse.getStatusCode().getNumber() == 0) {
+                    Toast.makeText(getContext(), "Transaction successful", Toast.LENGTH_SHORT).show();
 
-                    Transaction currentTransaction = retrieveStocksResponse.getTransaction();
-                    int mortgageValue = currentTransaction.getStockQuantity() * currentTransaction.getPrice();
+                    stocksOwned += stocksTransaction;
+                    stocksMortgaged -= stocksTransaction;
 
-                    cashTextView.setText(String.valueOf(Integer.parseInt(cashTextView.getText().toString()) - mortgageValue));
-                    stockTextView.setText(String.valueOf(Integer.parseInt(stockTextView.getText().toString()) + mortgageValue));
+                    String ownedString = NO_OF_STOCKS_OWNED_STRING + String.valueOf(stocksOwned);
+                    ownedTextView.setText(ownedString);
 
-                    MainActivity.ownedStockDetails.get(companySpinner.getSelectedItemPosition()).setQuantity(stocksOwned);
+                    String mortgageString = NO_OF_STOCKS_MORTGAGE_STRING + String.valueOf(stocksMortgaged);
+                    mortgagedTextView.setText(mortgageString);
+
+                    stocksEditText.setText("");
 
                 } else if (retrieveStocksResponse.getStatusCode().getNumber() == 2) {
                     Toast.makeText(getContext(), "Market is Closed", Toast.LENGTH_SHORT).show();
@@ -208,15 +192,19 @@ public class MortgageFragment extends Fragment {
         }
     }
 
-    public void updateValues(int position) {
+    public void updateValues(int stockId, String companyName) {
 
         GetMortgageDetailsResponse response = actionServiceBlockingStub.getMortgageDetails(GetMortgageDetailsRequest.newBuilder().build());
 
-        stocksMortgaged = response.getMortgageMapMap().get(position);
+        if (response.getMortgageMapMap().get(stockId) != null)
+            stocksMortgaged = response.getMortgageMapMap().get(stockId);
+        else
+            stocksMortgaged = 0;
         String mortgageString = NO_OF_STOCKS_MORTGAGE_STRING + String.valueOf(stocksMortgaged);
         mortgagedTextView.setText(mortgageString);
 
-        stocksOwned = MainActivity.ownedStockDetails.get(position).getQuantity();
+        stocksOwned = getQuantityFromCompanyName(MainActivity.ownedStockDetails, companyName);
+
         String ownedString = NO_OF_STOCKS_OWNED_STRING + String.valueOf(stocksOwned);
         ownedTextView.setText(ownedString);
     }
