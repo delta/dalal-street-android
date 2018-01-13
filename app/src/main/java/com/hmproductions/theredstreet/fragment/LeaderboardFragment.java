@@ -78,7 +78,7 @@ public class LeaderboardFragment extends Fragment implements LoaderManager.Loade
 
         if (getContext() != null){
             View dialogView = LayoutInflater.from(getContext()).inflate(R.layout.progress_dialog, null);
-            ((TextView) dialogView.findViewById(R.id.progressDialog_textView)).setText(R.string.loading);
+            ((TextView) dialogView.findViewById(R.id.progressDialog_textView)).setText(R.string.loading_leaderboard);
             loadingDialog = new AlertDialog.Builder(getContext())
                     .setView(dialogView)
                     .setCancelable(false)
@@ -113,24 +113,6 @@ public class LeaderboardFragment extends Fragment implements LoaderManager.Loade
         loadingDialog.show();
 
         getActivity().getSupportLoaderManager().restartLoader(LEADER_BOARD_LOADER_ID, null, this);
-
-       /* GetLeaderboardResponse leaderboardResponse = actionServiceBlockingStub.getLeaderboard(
-                GetLeaderboardRequest.newBuilder().setCount(LEADERBOARD_SIZE).setStartingId(1).build()
-        );
-
-        if (leaderboardResponse.getStatusCode().getNumber() == 0) {
-            personalRankTextView.setText(String.valueOf(leaderboardResponse.getMyRank()));
-            personalWealthTextView.setText(totalWorthTextView.getText().toString());
-            personalNameTextView.setText(MiscellaneousUtils.username);
-
-            for (int i = 0; i < leaderboardResponse.getRankListCount(); ++i) {
-                LeaderboardRow currentRow = leaderboardResponse.getRankList(i);
-                leaderBoardDetailsList.add(new LeaderboardDetails(currentRow.getRank(), currentRow.getUserName(), currentRow.getTotalWorth()));
-            }
-        } else {
-            Toast.makeText(getContext(), "Internal server error", Toast.LENGTH_SHORT).show();
-        }*/
-
     }
 
     @Override
