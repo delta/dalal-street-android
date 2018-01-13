@@ -20,6 +20,7 @@ public class StockUtils {
             if (MainActivity.globalStockDetails.get(i) != null) {
                 GlobalStockDetails currentStockDetails = MainActivity.globalStockDetails.get(i);
 
+
                 stockIdCompanyNameList.add(new StockIdCompanyName(currentStockDetails.getStockId(), currentStockDetails.getFullName()));
             }
         }
