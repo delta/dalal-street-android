@@ -10,6 +10,7 @@ import android.support.v4.content.Loader;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -128,6 +129,5 @@ public class TransactionsFragment extends Fragment implements LoaderManager.Load
 
     @Override
     public void onLoaderReset(Loader<GetTransactionsResponse> loader) {
-        // Do nothing
     }
 }
