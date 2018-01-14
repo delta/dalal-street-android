@@ -33,6 +33,7 @@
             android:layout_alignParentStart="true"
             android:layout_marginStart="6dp"
             android:text="Company Name"
+            android:textColor="@android:color/background_light"
             android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
             android:textSize="22sp" />
 
@@ -41,6 +42,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="4dp"
+            android:textColor="@color/secTextColor"
             android:layout_toStartOf="@+id/arrow_imageView"
             android:text="₹50"
             android:textSize="22sp" />

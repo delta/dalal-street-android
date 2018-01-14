@@ -99,9 +99,11 @@ public class LoginActivity extends AppCompatActivity implements LoaderManager.Lo
 
         if (emailEditText.getText().toString().trim().isEmpty()) {
             emailEditText.setError("Email is required");
+            emailEditText.requestFocus();
             return false;
         } else if (!emailEditText.getText().toString().contains("@")) {
             emailEditText.setError("Enter a valid email");
+            emailEditText.requestFocus();
             return false;
         }
         return true;
@@ -110,6 +112,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderManager.Lo
     private boolean validatePassword() {
         if (passwordEditText.getText().toString().trim().isEmpty()) {
             passwordEditText.setError("Enter password");
+            passwordEditText.requestFocus();
             return false;
         }
         return true;

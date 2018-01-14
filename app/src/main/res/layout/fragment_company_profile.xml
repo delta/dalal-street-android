@@ -15,7 +15,7 @@
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
             android:hint="@string/pick_a_company"
-            android:textColorHint="@color/colorAccent"
+            android:textColorHint="#fff"
             app:met_floatingLabel="normal" />
 
         <TextView
@@ -25,8 +25,9 @@
             android:layout_below="@id/company_spinner"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="15dp"
+            android:layout_marginBottom="10dp"
             android:text="@string/market_depth"
-            android:textColor="@android:color/background_dark"
+            android:textColor="@android:color/background_light"
             android:textSize="25sp" />
 
         <com.github.mikephil.charting.charts.BarChart
@@ -35,12 +36,32 @@
             android:layout_height="200dp"
             android:layout_below="@id/market_depth" />
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/bidBarChart"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="30dp"
+            android:text="@string/bid_market_depth"
+            android:textColor="@color/secTextColor"
+            android:textSize="14sp" />
+
         <com.github.mikephil.charting.charts.BarChart
             android:id="@+id/askBarChart"
             android:layout_width="match_parent"
             android:layout_height="200dp"
             android:layout_below="@id/bidBarChart"
-            android:layout_marginTop="20dp" />
+            android:layout_marginTop="35dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/askBarChart"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="20dp"
+            android:text="@string/ask_market_depth"
+            android:textColor="@color/secTextColor"
+            android:textSize="14sp" />
 
         <TextView
             android:id="@+id/ch"
@@ -50,7 +71,8 @@
             android:layout_centerHorizontal="true"
             android:layout_marginTop="40dp"
             android:text="@string/company_history"
-            android:textColor="@android:color/background_dark"
+            android:layout_marginBottom="10dp"
+            android:textColor="@android:color/background_light"
             android:textSize="25sp" />
 
         <com.github.mikephil.charting.charts.LineChart
@@ -58,26 +80,6 @@
             android:layout_width="match_parent"
             android:layout_height="300dp"
             android:layout_below="@id/ch" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/bidBarChart"
-            android:layout_centerHorizontal="true"
-            android:layout_marginBottom="20dp"
-            android:text="@string/bid_market_depth"
-            android:textColor="#121212"
-            android:textSize="14sp" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/askBarChart"
-            android:layout_centerHorizontal="true"
-            android:layout_marginBottom="20dp"
-            android:text="@string/ask_market_depth"
-            android:textColor="#121212"
-            android:textSize="14sp" />
 
     </RelativeLayout>
 

@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="6dp">
+    android:padding="10dp">
 
     <TextView
         android:id="@+id/news_head"
@@ -12,7 +12,7 @@
         android:layout_alignParentTop="true"
         android:layout_marginStart="4dp"
         android:text=""
-        android:textColor="@android:color/background_dark"
+        android:textColor="@android:color/background_light"
         android:textSize="20sp" />
 
     <TextView
@@ -24,7 +24,7 @@
         android:layout_marginStart="4dp"
         android:layout_marginTop="5dp"
         android:text=""
-        android:textColor="@android:color/background_dark" />
+        android:textColor="@color/secTextColor" />
 
     <TextView
         android:id="@+id/createdAt_textView"
@@ -35,7 +35,7 @@
         android:layout_marginEnd="4dp"
         android:layout_marginTop="2dp"
         android:text="12:52pm Jan 21"
-        android:textColor="#333333"
+        android:textColor="@color/secTextColor"
         android:textSize="12sp" />
 
     <View
@@ -44,6 +44,6 @@
         android:layout_below="@+id/news_content"
         android:layout_marginStart="4dp"
         android:layout_marginTop="10dp"
-        android:background="@android:color/darker_gray" />
+        android:background="@android:color/background_dark" />
 
 </RelativeLayout>

@@ -17,6 +17,9 @@ import com.hmproductions.theredstreet.data.PortfolioDetails;
 import com.hmproductions.theredstreet.ui.MainActivity;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -63,6 +66,18 @@ public class CompanyFragment extends Fragment {
             );
         }
 
+        sortList(portfolioList);
         adapter.swapData(portfolioList);
+    }
+
+    private void sortList(ArrayList<PortfolioDetails> list) {
+        Collections.sort(list, new Comparator<PortfolioDetails>() {
+            public int compare(PortfolioDetails ideaVal1, PortfolioDetails ideaVal2) {
+
+                Integer idea1 = new Integer(ideaVal1.getValue());
+                Integer idea2 = new Integer(ideaVal2.getValue());
+                return idea1.compareTo(idea2);
+            }
+        });
     }
 }

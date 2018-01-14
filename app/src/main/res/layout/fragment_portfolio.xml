@@ -9,8 +9,9 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="20dp"
         android:text="@string/stock_details"
-        android:textColor="@android:color/background_dark"
-        android:textSize="35sp" />
+        android:textColor="@android:color/background_light"
+        android:textSize="30sp"
+        android:fontFamily="sans-serif-condensed"/>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/portfolio_recyclerView"
