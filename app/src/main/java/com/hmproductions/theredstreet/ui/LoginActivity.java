@@ -98,10 +98,10 @@ public class LoginActivity extends AppCompatActivity implements LoaderManager.Lo
     private boolean validateEmail() {
 
         if (emailEditText.getText().toString().trim().isEmpty()) {
-            Toast.makeText(this, "Enter an email ID", Toast.LENGTH_SHORT).show();
+            emailEditText.setError("Email is required");
             return false;
         } else if (!emailEditText.getText().toString().contains("@")) {
-            Toast.makeText(this, "Please enter a valid email ID", Toast.LENGTH_SHORT).show();
+            emailEditText.setError("Enter a valid email");
             return false;
         }
         return true;
@@ -109,7 +109,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderManager.Lo
 
     private boolean validatePassword() {
         if (passwordEditText.getText().toString().trim().isEmpty()) {
-            Toast.makeText(this, "Enter a password", Toast.LENGTH_SHORT).show();
+            passwordEditText.setError("Enter password");
             return false;
         }
         return true;

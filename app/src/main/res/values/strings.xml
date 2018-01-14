@@ -139,5 +139,8 @@
     <string name="company_image_description">company_image_view</string>
     <string name="getting_fresh_news">Getting fresh news…</string>
     <string name="loading">Loading…</string>
+    <string name="loading_leaderboard">Fetching LeaderBoard…</string>
+    <string name="loading_transaction">Fetching Transactions…</string>
+    <string name="dalal">DALAL \n STREET</string>
 
 </resources>

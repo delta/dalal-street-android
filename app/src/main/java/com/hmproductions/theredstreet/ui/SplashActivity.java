@@ -34,6 +34,7 @@ import static com.hmproductions.theredstreet.utils.Constants.LOGIN_LOADER_ID;
 
 public class SplashActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<LoginResponse>{
 
+    /* Not injecting stub directly into this context to prevent empty/null metadata attached to stub since user has not logged in. */
     @Inject
     ManagedChannel channel;
 
@@ -68,13 +69,12 @@ public class SplashActivity extends AppCompatActivity implements LoaderManager.L
             bundle.putString(PASSWORD_KEY, password);
 
             getSupportLoaderManager().restartLoader(LOGIN_LOADER_ID, bundle, this);
-        }else {
+        } else {
 
-            Intent intent=new Intent(this, LoginActivity.class);
+            Intent intent = new Intent(this, LoginActivity.class);
             startActivity(intent);
             finish();
         }
-
 
         splashTimer = new Thread(){
             public void run(){
@@ -85,12 +85,12 @@ public class SplashActivity extends AppCompatActivity implements LoaderManager.L
                         sleep(150);
 
                         if(splashTime % 10 < 3){
-                            setText("Fetching Data.");
+                            setSplashText("Fetching Data.");
                         }
                         else if(splashTime % 10 >= 3 && splashTime % 10 < 7 ){
-                            setText("Fetching Data..");
+                            setSplashText("Fetching Data..");
                         }else if (splashTime % 10 >= 7){
-                            setText("Fetching Data...");
+                            setSplashText("Fetching Data...");
                         }
                         splashTime = splashTime + 1;
                     }
@@ -104,11 +104,9 @@ public class SplashActivity extends AppCompatActivity implements LoaderManager.L
 
     }
 
-
-    private void setText(final CharSequence text) {
+    private void setSplashText(final CharSequence text) {
         runOnUiThread(() -> splashText.setText(text));
     }
-
 
     @Override
     public Loader<LoginResponse> onCreateLoader(int id, Bundle args) {
@@ -180,12 +178,14 @@ public class SplashActivity extends AppCompatActivity implements LoaderManager.L
             startActivity(intent);
             finish();
         } else {
-            Toast.makeText(this, "Invalid Credentials", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Please login again", Toast.LENGTH_SHORT).show();
+            startActivity(new Intent(this, LoginActivity.class));
+            finish();
         }
     }
 
     @Override
     public void onLoaderReset(Loader<LoginResponse> loader) {
-
+        // Do Nothing
     }
 }

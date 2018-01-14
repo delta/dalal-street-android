@@ -74,8 +74,9 @@
                 android:layout_weight="1"
                 android:gravity="center"
                 android:text="@string/rank"
+                android:fontFamily="sans-serif-condensed"
                 android:textColor="@android:color/background_dark"
-                android:textSize="20sp" />
+                android:textSize="18sp" />
 
             <TextView
                 android:id="@+id/personal_name_textView"
@@ -84,8 +85,9 @@
                 android:layout_weight="1"
                 android:gravity="center"
                 android:text="@string/name"
+                android:fontFamily="sans-serif-condensed"
                 android:textColor="@android:color/background_dark"
-                android:textSize="20sp" />
+                android:textSize="18sp" />
 
             <TextView
                 android:id="@+id/personal_wealth_textView"
@@ -94,8 +96,9 @@
                 android:layout_weight="1"
                 android:gravity="center"
                 android:text="@string/wealth"
+                android:fontFamily="sans-serif-condensed"
                 android:textColor="@android:color/background_dark"
-                android:textSize="20sp" />
+                android:textSize="18sp" />
 
         </LinearLayout>
 
