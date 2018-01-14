@@ -15,7 +15,7 @@
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
             android:hint="@string/pick_a_company"
-            android:textColorHint="#fff"
+            app:met_textColorHint="@color/secTextColor"
             app:met_floatingLabel="normal" />
 
         <TextView

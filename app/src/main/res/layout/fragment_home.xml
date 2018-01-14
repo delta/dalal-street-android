@@ -6,8 +6,7 @@
         android:id="@+id/companies_recyclerView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
+        android:layout_centerInParent="true"
         android:layout_marginTop="20dp"
         android:padding="2dp" />
 
@@ -16,12 +15,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
-        android:layout_below="@id/companies_recyclerView"
-        android:layout_margin="6dp"
-        android:ellipsize="marquee"
-        android:fadingEdge="horizontal"
-        android:marqueeRepeatLimit="marquee_forever"
-        android:scrollHorizontally="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="6dp"
+        android:layout_marginLeft="3dp"
         android:singleLine="true"
         android:text="@string/breaking_news"
         android:textAllCaps="true"
@@ -29,48 +25,21 @@
         android:textSize="16sp"
         android:textStyle="bold|italic" />
 
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/background"
-        android:layout_below="@+id/breakingNewsText">
-
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/news_recyclerView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@android:color/background_light"
-            android:divider="@android:color/transparent"
-            android:dividerHeight="5dp"
-            android:paddingTop="12dp" />
-
-        <RelativeLayout
-            android:id="@+id/loadingNews_relativeLayout"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="center"
-            android:visibility="gone">
-
-            <TextView
-                android:id="@+id/loadingNews_textView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:text="@string/getting_fresh_news"
-                android:textColor="?colorPrimary"
-                android:textSize="20sp"
-                android:textStyle="italic|bold" />
-
-            <ProgressBar
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_above="@+id/loadingNews_textView"
-                android:layout_centerHorizontal="true"
-                android:layout_marginBottom="8dp"
-                android:indeterminate="true" />
-
-        </RelativeLayout>
-
-    </FrameLayout>
+    <TextView
+        android:id="@+id/breakingNewsTexts"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="6dp"
+        android:ellipsize="marquee"
+        android:fadingEdge="horizontal"
+        android:marqueeRepeatLimit="marquee_forever"
+        android:scrollHorizontally="true"
+        android:singleLine="true"
+        android:textAllCaps="true"
+        android:textColor="@color/secTextColor"
+        android:textSize="16sp"
+        android:textStyle="bold|italic"
+        android:layout_toRightOf="@+id/breakingNewsText"
+        android:layout_alignParentBottom="true"/>
 
 </RelativeLayout>

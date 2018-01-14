@@ -21,6 +21,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.hmproductions.theredstreet.utils.Constants;
 import com.hmproductions.theredstreet.R;
@@ -51,23 +52,21 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
     DalalActionServiceGrpc.DalalActionServiceBlockingStub actionServiceBlockingStub;
 
     @Inject
-    NewsRecyclerAdapter newsRecyclerAdapter;
-
-    @Inject
     CompanyRecyclerAdapter companyRecyclerAdapter;
 
     @BindView(R.id.companies_recyclerView)
     RecyclerView companiesRecyclerView;
 
-    @BindView(R.id.news_recyclerView)
-    RecyclerView newsRecyclerView;
+    @BindView(R.id.breakingNewsTexts)
+    TextView breakingNewsTexts;
 
-    @BindView(R.id.loadingNews_relativeLayout)
-    RelativeLayout loadingRelativeLayout;
+    @BindView(R.id.breakingNewsText)
+    TextView breakingNewsText;
 
     LinearLayoutManager linearLayoutManager;
 
     List<Company> companyList = new ArrayList<>();
+    String breakingNews;
 
     Handler handler = new Handler();
 
@@ -94,7 +93,8 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
         if (getActivity() != null)
             getActivity().setTitle("Home");
 
-        rootView.findViewById(R.id.breakingNewsText).setSelected(true);
+        breakingNewsText.setVisibility(View.INVISIBLE);
+        breakingNewsTexts.setSelected(true);
 
         linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
 
@@ -104,10 +104,6 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
 
         SnapHelper companiesSnapHelper = new PagerSnapHelper();
         companiesSnapHelper.attachToRecyclerView(companiesRecyclerView);
-
-        newsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        newsRecyclerView.setHasFixedSize(true);
-        newsRecyclerView.setAdapter(newsRecyclerAdapter);
 
         setValues();
 
@@ -151,20 +147,23 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
 
     @Override
     public Loader<List<NewsDetails>> onCreateLoader(int id, Bundle args) {
-        loadingRelativeLayout.setVisibility(View.VISIBLE);
-        newsRecyclerView.setVisibility(View.GONE);
         return new NewsLoader(getContext(), actionServiceBlockingStub);
     }
 
     @Override
     public void onLoadFinished(Loader<List<NewsDetails>> loader, List<NewsDetails> data) {
 
-        if (data != null && data.size()!=0) {
-            newsRecyclerAdapter.swapData(data);
-        }
+        StringBuilder builder = new StringBuilder();
+        builder.append("     ");
+        for(int i=0 ; i<data.size() ; i++){
 
-        loadingRelativeLayout.setVisibility(View.GONE);
-        newsRecyclerView.setVisibility(View.VISIBLE);
+            builder.append(data.get(i).getHeadlines().trim());
+            builder.append(".     ");
+
+        }
+        breakingNews = builder.toString();
+        breakingNewsTexts.setText(builder);
+        breakingNewsText.setVisibility(View.VISIBLE);
     }
 
     @Override
