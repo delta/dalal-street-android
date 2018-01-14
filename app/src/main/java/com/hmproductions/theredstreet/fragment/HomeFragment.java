@@ -59,14 +59,14 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
     @BindView(R.id.companies_recyclerView)
     RecyclerView companiesRecyclerView;
 
-    @BindView(R.id.news_recyclerView)
-    RecyclerView newsRecyclerView;
+    @BindView(R.id.breakingNewsText)
+    TextView breakingNewsTextView;
 
     @BindView(R.id.loadingNews_relativeLayout)
     RelativeLayout loadingRelativeLayout;
 
-    @BindView(R.id.breakingNewsText)
-    TextView breakingNewsTextView;
+    @BindView(R.id.news_recyclerView)
+    RecyclerView newsRecyclerView;
 
     LinearLayoutManager linearLayoutManager;
 
@@ -120,10 +120,6 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
         SnapHelper companiesSnapHelper = new PagerSnapHelper();
         companiesSnapHelper.attachToRecyclerView(companiesRecyclerView);
 
-        newsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        newsRecyclerView.setHasFixedSize(true);
-        newsRecyclerView.setAdapter(newsRecyclerAdapter);
-
         setValues();
 
         Runnable runnable = new Runnable() {
@@ -162,8 +158,6 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
 
     @Override
     public Loader<List<NewsDetails>> onCreateLoader(int id, Bundle args) {
-        loadingRelativeLayout.setVisibility(View.VISIBLE);
-        newsRecyclerView.setVisibility(View.GONE);
         return new NewsLoader(getContext(), actionServiceBlockingStub);
     }
 
