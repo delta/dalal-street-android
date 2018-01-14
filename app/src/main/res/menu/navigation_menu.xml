@@ -10,17 +10,17 @@
 
         <item
             android:id="@+id/nav_company_profile"
-            android:icon="@drawable/ic_action_performance"
-            android:title="@string/company_profile" />
+            android:icon="@drawable/market_depth_icon"
+            android:title="@string/market_depth" />
 
         <item
             android:id="@+id/nav_portfolio"
-            android:icon="@drawable/ic_action_portfolio"
-            android:title="@string/portfolio" />
+            android:icon="@drawable/companies_icon"
+            android:title="@string/companies" />
 
         <item
             android:id="@+id/nav_news"
-            android:icon="@drawable/ic_action_news"
+            android:icon="@drawable/news_icon"
             android:title="@string/news" />
     </group>
 
@@ -28,27 +28,27 @@
 
         <item
             android:id="@+id/nav_exchange"
-            android:icon="@drawable/ic_action_company"
+            android:icon="@drawable/stock_exchange_icon"
             android:title="@string/stock_exchange" />
 
         <item
             android:id="@+id/nav_buy_sell"
-            android:icon="@drawable/ic_action_exchange"
-            android:title="@string/buy_sell" />
+            android:icon="@drawable/trade_icon"
+            android:title="@string/trade" />
 
         <item
             android:id="@+id/nav_mortgage"
-            android:icon="@drawable/ic_action_mortgage"
+            android:icon="@drawable/mortgage_icon"
             android:title="@string/mortgage" />
 
         <item
             android:id="@+id/nav_my_orders"
-            android:icon="@drawable/ic_action_orders"
+            android:icon="@drawable/orders_icon"
             android:title="@string/my_orders" />
 
         <item
             android:id="@+id/nav_transactions"
-            android:icon="@drawable/ic_action_transactions"
+            android:icon="@drawable/transactions_icon"
             android:title="@string/transactions" />
 
     </group>
@@ -57,7 +57,7 @@
 
         <item
             android:id="@+id/nav_leaderboard"
-            android:icon="@drawable/ic_action_leaderboard"
+            android:icon="@drawable/trophy_icon"
             android:title="@string/leaderboard" />
 
     </group>

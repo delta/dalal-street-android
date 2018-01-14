@@ -1,7 +1,6 @@
 package com.hmproductions.theredstreet.dagger;
 
 import com.hmproductions.theredstreet.utils.MiscellaneousUtils;
-import com.hmproductions.theredstreet.utils.StockUtils;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -29,8 +28,7 @@ import io.grpc.okhttp.OkHttpChannelBuilder;
 @Module
 public class ChannelModule {
 
-    private static final String HOST = "159.89.95.163";
-//    private static final String HOST = "10.1.76.143";
+    private static final String HOST = "139.59.85.232";
 //    private static final String HOST = "192.168.43.230";
     private static final int PORT = 443;
 

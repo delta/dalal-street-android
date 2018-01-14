@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class PortfolioFragment extends Fragment {
+public class CompanyFragment extends Fragment {
 
     @BindView(R.id.portfolio_recyclerView)
     RecyclerView portfolioRecyclerView;
@@ -29,7 +29,7 @@ public class PortfolioFragment extends Fragment {
     private ArrayList<PortfolioDetails> portfolioList = new ArrayList<>();
     private PortfolioRecyclerAdapter adapter;
 
-    public PortfolioFragment() {
+    public CompanyFragment() {
         // Required empty public constructor
     }
 
@@ -38,7 +38,7 @@ public class PortfolioFragment extends Fragment {
         // Inflate the layout for this fragment
         View rootView=inflater.inflate(R.layout.fragment_portfolio, container, false);
 
-        if (getActivity() != null)  getActivity().setTitle("Portfolio");
+        if (getActivity() != null)  getActivity().setTitle("Company");
         ButterKnife.bind(this, rootView);
 
         adapter = new PortfolioRecyclerAdapter(getContext(), null);

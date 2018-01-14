@@ -69,6 +69,7 @@ public class StockExchangeFragment extends Fragment implements LoaderManager.Loa
     ProgressBar stockExchangeProgressBar;
 
     private Stock currentStock;
+    private int lastPositionClick = -1;
 
     public StockExchangeFragment() {
         // Required empty public constructor
@@ -90,6 +91,7 @@ public class StockExchangeFragment extends Fragment implements LoaderManager.Loa
         companySpinner.setOnItemClickListener((adapterView, view, position, id) -> {
             Bundle bundle = new Bundle();
             bundle.putInt(STOCK_ID_KEY, position + 1);
+            lastPositionClick = position;
             getActivity().getSupportLoaderManager().restartLoader(Constants.COMPANY_PROFILE_LOADER_ID, bundle, this);
         });
 
@@ -118,6 +120,12 @@ public class StockExchangeFragment extends Fragment implements LoaderManager.Loa
 
                     case 0:
                         Toast.makeText(getContext(), "Stocks bought", Toast.LENGTH_SHORT).show();
+
+                        if (getActivity() != null) {
+                            Bundle bundle = new Bundle();
+                            bundle.putInt(STOCK_ID_KEY, lastPositionClick + 1);
+                            getActivity().getSupportLoaderManager().restartLoader(Constants.COMPANY_PROFILE_LOADER_ID, bundle, this);
+                        }
                         break;
 
                     case 1:

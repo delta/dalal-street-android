@@ -35,7 +35,7 @@ import dalalstreet.api.datastreams.SubscriptionId;
 
 import static com.hmproductions.theredstreet.utils.MiscellaneousUtils.convertDpToPixel;
 
-public class CompanyProfileFragment extends Fragment {
+public class MarketDepthFragment extends Fragment {
 
     private static final int ANIMATE_DURATION = 1000;
 
@@ -67,7 +67,7 @@ public class CompanyProfileFragment extends Fragment {
 
     private SubscriptionId subscriptionId = null;
 
-    public CompanyProfileFragment() {
+    public MarketDepthFragment() {
         // Required empty public constructor
     }
 
@@ -79,7 +79,7 @@ public class CompanyProfileFragment extends Fragment {
         DaggerDalalStreetApplicationComponent.builder().contextModule(new ContextModule(getContext())).build().inject(this);
         ButterKnife.bind(this, rootView);
 
-        if (getActivity() != null) getActivity().setTitle("Company Profile");
+        if (getActivity() != null) getActivity().setTitle("Market Depth");
 
         ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(getActivity(),android.R.layout.simple_dropdown_item_1line, StockUtils.getCompanyNamesArray());
         materialBetterSpinner.setAdapter(arrayAdapter);

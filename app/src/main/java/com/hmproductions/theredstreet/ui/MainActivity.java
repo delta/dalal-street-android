@@ -26,14 +26,14 @@ import com.hmproductions.theredstreet.dagger.ContextModule;
 import com.hmproductions.theredstreet.dagger.DaggerDalalStreetApplicationComponent;
 import com.hmproductions.theredstreet.data.GlobalStockDetails;
 import com.hmproductions.theredstreet.data.StockDetails;
-import com.hmproductions.theredstreet.fragment.BuySellFragment;
-import com.hmproductions.theredstreet.fragment.CompanyProfileFragment;
+import com.hmproductions.theredstreet.fragment.TradeFragment;
+import com.hmproductions.theredstreet.fragment.CompanyFragment;
+import com.hmproductions.theredstreet.fragment.MarketDepthFragment;
 import com.hmproductions.theredstreet.fragment.HomeFragment;
 import com.hmproductions.theredstreet.fragment.LeaderboardFragment;
 import com.hmproductions.theredstreet.fragment.MortgageFragment;
 import com.hmproductions.theredstreet.fragment.NewsFragment;
 import com.hmproductions.theredstreet.fragment.OrdersFragment;
-import com.hmproductions.theredstreet.fragment.PortfolioFragment;
 import com.hmproductions.theredstreet.fragment.StockExchangeFragment;
 import com.hmproductions.theredstreet.fragment.TransactionsFragment;
 import com.hmproductions.theredstreet.utils.Constants;
@@ -221,13 +221,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 fragment = new StockExchangeFragment();
                 break;
             case R.id.nav_company_profile:
-                fragment = new CompanyProfileFragment();
+                fragment = new MarketDepthFragment();
                 break;
             case R.id.nav_news:
                 fragment = new NewsFragment();
                 break;
             case R.id.nav_buy_sell:
-                fragment = new BuySellFragment();
+                fragment = new TradeFragment();
                 break;
             case R.id.nav_mortgage:
                 fragment = new MortgageFragment();
@@ -239,7 +239,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 fragment = new TransactionsFragment();
                 break;
             case R.id.nav_portfolio:
-                fragment = new PortfolioFragment();
+                fragment = new CompanyFragment();
                 break;
             case R.id.nav_leaderboard:
                 fragment = new LeaderboardFragment();
@@ -324,6 +324,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     public void onNext(TransactionUpdate value) {
 
                         dalalstreet.api.models.Transaction transaction = value.getTransaction();
+                        Log.v(":::", "transaction update with type" + String.valueOf(value.getTransaction().getTypeValue()));
                         // TODO : Fill this method
                         if (transaction.getType() == TransactionType.DIVIDEND_TRANSACTION) {
                             int previousValue = Integer.parseInt(cashTextView.getText().toString());
@@ -394,6 +395,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 new StreamObserver<MarketEventUpdate>() {
                     @Override
                     public void onNext(MarketEventUpdate value) {
+                        Log.v(":::", "Received market event");
                         Intent refreshNewsIntent = new Intent(Constants.REFRESH_NEWS_ACTION);
                         LocalBroadcastManager.getInstance(MainActivity.this).sendBroadcast(refreshNewsIntent);
                     }
@@ -410,7 +412,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 });
     }
 
-    // Subscribes to stock prices stream and gets updates
+    // Subscribes to stock prices stream and gets updates (Tested)
     private void getStockPricesSubscriptionId() {
         streamServiceStub.subscribe(
                 SubscribeRequest.newBuilder().setDataStreamType(DataStreamType.STOCK_PRICES).setDataStreamId("").build(),

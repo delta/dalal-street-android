@@ -45,7 +45,7 @@ import dalalstreet.api.DalalActionServiceGrpc;
 
 public class HomeFragment extends Fragment implements LoaderManager.LoaderCallbacks<List<NewsDetails>>{
 
-    private static final int COMPANY_NEWS_DURATION = 3000;
+    private static final int COMPANY_NEWS_DURATION = 2000;
 
     @Inject
     DalalActionServiceGrpc.DalalActionServiceBlockingStub actionServiceBlockingStub;

@@ -4,6 +4,8 @@ package com.hmproductions.theredstreet.fragment;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,7 +20,9 @@ import android.widget.Toast;
 import com.hmproductions.theredstreet.R;
 import com.hmproductions.theredstreet.dagger.ContextModule;
 import com.hmproductions.theredstreet.dagger.DaggerDalalStreetApplicationComponent;
+import com.hmproductions.theredstreet.loaders.MortgageDetailsLoader;
 import com.hmproductions.theredstreet.ui.MainActivity;
+import com.hmproductions.theredstreet.utils.Constants;
 import com.hmproductions.theredstreet.utils.StockUtils;
 
 import javax.inject.Inject;
@@ -27,22 +31,22 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import dalalstreet.api.DalalActionServiceGrpc;
-import dalalstreet.api.actions.GetMortgageDetailsRequest;
 import dalalstreet.api.actions.GetMortgageDetailsResponse;
 import dalalstreet.api.actions.MortgageStocksRequest;
 import dalalstreet.api.actions.MortgageStocksResponse;
 import dalalstreet.api.actions.RetrieveMortgageStocksRequest;
 import dalalstreet.api.actions.RetrieveMortgageStocksResponse;
 
+import static com.hmproductions.theredstreet.utils.StockUtils.getCompanyNameFromStockId;
 import static com.hmproductions.theredstreet.utils.StockUtils.getQuantityFromCompanyName;
 
 /* Uses GetMortgageDetails() for setting stocksMortgaged (int data member)
 *  Uses MortgageStocks() to mortgage stocks
 *  Uses RetrieveStocksFromMortgage() to get back mortgaged stocks */
 
-public class MortgageFragment extends Fragment {
+public class MortgageFragment extends Fragment implements LoaderManager.LoaderCallbacks<GetMortgageDetailsResponse>{
 
-    private static final String NO_OF_STOCKS_OWNED_STRING = "Number of stocks you own :";
+    private static final String NO_OF_STOCKS_OWNED_STRING = "Number of stocks you own : ";
     private final static String NO_OF_STOCKS_MORTGAGE_STRING = "Number of stocks in mortgage : ";
 
     @Inject
@@ -83,7 +87,7 @@ public class MortgageFragment extends Fragment {
         companySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                updateValues(position+1, companySpinner.getSelectedItem().toString());
+                getActivity().getSupportLoaderManager().restartLoader(Constants.MORTGAGE_DETAILS_LOADER, null, MortgageFragment.this);
             }
 
             @Override
@@ -105,7 +109,7 @@ public class MortgageFragment extends Fragment {
     void onMortgageButtonClick() {
 
         if (stocksEditText.getText().toString().trim().isEmpty()) {
-            stocksEditText.setError("Enter the number of stocks");
+            stocksEditText.setError("Stocks quantity missing");
             stocksEditText.requestFocus();
             return;
         } else {
@@ -189,20 +193,38 @@ public class MortgageFragment extends Fragment {
         }
     }
 
-    public void updateValues(int stockId, String companyName) {
+    @Override
+    public Loader<GetMortgageDetailsResponse> onCreateLoader(int id, Bundle args) {
+        companySpinner.setEnabled(false);
+        if (getContext() != null) {
+            return new MortgageDetailsLoader(getContext(), actionServiceBlockingStub);
+        } else {
+            return null;
+        }
+    }
 
-        GetMortgageDetailsResponse response = actionServiceBlockingStub.getMortgageDetails(GetMortgageDetailsRequest.newBuilder().build());
+    @Override
+    public void onLoadFinished(Loader<GetMortgageDetailsResponse> loader, GetMortgageDetailsResponse response) {
+
+        int stockId = companySpinner.getSelectedItemPosition() + 1;
+        companySpinner.setEnabled(true);
 
         if (response.getMortgageMapMap().get(stockId) != null)
             stocksMortgaged = response.getMortgageMapMap().get(stockId);
         else
             stocksMortgaged = 0;
+
         String mortgageString = NO_OF_STOCKS_MORTGAGE_STRING + String.valueOf(stocksMortgaged);
         mortgagedTextView.setText(mortgageString);
 
-        stocksOwned = getQuantityFromCompanyName(MainActivity.ownedStockDetails, companyName);
+        stocksOwned = getQuantityFromCompanyName(MainActivity.ownedStockDetails, getCompanyNameFromStockId(stockId));
 
         String ownedString = NO_OF_STOCKS_OWNED_STRING + String.valueOf(stocksOwned);
         ownedTextView.setText(ownedString);
+    }
+
+    @Override
+    public void onLoaderReset(Loader<GetMortgageDetailsResponse> loader) {
+
     }
 }

@@ -34,7 +34,7 @@ import static com.hmproductions.theredstreet.utils.StockUtils.getQuantityFromCom
 import static com.hmproductions.theredstreet.utils.StockUtils.getStockIdFromCompanyName;
 
 /* Uses PlaceOrder() to place buy or ask order */
-public class BuySellFragment extends Fragment {
+public class TradeFragment extends Fragment {
 
     @Inject
     DalalActionServiceGrpc.DalalActionServiceBlockingStub actionServiceBlockingStub;
@@ -57,7 +57,7 @@ public class BuySellFragment extends Fragment {
     @BindView(R.id.orderPrice_editText)
     EditText orderPriceEditText;
 
-    public BuySellFragment() {
+    public TradeFragment() {
         // Required empty public constructor
     }
 

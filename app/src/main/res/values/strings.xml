@@ -142,5 +142,7 @@
     <string name="loading_leaderboard">Fetching LeaderBoard…</string>
     <string name="loading_transaction">Fetching Transactions…</string>
     <string name="dalal">DALAL \n STREET</string>
+    <string name="companies">Companies</string>
+    <string name="trade">Trade</string>
 
 </resources>
