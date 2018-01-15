@@ -10,6 +10,7 @@ import android.support.v4.content.Loader;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -70,7 +71,7 @@ public class TransactionsFragment extends Fragment implements LoaderManager.Load
         View rootView = inflater.inflate(R.layout.fragment_transactions, container, false);
 
         DaggerDalalStreetApplicationComponent.builder().contextModule(new ContextModule(getContext())).build().inject(this);
-        if (getActivity() != null) getActivity().setTitle("TransactionsFragment");
+        if (getActivity() != null) getActivity().setTitle("Transactions");
 
         adapter = new TransactionRecyclerAdapter(getContext(), null);
 
@@ -104,7 +105,7 @@ public class TransactionsFragment extends Fragment implements LoaderManager.Load
         for (int i = 0; i < data.getTransactionsCount(); ++i) {
             dalalstreet.api.models.Transaction currentTransaction = data.getTransactions(i);
             transactionList.add(new Transaction(
-                    currentTransaction.getType().getNumber(),
+                    currentTransaction.getType().name(),
                     currentTransaction.getStockId(),
                     currentTransaction.getStockQuantity(),
                     currentTransaction.getPrice(),
@@ -128,6 +129,5 @@ public class TransactionsFragment extends Fragment implements LoaderManager.Load
 
     @Override
     public void onLoaderReset(Loader<GetTransactionsResponse> loader) {
-        // Do nothing
     }
 }

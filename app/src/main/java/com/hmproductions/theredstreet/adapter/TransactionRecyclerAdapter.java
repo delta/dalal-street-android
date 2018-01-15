@@ -11,12 +11,20 @@ import android.widget.TextView;
 
 import com.hmproductions.theredstreet.R;
 import com.hmproductions.theredstreet.data.Transaction;
+import com.hmproductions.theredstreet.ui.MainActivity;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import static com.hmproductions.theredstreet.utils.StockUtils.getCompanyNameFromStockId;
+import static com.hmproductions.theredstreet.utils.StockUtils.getPriceFromStockId;
 
 public class TransactionRecyclerAdapter extends RecyclerView.Adapter<TransactionRecyclerAdapter.MyViewHolder> {
+
+    private static final double MORTGAGE_DEPRECATION = 0.75;
 
     private Context context;
     private List<Transaction> transactionList;
@@ -36,13 +44,50 @@ public class TransactionRecyclerAdapter extends RecyclerView.Adapter<Transaction
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
 
+        String tempAssigningString;
         Transaction currentTransaction = transactionList.get(position);
 
-        holder.typeTextView.setText("Transaction Type : " + String.valueOf(currentTransaction.getType()));
-        holder.companyTextView.setText("Company : " + getCompanyNameFromStockId(currentTransaction.getStockId()));
-        holder.noOfStocksTextView.setText("Number of stocks : " + String.valueOf(currentTransaction.getNoOfStocks()));
-        holder.priceTextView.setText("Stock price : " + String.valueOf(currentTransaction.getStockPrice()));
-        holder.timeTextView.setText("Time : " + currentTransaction.getTime());
+        switch (currentTransaction.getType()){
+            case "FROM_EXCHANGE_TRANSACTION":
+                tempAssigningString = "Type : Exchange Transaction";
+                holder.typeTextView.setText(tempAssigningString);
+                break;
+
+            case "ORDER_FILL_TRANSACTION":
+                tempAssigningString = "Type : Order Fill Transaction";
+                holder.typeTextView.setText(tempAssigningString);
+                break;
+
+            case "MORTGAGE_TRANSACTION":
+                if (currentTransaction.getNoOfStocks() < 0)
+                    tempAssigningString = "Type : Retrieve Mortgage Transaction";
+                else
+                    tempAssigningString = "Type : Mortgage Transaction";
+                holder.typeTextView.setText(tempAssigningString);
+                break;
+
+            case "DIVIDEND_TRANSACTION":
+                tempAssigningString = "Type : Dividend Transaction";
+                holder.typeTextView.setText(tempAssigningString);
+                break;
+        }
+
+        tempAssigningString = "Company : " + getCompanyNameFromStockId(currentTransaction.getStockId());
+        holder.companyTextView.setText(tempAssigningString);
+
+        tempAssigningString = "Number of stocks : " + String.valueOf(Math.abs(currentTransaction.getNoOfStocks()));
+        holder.noOfStocksTextView.setText(tempAssigningString);
+
+        if (currentTransaction.getStockPrice() == 0) {
+            tempAssigningString = "Stock price : " + String.valueOf(
+                    (double)(getPriceFromStockId(MainActivity.globalStockDetails, currentTransaction.getStockId())) * MORTGAGE_DEPRECATION);
+        } else if (!tempAssigningString.equals("Stock price : 0")) {
+            tempAssigningString = "Stock price : " + String.valueOf(currentTransaction.getStockPrice());
+        }
+        holder.priceTextView.setText(tempAssigningString);
+
+        tempAssigningString = "Time : " + parseDate(currentTransaction.getTime());
+        holder.timeTextView.setText(tempAssigningString);
 
         if (currentTransaction.getTotalMoney() >= 0) {
             holder.relativeLayout.setBackgroundColor(ContextCompat.getColor(context, R.color.greenTint));
@@ -78,5 +123,23 @@ public class TransactionRecyclerAdapter extends RecyclerView.Adapter<Transaction
             timeTextView = itemView.findViewById(R.id.time_textView);
             relativeLayout = itemView.findViewById(R.id.list_item_relativeLayout);
         }
+    }
+
+    private String parseDate(String time) {
+        String inputPattern = "yyyy-MM-dd'T'HH:mm:ss'Z'";
+        String outputPattern = "hh:mm a       'Date' : MMM dd, yyyy";
+        SimpleDateFormat inputFormat = new SimpleDateFormat(inputPattern, Locale.US);
+        SimpleDateFormat outputFormat = new SimpleDateFormat(outputPattern, Locale.US);
+
+        Date date;
+        String str = null;
+
+        try {
+            date = inputFormat.parse(time);
+            str = outputFormat.format(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return str;
     }
 }

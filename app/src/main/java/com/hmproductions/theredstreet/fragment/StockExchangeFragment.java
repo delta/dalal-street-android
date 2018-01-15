@@ -162,7 +162,7 @@ public class StockExchangeFragment extends Fragment implements LoaderManager.Loa
         String gettingString = "Getting stocks details for " + StockUtils.getCompanyNameFromStockId(args.getInt(STOCK_ID_KEY)) + "...";
 
         dailyHighTextView.setText("");
-        dailyHighTextView.setText("");
+        dailyLowTextView.setText("");
         currentStockPriceTextView.setText(gettingString);
         stocksInMarketTextView.setText("");
         stockInExchangeTextView.setText("");

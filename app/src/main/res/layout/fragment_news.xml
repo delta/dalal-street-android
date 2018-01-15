@@ -1,14 +1,14 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-<android.support.v7.widget.RecyclerView
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-
-    android:id="@+id/news_recyclerView"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" />
+    android:layout_height="match_parent"
+    android:padding="10dp">
+
+    <android.support.v7.widget.RecyclerView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/news_recyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 
     <TextView
         android:id="@+id/noNews_textView"
@@ -17,7 +17,7 @@
         android:text="@string/news_not_available"
         android:layout_centerInParent="true"
         android:textSize="24sp"
-        android:textColor="@android:color/background_dark"
+        android:textColor="@android:color/background_light"
         android:textAllCaps="true"
         android:visibility="gone"/>
 

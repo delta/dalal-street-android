@@ -18,7 +18,7 @@
             android:layout_weight="1"
             android:gravity="center"
             android:text="@string/rank"
-            android:textColor="@android:color/background_dark"
+            android:textColor="@android:color/background_light"
             android:textSize="20sp"
             android:textStyle="bold" />
 
@@ -28,7 +28,7 @@
             android:layout_weight="1"
             android:gravity="center"
             android:text="@string/name"
-            android:textColor="@android:color/background_dark"
+            android:textColor="@android:color/background_light"
             android:textSize="20sp"
             android:textStyle="bold" />
 
@@ -38,7 +38,7 @@
             android:layout_weight="1"
             android:gravity="center"
             android:text="@string/wealth"
-            android:textColor="@android:color/background_dark"
+            android:textColor="@android:color/background_light"
             android:textSize="20sp"
             android:textStyle="bold" />
 

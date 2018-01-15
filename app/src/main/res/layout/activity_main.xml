@@ -2,6 +2,7 @@
 <android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/drawer_layout"
+    android:background="@color/background"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -89,7 +90,7 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:background="@android:color/holo_green_dark"
+                android:background="@android:color/holo_green_light"
                 android:gravity="center"
                 android:orientation="vertical"
                 android:padding="4dp">
@@ -118,7 +119,7 @@
 
         <Button
             android:id="@+id/drawer_edge_button"
-            android:layout_width="16dp"
+            android:layout_width="12dp"
             android:layout_height="175dp"
             android:layout_alignParentStart="true"
             android:layout_below="@+id/button_bar"

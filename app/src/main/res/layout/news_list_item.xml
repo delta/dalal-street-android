@@ -24,7 +24,7 @@
         android:layout_marginStart="4dp"
         android:layout_marginTop="5dp"
         android:text=""
-        android:textColor="@android:color/background_dark" />
+        android:textColor="#333333" />
 
     <TextView
         android:id="@+id/createdAt_textView"
@@ -35,7 +35,7 @@
         android:layout_marginEnd="4dp"
         android:layout_marginTop="2dp"
         android:text="12:52pm Jan 21"
-        android:textColor="#333333"
+        android:textColor="@color/secTextColor"
         android:textSize="12sp" />
 
     <View
@@ -44,6 +44,6 @@
         android:layout_below="@+id/news_content"
         android:layout_marginStart="4dp"
         android:layout_marginTop="10dp"
-        android:background="@android:color/darker_gray" />
+        android:background="@android:color/background_dark" />
 
 </RelativeLayout>

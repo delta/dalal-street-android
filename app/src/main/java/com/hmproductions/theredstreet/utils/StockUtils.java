@@ -83,12 +83,21 @@ public class StockUtils {
         }
     }
 
-    public static int getQuantityFromCompanyName(List<StockDetails> list, String companyName) {
+    public static int getQuantityOwnedFromCompanyName(List<StockDetails> list, String companyName) {
         int stockId = getStockIdFromCompanyName(companyName);
 
         for (StockDetails stockDetails : list) {
             if (stockDetails.getStockId() == stockId)
                 return stockDetails.getQuantity();
+        }
+        return 0;
+    }
+
+    public static int getPriceFromStockId(List<GlobalStockDetails> list, int stockId) {
+
+        for (GlobalStockDetails stockDetails : list) {
+            if (stockDetails.getStockId() == stockId)
+                return stockDetails.getPrice();
         }
         return 0;
     }

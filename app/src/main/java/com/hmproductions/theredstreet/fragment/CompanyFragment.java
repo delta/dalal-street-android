@@ -17,6 +17,8 @@ import com.hmproductions.theredstreet.data.PortfolioDetails;
 import com.hmproductions.theredstreet.ui.MainActivity;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -36,7 +38,7 @@ public class CompanyFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View rootView=inflater.inflate(R.layout.fragment_portfolio, container, false);
+        View rootView=inflater.inflate(R.layout.fragment_companies, container, false);
 
         if (getActivity() != null)  getActivity().setTitle("Company");
         ButterKnife.bind(this, rootView);
@@ -63,6 +65,18 @@ public class CompanyFragment extends Fragment {
             );
         }
 
+        sortList(portfolioList);
         adapter.swapData(portfolioList);
+    }
+
+    private void sortList(ArrayList<PortfolioDetails> list) {
+        Collections.sort(list, new Comparator<PortfolioDetails>() {
+            public int compare(PortfolioDetails ideaVal1, PortfolioDetails ideaVal2) {
+
+                Integer idea1 = new Integer(ideaVal1.getValue());
+                Integer idea2 = new Integer(ideaVal2.getValue());
+                return idea1.compareTo(idea2);
+            }
+        });
     }
 }

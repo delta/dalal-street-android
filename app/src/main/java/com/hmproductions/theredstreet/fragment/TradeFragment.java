@@ -30,7 +30,7 @@ import dalalstreet.api.actions.PlaceOrderRequest;
 import dalalstreet.api.actions.PlaceOrderResponse;
 
 import static com.hmproductions.theredstreet.utils.StockUtils.getOrderTypeFromName;
-import static com.hmproductions.theredstreet.utils.StockUtils.getQuantityFromCompanyName;
+import static com.hmproductions.theredstreet.utils.StockUtils.getQuantityOwnedFromCompanyName;
 import static com.hmproductions.theredstreet.utils.StockUtils.getStockIdFromCompanyName;
 
 /* Uses PlaceOrder() to place buy or ask order */
@@ -99,7 +99,7 @@ public class TradeFragment extends Fragment {
         } else if (orderPriceEditText.isEnabled() && orderPriceEditText.getText().toString().trim().isEmpty()) {
             Toast.makeText(getActivity(), "Enter the order price", Toast.LENGTH_SHORT).show();
         } else if (stockRadioGroup.getCheckedRadioButtonId() == R.id.ask_radioButton) {
-            int validQuantity = getQuantityFromCompanyName(MainActivity.ownedStockDetails, companySpinner.getText().toString());
+            int validQuantity = getQuantityOwnedFromCompanyName(MainActivity.ownedStockDetails, companySpinner.getText().toString());
             int askingQuantity = Integer.parseInt(noOfStocksEditText.getText().toString());
 
             if (askingQuantity > validQuantity) {

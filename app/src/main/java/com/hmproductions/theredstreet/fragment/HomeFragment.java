@@ -21,6 +21,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.hmproductions.theredstreet.utils.Constants;
 import com.hmproductions.theredstreet.R;
@@ -65,6 +66,9 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
     @BindView(R.id.loadingNews_relativeLayout)
     RelativeLayout loadingRelativeLayout;
 
+    @BindView(R.id.breakingNewsText)
+    TextView breakingNewsTextView;
+
     LinearLayoutManager linearLayoutManager;
 
     List<Company> companyList = new ArrayList<>();
@@ -83,7 +87,7 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
     public HomeFragment() {
         // Required empty public constructor
     }
-    
+
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
@@ -159,10 +163,19 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
     @Override
     public void onLoadFinished(Loader<List<NewsDetails>> loader, List<NewsDetails> data) {
 
+        StringBuilder builder = new StringBuilder("");
+
         if (data != null && data.size()!=0) {
             newsRecyclerAdapter.swapData(data);
+
+            builder.append("     ");
+            for(GlobalStockDetails currentStockDetails : MainActivity.globalStockDetails){
+                builder.append(currentStockDetails.getShortName()).append("/INR : ");
+                builder.append(currentStockDetails.getPrice()).append("     ");
+            }
         }
 
+        breakingNewsTextView.setText(builder.toString());
         loadingRelativeLayout.setVisibility(View.GONE);
         newsRecyclerView.setVisibility(View.VISIBLE);
     }

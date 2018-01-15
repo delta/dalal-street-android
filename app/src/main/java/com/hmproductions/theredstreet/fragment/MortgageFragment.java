@@ -38,7 +38,7 @@ import dalalstreet.api.actions.RetrieveMortgageStocksRequest;
 import dalalstreet.api.actions.RetrieveMortgageStocksResponse;
 
 import static com.hmproductions.theredstreet.utils.StockUtils.getCompanyNameFromStockId;
-import static com.hmproductions.theredstreet.utils.StockUtils.getQuantityFromCompanyName;
+import static com.hmproductions.theredstreet.utils.StockUtils.getQuantityOwnedFromCompanyName;
 
 /* Uses GetMortgageDetails() for setting stocksMortgaged (int data member)
 *  Uses MortgageStocks() to mortgage stocks
@@ -217,7 +217,7 @@ public class MortgageFragment extends Fragment implements LoaderManager.LoaderCa
         String mortgageString = NO_OF_STOCKS_MORTGAGE_STRING + String.valueOf(stocksMortgaged);
         mortgagedTextView.setText(mortgageString);
 
-        stocksOwned = getQuantityFromCompanyName(MainActivity.ownedStockDetails, getCompanyNameFromStockId(stockId));
+        stocksOwned = getQuantityOwnedFromCompanyName(MainActivity.ownedStockDetails, getCompanyNameFromStockId(stockId));
 
         String ownedString = NO_OF_STOCKS_OWNED_STRING + String.valueOf(stocksOwned);
         ownedTextView.setText(ownedString);
