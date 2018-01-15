@@ -80,6 +80,7 @@ public class TransactionRecyclerAdapter extends RecyclerView.Adapter<Transaction
         tempAssigningString = "Time : " + parseDate(currentTransaction.getTime());
         holder.timeTextView.setText(tempAssigningString);
 
+
         if (currentTransaction.getTotalMoney() >= 0) {
             holder.relativeLayout.setBackgroundColor(ContextCompat.getColor(context, R.color.greenTint));
         } else {
