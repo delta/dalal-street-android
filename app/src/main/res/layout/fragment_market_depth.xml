@@ -24,7 +24,7 @@
             app:met_textColor="@color/neutral_font_color"
             app:met_textColorHint="@color/neutral_font_color"
             app:met_underlineColor="@color/neutral_font_color" />
-        
+
         <RelativeLayout
             android:id="@+id/current_stock_price_layout"
             android:layout_width="match_parent"
