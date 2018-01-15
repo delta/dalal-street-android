@@ -12,6 +12,9 @@ import android.widget.TextView;
 import com.hmproductions.theredstreet.R;
 import com.hmproductions.theredstreet.data.Transaction;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import static com.hmproductions.theredstreet.utils.StockUtils.getCompanyNameFromStockId;
@@ -38,11 +41,25 @@ public class TransactionRecyclerAdapter extends RecyclerView.Adapter<Transaction
 
         Transaction currentTransaction = transactionList.get(position);
 
-        holder.typeTextView.setText("Transaction Type : " + currentTransaction.getType());
+        String tempType = currentTransaction.getType();
+        switch (tempType){
+            case "FROM_EXCHANGE_TRANSACTION":
+                holder.typeTextView.setText("Transaction Type : Exchange Transaction");
+                break;
+            case "ORDER_FILL_TRANSACTION":
+                holder.typeTextView.setText("Transaction Type : Order Fill Transaction");
+                break;
+            case "MORTGAGE_TRANSACTION":
+                holder.typeTextView.setText("Transaction Type : Mortgage Transaction");
+                break;
+            case "DIVIDEND_TRANSACTION":
+                holder.typeTextView.setText("Transaction Type : Dividend Transaction");
+                break;
+        }
         holder.companyTextView.setText("Company : " + getCompanyNameFromStockId(currentTransaction.getStockId()));
         holder.noOfStocksTextView.setText("Number of stocks : " + String.valueOf(currentTransaction.getNoOfStocks()));
         holder.priceTextView.setText("Stock price : " + String.valueOf(currentTransaction.getStockPrice()));
-        holder.timeTextView.setText("Time : " + currentTransaction.getTime());
+        holder.timeTextView.setText("Time : " + parseDate(currentTransaction.getTime()));
 
         if (currentTransaction.getTotalMoney() >= 0) {
             holder.relativeLayout.setBackgroundColor(ContextCompat.getColor(context, R.color.greenTint));
@@ -78,5 +95,23 @@ public class TransactionRecyclerAdapter extends RecyclerView.Adapter<Transaction
             timeTextView = itemView.findViewById(R.id.time_textView);
             relativeLayout = itemView.findViewById(R.id.list_item_relativeLayout);
         }
+    }
+
+    public String parseDate(String time) {
+        String inputPattern = "yyyy-MM-dd'T'HH:mm:ss'Z'";
+        String outputPattern = "HH:mm:ss  yyyy-MM-dd";
+        SimpleDateFormat inputFormat = new SimpleDateFormat(inputPattern);
+        SimpleDateFormat outputFormat = new SimpleDateFormat(outputPattern);
+
+        Date date;
+        String str = null;
+
+        try {
+            date = inputFormat.parse(time);
+            str = outputFormat.format(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return str;
     }
 }

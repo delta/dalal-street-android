@@ -18,7 +18,8 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="15dp"
             android:hint="@string/pick_a_company"
-            android:textColorHint="@color/colorAccent"
+            app:met_textColorHint="@color/secTextColor"
+            app:met_textColor="@color/secTextColor"
             app:met_floatingLabel="normal" />
 
         <com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner
@@ -28,7 +29,8 @@
             android:layout_below="@+id/company_spinner"
             android:layout_marginTop="15dp"
             android:hint="@string/order_type"
-            android:textColorHint="@color/colorAccent"
+            app:met_textColorHint="@color/secTextColor"
+            app:met_textColor="@color/secTextColor"
             app:met_floatingLabel="normal" />
 
 
@@ -46,6 +48,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:textColor="@color/secTextColor"
                 android:text="@string/bid" />
 
             <RadioButton
@@ -53,6 +56,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:textColor="@color/secTextColor"
                 android:text="@string/ask" />
 
         </RadioGroup>
@@ -71,6 +75,7 @@
                 android:layout_height="wrap_content"
                 android:ems="10"
                 android:hint="@string/number_of_stocks"
+                android:textColor="@android:color/background_light"
                 android:inputType="number" />
 
         </android.support.design.widget.TextInputLayout>
@@ -89,6 +94,7 @@
                 android:layout_height="wrap_content"
                 android:ems="10"
                 android:hint="@string/order_price"
+                android:textColor="@android:color/background_light"
                 android:inputType="number" />
 
         </android.support.design.widget.TextInputLayout>

@@ -12,7 +12,7 @@
         android:layout_alignParentTop="true"
         android:layout_marginTop="15dp"
         android:hint="@string/pick_a_company"
-        android:textColorHint="@color/colorAccent" />
+        android:textColorHint="@color/secTextColor" />
 
     <TextView
         android:id="@+id/stocksOwned_textView"
@@ -23,6 +23,7 @@
         android:layout_marginStart="20dp"
         android:layout_marginTop="20dp"
         android:text="@string/number_of_stocks_you_own_n_a"
+        android:textColor="@color/secTextColor"
         android:textSize="15sp" />
 
     <TextView
@@ -33,6 +34,7 @@
         android:layout_below="@+id/stocksOwned_textView"
         android:layout_marginTop="15dp"
         android:text="@string/number_of_stocks_mortgaged_n_a"
+        android:textColor="@color/secTextColor"
         android:textSize="15sp" />
 
     <RadioGroup
@@ -48,6 +50,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:textColor="@color/secTextColor"
             android:text="@string/mortgage_stocks" />
 
         <RadioButton
@@ -55,6 +58,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:textColor="@color/secTextColor"
             android:text="@string/retrieve_stocks_from_mortgage" />
 
     </RadioGroup>
@@ -75,6 +79,7 @@
             android:ems="10"
             android:hint="@string/enter_the_number_of_stocks"
             android:inputType="number"
+            android:textColor="@android:color/background_light"
             android:maxLength="5" />
 
     </android.support.design.widget.TextInputLayout>

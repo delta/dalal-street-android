@@ -71,7 +71,7 @@ public class TransactionsFragment extends Fragment implements LoaderManager.Load
         View rootView = inflater.inflate(R.layout.fragment_transactions, container, false);
 
         DaggerDalalStreetApplicationComponent.builder().contextModule(new ContextModule(getContext())).build().inject(this);
-        if (getActivity() != null) getActivity().setTitle("TransactionsFragment");
+        if (getActivity() != null) getActivity().setTitle("Transactions");
 
         adapter = new TransactionRecyclerAdapter(getContext(), null);
 

@@ -66,7 +66,7 @@ public class OrdersAdapter extends RecyclerView.Adapter<OrdersAdapter.MyViewHold
         holder.pieChart.setUsePercentValues(false);
 
         holder.pieChart.setDrawHoleEnabled(false);
-        holder.pieChart.setTransparentCircleRadius(5);
+        holder.pieChart.setTransparentCircleRadius(4);
         holder.pieChart.setDrawLegend(false);
         holder.pieChart.setDescription("Number of stocks filled vs the price");
         holder.pieChart.setDescriptionTextSize(5);
