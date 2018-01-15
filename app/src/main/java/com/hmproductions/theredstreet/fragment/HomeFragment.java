@@ -168,10 +168,9 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
         if (data != null && data.size()!=0) {
             newsRecyclerAdapter.swapData(data);
 
-            builder.append("     ");
             for(GlobalStockDetails currentStockDetails : MainActivity.globalStockDetails){
-                builder.append(currentStockDetails.getShortName()).append("/INR : ");
-                builder.append(currentStockDetails.getPrice()).append("     ");
+                builder.append(currentStockDetails.getShortName()).append("/INR : ").append(currentStockDetails.getPrice());
+                builder.append(currentStockDetails.getUp()==1?"\u2191":"\u2193").append("     ");
             }
         }
 

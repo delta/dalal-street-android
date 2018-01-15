@@ -82,6 +82,7 @@ dependencies {
     compile "com.android.support:support-core-utils:27.0.2"
     compile 'com.android.support:cardview-v7:27.0.2'
     compile 'com.android.support:customtabs:27.0.2'
+    compile 'com.google.android.gms:play-services-auth:11.8.0'
 
     // Material libraries
     compile 'com.weiwangcn.betterspinner:library-material:1.1.0'

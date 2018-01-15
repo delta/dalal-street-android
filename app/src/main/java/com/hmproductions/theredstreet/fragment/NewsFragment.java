@@ -65,7 +65,7 @@ public class NewsFragment extends Fragment implements LoaderManager.LoaderCallba
 
         View rootView=inflater.inflate(R.layout.fragment_news, container, false);
 
-        if (getActivity() != null) getActivity().setTitle("NewsFragment");
+        if (getActivity() != null) getActivity().setTitle("News");
         DaggerDalalStreetApplicationComponent.builder().contextModule(new ContextModule(getContext())).build().inject(this);
 
         newsRecyclerView = rootView.findViewById(R.id.news_recyclerView);

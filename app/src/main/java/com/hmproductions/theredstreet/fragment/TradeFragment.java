@@ -67,7 +67,7 @@ public class TradeFragment extends Fragment {
         View rootView= inflater.inflate(R.layout.fragment_buy_sell, container, false);
 
         if (getActivity() != null)
-            getActivity().setTitle("Buy / Sell");
+            getActivity().setTitle("Trade");
 
         DaggerDalalStreetApplicationComponent.builder().contextModule(new ContextModule(getContext())).build().inject(this);
         ButterKnife.bind(this, rootView);

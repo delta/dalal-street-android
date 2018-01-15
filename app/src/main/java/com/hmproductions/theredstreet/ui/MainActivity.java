@@ -534,7 +534,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             @Override
             public void run() {
                 try {
-                    while (drawerEdgeButton.getAlpha() > 0.60) {
+                    while (drawerEdgeButton.getAlpha() > 0.50) {
                         Thread.sleep(175);
                         runOnUiThread(() -> drawerEdgeButton.setAlpha((float) (drawerEdgeButton.getAlpha() - 0.01)));
                     }

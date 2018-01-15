@@ -148,5 +148,6 @@
     <string name="stock_price">Stock Price</string>
     <string name="time">Time</string>
     <string name="type">Type</string>
+    <string name="no_company_selected">No Company Selected</string>
 
 </resources>

@@ -1,5 +1,10 @@
 package com.hmproductions.theredstreet.dagger;
 
+import android.content.Context;
+
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
+import com.google.android.gms.common.GooglePlayServicesRepairableException;
+import com.google.android.gms.security.ProviderInstaller;
 import com.hmproductions.theredstreet.utils.MiscellaneousUtils;
 
 import java.io.ByteArrayInputStream;
@@ -34,23 +39,24 @@ public class ChannelModule {
 
     @Provides
     @DalalStreetApplicationScope
-    public ManagedChannel getManagedChannel() {
+    public ManagedChannel getManagedChannel(Context context) {
 
         ManagedChannel channel = null;
         try {
             channel = OkHttpChannelBuilder
                     .forAddress(HOST, PORT)
-                    .sslSocketFactory(getSocketFactory())
+                    .sslSocketFactory(getSocketFactory(context))
                     .hostnameVerifier((hostname, session) -> true) // TODO : Fix this verification
                     .build();
-        } catch (KeyStoreException | CertificateException | IOException | NoSuchAlgorithmException | UnrecoverableKeyException | KeyManagementException e) {
+        } catch (KeyStoreException | CertificateException | IOException | NoSuchAlgorithmException | UnrecoverableKeyException |
+                KeyManagementException | GooglePlayServicesRepairableException | GooglePlayServicesNotAvailableException e) {
             e.printStackTrace();
         }
 
         return channel;
     }
 
-    private SSLSocketFactory getSocketFactory() throws KeyStoreException, CertificateException, NoSuchAlgorithmException, IOException, KeyManagementException, UnrecoverableKeyException {
+    private SSLSocketFactory getSocketFactory(Context context) throws KeyStoreException, CertificateException, NoSuchAlgorithmException, IOException, KeyManagementException, UnrecoverableKeyException, GooglePlayServicesNotAvailableException, GooglePlayServicesRepairableException {
 
         byte[] der = MiscellaneousUtils.SERVER_CERT.getBytes();
         ByteArrayInputStream crtInputStream = new ByteArrayInputStream(der);
@@ -69,6 +75,7 @@ public class ChannelModule {
         kmf.init(trustStore, null);
         KeyManager[] keyManagers = kmf.getKeyManagers();
 
+        ProviderInstaller.installIfNeeded(context);
         SSLContext tlsContext = SSLContext.getInstance("TLS");
         tlsContext.init(keyManagers, trust_manager, null);
 

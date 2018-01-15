@@ -2,7 +2,6 @@ package com.hmproductions.theredstreet.loaders;
 
 import android.content.Context;
 import android.support.v4.content.AsyncTaskLoader;
-import android.util.Log;
 
 import dalalstreet.api.DalalActionServiceGrpc;
 import dalalstreet.api.actions.LoginRequest;
@@ -26,8 +25,6 @@ public class LoginLoader extends AsyncTaskLoader<LoginResponse> {
 
     @Override
     public LoginResponse loadInBackground() {
-
         return stub.login(loginRequest);
     }
-
 }
