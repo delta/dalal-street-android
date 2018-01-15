@@ -105,7 +105,7 @@ public class TransactionsFragment extends Fragment implements LoaderManager.Load
         for (int i = 0; i < data.getTransactionsCount(); ++i) {
             dalalstreet.api.models.Transaction currentTransaction = data.getTransactions(i);
             transactionList.add(new Transaction(
-                    currentTransaction.getType().getNumber(),
+                    currentTransaction.getType().name(),
                     currentTransaction.getStockId(),
                     currentTransaction.getStockQuantity(),
                     currentTransaction.getPrice(),
