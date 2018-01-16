@@ -1,10 +1,15 @@
 package com.hmproductions.theredstreet.fragment;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.support.v4.content.LocalBroadcastManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,7 +44,7 @@ import static com.hmproductions.theredstreet.utils.StockUtils.getStockIdFromComp
 *  Uses BuyStocksFromExchange() to buy appropriate stocks */
 public class StockExchangeFragment extends Fragment implements LoaderManager.LoaderCallbacks<GetCompanyProfileResponse> {
 
-    private static final String STOCK_ID_KEY = "stock-id-key";
+    private static final String COMPANY_NAME_KEY = "company-name-key";
 
     @Inject
     DalalActionServiceGrpc.DalalActionServiceBlockingStub actionServiceBlockingStub;
@@ -69,7 +74,18 @@ public class StockExchangeFragment extends Fragment implements LoaderManager.Loa
     ProgressBar stockExchangeProgressBar;
 
     private Stock currentStock;
-    private int lastPositionClick = -1;
+    private String lastCompanySelected = null;
+
+    private BroadcastReceiver refreshStockPricesReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (getActivity() != null && intent.getAction() != null && intent.getAction().equalsIgnoreCase(Constants.REFRESH_STOCK_PRICES_ACTION)) {
+                Bundle bundle = new Bundle();
+                bundle.putString(COMPANY_NAME_KEY, lastCompanySelected);
+                getActivity().getSupportLoaderManager().restartLoader(Constants.COMPANY_PROFILE_LOADER_ID, bundle, StockExchangeFragment.this);
+            }
+        }
+    };
 
     public StockExchangeFragment() {
         // Required empty public constructor
@@ -90,8 +106,8 @@ public class StockExchangeFragment extends Fragment implements LoaderManager.Loa
 
         companySpinner.setOnItemClickListener((adapterView, view, position, id) -> {
             Bundle bundle = new Bundle();
-            bundle.putInt(STOCK_ID_KEY, position + 1);
-            lastPositionClick = position;
+            bundle.putString(COMPANY_NAME_KEY, companySpinner.getText().toString());
+            lastCompanySelected = companySpinner.getText().toString();
             getActivity().getSupportLoaderManager().restartLoader(Constants.COMPANY_PROFILE_LOADER_ID, bundle, this);
         });
 
@@ -123,7 +139,7 @@ public class StockExchangeFragment extends Fragment implements LoaderManager.Loa
 
                         if (getActivity() != null) {
                             Bundle bundle = new Bundle();
-                            bundle.putInt(STOCK_ID_KEY, lastPositionClick + 1);
+                            bundle.putString(COMPANY_NAME_KEY, lastCompanySelected);
                             getActivity().getSupportLoaderManager().restartLoader(Constants.COMPANY_PROFILE_LOADER_ID, bundle, this);
                         }
                         break;
@@ -159,7 +175,7 @@ public class StockExchangeFragment extends Fragment implements LoaderManager.Loa
     public Loader<GetCompanyProfileResponse> onCreateLoader(int id, Bundle args) {
         stockExchangeProgressBar.setVisibility(View.VISIBLE);
 
-        String gettingString = "Getting stocks details for " + StockUtils.getCompanyNameFromStockId(args.getInt(STOCK_ID_KEY)) + "...";
+        String gettingString = "Getting stocks details for " + lastCompanySelected + "...";
 
         dailyHighTextView.setText("");
         dailyLowTextView.setText("");
@@ -168,7 +184,7 @@ public class StockExchangeFragment extends Fragment implements LoaderManager.Loa
         stockInExchangeTextView.setText("");
 
         if (getContext() != null)
-            return new CompanyProfileLoader(getContext(), actionServiceBlockingStub, args.getInt(STOCK_ID_KEY));
+            return new CompanyProfileLoader(getContext(), actionServiceBlockingStub, getStockIdFromCompanyName(args.getString(COMPANY_NAME_KEY)));
         else
             return null;
     }
@@ -200,5 +216,23 @@ public class StockExchangeFragment extends Fragment implements LoaderManager.Loa
     @Override
     public void onLoaderReset(Loader<GetCompanyProfileResponse> loader) {
         // Do nothing
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (getContext() != null) {
+            LocalBroadcastManager.getInstance(getContext()).registerReceiver(
+                    refreshStockPricesReceiver, new IntentFilter(Constants.REFRESH_STOCK_PRICES_ACTION)
+            );
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (getContext() != null) {
+            LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(refreshStockPricesReceiver);
+        }
     }
 }

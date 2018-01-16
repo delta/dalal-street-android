@@ -64,7 +64,7 @@ public class TradeFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        View rootView= inflater.inflate(R.layout.fragment_buy_sell, container, false);
+        View rootView= inflater.inflate(R.layout.fragment_trade, container, false);
 
         if (getActivity() != null)
             getActivity().setTitle("Trade");
@@ -131,7 +131,7 @@ public class TradeFragment extends Fragment {
 
         switch (orderResponse.getStatusCode().getNumber()) {
             case 0:
-                Toast.makeText(getContext(), "Transaction added", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Order Placed", Toast.LENGTH_SHORT).show();
                 break;
 
             case 1:
@@ -147,5 +147,4 @@ public class TradeFragment extends Fragment {
                 break;
         }
     }
-
 }

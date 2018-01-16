@@ -95,7 +95,7 @@
             android:hint="@string/number_of_stocks"
             android:inputType="number"
             android:textColorHint="@android:color/background_dark"
-            android:textColor="@android:color/background_light"
+            android:textColor="@android:color/background_dark"
             android:textSize="18sp" />
 
     </android.support.design.widget.TextInputLayout>

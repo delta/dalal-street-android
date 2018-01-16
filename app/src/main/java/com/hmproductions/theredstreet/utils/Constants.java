@@ -10,4 +10,6 @@ public class Constants {
     public static final int TRANSACTION_LOADER_ID = 901;
 
     public static final String REFRESH_NEWS_ACTION = "refresh-news-action";
+    public static final String REFRESH_PRICE_TICKER_ACTION = "refresh-price-ticker-action";
+    public static final String REFRESH_STOCK_PRICES_ACTION = "refrehs-stock-prices-action";
 }

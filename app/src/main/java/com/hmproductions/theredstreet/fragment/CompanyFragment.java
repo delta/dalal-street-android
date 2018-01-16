@@ -1,9 +1,14 @@
 package com.hmproductions.theredstreet.fragment;
 
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -15,10 +20,10 @@ import com.hmproductions.theredstreet.adapter.PortfolioRecyclerAdapter;
 import com.hmproductions.theredstreet.data.GlobalStockDetails;
 import com.hmproductions.theredstreet.data.PortfolioDetails;
 import com.hmproductions.theredstreet.ui.MainActivity;
+import com.hmproductions.theredstreet.utils.Constants;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -34,6 +39,15 @@ public class CompanyFragment extends Fragment {
     public CompanyFragment() {
         // Required empty public constructor
     }
+
+    private BroadcastReceiver refreshStockPricesReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (getActivity() != null && intent.getAction() != null && intent.getAction().equalsIgnoreCase(Constants.REFRESH_STOCK_PRICES_ACTION)) {
+                updateValues();
+            }
+        }
+    };
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -70,13 +84,24 @@ public class CompanyFragment extends Fragment {
     }
 
     private void sortList(ArrayList<PortfolioDetails> list) {
-        Collections.sort(list, new Comparator<PortfolioDetails>() {
-            public int compare(PortfolioDetails ideaVal1, PortfolioDetails ideaVal2) {
+        Collections.sort(list, (v1, v2) -> v1.getValue()>v2.getValue()?v1.getValue():v2.getValue());
+    }
 
-                Integer idea1 = new Integer(ideaVal1.getValue());
-                Integer idea2 = new Integer(ideaVal2.getValue());
-                return idea1.compareTo(idea2);
-            }
-        });
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (getContext() != null) {
+            LocalBroadcastManager.getInstance(getContext()).registerReceiver(
+                    refreshStockPricesReceiver, new IntentFilter(Constants.REFRESH_STOCK_PRICES_ACTION)
+            );
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (getContext() != null) {
+            LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(refreshStockPricesReceiver);
+        }
     }
 }

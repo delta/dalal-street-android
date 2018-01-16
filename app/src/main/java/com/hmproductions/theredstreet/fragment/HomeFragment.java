@@ -79,7 +79,19 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
         @Override
         public void onReceive(Context context, Intent intent) {
             if (getActivity() != null && intent.getAction() != null && intent.getAction().equalsIgnoreCase(Constants.REFRESH_NEWS_ACTION)) {
+
                 getActivity().getSupportLoaderManager().restartLoader(Constants.NEWS_LOADER_ID, null, HomeFragment.this);
+
+            } else if (getActivity() != null && intent.getAction() != null && intent.getAction().equalsIgnoreCase(Constants.REFRESH_PRICE_TICKER_ACTION)) {
+
+                StringBuilder builder = new StringBuilder("");
+                if (MainActivity.globalStockDetails.size() > 0) {
+                    for(GlobalStockDetails currentStockDetails : MainActivity.globalStockDetails){
+                        builder.append(currentStockDetails.getShortName()).append("/INR : ").append(currentStockDetails.getPrice());
+                        builder.append(currentStockDetails.getUp()==1?"\u2191":"\u2193").append("     ");
+                    }
+                }
+                breakingNewsTextView.setText(builder.toString());
             }
         }
     };
@@ -187,9 +199,13 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
     @Override
     public void onResume() {
         super.onResume();
-        if (getContext() != null)
+        if (getContext() != null) {
+            IntentFilter intentFilter = new IntentFilter();
+            intentFilter.addAction(Constants.REFRESH_NEWS_ACTION);
+            intentFilter.addAction(Constants.REFRESH_PRICE_TICKER_ACTION);
             LocalBroadcastManager.getInstance(getContext())
-                    .registerReceiver(refreshNewsListReceiver, new IntentFilter(Constants.REFRESH_NEWS_ACTION));
+                    .registerReceiver(refreshNewsListReceiver, intentFilter);
+        }
     }
 
     @Override

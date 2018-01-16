@@ -370,6 +370,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     public void onNext(SubscribeResponse value) {
                         if (value.getStatusCode().getNumber() == 0) {
                             subscribeToMarketEventsUpdateStream(value.getSubscriptionId());
+                            Log.v(":::", " market events Subscription id " + value.getSubscriptionId().getId());
                         }
                         else
                             Toast.makeText(MainActivity.this , "Server internal error", Toast.LENGTH_SHORT).show();
@@ -412,7 +413,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 });
     }
 
-    // Subscribes to stock prices stream and gets updates (Tested)
+    // Subscribes to stock prices stream and gets updates (TESTED)
     private void getStockPricesSubscriptionId() {
         streamServiceStub.subscribe(
                 SubscribeRequest.newBuilder().setDataStreamType(DataStreamType.STOCK_PRICES).setDataStreamId("").build(),
@@ -439,7 +440,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 }
         );
     }
-
     private void subscribeToStockPricesStream(SubscriptionId stockPricesSubscriptionId) {
         streamServiceStub.getStockPricesUpdates(stockPricesSubscriptionId,
                 new StreamObserver<StockPricesUpdate>() {
@@ -448,6 +448,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         for (int i=1 ; i<=30 ; ++i) {
                             if (value.getPricesMap().containsKey(i)) {
                                 globalStockDetails.get(i-1).setPrice(value.getPricesMap().get(i));
+                                LocalBroadcastManager.getInstance(MainActivity.this).sendBroadcast(new Intent(Constants.REFRESH_PRICE_TICKER_ACTION));
+                                LocalBroadcastManager.getInstance(MainActivity.this).sendBroadcast(new Intent(Constants.REFRESH_STOCK_PRICES_ACTION));
                             }
                         }
                     }
@@ -490,7 +492,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 }
         );
     }
-
     private void subscribeToStockExchangeStream(SubscriptionId stockExchangeSubscriptionId) {
 
         streamServiceStub.getStockExchangeUpdates(stockExchangeSubscriptionId,
