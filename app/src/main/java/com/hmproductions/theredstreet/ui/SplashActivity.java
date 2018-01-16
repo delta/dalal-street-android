@@ -1,12 +1,21 @@
 package com.hmproductions.theredstreet.ui;
 
+import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.support.annotation.Nullable;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
+import android.util.AttributeSet;
 import android.util.Log;
+import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -33,8 +42,9 @@ import dalalstreet.api.models.Stock;
 import io.grpc.ManagedChannel;
 
 import static com.hmproductions.theredstreet.utils.Constants.LOGIN_LOADER_ID;
+import static com.hmproductions.theredstreet.utils.MiscellaneousUtils.getConnectionInfo;
 
-public class SplashActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<LoginResponse>{
+public class SplashActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<LoginResponse> {
 
     /* Not injecting stub directly into this context to prevent empty/null metadata attached to stub since user has not logged in. */
     @Inject
@@ -43,12 +53,19 @@ public class SplashActivity extends AppCompatActivity implements LoaderManager.L
     @Inject
     SharedPreferences preferences;
 
+    public final int FPS = 60;
+
     @BindView(R.id.splash_text)
     TextView splashText;
+    @BindView(R.id.graph_drawer)
+    GraphDrawView graphDrawView;
 
+    int width = 0;
+    int height = 0;
     public static final String USERNAME_KEY = "username-key";
     public static final String EMAIL_KEY = "email-key";
     static final String PASSWORD_KEY = "password-key";
+    public Thread drawer;
     private boolean threadRun = true;
     Thread splashTimer = null;
 
@@ -60,7 +77,6 @@ public class SplashActivity extends AppCompatActivity implements LoaderManager.L
 
         ButterKnife.bind(this);
         DaggerDalalStreetApplicationComponent.builder().contextModule(new ContextModule(this)).build().inject(this);
-
 
         String email = preferences.getString(EMAIL_KEY, null);
         String password = preferences.getString(PASSWORD_KEY, null);
@@ -74,30 +90,32 @@ public class SplashActivity extends AppCompatActivity implements LoaderManager.L
         } else {
 
             Intent intent = new Intent(this, LoginActivity.class);
-            startActivity(intent);
-            finish();
+             startActivity(intent);
+             finish();
         }
 
-        splashTimer = new Thread(){
-            public void run(){
-                try{
+        drawer = new Thread(graphDrawView);
+        drawer.start();
+
+        splashTimer = new Thread() {
+            public void run() {
+                try {
                     int splashTime = 0;
-                    while(threadRun){
+                    while (threadRun) {
 
                         sleep(150);
 
-                        if(splashTime % 10 < 3){
-                            setSplashText("Fetching Data.");
-                        }
-                        else if(splashTime % 10 >= 3 && splashTime % 10 < 7 ){
-                            setSplashText("Fetching Data..");
-                        }else if (splashTime % 10 >= 7){
-                            setSplashText("Fetching Data...");
+                        if (splashTime % 10 < 3) {
+                            setSplashText("Logging in.");
+                        } else if (splashTime % 10 >= 3 && splashTime % 10 < 7) {
+                            setSplashText("Logging in..");
+                        } else if (splashTime % 10 >= 7) {
+                            setSplashText("Logging in...");
                         }
                         splashTime = splashTime + 1;
                     }
 
-                }catch(InterruptedException e){
+                } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
             }
@@ -113,13 +131,13 @@ public class SplashActivity extends AppCompatActivity implements LoaderManager.L
     @Override
     public Loader<LoginResponse> onCreateLoader(int id, Bundle args) {
 
-        LoginRequest loginRequest = LoginRequest
-                .newBuilder()
-                .setEmail(args.getString(EMAIL_KEY))
-                .setPassword(args.getString(PASSWORD_KEY))
-                .build();
+            LoginRequest loginRequest = LoginRequest
+                    .newBuilder()
+                    .setEmail(args.getString(EMAIL_KEY))
+                    .setPassword(args.getString(PASSWORD_KEY))
+                    .build();
 
-        DalalActionServiceGrpc.DalalActionServiceBlockingStub stub = DalalActionServiceGrpc.newBlockingStub(channel);
+            DalalActionServiceGrpc.DalalActionServiceBlockingStub stub = DalalActionServiceGrpc.newBlockingStub(channel);
 
         return new LoginLoader(this, loginRequest, stub);
     }
@@ -191,6 +209,15 @@ public class SplashActivity extends AppCompatActivity implements LoaderManager.L
             Toast.makeText(this, "Please login again", Toast.LENGTH_SHORT).show();
             startActivity(new Intent(this, LoginActivity.class));
             finish();
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (drawer != null) {
+            if (drawer.isAlive())
+                drawer.interrupt();
         }
     }
 
