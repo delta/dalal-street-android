@@ -87,7 +87,7 @@ public class MortgageFragment extends Fragment implements LoaderManager.LoaderCa
         companySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                getActivity().getSupportLoaderManager().restartLoader(Constants.MORTGAGE_DETAILS_LOADER, null, MortgageFragment.this);
+                getActivity().getSupportLoaderManager().restartLoader(Constants.MORTGAGE_DETAILS_LOADER_ID, null, MortgageFragment.this);
             }
 
             @Override

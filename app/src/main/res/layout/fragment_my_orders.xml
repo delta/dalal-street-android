@@ -1,12 +1,48 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="org.pragyan.dalalstreet17.MyOrders">
 
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:id="@+id/recyclerViewsContainer_relativeLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/openOrderText"
+            android:textSize="20sp"
+            android:textColor="@android:color/background_dark"
+            android:text="@string/open_orders"
+            android:layout_margin="6dp"
+            android:textStyle="italic"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
 
     <android.support.v7.widget.RecyclerView
+        android:id="@+id/orders_recyclerView"
+        android:layout_below="@+id/openOrderText"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/orders_list"/>
+        android:layout_height="match_parent" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/emptyOrders_relativeLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_marginEnd="20dp"
+            android:layout_marginStart="20dp"
+            android:gravity="center"
+            android:text="@string/no_orders_pending"
+            android:textColor="@android:color/background_dark"
+            android:textSize="20sp"
+            android:visibility="gone" />
+
+    </RelativeLayout>
+
 </FrameLayout>

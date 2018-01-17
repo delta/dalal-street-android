@@ -37,7 +37,7 @@ service DalalActionService {
 	rpc MortgageStocks(actions.MortgageStocksRequest) 					returns (actions.MortgageStocksResponse);
 	rpc RetrieveMortgageStocks(actions.RetrieveMortgageStocksRequest) 	returns (actions.RetrieveMortgageStocksResponse);
 
-	// Getting information about transactions, orders, mortgage
+	// Getting information about transactions, order_list_item, mortgage
 	rpc GetMyOpenOrders(actions.GetMyOpenOrdersRequest)					returns (actions.GetMyOpenOrdersResponse);
 	rpc GetMyClosedAsks(actions.GetMyClosedAsksRequest)					returns (actions.GetMyClosedAsksResponse);
 	rpc GetMyClosedBids(actions.GetMyClosedBidsRequest)					returns (actions.GetMyClosedBidsResponse);

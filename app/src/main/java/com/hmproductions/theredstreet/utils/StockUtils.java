@@ -64,6 +64,16 @@ public class StockUtils {
         }
     }
 
+    public static String getOrderTypeFromTypeId(int id) {
+        switch (id) {
+            case 0 : return "Limit Order";
+            case 1 : return "Market Order";
+            case 2 : return "Stoploss Order";
+            case 3 : return "Stoploss Active Order";
+            default: return "Unrecognized order";
+        }
+    }
+
     private static class StockIdCompanyName {
 
         private int stockId;

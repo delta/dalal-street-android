@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -34,8 +33,6 @@ import io.grpc.ManagedChannel;
 import static com.hmproductions.theredstreet.utils.Constants.LOGIN_LOADER_ID;
 
 public class SplashActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<LoginResponse>{
-
-    private String LOG_TAG = SplashActivity.class.getName() + ":::";
 
     /* Not injecting stub directly into this context to prevent empty/null metadata attached to stub since user has not logged in. */
     @Inject
@@ -153,7 +150,6 @@ public class SplashActivity extends AppCompatActivity implements LoaderManager.L
             ArrayList<GlobalStockDetails> globalStockList = new ArrayList<>();
             Map<Integer, Stock> globalStockMap = loginResponse.getStockListMap();
 
-            Log.v(LOG_TAG, "Incoming global stock map size = " + String.valueOf(globalStockMap.size()));
             for (int q = 1; q <= globalStockMap.size(); ++q) {
 
                 Stock currentStockDetails = globalStockMap.get(q);

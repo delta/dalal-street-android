@@ -79,7 +79,7 @@
             android:ems="10"
             android:hint="@string/enter_the_number_of_stocks"
             android:inputType="number"
-            android:textColor="@android:color/background_light"
+            android:textColor="@android:color/background_dark"
             android:maxLength="5" />
 
     </android.support.design.widget.TextInputLayout>

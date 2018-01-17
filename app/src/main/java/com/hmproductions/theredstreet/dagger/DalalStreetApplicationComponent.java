@@ -1,5 +1,6 @@
 package com.hmproductions.theredstreet.dagger;
 
+import com.hmproductions.theredstreet.fragment.OrdersFragment;
 import com.hmproductions.theredstreet.fragment.TradeFragment;
 import com.hmproductions.theredstreet.fragment.MarketDepthFragment;
 import com.hmproductions.theredstreet.fragment.HomeFragment;
@@ -31,5 +32,5 @@ public interface DalalStreetApplicationComponent {
     void inject(LeaderboardFragment leaderboardFragment);
     void inject(StockExchangeFragment stockExchangeFragment);
     void inject(TransactionsFragment transactionsFragment);
-
+    void inject(OrdersFragment ordersFragment);
 }
