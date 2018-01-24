@@ -14,7 +14,7 @@
             android:textColor="@android:color/background_dark"
             android:text="@string/open_orders"
             android:layout_margin="6dp"
-            android:textStyle="italic"
+            android:textStyle="bold"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 

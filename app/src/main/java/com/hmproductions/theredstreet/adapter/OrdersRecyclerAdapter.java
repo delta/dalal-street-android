@@ -44,7 +44,7 @@ public class OrdersRecyclerAdapter extends RecyclerView.Adapter<OrdersRecyclerAd
         Order order = orderList.get(orderList.size()-position-1);
         String tempString;
 
-        tempString = "Order Type : " + (order.isBid()?"BID - ":"ASK - " + StockUtils.getOrderTypeFromTypeId(order.getOrderType()));
+        tempString = "Order Type : " + (order.isBid()?"BID - ":"ASK - ") + StockUtils.getOrderTypeFromTypeId(order.getOrderType());
         holder.typeTextView.setText(tempString);
 
         tempString = "Company : " + StockUtils.getCompanyNameFromStockId(order.getStockId());

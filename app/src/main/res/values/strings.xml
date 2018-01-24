@@ -28,7 +28,6 @@
         <item>Limit Order</item>
         <item>Market Order</item>
         <item>Stoploss Order</item>
-        <item>Stoploss Active Order</item>
     </string-array>
 
     <string name="help">

@@ -69,7 +69,6 @@ public class StockUtils {
             case 0 : return "Limit Order";
             case 1 : return "Market Order";
             case 2 : return "Stoploss Order";
-            case 3 : return "Stoploss Active Order";
             default: return "Unrecognized order";
         }
     }

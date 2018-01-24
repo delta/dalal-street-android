@@ -43,7 +43,8 @@ public class CompanyFragment extends Fragment {
     private BroadcastReceiver refreshStockPricesReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if (getActivity() != null && intent.getAction() != null && intent.getAction().equalsIgnoreCase(Constants.REFRESH_STOCK_PRICES_ACTION)) {
+            if (getActivity() != null && intent.getAction() != null &&
+                    (intent.getAction().equalsIgnoreCase(Constants.REFRESH_STOCK_PRICES_ACTION) || intent.getAction().equalsIgnoreCase(Constants.REFRESH_STOCKS_EXCHANGE_ACTION))) {
                 updateValues();
             }
         }
@@ -91,8 +92,11 @@ public class CompanyFragment extends Fragment {
     public void onResume() {
         super.onResume();
         if (getContext() != null) {
+            IntentFilter intentFilter = new IntentFilter(Constants.REFRESH_STOCKS_EXCHANGE_ACTION);
+            intentFilter.addAction(Constants.REFRESH_STOCK_PRICES_ACTION);
+
             LocalBroadcastManager.getInstance(getContext()).registerReceiver(
-                    refreshStockPricesReceiver, new IntentFilter(Constants.REFRESH_STOCK_PRICES_ACTION)
+                    refreshStockPricesReceiver, intentFilter
             );
         }
     }

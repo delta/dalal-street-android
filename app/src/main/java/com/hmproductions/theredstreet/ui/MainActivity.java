@@ -40,7 +40,9 @@ import com.hmproductions.theredstreet.utils.Constants;
 import com.hmproductions.theredstreet.utils.MiscellaneousUtils;
 import com.hmproductions.theredstreet.utils.StockUtils;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -60,6 +62,8 @@ import dalalstreet.api.datastreams.SubscribeRequest;
 import dalalstreet.api.datastreams.SubscribeResponse;
 import dalalstreet.api.datastreams.SubscriptionId;
 import dalalstreet.api.datastreams.TransactionUpdate;
+import dalalstreet.api.datastreams.UnsubscribeRequest;
+import dalalstreet.api.datastreams.UnsubscribeResponse;
 import dalalstreet.api.models.TransactionType;
 import io.grpc.stub.StreamObserver;
 
@@ -94,6 +98,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     public static List<StockDetails> ownedStockDetails;
     public static List<GlobalStockDetails> globalStockDetails;
+    private List<SubscriptionId> subscriptionIds = new ArrayList<>();
 
     @BindView(R.id.stockWorth_textView)
     TextView stockTextView;
@@ -287,7 +292,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         totalTextView.setText(String.valueOf(totalWorth));
     }
 
-    // Subscribes to transaction stream and gets updates (PARTIALLY TESTED)
+    // Subscribes to transaction stream and gets updates (TESTED) TODO : Fill this method
     private void getTransactionSubscriptionId() {
         streamServiceStub.subscribe(
                 SubscribeRequest.newBuilder().setDataStreamType(DataStreamType.TRANSACTIONS).setDataStreamId("").build(),
@@ -295,6 +300,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     @Override
                     public void onNext(SubscribeResponse value) {
                         if (value.getStatusCode().getNumber() == 0) {
+                            subscriptionIds.add(value.getSubscriptionId());
                             subscribeToTransactionsStream(value.getSubscriptionId());
                         }
                         else
@@ -322,9 +328,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     public void onNext(TransactionUpdate value) {
 
                         dalalstreet.api.models.Transaction transaction = value.getTransaction();
-                        Log.v(":::", "transaction update with type" + String.valueOf(value.getTransaction().getTypeValue()));
 
-                        // TODO : Fill this method
                         if (transaction.getType() == TransactionType.DIVIDEND_TRANSACTION) {
                             int previousValue = Integer.parseInt(cashTextView.getText().toString());
                             cashTextView.setText(String.valueOf(previousValue + transaction.getTotal()));
@@ -349,13 +353,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                             long previousCash = Integer.parseInt(cashTextView.getText().toString());
                             long previousStock = Integer.parseInt(stockTextView.getText().toString());
 
-                            long newStockValue = previousStock + transaction.getTotal();
-                            long newCashValue = previousCash - transaction.getTotal();
+                            long newStockValue = previousStock - transaction.getTotal();
+                            long newCashValue = previousCash + transaction.getTotal();
 
                             stockTextView.setText(String.valueOf(newStockValue));
                             cashTextView.setText(String.valueOf(newCashValue));
 
-                            updateOwnedStockIdAndQuantity(transaction.getStockId(), transaction.getStockQuantity(), transaction.getTotal() < 0);
+                            updateOwnedStockIdAndQuantity(transaction.getStockId(), transaction.getStockQuantity(), transaction.getStockQuantity() > 0);
                         }
                     }
 
@@ -379,6 +383,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     @Override
                     public void onNext(SubscribeResponse value) {
                         if (value.getStatusCode().getNumber() == 0) {
+                            subscriptionIds.add(value.getSubscriptionId());
                             subscribeToMarketEventsUpdateStream(value.getSubscriptionId());
                         }
                         else
@@ -428,6 +433,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     @Override
                     public void onNext(SubscribeResponse value) {
                         if (value.getStatusCode().getNumber() == 0) {
+                            subscriptionIds.add(value.getSubscriptionId());
                             subscribeToStockPricesStream(value.getSubscriptionId());
                         }
                         else
@@ -473,15 +479,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 });
     }
 
-    // Subscribes to stock exchange stream and gets updates globalStockDetails
+    // Subscribes to stock exchange stream and gets updates globalStockDetails (TESTED)
     private void getStockExchangeSubscriptionId() {
         streamServiceStub.subscribe(
                 SubscribeRequest.newBuilder().setDataStreamType(DataStreamType.STOCK_EXCHANGE).setDataStreamId("").build(),
                 new StreamObserver<SubscribeResponse>() {
                     @Override
                     public void onNext(SubscribeResponse value) {
-                        if (value.getStatusCode().getNumber() == 0)
+                        if (value.getStatusCode().getNumber() == 0) {
+                            subscriptionIds.add(value.getSubscriptionId());
                             subscribeToStockExchangeStream(value.getSubscriptionId());
+                        }
                         else
                             Toast.makeText(MainActivity.this , "Server internal error", Toast.LENGTH_SHORT).show();
                         onCompleted();
@@ -505,12 +513,24 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 new StreamObserver<StockExchangeUpdate>() {
                     @Override
                     public void onNext(StockExchangeUpdate value) {
+                        Map<Integer, StockExchangeDataPoint> stockExchangeDataPointMap = value.getStocksInExchangeMap();
 
-                        for (int x=0 ; x<value.getStocksInExchangeCount() ; ++x) {
-                            StockExchangeDataPoint currentDataPoint = value.getStocksInExchangeMap().get(x);
-                            MainActivity.globalStockDetails.get(x).setPrice(currentDataPoint.getPrice());
-                            MainActivity.globalStockDetails.get(x).setQuantityInMarket(currentDataPoint.getStocksInMarket());
-                            MainActivity.globalStockDetails.get(x).setQuantityInExchange(currentDataPoint.getStocksInExchange());
+                        for (int x=1 ; x <= 30 ; ++x) {
+                            if (stockExchangeDataPointMap.containsKey(x)) {
+                                StockExchangeDataPoint currentDataPoint = value.getStocksInExchangeMap().get(x);
+
+                                int position = -1;
+                                for (int i=0 ; i<globalStockDetails.size() ; ++i) {
+                                    if (x == globalStockDetails.get(i).getStockId()) {
+                                        position = i;
+                                        break;
+                                    }
+                                }
+                                MainActivity.globalStockDetails.get(position).setPrice(currentDataPoint.getPrice());
+                                MainActivity.globalStockDetails.get(position).setQuantityInMarket(currentDataPoint.getStocksInMarket());
+                                MainActivity.globalStockDetails.get(position).setQuantityInExchange(currentDataPoint.getStocksInExchange());
+                                LocalBroadcastManager.getInstance(MainActivity.this).sendBroadcast(new Intent(Constants.REFRESH_STOCKS_EXCHANGE_ACTION));
+                            }
                         }
                     }
 
@@ -527,6 +547,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void updateOwnedStockIdAndQuantity(int stockId, int stockQuantity, boolean increase) {
+
+        boolean isPresentInList = false;
+
         for (StockDetails currentOwnedStockDetails : ownedStockDetails) {
             if (currentOwnedStockDetails.getStockId() == stockId) {
                 int newQuantity;
@@ -534,9 +557,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 if (increase) newQuantity = currentOwnedStockDetails.getQuantity() + stockQuantity;
                 else newQuantity = currentOwnedStockDetails.getQuantity() - stockQuantity;
 
+                Log.v("::Setting:", "Stock id=" + String.valueOf(stockId) + "Quantity=" + String.valueOf(stockQuantity));
+                isPresentInList = true;
+
                 currentOwnedStockDetails.setQuantity(newQuantity);
-                return;
+                break;
             }
+        }
+
+        if(!isPresentInList) {
+            ownedStockDetails.add(new StockDetails(stockId, stockQuantity));
         }
     }
 
@@ -547,7 +577,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             @Override
             public void run() {
                 try {
-                    while (drawerEdgeButton.getAlpha() > 0.50) {
+                    while (drawerEdgeButton.getAlpha() > 0.70) {
                         Thread.sleep(175);
                         runOnUiThread(() -> drawerEdgeButton.setAlpha((float) (drawerEdgeButton.getAlpha() - 0.01)));
                     }
@@ -565,6 +595,31 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             drawer.closeDrawer(GravityCompat.START);
         } else {
             super.onBackPressed();
+        }
+    }
+
+    // Unsubscribes from all the streams subscribed in this activity.
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        for (SubscriptionId currentSubscriptionId : subscriptionIds) {
+            streamServiceStub.unsubscribe(UnsubscribeRequest.newBuilder().setSubscriptionId(currentSubscriptionId).build(),
+                    new StreamObserver<UnsubscribeResponse>() {
+                        @Override
+                        public void onNext(UnsubscribeResponse value) {
+                            onCompleted();
+                        }
+
+                        @Override
+                        public void onError(Throwable t) {
+
+                        }
+
+                        @Override
+                        public void onCompleted() {
+
+                        }
+                    });
         }
     }
 }

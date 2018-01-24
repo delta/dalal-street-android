@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.hmproductions.theredstreet.R;
 import com.hmproductions.theredstreet.data.Company;
+import com.hmproductions.theredstreet.utils.Constants;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -42,7 +43,7 @@ public class CompanyRecyclerAdapter extends RecyclerView.Adapter<CompanyRecycler
 
         Picasso.with(context).load(currentCompany.isUp()? upArrowResourceId : downArrowResourceId).into(holder.arrowImageView);
 
-        String worthString = "₹" + String.valueOf(currentCompany.getPreviousDayClose());
+        String worthString = Constants.RUPEE_SYMBOL + String.valueOf(currentCompany.getPreviousDayClose());
         holder.previousDayCloseTextView.setText(worthString);
 
         if (currentCompany.getImageUrl() != null) {

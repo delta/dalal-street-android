@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import com.hmproductions.theredstreet.R;
 import com.hmproductions.theredstreet.data.PortfolioDetails;
+import com.hmproductions.theredstreet.utils.Constants;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,7 +45,7 @@ public class PortfolioRecyclerAdapter extends RecyclerView.Adapter<PortfolioRecy
         String temporaryString = ": " + String.valueOf(list.get(position).getNoOfStock());
         holder.portfolioStockQuantityTextView.setText(temporaryString);
 
-        temporaryString = "(₹" + String.valueOf(list.get(position).getValue()) + "/stock)";
+        temporaryString = Constants.RUPEE_SYMBOL + String.valueOf(list.get(position).getValue()) + "/stock)";
         holder.portfolioPriceTextView.setText(temporaryString);
     }
 

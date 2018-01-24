@@ -33,8 +33,7 @@ import io.grpc.okhttp.OkHttpChannelBuilder;
 @Module
 public class ChannelModule {
 
-    private static final String HOST = "139.59.85.232";
-//    private static final String HOST = "192.168.43.230";
+    private static final String HOST = "139.59.47.250";
     private static final int PORT = 443;
 
     @Provides

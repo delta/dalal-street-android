@@ -148,22 +148,33 @@ public class OrdersFragment extends Fragment implements
 
     @Override
     public void onOrderClick(int orderId, boolean bid) {
-        CancelOrderResponse response = actionServiceBlockingStub.cancelOrder(
-                CancelOrderRequest.newBuilder().setOrderId(orderId).setIsAsk(!bid).build());
 
-        switch (response.getStatusCodeValue()) {
-            case 0:
-                Toast.makeText(getContext(), "Order cancelled", Toast.LENGTH_SHORT).show();
-                if (getActivity() != null)
-                    getActivity().getSupportLoaderManager().restartLoader(Constants.ORDERS_LOADER_ID, null, this);
-                break;
+        if (getContext() != null) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(getContext())
+                    .setTitle("Cancel Confirm")
+                    .setCancelable(true)
+                    .setMessage("Do you want to cancel this order ?")
+                    .setPositiveButton("Cancel", (dialogInterface, i) -> {
+                        CancelOrderResponse response = actionServiceBlockingStub.cancelOrder(
+                                CancelOrderRequest.newBuilder().setOrderId(orderId).setIsAsk(!bid).build());
 
-            case 1:
-            case 3:
-                Toast.makeText(getContext(), "Inconsistent data server error", Toast.LENGTH_SHORT).show();
+                        switch (response.getStatusCodeValue()) {
+                            case 0:
+                                Toast.makeText(getContext(), "Order cancelled", Toast.LENGTH_SHORT).show();
+                                if (getActivity() != null)
+                                    getActivity().getSupportLoaderManager().restartLoader(Constants.ORDERS_LOADER_ID, null, OrdersFragment.this);
+                                break;
 
-            case 2:
-                Toast.makeText(getContext(), "Market is closed", Toast.LENGTH_SHORT).show();
+                            case 1:
+                            case 3:
+                                Toast.makeText(getContext(), "Inconsistent data server error", Toast.LENGTH_SHORT).show();
+
+                            case 2:
+                                Toast.makeText(getContext(), "Market is closed", Toast.LENGTH_SHORT).show();
+                        }
+                    })
+                    .setNegativeButton("Back", (dialogInterface, i) -> dialogInterface.dismiss());
+            builder.show();
         }
     }
 }
