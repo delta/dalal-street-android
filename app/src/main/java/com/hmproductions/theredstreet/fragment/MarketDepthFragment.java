@@ -241,7 +241,7 @@ public class MarketDepthFragment extends Fragment {
         askBarChart.setData(askBarData);
         askBarChart.animateY(ANIMATE_DURATION);
 
-        dataset=new LineDataSet(performanceEntries,"Company Performance");
+        dataset=new LineDataSet(performanceEntries,"CompanyTickerDetails Performance");
         if (getContext() != null)
             dataset.setColor(ContextCompat.getColor(getContext(),R.color.colorPrimary));
         dataset.setLineWidth(3);

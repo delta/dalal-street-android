@@ -2,13 +2,13 @@ package com.hmproductions.theredstreet.data;
 
 import javax.annotation.Nullable;
 
-public class Company {
+public class CompanyTickerDetails {
 
     private String fullName, imageUrl;
     private int previousDayClose;
     private boolean up;
 
-    public Company(String fullName, @Nullable String imageUrl, int previousDayClose, boolean up) {
+    public CompanyTickerDetails(String fullName, @Nullable String imageUrl, int previousDayClose, boolean up) {
         this.fullName = fullName;
         this.imageUrl = imageUrl;
         this.previousDayClose = previousDayClose;

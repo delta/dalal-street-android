@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.RadioGroup;
@@ -78,10 +79,18 @@ public class TradeFragment extends Fragment {
         orderSpinner.setAdapter(orderSelectAdapter);
         companySpinner.setAdapter(companiesAdapter);
 
+        stockRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup radioGroup, int id) {
+                Button bidAskButton = rootView.findViewById(R.id.bidAsk_button);
+                bidAskButton.setText(id==R.id.bid_radioButton?"BID":"ASK");
+            }
+        });
+
         orderSpinner.setOnItemClickListener((aV, view, i, l) -> orderPriceEditText.setEnabled(!aV.getItemAtPosition(i).toString().equals("Marker order")));
 
         return rootView;
-    }
+    } // todo : when user buy stock for first time, companies add extra fields, green arrow ~ red arrow, date/time ist
 
     @OnClick(R.id.bidAsk_button)
     void onBidAskButtonClick() {

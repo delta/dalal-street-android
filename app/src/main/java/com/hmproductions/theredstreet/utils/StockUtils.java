@@ -73,6 +73,14 @@ public class StockUtils {
         }
     }
 
+    public static String getShortNameForStockId(List<GlobalStockDetails> globalStockDetails, int stockId) {
+        for (GlobalStockDetails currentDetails : globalStockDetails) {
+            if (currentDetails.getStockId() == stockId)
+                return currentDetails.getShortName();
+        }
+        return null;
+    }
+
     private static class StockIdCompanyName {
 
         private int stockId;

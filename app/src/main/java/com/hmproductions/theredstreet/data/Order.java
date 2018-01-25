@@ -48,4 +48,12 @@ public class Order {
     public int getStockQuantityFulfilled() {
         return stockQuantityFulfilled;
     }
+
+    public void setClosed(boolean closed) {
+        this.closed = closed;
+    }
+
+    public void setStockQuantityFulfilled(int stockQuantityFulfilled) {
+        this.stockQuantityFulfilled = stockQuantityFulfilled;
+    }
 }

@@ -30,11 +30,20 @@ import java.util.List;
 import javax.inject.Inject;
 
 import dalalstreet.api.DalalActionServiceGrpc;
+import dalalstreet.api.DalalStreamServiceGrpc;
 import dalalstreet.api.actions.CancelOrderRequest;
 import dalalstreet.api.actions.CancelOrderResponse;
 import dalalstreet.api.actions.GetMyOpenOrdersResponse;
+import dalalstreet.api.datastreams.DataStreamType;
+import dalalstreet.api.datastreams.MyOrderUpdate;
+import dalalstreet.api.datastreams.SubscribeRequest;
+import dalalstreet.api.datastreams.SubscribeResponse;
+import dalalstreet.api.datastreams.SubscriptionId;
+import dalalstreet.api.datastreams.UnsubscribeRequest;
+import dalalstreet.api.datastreams.UnsubscribeResponse;
 import dalalstreet.api.models.Ask;
 import dalalstreet.api.models.Bid;
+import io.grpc.stub.StreamObserver;
 
 public class OrdersFragment extends Fragment implements
         LoaderManager.LoaderCallbacks<GetMyOpenOrdersResponse>, OrdersRecyclerAdapter.OnOrderClickListener{
@@ -42,10 +51,14 @@ public class OrdersFragment extends Fragment implements
     @Inject
     DalalActionServiceGrpc.DalalActionServiceBlockingStub actionServiceBlockingStub;
 
+    @Inject
+    DalalStreamServiceGrpc.DalalStreamServiceStub streamServiceStub;
+
     RecyclerView orderRecyclerView;
     RelativeLayout emptyOrderRelativeLayout, recyclerContainerRelativeLayout;
 
-    OrdersRecyclerAdapter ordersRecyclerAdapter;
+    private OrdersRecyclerAdapter ordersRecyclerAdapter;
+    private SubscriptionId orderSubscriptionId = null;
     AlertDialog loadingOrdersDialog;
 
     public OrdersFragment() {
@@ -78,7 +91,50 @@ public class OrdersFragment extends Fragment implements
 
         getActivity().getSupportLoaderManager().restartLoader(Constants.ORDERS_LOADER_ID, null, this);
 
+        getMyOrdersSubscriptionId();
+
         return rootView;
+    }
+
+    // Subscribe to getMyOrders() stream
+    private void getMyOrdersSubscriptionId() {
+        streamServiceStub.subscribe(SubscribeRequest.newBuilder().setDataStreamType(DataStreamType.MY_ORDERS).setDataStreamId("").build(),
+                new StreamObserver<SubscribeResponse>() {
+                    @Override
+                    public void onNext(SubscribeResponse value) {
+                        subscribeToMyOrdersStream(value.getSubscriptionId());
+                        orderSubscriptionId = value.getSubscriptionId();
+                        onCompleted();
+                    }
+
+                    @Override
+                    public void onError(Throwable t) {
+
+                    }
+
+                    @Override
+                    public void onCompleted() {
+
+                    }
+                });
+    }
+    private void subscribeToMyOrdersStream(SubscriptionId subscriptionId) {
+        streamServiceStub.getMyOrderUpdates(subscriptionId, new StreamObserver<MyOrderUpdate>() {
+            @Override
+            public void onNext(MyOrderUpdate orderUpdate) {
+                ordersRecyclerAdapter.orderUpdate(orderUpdate.getId(), orderUpdate.getTradeQuantity(), orderUpdate.getIsClosed());
+            }
+
+            @Override
+            public void onError(Throwable t) {
+
+            }
+
+            @Override
+            public void onCompleted() {
+
+            }
+        });
     }
 
     @Override
@@ -175,6 +231,30 @@ public class OrdersFragment extends Fragment implements
                     })
                     .setNegativeButton("Back", (dialogInterface, i) -> dialogInterface.dismiss());
             builder.show();
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (orderSubscriptionId != null) {
+            streamServiceStub.unsubscribe(UnsubscribeRequest.newBuilder().setSubscriptionId(orderSubscriptionId).build(),
+                    new StreamObserver<UnsubscribeResponse>() {
+                        @Override
+                        public void onNext(UnsubscribeResponse value) {
+                            onCompleted();
+                        }
+
+                        @Override
+                        public void onError(Throwable t) {
+
+                        }
+
+                        @Override
+                        public void onCompleted() {
+
+                        }
+                    });
         }
     }
 }

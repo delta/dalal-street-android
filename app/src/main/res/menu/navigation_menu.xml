@@ -9,12 +9,17 @@
             android:title="@string/title_activity_home" />
 
         <item
+            android:id="@+id/nav_portfolio"
+            android:icon="@drawable/portfolio_icon"
+            android:title="@string/portfolio"/>
+
+        <item
             android:id="@+id/nav_company_profile"
             android:icon="@drawable/market_depth_icon"
             android:title="@string/market_depth" />
 
         <item
-            android:id="@+id/nav_portfolio"
+            android:id="@+id/nav_companies"
             android:icon="@drawable/companies_icon"
             android:title="@string/companies" />
 

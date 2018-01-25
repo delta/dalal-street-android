@@ -72,7 +72,7 @@ public class TransactionRecyclerAdapter extends RecyclerView.Adapter<Transaction
                 break;
         }
 
-        tempAssigningString = "Company : " + getCompanyNameFromStockId(currentTransaction.getStockId());
+        tempAssigningString = "CompanyTickerDetails : " + getCompanyNameFromStockId(currentTransaction.getStockId());
         holder.companyTextView.setText(tempAssigningString);
 
         tempAssigningString = "Number of stocks : " + String.valueOf(Math.abs(currentTransaction.getNoOfStocks()));

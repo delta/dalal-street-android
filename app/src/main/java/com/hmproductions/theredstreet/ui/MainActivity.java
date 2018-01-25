@@ -26,6 +26,7 @@ import com.hmproductions.theredstreet.dagger.ContextModule;
 import com.hmproductions.theredstreet.dagger.DaggerDalalStreetApplicationComponent;
 import com.hmproductions.theredstreet.data.GlobalStockDetails;
 import com.hmproductions.theredstreet.data.StockDetails;
+import com.hmproductions.theredstreet.fragment.PortfolioFragment;
 import com.hmproductions.theredstreet.fragment.TradeFragment;
 import com.hmproductions.theredstreet.fragment.CompanyFragment;
 import com.hmproductions.theredstreet.fragment.MarketDepthFragment;
@@ -244,6 +245,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 fragment = new TransactionsFragment();
                 break;
             case R.id.nav_portfolio:
+                fragment = new PortfolioFragment();
+                break;
+            case R.id.nav_companies:
                 fragment = new CompanyFragment();
                 break;
             case R.id.nav_leaderboard:
@@ -292,7 +296,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         totalTextView.setText(String.valueOf(totalWorth));
     }
 
-    // Subscribes to transaction stream and gets updates (TESTED) TODO : Fill this method
+    // Subscribes to transaction stream and gets updates (TESTED)
     private void getTransactionSubscriptionId() {
         streamServiceStub.subscribe(
                 SubscribeRequest.newBuilder().setDataStreamType(DataStreamType.TRANSACTIONS).setDataStreamId("").build(),
@@ -330,34 +334,43 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         dalalstreet.api.models.Transaction transaction = value.getTransaction();
 
                         if (transaction.getType() == TransactionType.DIVIDEND_TRANSACTION) {
-                            int previousValue = Integer.parseInt(cashTextView.getText().toString());
-                            cashTextView.setText(String.valueOf(previousValue + transaction.getTotal()));
+                            int previousCashValue = Integer.parseInt(cashTextView.getText().toString());
+                            cashTextView.setText(String.valueOf(previousCashValue + transaction.getTotal()));
+
+                            int previousTotalValue = Integer.parseInt(totalTextView.getText().toString());
+                            totalTextView.setText(String.valueOf(previousTotalValue + transaction.getTotal()));
 
                         } else if (transaction.getType() == TransactionType.ORDER_FILL_TRANSACTION) {
 
+                            for (StockDetails currentStockDetails : ownedStockDetails) {
+                                if (currentStockDetails.getStockId() == transaction.getStockId()) {
+                                    int oldQuantity = currentStockDetails.getQuantity();
+                                    currentStockDetails.setQuantity(oldQuantity + transaction.getStockQuantity());
+
+                                    long previousCash = Integer.parseInt(cashTextView.getText().toString());
+                                    long previousStock = Integer.parseInt(stockTextView.getText().toString());
+
+                                    long newStockValue = previousStock - transaction.getTotal();
+                                    long newCashValue = previousCash + transaction.getTotal();
+
+                                    stockTextView.setText(String.valueOf(newStockValue));
+                                    cashTextView.setText(String.valueOf(newCashValue));
+
+                                    break;
+                                }
+                            }
+
                         } else if (transaction.getType() == TransactionType.FROM_EXCHANGE_TRANSACTION) {
 
-                            long previousCash = Integer.parseInt(cashTextView.getText().toString());
-                            long previousStock = Integer.parseInt(stockTextView.getText().toString());
-
-                            long newStockValue = previousStock + transaction.getPrice()*transaction.getStockQuantity();
-                            long newCashValue = previousCash - transaction.getPrice()*transaction.getStockQuantity();
-
-                            stockTextView.setText(String.valueOf(newStockValue));
-                            cashTextView.setText(String.valueOf(newCashValue));
+                            changeTextViewValue(stockTextView, transaction.getTotal(), false);
+                            changeTextViewValue(cashTextView, transaction.getTotal(), true);
 
                             updateOwnedStockIdAndQuantity(transaction.getStockId(), transaction.getStockQuantity(), true);
 
                         } else if (transaction.getType() == TransactionType.MORTGAGE_TRANSACTION) {
 
-                            long previousCash = Integer.parseInt(cashTextView.getText().toString());
-                            long previousStock = Integer.parseInt(stockTextView.getText().toString());
-
-                            long newStockValue = previousStock - transaction.getTotal();
-                            long newCashValue = previousCash + transaction.getTotal();
-
-                            stockTextView.setText(String.valueOf(newStockValue));
-                            cashTextView.setText(String.valueOf(newCashValue));
+                            changeTextViewValue(stockTextView, transaction.getTotal(), false);
+                            changeTextViewValue(cashTextView, transaction.getTotal(), true);
 
                             updateOwnedStockIdAndQuantity(transaction.getStockId(), transaction.getStockQuantity(), transaction.getStockQuantity() > 0);
                         }
@@ -463,6 +476,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                                 globalStockDetails.get(i-1).setPrice(value.getPricesMap().get(i));
                                 LocalBroadcastManager.getInstance(MainActivity.this).sendBroadcast(new Intent(Constants.REFRESH_PRICE_TICKER_ACTION));
                                 LocalBroadcastManager.getInstance(MainActivity.this).sendBroadcast(new Intent(Constants.REFRESH_STOCK_PRICES_ACTION));
+                                updateStockWorthViaStreamUpdates();
                             }
                         }
                     }
@@ -530,6 +544,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                                 MainActivity.globalStockDetails.get(position).setQuantityInMarket(currentDataPoint.getStocksInMarket());
                                 MainActivity.globalStockDetails.get(position).setQuantityInExchange(currentDataPoint.getStocksInExchange());
                                 LocalBroadcastManager.getInstance(MainActivity.this).sendBroadcast(new Intent(Constants.REFRESH_STOCKS_EXCHANGE_ACTION));
+                                updateStockWorthViaStreamUpdates();
                             }
                         }
                     }
@@ -546,6 +561,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 });
     }
 
+    // Method called when user's stock quantity changes (called from Transactions stream update)
     private void updateOwnedStockIdAndQuantity(int stockId, int stockQuantity, boolean increase) {
 
         boolean isPresentInList = false;
@@ -568,6 +584,29 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if(!isPresentInList) {
             ownedStockDetails.add(new StockDetails(stockId, stockQuantity));
         }
+    }
+
+    // Method is called when stock price update is received
+    private void updateStockWorthViaStreamUpdates() {
+        int netStockWorth = 0, rate = 0;
+
+        for (StockDetails currentOwnedDetails : ownedStockDetails) {
+            for (GlobalStockDetails details : globalStockDetails) {
+                if (details.getStockId() == currentOwnedDetails.getStockId()) {
+                    rate = details.getPrice();
+                    break;
+                }
+            }
+            netStockWorth += currentOwnedDetails.getQuantity()*rate;
+        }
+
+        stockTextView.setText(String.valueOf(netStockWorth));
+        totalTextView.setText(String.valueOf(netStockWorth + Integer.parseInt(cashTextView.getText().toString())));
+    }
+
+    private void changeTextViewValue(TextView textView, int value, boolean increase) {
+        int previousValue = Integer.parseInt(textView.getText().toString());
+        textView.setText(String.valueOf(previousValue + (increase?value:-1*value)));
     }
 
     // Starts making drawer button translucent

@@ -47,7 +47,7 @@ public class OrdersRecyclerAdapter extends RecyclerView.Adapter<OrdersRecyclerAd
         tempString = "Order Type : " + (order.isBid()?"BID - ":"ASK - ") + StockUtils.getOrderTypeFromTypeId(order.getOrderType());
         holder.typeTextView.setText(tempString);
 
-        tempString = "Company : " + StockUtils.getCompanyNameFromStockId(order.getStockId());
+        tempString = "CompanyTickerDetails : " + StockUtils.getCompanyNameFromStockId(order.getStockId());
         holder.companyTextView.setText(tempString);
 
         tempString = "Status : " + (order.getStockQuantity()==order.getStockQuantityFulfilled()?"Filled":
@@ -76,6 +76,19 @@ public class OrdersRecyclerAdapter extends RecyclerView.Adapter<OrdersRecyclerAd
     public void swapData(List<Order> list) {
         orderList = list;
         notifyDataSetChanged();
+    }
+
+    public void orderUpdate(int orderId, int quantityFilled, boolean closed) {
+        for (Order currentOrder : orderList) {
+            if (currentOrder.getOrderId() == orderId) {
+                if (closed) {
+                    orderList.remove(currentOrder);
+                } else {
+                    currentOrder.setStockQuantityFulfilled(quantityFilled);
+                }
+                notifyDataSetChanged();
+            }
+        }
     }
 
     class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{

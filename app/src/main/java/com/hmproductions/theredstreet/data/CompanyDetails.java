@@ -1,11 +1,11 @@
 package com.hmproductions.theredstreet.data;
 
-public class PortfolioDetails {
+public class CompanyDetails {
 
     private String company, shortName;
     private int noOfStock,value;
 
-    public PortfolioDetails(String company, String shortName, int noOfStock, int value) {
+    public CompanyDetails(String company, String shortName, int noOfStock, int value) {
         this.shortName = shortName;
         this.company = company;
         this.noOfStock = noOfStock;

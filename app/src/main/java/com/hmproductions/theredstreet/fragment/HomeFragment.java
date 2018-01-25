@@ -1,6 +1,5 @@
 package com.hmproductions.theredstreet.fragment;
 
-
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -23,13 +22,13 @@ import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.hmproductions.theredstreet.adapter.CompanyTickerRecyclerAdapter;
+import com.hmproductions.theredstreet.data.CompanyTickerDetails;
 import com.hmproductions.theredstreet.utils.Constants;
 import com.hmproductions.theredstreet.R;
-import com.hmproductions.theredstreet.adapter.CompanyRecyclerAdapter;
 import com.hmproductions.theredstreet.adapter.NewsRecyclerAdapter;
 import com.hmproductions.theredstreet.dagger.ContextModule;
 import com.hmproductions.theredstreet.dagger.DaggerDalalStreetApplicationComponent;
-import com.hmproductions.theredstreet.data.Company;
 import com.hmproductions.theredstreet.data.GlobalStockDetails;
 import com.hmproductions.theredstreet.data.NewsDetails;
 import com.hmproductions.theredstreet.loaders.NewsLoader;
@@ -46,7 +45,7 @@ import dalalstreet.api.DalalActionServiceGrpc;
 
 public class HomeFragment extends Fragment implements LoaderManager.LoaderCallbacks<List<NewsDetails>>{
 
-    private static final int COMPANY_NEWS_DURATION = 2000;
+    private static final int COMPANY_TICKER_DURATION = 2500;
 
     @Inject
     DalalActionServiceGrpc.DalalActionServiceBlockingStub actionServiceBlockingStub;
@@ -55,7 +54,7 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
     NewsRecyclerAdapter newsRecyclerAdapter;
 
     @Inject
-    CompanyRecyclerAdapter companyRecyclerAdapter;
+    CompanyTickerRecyclerAdapter companyTickerRecyclerAdapter;
 
     @BindView(R.id.companies_recyclerView)
     RecyclerView companiesRecyclerView;
@@ -71,7 +70,7 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
 
     LinearLayoutManager linearLayoutManager;
 
-    List<Company> companyList = new ArrayList<>();
+    List<CompanyTickerDetails> companyTickerDetailsList = new ArrayList<>();
 
     Handler handler = new Handler();
 
@@ -87,7 +86,7 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
                 StringBuilder builder = new StringBuilder("");
                 if (MainActivity.globalStockDetails.size() > 0) {
                     for(GlobalStockDetails currentStockDetails : MainActivity.globalStockDetails){
-                        builder.append(currentStockDetails.getShortName()).append("/INR : ").append(currentStockDetails.getPrice());
+                        builder.append(currentStockDetails.getShortName()).append(" : ").append(currentStockDetails.getPrice());
                         builder.append(currentStockDetails.getUp()==1?"\u2191":"\u2193").append("     ");
                     }
                 }
@@ -116,7 +115,7 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
 
         companiesRecyclerView.setLayoutManager(linearLayoutManager);
         companiesRecyclerView.setItemAnimator(new DefaultItemAnimator());
-        companiesRecyclerView.setAdapter(companyRecyclerAdapter);
+        companiesRecyclerView.setAdapter(companyTickerRecyclerAdapter);
 
         SnapHelper companiesSnapHelper = new PagerSnapHelper();
         companiesSnapHelper.attachToRecyclerView(companiesRecyclerView);
@@ -131,15 +130,11 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
             @Override
             public void run() {
                 int position = linearLayoutManager.findFirstVisibleItemPosition();
-                if (position == companyList.size()-1) {
-                    companiesRecyclerView.smoothScrollToPosition(0);
-                } else {
-                    companiesRecyclerView.smoothScrollToPosition(position+1);
-                }
-                handler.postDelayed(this, COMPANY_NEWS_DURATION);
+                companiesRecyclerView.smoothScrollToPosition(position+1);
+                handler.postDelayed(this, COMPANY_TICKER_DURATION);
             }
         };
-        handler.postDelayed(runnable, COMPANY_NEWS_DURATION);
+        handler.postDelayed(runnable, COMPANY_TICKER_DURATION);
 
         return rootView;
     }
@@ -149,18 +144,18 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
         if (getActivity() != null)
             getActivity().getSupportLoaderManager().restartLoader(Constants.NEWS_LOADER_ID, null, this);
 
-        companyList.clear();
+        companyTickerDetailsList.clear();
 
         for (GlobalStockDetails currentStockDetails : MainActivity.globalStockDetails) {
-            companyList.add(new Company(
+            companyTickerDetailsList.add(new CompanyTickerDetails(
                     currentStockDetails.getFullName(),
                     null,
                     currentStockDetails.getPreviousDayClose(),
                     currentStockDetails.getUp()==0));
         }
 
-        if (companyList != null && companyList.size()!=0) {
-            companyRecyclerAdapter.swapData(companyList);
+        if (companyTickerDetailsList != null && companyTickerDetailsList.size()!=0) {
+            companyTickerRecyclerAdapter.swapData(companyTickerDetailsList);
         }
 
     }
@@ -181,7 +176,7 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
             newsRecyclerAdapter.swapData(data);
 
             for(GlobalStockDetails currentStockDetails : MainActivity.globalStockDetails){
-                builder.append(currentStockDetails.getShortName()).append("/INR : ").append(currentStockDetails.getPrice());
+                builder.append(currentStockDetails.getShortName()).append(" : ").append(currentStockDetails.getPrice());
                 builder.append(currentStockDetails.getUp()==1?"\u2191":"\u2193").append("     ");
             }
         }

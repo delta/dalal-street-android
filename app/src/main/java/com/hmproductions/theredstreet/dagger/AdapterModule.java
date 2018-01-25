@@ -2,12 +2,9 @@ package com.hmproductions.theredstreet.dagger;
 
 import android.content.Context;
 
-import com.hmproductions.theredstreet.adapter.CompanyRecyclerAdapter;
+import com.hmproductions.theredstreet.adapter.CompanyTickerRecyclerAdapter;
 import com.hmproductions.theredstreet.adapter.NewsRecyclerAdapter;
-import com.hmproductions.theredstreet.data.NewsDetails;
-
-import java.util.ArrayList;
-import java.util.List;
+import com.hmproductions.theredstreet.adapter.PortfolioRecyclerAdapter;
 
 import dagger.Module;
 import dagger.Provides;
@@ -23,7 +20,13 @@ public class AdapterModule {
 
     @Provides
     @DalalStreetApplicationScope
-    public CompanyRecyclerAdapter getCompanyRecyclerAdapter(Context context) {
-        return new CompanyRecyclerAdapter(context ,null);
+    public CompanyTickerRecyclerAdapter getCompanyRecyclerAdapter(Context context) {
+        return new CompanyTickerRecyclerAdapter(context ,null);
+    }
+
+    @Provides
+    @DalalStreetApplicationScope
+    public PortfolioRecyclerAdapter getPortfolioRecyclerAdapter(Context context) {
+        return new PortfolioRecyclerAdapter(context, null);
     }
 }

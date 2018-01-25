@@ -6,10 +6,12 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -75,6 +77,7 @@ public class StockExchangeFragment extends Fragment implements LoaderManager.Loa
 
     private Stock currentStock;
     private String lastCompanySelected = null;
+    private AlertDialog loadingDialog;
 
     private BroadcastReceiver refreshStockPricesReceiver = new BroadcastReceiver() {
         @Override
@@ -89,6 +92,21 @@ public class StockExchangeFragment extends Fragment implements LoaderManager.Loa
 
     public StockExchangeFragment() {
         // Required empty public constructor
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        if (getContext() != null){
+            View dialogView = LayoutInflater.from(getContext()).inflate(R.layout.progress_dialog, null);
+            String tempString = "Getting stocks details...";
+            ((TextView) dialogView.findViewById(R.id.progressDialog_textView)).setText(tempString);
+            loadingDialog = new AlertDialog.Builder(getContext())
+                    .setView(dialogView)
+                    .setCancelable(false)
+                    .create();
+        }
     }
 
     @Override
@@ -175,11 +193,11 @@ public class StockExchangeFragment extends Fragment implements LoaderManager.Loa
     public Loader<GetCompanyProfileResponse> onCreateLoader(int id, Bundle args) {
         stockExchangeProgressBar.setVisibility(View.VISIBLE);
 
-        String gettingString = "Getting stocks details for " + lastCompanySelected + "...";
+        loadingDialog.show();
 
         dailyHighTextView.setText("");
         dailyLowTextView.setText("");
-        currentStockPriceTextView.setText(gettingString);
+        currentStockPriceTextView.setText("");
         stocksInMarketTextView.setText("");
         stockInExchangeTextView.setText("");
 
@@ -193,23 +211,24 @@ public class StockExchangeFragment extends Fragment implements LoaderManager.Loa
     public void onLoadFinished(Loader<GetCompanyProfileResponse> loader, GetCompanyProfileResponse companyProfileResponse) {
 
         stockExchangeProgressBar.setVisibility(View.GONE);
+        loadingDialog.dismiss();
 
         String temporaryTextViewString;
         currentStock = companyProfileResponse.getStockDetails();
 
-        temporaryTextViewString = "Current stock price : ₹" + String.valueOf(currentStock.getCurrentPrice());
+        temporaryTextViewString = ": ₹" + String.valueOf(currentStock.getCurrentPrice());
         currentStockPriceTextView.setText(temporaryTextViewString);
 
-        temporaryTextViewString = "Daily high : ₹" + String.valueOf(currentStock.getDayHigh());
+        temporaryTextViewString = ": ₹" + String.valueOf(currentStock.getDayHigh());
         dailyHighTextView.setText(temporaryTextViewString);
 
-        temporaryTextViewString = "Daily low : ₹" + String.valueOf(currentStock.getDayLow());
+        temporaryTextViewString = ": ₹" + String.valueOf(currentStock.getDayLow());
         dailyLowTextView.setText(temporaryTextViewString);
 
-        temporaryTextViewString = "Stocks in market : " + String.valueOf(currentStock.getStocksInMarket());
+        temporaryTextViewString = ": " + String.valueOf(currentStock.getStocksInMarket());
         stocksInMarketTextView.setText(temporaryTextViewString);
 
-        temporaryTextViewString = "Stocks in exchange : " + String.valueOf(currentStock.getStocksInExchange());
+        temporaryTextViewString = ": " + String.valueOf(currentStock.getStocksInExchange());
         stockInExchangeTextView.setText(temporaryTextViewString);
     }
 

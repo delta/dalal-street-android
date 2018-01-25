@@ -152,5 +152,14 @@
     <string name="no_orders_pending">Looks like you don\'t have any\norders pending…</string>
     <string name="getting_your_orders">Getting your orders…</string>
     <string name="open_orders">Open Orders</string>
+    <string name="you_don_t_own_any_stocks">You don\'t own any stocks.</string>
+    <string name="daily_high">Daily High</string>
+    <string name="daily_low">Daily Low</string>
+    <string name="stocks_in_market">Stocks in Market</string>
+    <string name="stocks_in_exchange">Stocks in Exchange</string>
+    <string name="n_a">N/A</string>
+    <string name="quantity">Quantity</string>
+    <string name="price">Price (₹)</string>
+    <string name="current_price">Current Price</string>
 
 </resources>

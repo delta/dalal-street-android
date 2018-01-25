@@ -16,9 +16,9 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.hmproductions.theredstreet.R;
-import com.hmproductions.theredstreet.adapter.PortfolioRecyclerAdapter;
+import com.hmproductions.theredstreet.adapter.CompanyRecyclerAdapter;
 import com.hmproductions.theredstreet.data.GlobalStockDetails;
-import com.hmproductions.theredstreet.data.PortfolioDetails;
+import com.hmproductions.theredstreet.data.CompanyDetails;
 import com.hmproductions.theredstreet.ui.MainActivity;
 import com.hmproductions.theredstreet.utils.Constants;
 
@@ -33,8 +33,8 @@ public class CompanyFragment extends Fragment {
     @BindView(R.id.portfolio_recyclerView)
     RecyclerView portfolioRecyclerView;
 
-    private ArrayList<PortfolioDetails> portfolioList = new ArrayList<>();
-    private PortfolioRecyclerAdapter adapter;
+    private ArrayList<CompanyDetails> portfolioList = new ArrayList<>();
+    private CompanyRecyclerAdapter adapter;
 
     public CompanyFragment() {
         // Required empty public constructor
@@ -55,10 +55,10 @@ public class CompanyFragment extends Fragment {
         // Inflate the layout for this fragment
         View rootView=inflater.inflate(R.layout.fragment_companies, container, false);
 
-        if (getActivity() != null)  getActivity().setTitle("Company");
+        if (getActivity() != null)  getActivity().setTitle("CompanyTickerDetails");
         ButterKnife.bind(this, rootView);
 
-        adapter = new PortfolioRecyclerAdapter(getContext(), null);
+        adapter = new CompanyRecyclerAdapter(getContext(), null);
 
         updateValues();
 
@@ -74,7 +74,7 @@ public class CompanyFragment extends Fragment {
         portfolioList.clear();
 
         for (GlobalStockDetails currentStockDetail : MainActivity.globalStockDetails) {
-            portfolioList.add(new PortfolioDetails(
+            portfolioList.add(new CompanyDetails(
                     currentStockDetail.getFullName(), currentStockDetail.getShortName(),
                     currentStockDetail.getQuantityInExchange(), currentStockDetail.getPrice())
             );
@@ -84,7 +84,7 @@ public class CompanyFragment extends Fragment {
         adapter.swapData(portfolioList);
     }
 
-    private void sortList(ArrayList<PortfolioDetails> list) {
+    private void sortList(ArrayList<CompanyDetails> list) {
         Collections.sort(list, (v1, v2) -> v1.getValue()>v2.getValue()?v1.getValue():v2.getValue());
     }
 

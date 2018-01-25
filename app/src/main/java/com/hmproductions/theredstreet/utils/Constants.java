@@ -14,6 +14,7 @@ public class Constants {
     public static final String REFRESH_PRICE_TICKER_ACTION = "refresh-price-ticker-action";
     public static final String REFRESH_STOCK_PRICES_ACTION = "refresh-stock-prices-action";
     public static final String REFRESH_STOCKS_EXCHANGE_ACTION = "refresh-stock-exchange-action";
+    public static final String REFRESH_OWNED_STOCKS_ACTION = "refresh-owned-stocks-action";
 
     public static final String RUPEE_SYMBOL = "₹";
 }

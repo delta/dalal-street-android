@@ -1,37 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 
-    android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="16dp">
+    android:layout_marginTop="2dp"
+    android:orientation="vertical"
+    android:padding="8dp">
 
-    <TextView
-        android:id="@+id/portfolio_company_textView"
-        android:layout_width="0dp"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="@android:color/background_dark"
-        android:textSize="20sp"
-        android:text=""
-        android:layout_weight="2.5" />
+        android:layout_marginBottom="12dp">
 
-    <TextView
-        android:id="@+id/portfolio_stockQuantity_textView"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:textColor="@android:color/background_dark"
-        android:textSize="20sp"
-        android:gravity="center"
-        android:text=""
-        android:layout_weight="1" />
+        <TextView
+            android:id="@+id/companyName_textView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="4"
+            android:gravity="center"
+            android:text=""
+            android:textColor="@android:color/background_dark"
+            android:textSize="22sp" />
 
-    <TextView
-        android:id="@+id/portfolio_price_textView"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:textColor="@android:color/background_dark"
-        android:textSize="20sp"
-        android:text=""
-        android:layout_weight="3" />
+        <TextView
+            android:id="@+id/quantity_textView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="3"
+            android:gravity="center"
+            android:text=""
+            android:textColor="@android:color/background_dark"
+            android:textSize="22sp" />
+
+        <TextView
+            android:id="@+id/price_textView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="3"
+            android:gravity="center"
+            android:text=""
+            android:textColor="@android:color/background_dark"
+            android:textSize="22sp" />
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginEnd="2dp"
+        android:layout_marginStart="2dp"
+        android:background="#AAAAAA" />
 
 </LinearLayout>
