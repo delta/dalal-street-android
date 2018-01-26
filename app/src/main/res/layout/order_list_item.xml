@@ -3,18 +3,64 @@
     android:id="@+id/orders_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@color/black_background"
     android:padding="8dp">
 
+    <TextView
+        android:id="@+id/company_textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:fontFamily="@font/marcellus_sc"
+        android:text="Google"
+        android:textColor="@color/neutral_font_color"
+        android:textSize="22sp" />
 
     <TextView
         android:id="@+id/orderType_textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:text=""
-        android:textColor="@android:color/background_dark"
-        android:textSize="15sp" />
+        android:layout_below="@id/company_textView"
+        android:fontFamily="@font/kreon_light"
+        android:text="BID - Limit Order"
+        android:textColor="@color/neutral_font_color"
+        android:textSize="20sp" />
+
+    <TextView
+        android:id="@+id/orderPrice_textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/orderType_textView"
+        android:fontFamily="@font/kreon_light"
+        android:text="Partially Filled at Rs. 400"
+        android:textColor="@color/neutral_font_color"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/quantity_textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_below="@+id/cancel_button"
+        android:layout_marginTop="4dp"
+        android:paddingEnd="20sp"
+        android:text="5 / 9"
+        android:textColor="@color/neutral_font_color"
+        android:textSize="22sp"
+        android:textStyle="bold" />
+
+    <SeekBar
+        android:id="@+id/stockDisplay_seekBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/orderPrice_textView"
+        android:layout_margin="2dp"
+        android:progress="40"
+        android:secondaryProgressTint="@color/neutral_font_color"
+        android:thumbTint="@color/neon_blue" />
 
     <Button
         android:id="@+id/cancel_button"
@@ -22,53 +68,18 @@
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_alignParentTop="true"
-        android:background="@drawable/black_green_rounded_button"
+        android:background="@drawable/black_orange_rounded_button"
+        android:fontFamily="@font/marcellus"
         android:text="@string/cancel"
-        android:textColor="@android:color/background_light" />
-
-    <TextView
-        android:id="@+id/company_textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/orderType_textView"
-        android:text=""
-        android:textColor="@android:color/background_dark"
-        android:textSize="15sp" />
-
-    <TextView
-        android:id="@+id/orderStatus_textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/company_textView"
-        android:text=""
-        android:textColor="@android:color/background_dark"
-        android:textSize="15sp" />
-
-    <TextView
-        android:id="@+id/orderPrice_textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/orderStatus_textView"
-        android:text=""
-        android:textColor="@android:color/background_dark"
-        android:textSize="15sp" />
-
-    <SeekBar
-        android:id="@+id/stockDisplay_seekBar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:thumbTint="@android:color/holo_orange_dark"
-        android:layout_below="@id/orderPrice_textView"
-        android:layout_margin="4dp" />
+        android:textColor="@color/neon_orange"
+        android:textSize="16sp"
+        android:textStyle="bold" />
 
     <View
         android:layout_width="match_parent"
-        android:layout_height="1px"
+        android:layout_height="2dp"
         android:layout_below="@+id/stockDisplay_seekBar"
-        android:layout_marginTop="20dp"
-        android:background="@android:color/background_dark" />
+        android:layout_marginTop="12dp"
+        android:background="@android:color/background_light" />
 
 </RelativeLayout>

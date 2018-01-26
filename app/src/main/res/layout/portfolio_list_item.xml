@@ -18,9 +18,9 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_weight="4"
+            android:fontFamily="@font/marcellus_sc"
             android:gravity="center"
-            android:text=""
-            android:textColor="@android:color/background_dark"
+            android:textColor="@color/neutral_font_color"
             android:textSize="22sp" />
 
         <TextView
@@ -28,9 +28,9 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="3"
+            android:fontFamily="@font/kreon_light"
             android:gravity="center"
-            android:text=""
-            android:textColor="@android:color/background_dark"
+            android:textColor="@color/neutral_font_color"
             android:textSize="22sp" />
 
         <TextView
@@ -38,9 +38,9 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="3"
+            android:fontFamily="@font/kreon_light"
             android:gravity="center"
-            android:text=""
-            android:textColor="@android:color/background_dark"
+            android:textColor="@color/neutral_font_color"
             android:textSize="22sp" />
 
     </LinearLayout>
@@ -50,6 +50,6 @@
         android:layout_height="1dp"
         android:layout_marginEnd="2dp"
         android:layout_marginStart="2dp"
-        android:background="#AAAAAA" />
+        android:background="#FFFFFF" />
 
 </LinearLayout>

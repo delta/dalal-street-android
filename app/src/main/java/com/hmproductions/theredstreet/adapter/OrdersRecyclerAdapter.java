@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.hmproductions.theredstreet.R;
 import com.hmproductions.theredstreet.data.Order;
+import com.hmproductions.theredstreet.utils.Constants;
 import com.hmproductions.theredstreet.utils.StockUtils;
 
 import java.util.List;
@@ -44,17 +45,17 @@ public class OrdersRecyclerAdapter extends RecyclerView.Adapter<OrdersRecyclerAd
         Order order = orderList.get(orderList.size()-position-1);
         String tempString;
 
-        tempString = "Order Type : " + (order.isBid()?"BID - ":"ASK - ") + StockUtils.getOrderTypeFromTypeId(order.getOrderType());
+        tempString = (order.isBid()?"BID - ":"ASK - ") + StockUtils.getOrderTypeFromTypeId(order.getOrderType());
         holder.typeTextView.setText(tempString);
 
-        tempString = "CompanyTickerDetails : " + StockUtils.getCompanyNameFromStockId(order.getStockId());
-        holder.companyTextView.setText(tempString);
+        tempString = StockUtils.getCompanyNameFromStockId(order.getStockId());
+        holder.companyNameTextView.setText(tempString);
 
-        tempString = "Status : " + (order.getStockQuantity()==order.getStockQuantityFulfilled()?"Filled":
-                "Partially Filled - " + String.valueOf(order.getStockQuantityFulfilled()) + "/" + String.valueOf(order.getStockQuantity()));
-        holder.statusTextView.setText(tempString);
+        tempString = String.valueOf(order.getStockQuantityFulfilled()) + " / " + String.valueOf(order.getStockQuantity());
+        holder.quantityTextView.setText(tempString);
 
-        tempString = "Order price : "+ String.valueOf(order.getPrice());
+        tempString = (order.getStockQuantityFulfilled()==0?"Placed ":order.getStockQuantity()==order.getStockQuantityFulfilled()?"Filled":"Partially Filled") + " at " +
+                Constants.RUPEE_SYMBOL + " " + String.valueOf(order.getPrice() + "/stock");
         holder.priceTextView.setText(tempString);
 
         if(order.getOrderType() == 1)
@@ -93,7 +94,7 @@ public class OrdersRecyclerAdapter extends RecyclerView.Adapter<OrdersRecyclerAd
 
     class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
-        TextView typeTextView, priceTextView, statusTextView, companyTextView;
+        TextView typeTextView, priceTextView, quantityTextView, companyNameTextView;
         Button cancelButton;
         SeekBar quantitySeekbar;
 
@@ -102,8 +103,8 @@ public class OrdersRecyclerAdapter extends RecyclerView.Adapter<OrdersRecyclerAd
 
             typeTextView= view.findViewById(R.id.orderType_textView);
             priceTextView= view.findViewById(R.id.orderPrice_textView);
-            statusTextView= view.findViewById(R.id.orderStatus_textView);
-            companyTextView= view.findViewById(R.id.company_textView);
+            quantityTextView= view.findViewById(R.id.quantity_textView);
+            companyNameTextView= view.findViewById(R.id.company_textView);
             cancelButton= view.findViewById(R.id.cancel_button);
             quantitySeekbar = view.findViewById(R.id.stockDisplay_seekBar);
 

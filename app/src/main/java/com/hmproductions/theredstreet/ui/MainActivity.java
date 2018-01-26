@@ -1,5 +1,6 @@
 package com.hmproductions.theredstreet.ui;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -132,7 +133,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         OpenAndCloseDrawer();
 
-        getSupportFragmentManager().beginTransaction().add(R.id.home_activity_fragment_container, new CompanyFragment()).commit();
+        getSupportFragmentManager().beginTransaction().add(R.id.home_activity_fragment_container, new HomeFragment()).commit();
 
         ownedStockDetails = getIntent().getParcelableArrayListExtra(STOCKS_OWNED_KEY);
         globalStockDetails = getIntent().getParcelableArrayListExtra(GLOBAL_STOCKS_KEY);
@@ -146,6 +147,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         getMarketEventsSubscriptionId();
 
         StartMakingButtonsTransparent();
+        updateStockWorthViaStreamUpdates();
     }
 
     private void BindDrawerViews() {
@@ -203,7 +205,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 return true;
 
             case R.id.action_logout:
-                logout();
+                new AlertDialog.Builder(this)
+                        .setMessage("Do you want to logout ?")
+                        .setPositiveButton("Logout", (dialogInterface, i) -> logout())
+                        .setNegativeButton(getString(R.string.cancel), (dialogInterface, i) -> dialogInterface.dismiss())
+                        .setTitle("Confirm Logout")
+                        .setCancelable(true)
+                        .show();
+
                 return true;
 
             case android.R.id.home:
@@ -334,11 +343,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         dalalstreet.api.models.Transaction transaction = value.getTransaction();
 
                         if (transaction.getType() == TransactionType.DIVIDEND_TRANSACTION) {
-                            int previousCashValue = Integer.parseInt(cashTextView.getText().toString());
-                            cashTextView.setText(String.valueOf(previousCashValue + transaction.getTotal()));
 
-                            int previousTotalValue = Integer.parseInt(totalTextView.getText().toString());
-                            totalTextView.setText(String.valueOf(previousTotalValue + transaction.getTotal()));
+                            changeTextViewValue(cashTextView, transaction.getTotal(), true);
+                            changeTextViewValue(totalTextView, transaction.getTotal(), true);
 
                         } else if (transaction.getType() == TransactionType.ORDER_FILL_TRANSACTION) {
 
@@ -582,6 +589,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
 
         if(!isPresentInList) {
+            Log.v(":::", "adding");
             ownedStockDetails.add(new StockDetails(stockId, stockQuantity));
         }
     }

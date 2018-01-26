@@ -2,9 +2,9 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/activity_login"
-    android:background="@color/background"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/black_background">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/login_toolbar"
@@ -13,23 +13,24 @@
         android:background="?colorPrimary"
         android:elevation="8dp"
         android:orientation="horizontal"
-        android:theme="@style/Base.ThemeOverlay.AppCompat.Dark"/>
+        android:theme="@style/Base.ThemeOverlay.AppCompat.Dark" />
 
     <android.support.v7.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
+        android:layout_margin="10dp"
         android:clickable="true"
-        android:focusable="true"
         android:elevation="10dp"
-        app:cardCornerRadius="5dp"
-        android:layout_margin="10dp">
+        android:focusable="true"
+        app:cardCornerRadius="12dp">
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:padding="10dp"
-            android:layout_below="@id/login_toolbar">
+            android:layout_below="@id/login_toolbar"
+            android:background="#20202C"
+            android:padding="10dp">
 
             <TextView
                 android:id="@+id/login_text"
@@ -37,10 +38,10 @@
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="12dp"
+                android:fontFamily="@font/marcellus_sc"
                 android:text="@string/login_text"
-                android:textColor="@android:color/background_dark"
-                android:textSize="40sp"
-                android:fontFamily="sans-serif-condensed"/>
+                android:textColor="@color/neutral_font_color"
+                android:textSize="40sp" />
 
             <android.support.design.widget.TextInputLayout
                 android:id="@+id/email_input"
@@ -48,16 +49,20 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/login_text"
                 android:layout_marginTop="12dp"
-                android:padding="12dp">
+                android:padding="12dp"
+                android:textColorHint="@color/neutral_font_color">
 
                 <EditText
                     android:id="@+id/email_editText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
+                    android:backgroundTint="@color/neutral_font_color"
                     android:ems="10"
                     android:hint="@string/email_hint"
-                    android:inputType="textEmailAddress" />
+                    android:inputType="textEmailAddress"
+                    android:textColor="@color/neutral_font_color"
+                    android:textColorHint="@color/neutral_font_color" />
 
             </android.support.design.widget.TextInputLayout>
 
@@ -67,16 +72,20 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/email_input"
                 android:layout_marginTop="12dp"
-                android:padding="12dp">
+                android:padding="12dp"
+                android:textColorHint="@color/neutral_font_color">
 
                 <EditText
                     android:id="@+id/password_editText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
+                    android:backgroundTint="@color/neutral_font_color"
                     android:ems="10"
                     android:hint="@string/password_hint"
-                    android:inputType="textPassword" />
+                    android:inputType="textPassword"
+                    android:textColor="@color/neutral_font_color"
+                    android:textColorHint="@color/neutral_font_color" />
 
             </android.support.design.widget.TextInputLayout>
 
@@ -86,13 +95,14 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/password_input"
                 android:layout_centerHorizontal="true"
+                android:layout_marginBottom="15dp"
                 android:layout_marginEnd="12dp"
                 android:layout_marginStart="12dp"
                 android:layout_marginTop="36dp"
-                android:background="@color/colorPrimary"
-                android:text="Play"
-                android:layout_marginBottom="15dp"
-                android:textColor="@android:color/white" />
+                android:background="@drawable/black_green_rounded_button"
+                android:text="@string/play"
+                android:textColor="@android:color/white"
+                android:textSize="22sp" />
 
         </RelativeLayout>
 

@@ -38,7 +38,7 @@ public class CompanyRecyclerAdapter extends RecyclerView.Adapter<CompanyRecycler
 
         CompanyDetails currentCompanyDetails = list.get(position);
 
-        if (currentCompanyDetails.getCompany().length() >= 10) {
+        if (currentCompanyDetails.getCompany().length() > 9) {
             holder.companyNameTextView.setText(currentCompanyDetails.getShortName());
         } else {
             holder.companyNameTextView.setText(currentCompanyDetails.getCompany());

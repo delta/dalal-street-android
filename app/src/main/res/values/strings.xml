@@ -166,5 +166,6 @@
     <string name="mortgage_retrival_rate">Mortgage Retrival Rate</string>
     <string name="change">Change</string>
     <string name="volume">Volume</string>
+    <string name="play">Play</string>
 
 </resources>

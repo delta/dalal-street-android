@@ -11,7 +11,6 @@ import android.widget.TextView;
 
 import com.hmproductions.theredstreet.R;
 import com.hmproductions.theredstreet.data.Transaction;
-import com.hmproductions.theredstreet.ui.MainActivity;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -20,11 +19,8 @@ import java.util.List;
 import java.util.Locale;
 
 import static com.hmproductions.theredstreet.utils.StockUtils.getCompanyNameFromStockId;
-import static com.hmproductions.theredstreet.utils.StockUtils.getPriceFromStockId;
 
 public class TransactionRecyclerAdapter extends RecyclerView.Adapter<TransactionRecyclerAdapter.MyViewHolder> {
-
-    private static final double MORTGAGE_DEPRECATION = 0.75;
 
     private Context context;
     private List<Transaction> transactionList;
@@ -78,12 +74,7 @@ public class TransactionRecyclerAdapter extends RecyclerView.Adapter<Transaction
         tempAssigningString = "Number of stocks : " + String.valueOf(Math.abs(currentTransaction.getNoOfStocks()));
         holder.noOfStocksTextView.setText(tempAssigningString);
 
-        if (currentTransaction.getStockPrice() == 0) {
-            tempAssigningString = "Stock price : " + String.valueOf(
-                    (double)(getPriceFromStockId(MainActivity.globalStockDetails, currentTransaction.getStockId())) * MORTGAGE_DEPRECATION);
-        } else if (!tempAssigningString.equals("Stock price : 0")) {
-            tempAssigningString = "Stock price : " + String.valueOf(currentTransaction.getStockPrice());
-        }
+        tempAssigningString = "Stock price : " + String.valueOf(currentTransaction.getStockPrice());
         holder.priceTextView.setText(tempAssigningString);
 
         tempAssigningString = "Time : " + parseDate(currentTransaction.getTime());

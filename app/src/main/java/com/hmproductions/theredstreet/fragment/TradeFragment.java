@@ -12,12 +12,14 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.hmproductions.theredstreet.R;
 import com.hmproductions.theredstreet.dagger.ContextModule;
 import com.hmproductions.theredstreet.dagger.DaggerDalalStreetApplicationComponent;
 import com.hmproductions.theredstreet.ui.MainActivity;
+import com.hmproductions.theredstreet.utils.Constants;
 import com.hmproductions.theredstreet.utils.StockUtils;
 import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner;
 
@@ -58,6 +60,12 @@ public class TradeFragment extends Fragment {
     @BindView(R.id.orderPrice_editText)
     EditText orderPriceEditText;
 
+    @BindView(R.id.currentStockPrice_textView)
+    TextView currentPriceTextView;
+
+    @BindView(R.id.stocksOwned_textView)
+    TextView stocksOwnedTextView;
+
     public TradeFragment() {
         // Required empty public constructor
     }
@@ -73,8 +81,8 @@ public class TradeFragment extends Fragment {
         DaggerDalalStreetApplicationComponent.builder().contextModule(new ContextModule(getContext())).build().inject(this);
         ButterKnife.bind(this, rootView);
 
-        ArrayAdapter<String> companiesAdapter = new ArrayAdapter<>(getActivity(),android.R.layout.simple_dropdown_item_1line, StockUtils.getCompanyNamesArray());
-        ArrayAdapter<String> orderSelectAdapter = new ArrayAdapter<>(getActivity(),android.R.layout.simple_dropdown_item_1line,getResources().getStringArray(R.array.orderType));
+        ArrayAdapter<String> companiesAdapter = new ArrayAdapter<>(getActivity(), R.layout.order_spinner_item, StockUtils.getCompanyNamesArray());
+        ArrayAdapter<String> orderSelectAdapter = new ArrayAdapter<>(getActivity(), R.layout.order_spinner_item,getResources().getStringArray(R.array.orderType));
 
         orderSpinner.setAdapter(orderSelectAdapter);
         companySpinner.setAdapter(companiesAdapter);
@@ -84,13 +92,24 @@ public class TradeFragment extends Fragment {
             bidAskButton.setText(id==R.id.bid_radioButton?"BID":"ASK");
         });
 
+        companySpinner.setOnItemClickListener((adapterView, view, position, l) -> {
+            int stocksOwned = StockUtils.getQuantityOwnedFromCompanyName(MainActivity.ownedStockDetails, companySpinner.getText().toString());
+            String tempString = " :  " + String.valueOf(stocksOwned);
+            stocksOwnedTextView.setText(tempString);
+
+            tempString = " : " + Constants.RUPEE_SYMBOL + " " +
+                    String.valueOf(StockUtils.getPriceFromStockId(MainActivity.globalStockDetails, StockUtils.getStockIdFromCompanyName(companySpinner.getText().toString())));
+            currentPriceTextView.setText(tempString);
+        });
+
         orderSpinner.setOnItemClickListener((aV, view, i, l) -> orderPriceEditText.setEnabled(!aV.getItemAtPosition(i).toString().equals("Marker order")));
 
         return rootView;
-    } // todo : when user buys stock for first time, companies add extra fields, green arrow ~ red arrow, date/time ist
+    } // todo : when user buys stock for first time
 
     @OnClick(R.id.bidAsk_button)
     void onBidAskButtonClick() {
+
         if(companySpinner.getText().toString().trim().isEmpty()){
             Toast.makeText(getActivity(), "Select a company", Toast.LENGTH_SHORT).show();
         }

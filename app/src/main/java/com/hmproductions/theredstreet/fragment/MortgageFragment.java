@@ -46,7 +46,6 @@ import static com.hmproductions.theredstreet.utils.StockUtils.getQuantityOwnedFr
 /* Uses GetMortgageDetails() for setting stocksMortgaged (int data member)
 *  Uses MortgageStocks() to mortgage stocks
 *  Uses RetrieveStocksFromMortgage() to get back mortgaged stocks */
-// TODO use constants to deduct price
 public class MortgageFragment extends Fragment implements LoaderManager.LoaderCallbacks<GetMortgageDetailsResponse>{
 
     @Inject
@@ -109,7 +108,7 @@ public class MortgageFragment extends Fragment implements LoaderManager.LoaderCa
         companiesArray = StockUtils.getCompanyNamesArray();
 
         companySpinner = rootView.findViewById(R.id.mortgage_companies_spinner);
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(getActivity(), R.layout.spinner_item, companiesArray);
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(getActivity(), R.layout.company_spinner_item, companiesArray);
         companySpinner.setAdapter(arrayAdapter);
 
         companySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -184,7 +183,7 @@ public class MortgageFragment extends Fragment implements LoaderManager.LoaderCa
                 }
 
             } else {
-                Toast.makeText(getActivity(), "You dont have sufficient stocks", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "Insufficient Stocks", Toast.LENGTH_SHORT).show();
             }
 
         } else if (mortgageRadioGroup.getCheckedRadioButtonId() == R.id.retrieve_radioButton) {

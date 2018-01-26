@@ -1,7 +1,9 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
 
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/black_background"
+    android:paddingTop="8dp">
 
     <RelativeLayout
         android:id="@+id/portfolio_relativeLayout"
@@ -21,7 +23,7 @@
                 android:gravity="center"
                 android:text="@string/company"
                 android:textAllCaps="true"
-                android:textColor="@android:color/background_dark"
+                android:textColor="@color/neutral_font_color"
                 android:textSize="20sp"
                 android:textStyle="bold" />
 
@@ -32,7 +34,7 @@
                 android:gravity="center"
                 android:text="@string/quantity"
                 android:textAllCaps="true"
-                android:textColor="@android:color/background_dark"
+                android:textColor="@color/neutral_font_color"
                 android:textSize="20sp"
                 android:textStyle="bold" />
 
@@ -43,25 +45,26 @@
                 android:gravity="center"
                 android:text="@string/price"
                 android:textAllCaps="true"
-                android:textColor="@android:color/background_dark"
+                android:textColor="@color/neutral_font_color"
                 android:textSize="20sp"
                 android:textStyle="bold" />
 
         </LinearLayout>
 
         <View
+            android:id="@+id/view"
             android:layout_width="match_parent"
             android:layout_height="2dp"
             android:layout_below="@+id/headings_tab_linearLayout"
-            android:layout_margin="2dp"
-            android:background="@android:color/background_dark"/>
+            android:layout_margin="4dp"
+            android:background="@android:color/background_light" />
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/portfolio_recyclerView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="3dp"
-            android:layout_below="@+id/headings_tab_linearLayout"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/view"
             android:visibility="visible" />
 
     </RelativeLayout>

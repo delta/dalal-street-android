@@ -17,7 +17,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -116,7 +115,7 @@ public class StockExchangeFragment extends Fragment implements LoaderManager.Loa
         DaggerDalalStreetApplicationComponent.builder().contextModule(new ContextModule(getContext())).build().inject(this);
 
         companySpinner = rootView.findViewById(R.id.company_spinner);
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(getActivity(), R.layout.spinner_item, StockUtils.getCompanyNamesArray());
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(getActivity(), R.layout.company_spinner_item, StockUtils.getCompanyNamesArray());
         companySpinner.setAdapter(arrayAdapter);
 
         companySpinner.setOnItemClickListener((adapterView, view, position, id) -> {

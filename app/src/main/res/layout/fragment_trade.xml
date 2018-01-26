@@ -2,20 +2,22 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin">
+    android:background="@color/black_background"
+    android:paddingEnd="12dp"
+    android:paddingBottom="12dp"
+    android:paddingStart="12dp">
 
     <com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner
         android:id="@+id/company_spinner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="15dp"
+        android:backgroundTint="@color/neutral_font_color"
         android:hint="@string/pick_a_company"
+        app:backgroundTint="@color/neutral_font_color"
         app:met_floatingLabel="normal"
-        app:met_textColor="@android:color/background_dark"
-        app:met_textColorHint="@color/secTextColor" />
+        app:met_textColor="@color/neutral_font_color"
+        app:met_textColorHint="@color/neutral_font_color" />
 
     <com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner
         android:id="@+id/order_select_spinner"
@@ -23,10 +25,11 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/company_spinner"
         android:layout_marginTop="15dp"
+        android:backgroundTint="@color/neutral_font_color"
         android:hint="@string/order_type"
         app:met_floatingLabel="normal"
-        app:met_textColor="@android:color/background_dark"
-        app:met_textColorHint="@color/secTextColor" />
+        app:met_textColor="@color/neutral_font_color"
+        app:met_textColorHint="@color/neutral_font_color" />
 
 
     <RadioGroup
@@ -43,26 +46,89 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:fontFamily="@font/marcellus_sc"
             android:text="@string/bid"
-            android:textColor="@color/secTextColor" />
+            android:textColor="@color/neon_green"
+            android:textSize="22sp"
+            android:textStyle="bold" />
 
         <RadioButton
             android:id="@+id/ask_radioButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:fontFamily="@font/marcellus"
             android:text="@string/ask"
-            android:textColor="@color/secTextColor" />
+            android:textColor="@color/neon_blue"
+            android:textSize="22sp"
+            android:textStyle="bold" />
 
     </RadioGroup>
+
+    <LinearLayout
+        android:id="@+id/stocksOwned_linearLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/radioGroupStock"
+        android:layout_marginTop="24dp"
+        android:weightSum="2">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:fontFamily="@font/marcellus_sc"
+            android:text="@string/stocks_owned"
+            android:textColor="@color/neon_green"
+            android:textSize="22sp" />
+
+        <TextView
+            android:id="@+id/stocksOwned_textView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:fontFamily="@font/kreon_light"
+            android:text="@string/n_a"
+            android:textColor="@color/neutral_font_color"
+            android:textSize="22sp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/currentStockPrice_linearLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/stocksOwned_linearLayout"
+        android:layout_marginTop="8dp">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:fontFamily="@font/marcellus_sc"
+            android:text="@string/current_price"
+            android:textColor="@color/neon_orange"
+            android:textSize="22sp" />
+
+        <TextView
+            android:id="@+id/currentStockPrice_textView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:fontFamily="@font/kreon_light"
+            android:text="@string/n_a"
+            android:textColor="@color/neutral_font_color"
+            android:textSize="22sp" />
+
+    </LinearLayout>
 
     <android.support.design.widget.TextInputLayout
         android:id="@+id/no_of_stocks_input"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignStart="@+id/radioGroupStock"
-        android:layout_below="@+id/radioGroupStock"
-        android:layout_marginTop="15dp">
+        android:layout_below="@+id/currentStockPrice_linearLayout"
+        android:layout_marginTop="15dp"
+        android:textColorHint="@color/neutral_font_color">
 
         <EditText
             android:id="@+id/noOfStocks_editText"
@@ -71,7 +137,7 @@
             android:ems="10"
             android:hint="@string/number_of_stocks"
             android:inputType="number"
-            android:textColor="@android:color/background_dark" />
+            android:textColor="@color/neutral_font_color" />
 
     </android.support.design.widget.TextInputLayout>
 
@@ -81,7 +147,8 @@
         android:layout_height="wrap_content"
         android:layout_alignStart="@+id/no_of_stocks_input"
         android:layout_below="@+id/no_of_stocks_input"
-        android:layout_marginTop="15dp">
+        android:layout_marginTop="15dp"
+        android:textColorHint="@color/neutral_font_color">
 
         <EditText
             android:id="@+id/orderPrice_editText"
@@ -90,27 +157,30 @@
             android:ems="10"
             android:hint="@string/order_price"
             android:inputType="number"
-            android:textColor="@android:color/background_dark" />
+            android:textColor="@color/neutral_font_color" />
 
     </android.support.design.widget.TextInputLayout>
 
-
     <Button
         android:id="@+id/bidAsk_button"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_marginBottom="8dp"
-        android:background="@color/colorPrimary"
+        android:layout_centerHorizontal="true"
+        android:padding="12dp"
+        android:background="@drawable/black_white_rounded_button"
+        android:fontFamily="@font/marcellus_sc"
         android:text="@string/bid"
-        android:textColor="@android:color/white" />
+        android:textColor="@android:color/white"
+        android:textSize="22sp" />
 
     <ProgressBar
         android:id="@+id/buySell_progressBar"
         style="?android:attr/progressBarStyleLarge"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
+        android:layout_above="@+id/bidAsk_button"
+        android:layout_marginBottom="12dp"
         android:visibility="gone" />
 
 </RelativeLayout>

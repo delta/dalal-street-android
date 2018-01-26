@@ -1,7 +1,8 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
 
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/black_background">
 
     <RelativeLayout
         android:id="@+id/recyclerViewsContainer_relativeLayout"
@@ -10,38 +11,49 @@
 
         <TextView
             android:id="@+id/openOrderText"
-            android:textSize="20sp"
-            android:textColor="@android:color/background_dark"
-            android:text="@string/open_orders"
-            android:layout_margin="6dp"
-            android:textStyle="bold"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:fontFamily="@font/marcellus_sc"
+            android:text="@string/open_orders"
+            android:textColor="@color/neutral_font_color"
+            android:textSize="24sp"
+            android:textStyle="bold" />
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/orders_recyclerView"
-        android:layout_below="@+id/openOrderText"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/orders_recyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/openOrderText" />
 
     </RelativeLayout>
 
     <RelativeLayout
         android:id="@+id/emptyOrders_relativeLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:visibility="visible">
+
+        <ImageView
+            android:id="@+id/no_orders_pending"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:layout_centerInParent="true"
+            android:layout_marginBottom="12dp"
+            android:contentDescription="@string/my_orders"
+            android:src="@drawable/no_orders" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_below="@+id/no_orders_pending"
             android:layout_centerInParent="true"
-            android:layout_marginEnd="20dp"
-            android:layout_marginStart="20dp"
+            android:layout_marginEnd="12dp"
+            android:layout_marginStart="12dp"
             android:gravity="center"
             android:text="@string/no_orders_pending"
-            android:textColor="@android:color/background_dark"
-            android:textSize="20sp"
-            android:visibility="gone" />
+            android:textColor="@color/neutral_font_color"
+            android:textSize="20sp" />
 
     </RelativeLayout>
 
