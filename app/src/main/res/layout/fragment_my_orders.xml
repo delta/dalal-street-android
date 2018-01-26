@@ -20,11 +20,19 @@
             android:textSize="24sp"
             android:textStyle="bold" />
 
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1.5dp"
+            android:layout_below="@+id/openOrderText"
+            android:layout_marginTop="0dp"
+            android:background="@android:color/background_light" />
+
         <android.support.v7.widget.RecyclerView
             android:id="@+id/orders_recyclerView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@+id/openOrderText" />
+            android:layout_below="@+id/openOrderText"
+            android:layout_marginTop="4dp" />
 
     </RelativeLayout>
 
@@ -32,7 +40,7 @@
         android:id="@+id/emptyOrders_relativeLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="visible">
+        android:visibility="gone">
 
         <ImageView
             android:id="@+id/no_orders_pending"

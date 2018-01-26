@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -34,7 +33,7 @@ import io.grpc.ManagedChannel;
 
 import static com.hmproductions.theredstreet.utils.Constants.LOGIN_LOADER_ID;
 
-public class SplashActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<LoginResponse>{
+public class SplashActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<LoginResponse> {
 
     /* Not injecting stub directly into this context to prevent empty/null metadata attached to stub since user has not logged in. */
     @Inject
@@ -43,12 +42,16 @@ public class SplashActivity extends AppCompatActivity implements LoaderManager.L
     @Inject
     SharedPreferences preferences;
 
-    @BindView(R.id.splash_text)
+    @BindView(R.id.splash_textView)
     TextView splashText;
+
+    @BindView(R.id.graph_drawer)
+    GraphDrawView graphDrawView;
 
     public static final String USERNAME_KEY = "username-key";
     public static final String EMAIL_KEY = "email-key";
     static final String PASSWORD_KEY = "password-key";
+    public Thread drawer;
     private boolean threadRun = true;
     Thread splashTimer = null;
 
@@ -61,7 +64,6 @@ public class SplashActivity extends AppCompatActivity implements LoaderManager.L
         ButterKnife.bind(this);
         DaggerDalalStreetApplicationComponent.builder().contextModule(new ContextModule(this)).build().inject(this);
 
-
         String email = preferences.getString(EMAIL_KEY, null);
         String password = preferences.getString(PASSWORD_KEY, null);
         if (email != null && !email.equals("")) {
@@ -72,38 +74,38 @@ public class SplashActivity extends AppCompatActivity implements LoaderManager.L
 
             getSupportLoaderManager().restartLoader(LOGIN_LOADER_ID, bundle, this);
         } else {
-
             Intent intent = new Intent(this, LoginActivity.class);
             startActivity(intent);
             finish();
         }
 
-        splashTimer = new Thread(){
-            public void run(){
-                try{
+        drawer = new Thread(graphDrawView);
+        drawer.start();
+
+        splashTimer = new Thread() {
+            public void run() {
+                try {
                     int splashTime = 0;
-                    while(threadRun){
+                    while (threadRun) {
 
                         sleep(150);
 
-                        if(splashTime % 10 < 3){
-                            setSplashText("Fetching Data.");
-                        }
-                        else if(splashTime % 10 >= 3 && splashTime % 10 < 7 ){
-                            setSplashText("Fetching Data..");
-                        }else if (splashTime % 10 >= 7){
-                            setSplashText("Fetching Data...");
+                        if (splashTime % 10 < 3) {
+                            setSplashText("Signing In.");
+                        } else if (splashTime % 10 >= 3 && splashTime % 10 < 7) {
+                            setSplashText("Signing In..");
+                        } else if (splashTime % 10 >= 7) {
+                            setSplashText("Signing In...");
                         }
                         splashTime = splashTime + 1;
                     }
 
-                }catch(InterruptedException e){
+                } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
             }
         };
         splashTimer.start();
-
     }
 
     private void setSplashText(final CharSequence text) {
@@ -113,13 +115,13 @@ public class SplashActivity extends AppCompatActivity implements LoaderManager.L
     @Override
     public Loader<LoginResponse> onCreateLoader(int id, Bundle args) {
 
-        LoginRequest loginRequest = LoginRequest
-                .newBuilder()
-                .setEmail(args.getString(EMAIL_KEY))
-                .setPassword(args.getString(PASSWORD_KEY))
-                .build();
+            LoginRequest loginRequest = LoginRequest
+                    .newBuilder()
+                    .setEmail(args.getString(EMAIL_KEY))
+                    .setPassword(args.getString(PASSWORD_KEY))
+                    .build();
 
-        DalalActionServiceGrpc.DalalActionServiceBlockingStub stub = DalalActionServiceGrpc.newBlockingStub(channel);
+            DalalActionServiceGrpc.DalalActionServiceBlockingStub stub = DalalActionServiceGrpc.newBlockingStub(channel);
 
         return new LoginLoader(this, loginRequest, stub);
     }
@@ -191,6 +193,15 @@ public class SplashActivity extends AppCompatActivity implements LoaderManager.L
             Toast.makeText(this, "Please login again", Toast.LENGTH_SHORT).show();
             startActivity(new Intent(this, LoginActivity.class));
             finish();
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (drawer != null) {
+            if (drawer.isAlive())
+                drawer.interrupt();
         }
     }
 

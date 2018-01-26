@@ -1,6 +1,9 @@
 package com.hmproductions.theredstreet.adapter;
 
 import android.content.Context;
+import android.content.res.ColorStateList;
+import android.os.Build;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -58,14 +61,15 @@ public class OrdersRecyclerAdapter extends RecyclerView.Adapter<OrdersRecyclerAd
                 Constants.RUPEE_SYMBOL + " " + String.valueOf(order.getPrice() + "/stock");
         holder.priceTextView.setText(tempString);
 
-        if(order.getOrderType() == 1)
-            holder.priceTextView.setVisibility(View.GONE);
-
         if(order.getStockQuantity()==order.getStockQuantityFulfilled())
             holder.cancelButton.setEnabled(false);
 
         holder.quantitySeekbar.setMax(order.getStockQuantity());
         holder.quantitySeekbar.setProgress(order.getStockQuantityFulfilled());
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            holder.quantitySeekbar.setProgressTintList(ColorStateList.valueOf(ContextCompat.getColor(context, R.color.neon_green)));
+        }
     }
 
     @Override

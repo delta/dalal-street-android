@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/orders_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -15,7 +16,7 @@
         android:fontFamily="@font/marcellus_sc"
         android:text="Google"
         android:textColor="@color/neutral_font_color"
-        android:textSize="22sp" />
+        android:textSize="24sp" />
 
     <TextView
         android:id="@+id/orderType_textView"
@@ -47,7 +48,8 @@
         android:layout_below="@+id/cancel_button"
         android:layout_marginTop="4dp"
         android:paddingEnd="20sp"
-        android:text="5 / 9"
+        android:paddingStart="0dp"
+        android:text=""
         android:textColor="@color/neutral_font_color"
         android:textSize="22sp"
         android:textStyle="bold" />
@@ -56,11 +58,10 @@
         android:id="@+id/stockDisplay_seekBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/orderPrice_textView"
-        android:layout_margin="2dp"
+        android:layout_below="@id/quantity_textView"
+        android:layout_marginTop="12dp"
         android:progress="40"
-        android:secondaryProgressTint="@color/neutral_font_color"
-        android:thumbTint="@color/neon_blue" />
+        android:thumb="@drawable/blue_thumb" />
 
     <Button
         android:id="@+id/cancel_button"
@@ -73,13 +74,14 @@
         android:text="@string/cancel"
         android:textColor="@color/neon_orange"
         android:textSize="16sp"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        tools:ignore="RelativeOverlap" />
 
     <View
         android:layout_width="match_parent"
-        android:layout_height="2dp"
+        android:layout_height="1dp"
         android:layout_below="@+id/stockDisplay_seekBar"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="4dp"
         android:background="@android:color/background_light" />
 
 </RelativeLayout>
