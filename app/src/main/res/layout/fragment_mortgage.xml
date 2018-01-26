@@ -1,99 +1,235 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp">
+    android:background="@color/black_background"
+    android:orientation="vertical"
+    android:paddingBottom="8dp"
+    android:paddingEnd="2dp"
+    android:paddingStart="2dp"
+    android:paddingTop="8dp">
 
     <Spinner
         android:id="@+id/mortgage_companies_spinner"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="15dp"
+        android:layout_height="0dp"
+        android:layout_marginEnd="12dp"
+        android:layout_marginStart="12dp"
+        android:layout_weight="1"
+        android:backgroundTint="@android:color/background_light"
         android:hint="@string/pick_a_company"
-        android:textColorHint="@color/secTextColor" />
+        android:textColorHint="@color/neutral_font_color" />
 
-    <TextView
-        android:id="@+id/stocksOwned_textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/mortgage_companies_spinner"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="20dp"
-        android:text="@string/number_of_stocks_you_own_n_a"
-        android:textColor="@color/secTextColor"
-        android:textSize="15sp" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginStart="12dp"
+        android:layout_weight="0.7"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
 
-    <TextView
-        android:id="@+id/stocksMortgaged_textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignStart="@+id/stocksOwned_textView"
-        android:layout_below="@+id/stocksOwned_textView"
-        android:layout_marginTop="15dp"
-        android:text="@string/number_of_stocks_mortgaged_n_a"
-        android:textColor="@color/secTextColor"
-        android:textSize="15sp" />
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="3"
+            android:fontFamily="@font/marcellus_sc"
+            android:text="@string/stocks_owned"
+            android:textColor="@color/neutral_font_color"
+            android:textSize="20sp" />
+
+        <TextView
+            android:id="@+id/stocksOwned_textView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:fontFamily="@font/kreon_light"
+            android:text=""
+            android:textColor="@color/neutral_font_color"
+            android:textSize="20sp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginStart="12dp"
+        android:layout_weight="0.7"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="3"
+            android:fontFamily="@font/marcellus_sc"
+            android:text="@string/stocks_mortgaged"
+            android:textColor="@color/neutral_font_color"
+            android:textSize="20sp" />
+
+        <TextView
+            android:id="@+id/stocksMortgaged_textView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:fontFamily="@font/kreon_light"
+            android:text=""
+            android:textColor="@color/neutral_font_color"
+            android:textSize="20sp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginStart="12dp"
+        android:layout_weight="0.667"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="4"
+            android:fontFamily="@font/marcellus_sc"
+            android:text="@string/current_price"
+            android:textColor="@color/neutral_font_color"
+            android:textSize="20sp" />
+
+        <TextView
+            android:id="@+id/currentPrice_textView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:fontFamily="@font/kreon_light"
+            android:text=""
+            android:textColor="@color/neutral_font_color"
+            android:textSize="20sp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginStart="12dp"
+        android:layout_weight="0.667"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="4"
+            android:fontFamily="@font/marcellus_sc"
+            android:text="@string/mortgage_deposit_rate"
+            android:textColor="@color/neutral_font_color"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/mortgageDeposit_textView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:fontFamily="@font/kreon_light"
+            android:text=""
+            android:textColor="@color/neutral_font_color"
+            android:textSize="20sp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginStart="12dp"
+        android:layout_weight="0.667"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="4"
+            android:fontFamily="@font/marcellus_sc"
+            android:text="@string/mortgage_retrival_rate"
+            android:textColor="@color/neutral_font_color"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/mortgageRetrieve_textView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:fontFamily="@font/kreon_light"
+            android:text=""
+            android:textColor="@color/neutral_font_color"
+            android:textSize="20sp" />
+
+    </LinearLayout>
 
     <RadioGroup
         android:id="@+id/mortgageRadioGroup"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignStart="@+id/stocksMortgaged_textView"
-        android:layout_below="@+id/stocksMortgaged_textView"
-        android:layout_marginTop="36dp">
+        android:layout_height="0dp"
+        android:layout_marginStart="12dp"
+        android:layout_weight="1">
 
         <RadioButton
             android:id="@+id/mortgage_radioButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:textColor="@color/secTextColor"
-            android:text="@string/mortgage_stocks" />
+            android:fontFamily="@font/marcellus_sc"
+            android:text="@string/mortgage_stocks"
+            android:textColor="@color/neon_orange"
+            android:textSize="20sp"
+            android:textStyle="bold" />
 
         <RadioButton
             android:id="@+id/retrieve_radioButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:textColor="@color/secTextColor"
-            android:text="@string/retrieve_stocks_from_mortgage" />
+            android:fontFamily="@font/marcellus_sc"
+            android:text="@string/retrieve_stocks"
+            android:textColor="@color/neon_green"
+            android:textSize="20sp"
+            android:textStyle="bold" />
 
     </RadioGroup>
 
     <android.support.design.widget.TextInputLayout
         android:id="@+id/mortgage_stock_input"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignStart="@+id/mortgageRadioGroup"
-        android:layout_below="@+id/mortgageRadioGroup"
-        android:layout_marginTop="41dp">
+        android:layout_height="0dp"
+        android:layout_marginBottom="2dp"
+        android:layout_marginEnd="48dp"
+        android:paddingTop="12dp"
+        android:textColorHint="@color/neutral_font_color"
+        android:layout_marginStart="12dp"
+        android:layout_weight="1"
+        android:gravity="bottom">
 
         <EditText
             android:id="@+id/stocks_editText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="20dp"
             android:ems="10"
             android:hint="@string/enter_the_number_of_stocks"
             android:inputType="number"
-            android:textColor="@android:color/background_dark"
-            android:maxLength="5" />
+            android:maxLength="4"
+            android:textColor="@color/neutral_font_color" />
 
     </android.support.design.widget.TextInputLayout>
 
     <Button
         android:id="@+id/mortgage_button"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/mortgage_stock_input"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="60dp"
-        android:background="@color/colorPrimary"
-        android:text="@string/sell_retrieve"
-        android:textColor="@android:color/white" />
+        android:layout_gravity="center"
+        android:layout_marginBottom="4dp"
+        android:layout_weight="0"
+        android:background="@drawable/black_white_rounded_button"
+        android:fontFamily="@font/kreon_light"
+        android:padding="12dp"
+        android:text="@string/mortgage"
+        android:textColor="@color/neutral_font_color"
+        android:textSize="22sp"
+        android:textStyle="bold" />
 
-</RelativeLayout>
+</LinearLayout>
 

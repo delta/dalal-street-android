@@ -471,7 +471,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 new StreamObserver<StockPricesUpdate>() {
                     @Override
                     public void onNext(StockPricesUpdate value) {
-                        for (int i=1 ; i<=30 ; ++i) {
+                        for (int i=1 ; i <= Constants.NUMBER_OF_COMPANIES ; ++i) {
                             if (value.getPricesMap().containsKey(i)) {
                                 globalStockDetails.get(i-1).setPrice(value.getPricesMap().get(i));
                                 LocalBroadcastManager.getInstance(MainActivity.this).sendBroadcast(new Intent(Constants.REFRESH_PRICE_TICKER_ACTION));
@@ -529,7 +529,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     public void onNext(StockExchangeUpdate value) {
                         Map<Integer, StockExchangeDataPoint> stockExchangeDataPointMap = value.getStocksInExchangeMap();
 
-                        for (int x=1 ; x <= 30 ; ++x) {
+                        for (int x=1 ; x <= Constants.NUMBER_OF_COMPANIES ; ++x) {
                             if (stockExchangeDataPointMap.containsKey(x)) {
                                 StockExchangeDataPoint currentDataPoint = value.getStocksInExchangeMap().get(x);
 

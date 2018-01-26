@@ -55,7 +55,7 @@ public class CompanyFragment extends Fragment {
         // Inflate the layout for this fragment
         View rootView=inflater.inflate(R.layout.fragment_companies, container, false);
 
-        if (getActivity() != null)  getActivity().setTitle("CompanyTickerDetails");
+        if (getActivity() != null)  getActivity().setTitle("Company Details");
         ButterKnife.bind(this, rootView);
 
         adapter = new CompanyRecyclerAdapter(getContext(), null);

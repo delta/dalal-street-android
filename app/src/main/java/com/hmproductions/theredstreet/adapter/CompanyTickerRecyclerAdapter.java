@@ -27,7 +27,7 @@ public class CompanyTickerRecyclerAdapter extends RecyclerView.Adapter<CompanyTi
 
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemView = LayoutInflater.from(context).inflate(R.layout.company_list_item, parent, false);
+        View itemView = LayoutInflater.from(context).inflate(R.layout.company_ticker_list_item, parent, false);
 
         return new MyViewHolder(itemView);
     }

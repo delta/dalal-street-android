@@ -4,6 +4,7 @@
     android:gravity="center"
     android:layout_marginStart="12dp"
     android:layout_marginEnd="12dp"
+    android:background="#20202C"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
@@ -20,8 +21,8 @@
         android:layout_weight="3"
         android:text="@string/signing_in"
         android:textSize="18sp"
-        android:fontFamily="sans-serif-condensed"
+        android:fontFamily="@font/kreon_light"
         android:layout_marginStart="12dp"
-        android:textColor="@android:color/background_dark"/>
+        android:textColor="@color/neutral_font_color"/>
 
 </LinearLayout>

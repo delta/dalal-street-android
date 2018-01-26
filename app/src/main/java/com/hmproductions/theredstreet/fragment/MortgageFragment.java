@@ -3,14 +3,17 @@ package com.hmproductions.theredstreet.fragment;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
@@ -43,11 +46,8 @@ import static com.hmproductions.theredstreet.utils.StockUtils.getQuantityOwnedFr
 /* Uses GetMortgageDetails() for setting stocksMortgaged (int data member)
 *  Uses MortgageStocks() to mortgage stocks
 *  Uses RetrieveStocksFromMortgage() to get back mortgaged stocks */
-
+// TODO use constants to deduct price
 public class MortgageFragment extends Fragment implements LoaderManager.LoaderCallbacks<GetMortgageDetailsResponse>{
-
-    private static final String NO_OF_STOCKS_OWNED_STRING = "Number of stocks you own : ";
-    private final static String NO_OF_STOCKS_MORTGAGE_STRING = "Number of stocks in mortgage : ";
 
     @Inject
     DalalActionServiceGrpc.DalalActionServiceBlockingStub actionServiceBlockingStub;
@@ -64,11 +64,37 @@ public class MortgageFragment extends Fragment implements LoaderManager.LoaderCa
     @BindView(R.id.stocksMortgaged_textView)
     TextView mortgagedTextView;
 
+    @BindView(R.id.currentPrice_textView)
+    TextView currentPriceTextView;
+
+    @BindView(R.id.mortgageDeposit_textView)
+    TextView mortgageDepositTextView;
+
+    @BindView(R.id.mortgageRetrieve_textView)
+    TextView mortgageRetrieveTextView;
+
     int stocksOwned = 0, stocksMortgaged = 0, stocksTransaction;
     Spinner companySpinner;
+    String [] companiesArray;
+    private AlertDialog loadingDialog;
 
     public MortgageFragment() {
         // Required empty public constructor
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        if (getContext() != null){
+            View dialogView = LayoutInflater.from(getContext()).inflate(R.layout.progress_dialog, null);
+            String tempString = "Getting mortgage details...";
+            ((TextView) dialogView.findViewById(R.id.progressDialog_textView)).setText(tempString);
+            loadingDialog = new AlertDialog.Builder(getContext())
+                    .setView(dialogView)
+                    .setCancelable(false)
+                    .create();
+        }
     }
 
     @Override
@@ -80,8 +106,10 @@ public class MortgageFragment extends Fragment implements LoaderManager.LoaderCa
         ButterKnife.bind(this, rootView);
         if (getActivity() != null) getActivity().setTitle("Mortgage Stocks");
 
+        companiesArray = StockUtils.getCompanyNamesArray();
+
         companySpinner = rootView.findViewById(R.id.mortgage_companies_spinner);
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_dropdown_item_1line, StockUtils.getCompanyNamesArray());
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(getActivity(), R.layout.spinner_item, companiesArray);
         companySpinner.setAdapter(arrayAdapter);
 
         companySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -96,10 +124,15 @@ public class MortgageFragment extends Fragment implements LoaderManager.LoaderCa
             }
         });
 
-        String ownedString = NO_OF_STOCKS_OWNED_STRING + "N/A";
+        mortgageRadioGroup.setOnCheckedChangeListener((radioGroup, id) -> {
+            Button mortgageButton = rootView.findViewById(R.id.mortgage_button);
+            mortgageButton.setText(id==R.id.mortgage_radioButton?"MORTGAGE":"RETRIEVE");
+        });
+
+        String ownedString = "N/A";
         ownedTextView.setText(ownedString);
 
-        String mortgageString = NO_OF_STOCKS_MORTGAGE_STRING + "N/A";
+        String mortgageString = "N/A";
         mortgagedTextView.setText(mortgageString);
 
         return rootView;
@@ -136,10 +169,10 @@ public class MortgageFragment extends Fragment implements LoaderManager.LoaderCa
                     stocksOwned -= stocksTransaction;
                     stocksMortgaged += stocksTransaction;
 
-                    String ownedString = NO_OF_STOCKS_OWNED_STRING + String.valueOf(stocksOwned);
+                    String ownedString = " :  " + String.valueOf(stocksOwned);
                     ownedTextView.setText(ownedString);
 
-                    String mortgageString = NO_OF_STOCKS_MORTGAGE_STRING + String.valueOf(stocksMortgaged);
+                    String mortgageString = " :  " + String.valueOf(stocksMortgaged);
                     mortgagedTextView.setText(mortgageString);
 
                     stocksEditText.setText("");
@@ -171,10 +204,10 @@ public class MortgageFragment extends Fragment implements LoaderManager.LoaderCa
                     stocksOwned += stocksTransaction;
                     stocksMortgaged -= stocksTransaction;
 
-                    String ownedString = NO_OF_STOCKS_OWNED_STRING + String.valueOf(stocksOwned);
+                    String ownedString = " :  " + String.valueOf(stocksOwned);
                     ownedTextView.setText(ownedString);
 
-                    String mortgageString = NO_OF_STOCKS_MORTGAGE_STRING + String.valueOf(stocksMortgaged);
+                    String mortgageString = " :  " + String.valueOf(stocksMortgaged);
                     mortgagedTextView.setText(mortgageString);
 
                     stocksEditText.setText("");
@@ -195,7 +228,9 @@ public class MortgageFragment extends Fragment implements LoaderManager.LoaderCa
 
     @Override
     public Loader<GetMortgageDetailsResponse> onCreateLoader(int id, Bundle args) {
+        loadingDialog.show();
         companySpinner.setEnabled(false);
+
         if (getContext() != null) {
             return new MortgageDetailsLoader(getContext(), actionServiceBlockingStub);
         } else {
@@ -206,7 +241,9 @@ public class MortgageFragment extends Fragment implements LoaderManager.LoaderCa
     @Override
     public void onLoadFinished(Loader<GetMortgageDetailsResponse> loader, GetMortgageDetailsResponse response) {
 
-        int stockId = companySpinner.getSelectedItemPosition() + 1;
+        loadingDialog.dismiss();
+
+        int stockId = StockUtils.getStockIdFromCompanyName(companiesArray[companySpinner.getSelectedItemPosition()]);
         companySpinner.setEnabled(true);
 
         if (response.getMortgageMapMap().get(stockId) != null)
@@ -214,17 +251,26 @@ public class MortgageFragment extends Fragment implements LoaderManager.LoaderCa
         else
             stocksMortgaged = 0;
 
-        String mortgageString = NO_OF_STOCKS_MORTGAGE_STRING + String.valueOf(stocksMortgaged);
+        String mortgageString = " :  " + String.valueOf(stocksMortgaged);
         mortgagedTextView.setText(mortgageString);
 
         stocksOwned = getQuantityOwnedFromCompanyName(MainActivity.ownedStockDetails, getCompanyNameFromStockId(stockId));
 
-        String ownedString = NO_OF_STOCKS_OWNED_STRING + String.valueOf(stocksOwned);
+        String ownedString = " :  " + String.valueOf(stocksOwned);
         ownedTextView.setText(ownedString);
+
+        String tempString = " :  " + Constants.RUPEE_SYMBOL + " " + String.valueOf(StockUtils.getPriceFromStockId(MainActivity.globalStockDetails, stockId));
+        currentPriceTextView.setText(tempString);
+
+        tempString = " :  " + String.valueOf(Constants.MORTGAGE_DEPOSIT_RATE) + " %";
+        mortgageDepositTextView.setText(tempString);
+
+        tempString = " :  " + String.valueOf(Constants.MORTGAGE_RETRIEVE_RATE) + " %";
+        mortgageRetrieveTextView.setText(tempString);
     }
 
     @Override
     public void onLoaderReset(Loader<GetMortgageDetailsResponse> loader) {
-
+        // Do nothing
     }
 }

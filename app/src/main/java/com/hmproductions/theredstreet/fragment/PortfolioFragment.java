@@ -117,6 +117,7 @@ public class PortfolioFragment extends Fragment {
         if (getContext() != null) {
             IntentFilter intentFilter = new IntentFilter(Constants.REFRESH_OWNED_STOCKS_ACTION);
             intentFilter.addAction(Constants.REFRESH_STOCK_PRICES_ACTION);
+            intentFilter.addAction(Constants.REFRESH_STOCKS_EXCHANGE_ACTION);
             LocalBroadcastManager.getInstance(getContext())
                     .registerReceiver(refreshPortfolioDetails, intentFilter);
         }

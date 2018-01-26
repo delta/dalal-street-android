@@ -29,7 +29,7 @@ public class CompanyRecyclerAdapter extends RecyclerView.Adapter<CompanyRecycler
 
     @Override
     public CompanyRecyclerAdapter.PortfolioViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View customView = LayoutInflater.from(context).inflate(R.layout.company_ticker_list_item, parent, false);
+        View customView = LayoutInflater.from(context).inflate(R.layout.company_list_item, parent, false);
         return new PortfolioViewHolder(customView);
     }
 

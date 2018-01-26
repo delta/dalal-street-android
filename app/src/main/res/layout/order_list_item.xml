@@ -22,7 +22,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_alignParentTop="true"
-        android:background="@drawable/black_rounded_button"
+        android:background="@drawable/black_green_rounded_button"
         android:text="@string/cancel"
         android:textColor="@android:color/background_light" />
 

@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -15,6 +16,7 @@ import com.hmproductions.theredstreet.dagger.DaggerDalalStreetApplicationCompone
 import com.hmproductions.theredstreet.data.GlobalStockDetails;
 import com.hmproductions.theredstreet.data.StockDetails;
 import com.hmproductions.theredstreet.loaders.LoginLoader;
+import com.hmproductions.theredstreet.utils.Constants;
 import com.hmproductions.theredstreet.utils.MiscellaneousUtils;
 
 import java.util.ArrayList;
@@ -140,7 +142,7 @@ public class SplashActivity extends AppCompatActivity implements LoaderManager.L
             ArrayList<StockDetails> stocksOwnedList = new ArrayList<>();
             Map<Integer, Integer> stocksOwnedMap = loginResponse.getStocksOwnedMap();
 
-            for (int i = 1; i <= 30; ++i) {
+            for (int i = 1; i <= Constants.NUMBER_OF_COMPANIES; ++i) {
                 if (stocksOwnedMap.containsKey(i)) {
                     stocksOwnedList.add(new StockDetails(i, stocksOwnedMap.get(i)));
                 }
@@ -174,6 +176,14 @@ public class SplashActivity extends AppCompatActivity implements LoaderManager.L
 
             intent.putParcelableArrayListExtra(MainActivity.STOCKS_OWNED_KEY, stocksOwnedList);
             intent.putParcelableArrayListExtra(MainActivity.GLOBAL_STOCKS_KEY, globalStockList);
+
+            // Checking for constants
+            for (Map.Entry<String,Integer> entry : loginResponse.getConstantsMap().entrySet()) {
+                if (entry.getKey().equals("MORTGAGE_DEPOSIT_RATE"))
+                    Constants.MORTGAGE_DEPOSIT_RATE = entry.getValue();
+                else if (entry.getKey().equals("MORTGAGE_RETRIEVE_RATE"))
+                    Constants.MORTGAGE_RETRIEVE_RATE = entry.getValue();
+            }
 
             startActivity(intent);
             finish();

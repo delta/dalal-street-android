@@ -2,6 +2,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/black_background"
     android:padding="@dimen/activity_vertical_margin">
 
     <com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner
@@ -12,22 +13,24 @@
         android:hint="@string/pick_a_company"
         android:textSize="22sp"
         app:met_floatingLabel="normal"
-        app:met_textColor="@android:color/background_dark" />
+        app:met_textColor="@color/neutral_font_color"
+        app:met_textColorHint="@color/neutral_font_color" />
 
     <LinearLayout
         android:id="@+id/currentStockPrice_linearLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/company_spinner"
-        android:layout_marginTop="15dp"
+        android:layout_marginTop="20dp"
         android:orientation="horizontal">
 
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="3"
+            android:layout_weight="4"
+            android:fontFamily="@font/marcellus_sc"
             android:text="@string/current_price"
-            android:textColor="@android:color/background_dark"
+            android:textColor="@color/neutral_font_color"
             android:textSize="22sp" />
 
         <TextView
@@ -35,8 +38,9 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="2"
+            android:fontFamily="@font/kreon_light"
             android:text="@string/n_a"
-            android:textColor="@android:color/background_dark"
+            android:textColor="@color/neutral_font_color"
             android:textSize="22sp" />
 
     </LinearLayout>
@@ -52,9 +56,10 @@
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="3"
+            android:layout_weight="4"
+            android:fontFamily="@font/marcellus_sc"
             android:text="@string/daily_high"
-            android:textColor="@android:color/holo_green_dark"
+            android:textColor="@color/neon_green"
             android:textSize="22sp" />
 
         <TextView
@@ -62,8 +67,9 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="2"
+            android:fontFamily="@font/kreon_light"
             android:text="@string/n_a"
-            android:textColor="@android:color/holo_green_dark"
+            android:textColor="@color/neon_green"
             android:textSize="22sp" />
 
     </LinearLayout>
@@ -79,9 +85,10 @@
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="3"
+            android:layout_weight="4"
+            android:fontFamily="@font/marcellus_sc"
             android:text="@string/daily_low"
-            android:textColor="@android:color/holo_red_dark"
+            android:textColor="@color/neon_orange"
             android:textSize="22sp" />
 
         <TextView
@@ -89,8 +96,9 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="2"
+            android:fontFamily="@font/kreon_light"
             android:text="@string/n_a"
-            android:textColor="@android:color/holo_red_dark"
+            android:textColor="@color/neon_orange"
             android:textSize="22sp" />
 
     </LinearLayout>
@@ -106,9 +114,10 @@
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="3"
+            android:layout_weight="4"
+            android:fontFamily="@font/marcellus_sc"
             android:text="@string/stocks_in_market"
-            android:textColor="@android:color/holo_blue_dark"
+            android:textColor="@android:color/holo_blue_bright"
             android:textSize="22sp" />
 
         <TextView
@@ -116,8 +125,9 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="2"
+            android:fontFamily="@font/kreon_light"
             android:text="@string/n_a"
-            android:textColor="@android:color/holo_blue_dark"
+            android:textColor="@android:color/holo_blue_bright"
             android:textSize="22sp" />
 
     </LinearLayout>
@@ -132,9 +142,10 @@
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="3"
+            android:layout_weight="4"
+            android:fontFamily="@font/marcellus_sc"
             android:text="@string/stocks_in_exchange"
-            android:textColor="@android:color/holo_blue_dark"
+            android:textColor="@android:color/holo_blue_bright"
             android:textSize="22sp" />
 
         <TextView
@@ -142,20 +153,12 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="2"
+            android:fontFamily="@font/kreon_light"
             android:text="@string/n_a"
-            android:textColor="@android:color/holo_blue_dark"
+            android:textColor="@android:color/holo_blue_bright"
             android:textSize="22sp" />
 
     </LinearLayout>
-
-    <ProgressBar
-        android:id="@+id/stockExchange_progressBar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:layout_marginEnd="2dp"
-        android:indeterminate="true"
-        android:visibility="gone" />
 
     <android.support.design.widget.TextInputLayout
         android:id="@+id/stocks_exchange_input"
@@ -163,18 +166,19 @@
         android:layout_height="wrap_content"
         android:layout_above="@+id/buyExchange_button"
         android:layout_alignParentStart="true"
-        android:layout_marginBottom="24dp">
+        android:layout_marginBottom="24dp"
+        android:textColorHint="@color/neutral_font_color">
 
         <EditText
             android:id="@+id/noOfStocks_editText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:ems="10"
+            android:fontFamily="@font/kreon_light"
             android:hint="@string/number_of_stocks"
             android:inputType="number"
-            android:textColor="@android:color/background_dark"
-            android:textColorHint="@android:color/background_dark"
-            android:textSize="18sp" />
+            android:textColor="@color/neutral_font_color"
+            android:textSize="20sp" />
 
     </android.support.design.widget.TextInputLayout>
 
@@ -185,8 +189,8 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentStart="true"
         android:layout_marginBottom="15dp"
-        android:background="@color/colorPrimary"
+        android:background="@drawable/black_white_rounded_button"
         android:text="@string/buy_stocks"
-        android:textColor="@android:color/white" />
+        android:textColor="@color/neutral_font_color" />
 
 </RelativeLayout>

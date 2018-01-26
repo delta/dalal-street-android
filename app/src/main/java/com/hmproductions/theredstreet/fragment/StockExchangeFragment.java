@@ -72,9 +72,6 @@ public class StockExchangeFragment extends Fragment implements LoaderManager.Loa
     @BindView(R.id.stocksInExchange_textView)
     TextView stockInExchangeTextView;
 
-    @BindView(R.id.stockExchange_progressBar)
-    ProgressBar stockExchangeProgressBar;
-
     private Stock currentStock;
     private String lastCompanySelected = null;
     private AlertDialog loadingDialog;
@@ -119,7 +116,7 @@ public class StockExchangeFragment extends Fragment implements LoaderManager.Loa
         DaggerDalalStreetApplicationComponent.builder().contextModule(new ContextModule(getContext())).build().inject(this);
 
         companySpinner = rootView.findViewById(R.id.company_spinner);
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_dropdown_item_1line, StockUtils.getCompanyNamesArray());
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(getActivity(), R.layout.spinner_item, StockUtils.getCompanyNamesArray());
         companySpinner.setAdapter(arrayAdapter);
 
         companySpinner.setOnItemClickListener((adapterView, view, position, id) -> {
@@ -191,8 +188,6 @@ public class StockExchangeFragment extends Fragment implements LoaderManager.Loa
 
     @Override
     public Loader<GetCompanyProfileResponse> onCreateLoader(int id, Bundle args) {
-        stockExchangeProgressBar.setVisibility(View.VISIBLE);
-
         loadingDialog.show();
 
         dailyHighTextView.setText("");
@@ -210,7 +205,6 @@ public class StockExchangeFragment extends Fragment implements LoaderManager.Loa
     @Override
     public void onLoadFinished(Loader<GetCompanyProfileResponse> loader, GetCompanyProfileResponse companyProfileResponse) {
 
-        stockExchangeProgressBar.setVisibility(View.GONE);
         loadingDialog.dismiss();
 
         String temporaryTextViewString;

@@ -15,7 +15,6 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/toolbar_height"
             android:background="?colorPrimary"
-            android:elevation="8dp"
             android:orientation="horizontal"
             android:theme="@style/Base.ThemeOverlay.AppCompat.Dark" />
 
@@ -24,6 +23,7 @@
             android:layout_width="match_parent"
             android:layout_height="60dp"
             android:layout_below="@id/home_toolbar"
+            android:background="#20202C"
             android:baselineAligned="false"
             android:elevation="8dp"
             android:orientation="horizontal">
@@ -32,7 +32,6 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:background="@android:color/holo_red_dark"
                 android:gravity="center"
                 android:orientation="vertical"
                 android:padding="4dp">
@@ -40,18 +39,19 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:fontFamily="@font/marcellus_sc"
                     android:gravity="center"
                     android:text="@string/cash_worth"
-                    android:textColor="@android:color/background_light"
+                    android:textColor="@color/neon_green"
                     android:textSize="12sp" />
 
                 <TextView
                     android:id="@+id/cashWorth_textView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:fontFamily="@font/kreon_light"
                     android:gravity="center"
-                    android:text=""
-                    android:textColor="@android:color/background_light"
+                    android:textColor="@color/neon_green"
                     android:textSize="22sp"
                     android:textStyle="bold" />
 
@@ -61,7 +61,6 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:background="@android:color/holo_blue_dark"
                 android:gravity="center"
                 android:orientation="vertical"
                 android:padding="4dp">
@@ -69,18 +68,19 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:fontFamily="@font/marcellus_sc"
                     android:gravity="center"
                     android:text="@string/stock_worth"
-                    android:textColor="@android:color/background_light"
+                    android:textColor="@color/neon_blue"
                     android:textSize="12sp" />
 
                 <TextView
                     android:id="@+id/stockWorth_textView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:fontFamily="@font/kreon_light"
                     android:gravity="center"
-                    android:text=""
-                    android:textColor="@android:color/background_light"
+                    android:textColor="@color/neon_blue"
                     android:textSize="22sp"
                     android:textStyle="bold" />
 
@@ -90,7 +90,6 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:background="@android:color/holo_green_light"
                 android:gravity="center"
                 android:orientation="vertical"
                 android:padding="4dp">
@@ -98,18 +97,20 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:fontFamily="@font/marcellus_sc"
                     android:gravity="center"
                     android:text="@string/total_worth"
-                    android:textColor="@android:color/background_light"
+                    android:textColor="@color/neon_orange"
                     android:textSize="12sp" />
 
                 <TextView
                     android:id="@+id/totalWorth_textView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:fontFamily="@font/kreon_light"
                     android:gravity="center"
                     android:text=""
-                    android:textColor="@android:color/background_light"
+                    android:textColor="@color/neon_orange"
                     android:textSize="22sp"
                     android:textStyle="bold" />
 

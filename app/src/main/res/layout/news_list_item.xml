@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:background="@color/black_background">
 
     <TextView
         android:id="@+id/news_head"
@@ -11,8 +13,8 @@
         android:layout_alignParentTop="true"
         android:layout_marginStart="6dp"
         android:layout_marginTop="8dp"
-        android:text=""
-        android:textColor="@android:color/background_dark"
+        android:fontFamily="@font/marcellus"
+        android:textColor="#FFA500"
         android:textSize="20sp" />
 
     <TextView
@@ -23,8 +25,8 @@
         android:layout_below="@+id/news_head"
         android:layout_marginStart="6dp"
         android:layout_marginTop="6dp"
-        android:text=""
-        android:textColor="#333333"
+        android:fontFamily="@font/kreon_light"
+        android:textColor="@color/neutral_font_color"
         android:textSize="16sp" />
 
     <TextView
@@ -36,7 +38,7 @@
         android:layout_marginEnd="4dp"
         android:layout_marginTop="2dp"
         android:text="12:52pm Jan 21"
-        android:textColor="@color/secTextColor"
+        android:textColor="@color/neutral_font_color"
         android:textSize="12sp" />
 
     <View
@@ -45,6 +47,6 @@
         android:layout_below="@+id/news_content"
         android:layout_marginStart="4dp"
         android:layout_marginTop="10dp"
-        android:background="@android:color/background_dark" />
+        android:background="@color/neutral_font_color" />
 
 </RelativeLayout>
