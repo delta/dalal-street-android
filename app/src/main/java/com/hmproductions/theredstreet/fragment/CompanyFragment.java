@@ -75,8 +75,11 @@ public class CompanyFragment extends Fragment {
 
         for (GlobalStockDetails currentStockDetail : MainActivity.globalStockDetails) {
             portfolioList.add(new CompanyDetails(
-                    currentStockDetail.getFullName(), currentStockDetail.getShortName(),
-                    currentStockDetail.getQuantityInExchange(), currentStockDetail.getPrice())
+                    currentStockDetail.getFullName(),
+                    currentStockDetail.getShortName(),
+                    currentStockDetail.getPrice(),
+                    -1,
+                    currentStockDetail.getPreviousDayClose())
             );
         }
 

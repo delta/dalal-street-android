@@ -43,7 +43,7 @@
 
     <View
         android:layout_width="match_parent"
-        android:layout_height="1px"
+        android:layout_height="2dp"
         android:layout_below="@+id/news_content"
         android:layout_marginStart="4dp"
         android:layout_marginTop="10dp"

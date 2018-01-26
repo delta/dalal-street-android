@@ -1,28 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 
-    android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="16dp">
+    android:background="@color/black_background"
+    android:orientation="horizontal"
+    android:paddingBottom="16dp"
+    android:paddingTop="16dp">
 
     <TextView
-        android:id="@+id/portfolio_company_textView"
+        android:id="@+id/companyName_textView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:textColor="@android:color/background_dark"
-        android:textSize="20sp"
-        android:text=""
+        android:layout_weight="2"
+        android:fontFamily="@font/marcellus_sc"
         android:gravity="center"
-        android:layout_weight="2.5" />
+        android:text=""
+        android:textColor="@color/neutral_font_color"
+        android:textSize="20sp" />
 
     <TextView
-        android:id="@+id/portfolio_price_textView"
+        android:id="@+id/difference_textView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:textColor="@android:color/background_dark"
-        android:textSize="20sp"
+        android:layout_weight="1"
+        android:fontFamily="@font/kreon_light"
+        android:gravity="center"
         android:text=""
-        android:layout_weight="3" />
+        android:textColor="@color/neutral_font_color"
+        android:textSize="20sp" />
+
+    <TextView
+        android:id="@+id/price_textView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="2"
+        android:fontFamily="@font/marcellus"
+        android:gravity="center"
+        android:text=""
+        android:textColor="@color/neutral_font_color"
+        android:textSize="20sp" />
+
+    <TextView
+        android:id="@+id/volume_textView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1.5"
+        android:fontFamily="@font/marcellus"
+        android:gravity="center"
+        android:text=""
+        android:textColor="@color/neutral_font_color"
+        android:textSize="20sp" />
 
 </LinearLayout>

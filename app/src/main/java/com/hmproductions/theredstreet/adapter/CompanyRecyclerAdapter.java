@@ -1,6 +1,7 @@
 package com.hmproductions.theredstreet.adapter;
 
 import android.content.Context;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,7 +10,6 @@ import android.widget.TextView;
 
 import com.hmproductions.theredstreet.R;
 import com.hmproductions.theredstreet.data.CompanyDetails;
-import com.hmproductions.theredstreet.utils.Constants;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,14 +36,28 @@ public class CompanyRecyclerAdapter extends RecyclerView.Adapter<CompanyRecycler
     @Override
     public void onBindViewHolder(CompanyRecyclerAdapter.PortfolioViewHolder holder, int position) {
 
-        if (list.get(position).getCompany().length() >= 10) {
-            holder.portfolioCompanyNameTextView.setText(list.get(position).getShortName());
+        CompanyDetails currentCompanyDetails = list.get(position);
+
+        if (currentCompanyDetails.getCompany().length() >= 10) {
+            holder.companyNameTextView.setText(currentCompanyDetails.getShortName());
         } else {
-            holder.portfolioCompanyNameTextView.setText(list.get(position).getCompany());
+            holder.companyNameTextView.setText(currentCompanyDetails.getCompany());
         }
 
-        String temporaryString = Constants.RUPEE_SYMBOL + String.valueOf(list.get(position).getValue()) + "/stock";
-        holder.portfolioPriceTextView.setText(temporaryString);
+        String temporaryString = String.valueOf(currentCompanyDetails.getValue()) + "/stock";
+        holder.priceTextView.setText(temporaryString);
+
+        holder.volumeTextView.setText(String.valueOf(currentCompanyDetails.getVolume()));
+
+        int diff = (currentCompanyDetails.getValue() - currentCompanyDetails.getPreviousDayClose()) / currentCompanyDetails.getPreviousDayClose();
+        holder.differenceTextView.setText(String.valueOf(Math.abs(diff)));
+        if (diff < 0) {
+            holder.differenceTextView.setTextColor(ContextCompat.getColor(context, R.color.neon_orange));
+        } else if (diff == 0) {
+            holder.differenceTextView.setTextColor(ContextCompat.getColor(context, R.color.neutral_font_color));
+        } else {
+            holder.differenceTextView.setTextColor(ContextCompat.getColor(context, R.color.neon_green));
+        }
     }
 
     @Override
@@ -59,11 +73,17 @@ public class CompanyRecyclerAdapter extends RecyclerView.Adapter<CompanyRecycler
 
     class PortfolioViewHolder extends RecyclerView.ViewHolder {
 
-        @BindView(R.id.portfolio_company_textView)
-        TextView portfolioCompanyNameTextView;
+        @BindView(R.id.companyName_textView)
+        TextView companyNameTextView;
 
-        @BindView(R.id.portfolio_price_textView)
-        TextView portfolioPriceTextView;
+        @BindView(R.id.price_textView)
+        TextView priceTextView;
+
+        @BindView(R.id.volume_textView)
+        TextView volumeTextView;
+
+        @BindView(R.id.difference_textView)
+        TextView differenceTextView;
 
         PortfolioViewHolder(View itemView) {
             super(itemView);

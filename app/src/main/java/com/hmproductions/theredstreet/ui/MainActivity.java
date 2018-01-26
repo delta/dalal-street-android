@@ -132,7 +132,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         OpenAndCloseDrawer();
 
-        getSupportFragmentManager().beginTransaction().add(R.id.home_activity_fragment_container, new HomeFragment()).commit();
+        getSupportFragmentManager().beginTransaction().add(R.id.home_activity_fragment_container, new CompanyFragment()).commit();
 
         ownedStockDetails = getIntent().getParcelableArrayListExtra(STOCKS_OWNED_KEY);
         globalStockDetails = getIntent().getParcelableArrayListExtra(GLOBAL_STOCKS_KEY);

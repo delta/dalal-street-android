@@ -3,13 +3,14 @@ package com.hmproductions.theredstreet.data;
 public class CompanyDetails {
 
     private String company, shortName;
-    private int noOfStock,value;
+    private int value, volume, previousDayClose;
 
-    public CompanyDetails(String company, String shortName, int noOfStock, int value) {
+    public CompanyDetails(String company, String shortName, int value, int volume, int previousDayClose) {
         this.shortName = shortName;
         this.company = company;
-        this.noOfStock = noOfStock;
         this.value = value;
+        this.volume = volume;
+        this.previousDayClose = previousDayClose;
     }
 
     public String getCompany() {
@@ -28,19 +29,27 @@ public class CompanyDetails {
         this.shortName = shortName;
     }
 
-    public int getNoOfStock() {
-        return noOfStock;
-    }
-
-    public void setNoOfStock(int noOfStock) {
-        this.noOfStock = noOfStock;
-    }
-
     public int getValue() {
         return value;
     }
 
     public void setValue(int value) {
         this.value = value;
+    }
+
+    public int getVolume() {
+        return volume;
+    }
+
+    public void setVolume(int volume) {
+        this.volume = volume;
+    }
+
+    public int getPreviousDayClose() {
+        return previousDayClose;
+    }
+
+    public void setPreviousDayClose(int previousDayClose) {
+        this.previousDayClose = previousDayClose;
     }
 }

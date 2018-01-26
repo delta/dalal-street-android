@@ -43,7 +43,6 @@ public class NewsRecyclerAdapter extends RecyclerView.Adapter<NewsRecyclerAdapte
         else {
             holder.contentTextView.setVisibility(View.GONE);
             holder.createdAtTextView.setVisibility(View.GONE);
-
         }
     }
 

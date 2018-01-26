@@ -164,5 +164,7 @@
     <string name="stocks_mortgaged">Stocks Mortgaged</string>
     <string name="mortgage_deposit_rate">Mortgage Deposit Rate</string>
     <string name="mortgage_retrival_rate">Mortgage Retrival Rate</string>
+    <string name="change">Change</string>
+    <string name="volume">Volume</string>
 
 </resources>
