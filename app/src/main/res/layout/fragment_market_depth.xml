@@ -6,9 +6,10 @@
     android:background="@color/black_background"
     android:padding="16dp">
     
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
         <com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner
             android:id="@+id/company_spinner"
@@ -29,9 +30,6 @@
             android:id="@+id/current_stock_price_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/company_spinner"
-            android:padding="10dp"
-            android:layout_centerInParent="true"
             android:visibility="invisible">
 
             <RelativeLayout
@@ -74,142 +72,150 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/bid_depth_layout"
-            android:orientation="vertical"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="5dp"
-            android:layout_marginLeft="3dp"
-            android:visibility="invisible"
-            android:background="@drawable/blue_border"
-            android:layout_below="@+id/current_stock_price_layout">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="10dp"
-                android:textSize="20sp"
-                android:fontFamily="@font/kreon_light"
-                android:text="@string/biddepth"
-                android:gravity="center"
-                android:background="#20202C"
-                android:textColor="@color/neutral_font_color"/>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginEnd="1dp"
-                android:layout_marginStart="1dp"
-                android:background="@color/neutral_font_color"/>
+            android:orientation="horizontal">
 
             <LinearLayout
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
+                android:layout_weight="1"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:layout_marginBottom="3dp"
-                android:padding="5dp">
+                android:id="@+id/bid_depth_layout"
+                android:orientation="vertical"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="5dp"
+                android:layout_marginEnd="1dp"
+                android:visibility="invisible"
+                android:background="@drawable/blue_border">
 
                 <TextView
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
+                    android:padding="10dp"
+                    android:textSize="20sp"
                     android:fontFamily="@font/kreon_light"
+                    android:text="@string/biddepth"
                     android:gravity="center"
-                    android:text="@string/volume"
-                    android:textColor="@color/neutral_font_color"
-                    android:textSize="18sp" />
+                    android:background="@color/dark_bg"
+                    android:textColor="#FFA500"/>
 
-                <TextView
-                    android:layout_width="0dp"
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginEnd="1dp"
+                    android:layout_marginStart="1dp"
+                    android:background="@color/neutral_font_color"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:fontFamily="@font/kreon_light"
-                    android:gravity="center"
-                    android:text="@string/price"
-                    android:textColor="@color/neutral_font_color"
-                    android:textSize="18sp" />
+                    android:layout_marginTop="5dp"
+                    android:layout_marginBottom="3dp"
+                    android:padding="5dp">
 
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:textSize="18sp"
+                        android:fontFamily="@font/kreon_light"
+                        android:text="@string/volume"
+                        android:gravity="center"
+                        android:textColor="@color/neutral_font_color"/>
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:textSize="18sp"
+                        android:fontFamily="@font/kreon_light"
+                        android:text="@string/price"
+                        android:gravity="center"
+                        android:textColor="@color/neutral_font_color"/>
+
+                </LinearLayout>
+
+                <android.support.v7.widget.RecyclerView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:paddingLeft="6dp"
+                    android:paddingRight="6dp"
+                    android:id="@+id/bid_depth_rv" />
 
             </LinearLayout>
 
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/bid_depth_rv"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:paddingLeft="6dp"
-                android:paddingRight="6dp" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/ask_depth_layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/bid_depth_layout"
-            android:layout_marginBottom="5dp"
-            android:layout_marginLeft="3dp"
-            android:layout_marginRight="3dp"
-            android:layout_marginTop="10dp"
-            android:background="@drawable/blue_border"
-            android:orientation="vertical"
-            android:visibility="invisible">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="#20202C"
-                android:fontFamily="@font/kreon_light"
-                android:gravity="center"
-                android:padding="10dp"
-                android:text="@string/askdepth"
-                android:textColor="@color/neutral_font_color"
-                android:textSize="20sp" />
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginEnd="1dp"
-                android:layout_marginStart="1dp"
-                android:background="@color/neutral_font_color" />
-
-
             <LinearLayout
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
+                android:layout_weight="1"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="3dp"
-                android:layout_marginTop="5dp"
-                android:padding="5dp">
+                android:id="@+id/ask_depth_layout"
+                android:orientation="vertical"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="5dp"
+                android:layout_marginStart="1dp"
+                android:visibility="invisible"
+                android:background="@drawable/blue_border">
 
                 <TextView
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
+                    android:padding="10dp"
+                    android:textSize="20sp"
                     android:fontFamily="@font/kreon_light"
+                    android:text="@string/askdepth"
                     android:gravity="center"
-                    android:text="@string/volume"
-                    android:textColor="@color/neutral_font_color"
-                    android:textSize="18sp" />
+                    android:background="@color/dark_bg"
+                    android:textColor="#FFA500"/>
 
-                <TextView
-                    android:layout_width="0dp"
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginStart="1dp"
+                    android:layout_marginEnd="1dp"
+                    android:background="@color/neutral_font_color"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:fontFamily="@font/kreon_light"
-                    android:gravity="center"
-                    android:text="@string/price"
-                    android:textColor="@color/neutral_font_color"
-                    android:textSize="18sp" />
+                    android:layout_marginTop="5dp"
+                    android:layout_marginBottom="3dp"
+                    android:padding="5dp">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:textSize="18sp"
+                        android:fontFamily="@font/kreon_light"
+                        android:text="@string/volume"
+                        android:gravity="center"
+                        android:textColor="@color/neutral_font_color"/>
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:textSize="18sp"
+                        android:fontFamily="@font/kreon_light"
+                        android:text="@string/price"
+                        android:gravity="center"
+                        android:textColor="@color/neutral_font_color"/>
+
+
+                </LinearLayout>
+
+                <android.support.v7.widget.RecyclerView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:paddingLeft="6dp"
+                    android:paddingRight="6dp"
+                    android:id="@+id/ask_depth_rv" />
 
             </LinearLayout>
 
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/ask_depth_rv"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:paddingLeft="6dp"
-                android:paddingRight="6dp" />
-
         </LinearLayout>
 
-    </RelativeLayout>
+
+
+
+    </LinearLayout>
 
 </android.support.v4.widget.NestedScrollView>

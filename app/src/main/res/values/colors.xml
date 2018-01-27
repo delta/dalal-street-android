@@ -12,9 +12,11 @@
     <color name="greenTint">#b2ffb2</color>
 
     <color name="black_background">#30303C</color>
+    <color name="dark_bg">#20202C</color>
     <color name="neutral_font_color">#FFFFFF</color>
     <color name="neon_green">#39FF14</color>
     <color name="neon_orange">#FF6939</color>
     <color name="neon_blue">#00ddff</color>
+    <color name="neon_red">#FF0000</color>
 
 </resources>

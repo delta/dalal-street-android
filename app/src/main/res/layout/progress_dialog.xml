@@ -22,7 +22,6 @@
         android:text="@string/signing_in"
         android:textSize="18sp"
         android:fontFamily="@font/kreon_light"
-        android:layout_marginStart="12dp"
         android:textColor="@color/neutral_font_color"/>
 
 </LinearLayout>

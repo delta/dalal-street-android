@@ -1,9 +1,9 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/black_background"
-    android:paddingTop="8dp">
+    android:padding="10dp">
 
     <RelativeLayout
         android:id="@+id/portfolio_relativeLayout"
@@ -25,6 +25,7 @@
                 android:textAllCaps="true"
                 android:textColor="@color/neutral_font_color"
                 android:textSize="15sp"
+                android:fontFamily="@font/kreon_light"
                 android:textStyle="bold" />
 
             <TextView
@@ -36,6 +37,7 @@
                 android:textAllCaps="true"
                 android:textColor="@color/neutral_font_color"
                 android:textSize="15sp"
+                android:fontFamily="@font/kreon_light"
                 android:textStyle="bold" />
 
             <TextView
@@ -46,6 +48,7 @@
                 android:text="@string/price"
                 android:textAllCaps="true"
                 android:textColor="@color/neutral_font_color"
+                android:fontFamily="@font/kreon_light"
                 android:textSize="15sp"
                 android:textStyle="bold" />
 
@@ -65,7 +68,7 @@
         <View
             android:id="@+id/view"
             android:layout_width="match_parent"
-            android:layout_height="2dp"
+            android:layout_height="1dp"
             android:layout_below="@+id/headings_tab_linearLayout"
             android:layout_margin="4dp"
             android:background="@android:color/background_light" />

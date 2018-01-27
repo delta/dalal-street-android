@@ -5,18 +5,17 @@
     android:layout_height="wrap_content"
     android:orientation="horizontal"
     android:paddingBottom="10dp"
-    android:paddingTop="10dp"
-    android:weightSum="3" >
+    android:paddingTop="10dp">
 
     <TextView
         android:id="@+id/rank_textView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
+        android:layout_weight=".6"
         android:gravity="center"
         android:text="@string/rank"
-        android:fontFamily="sans-serif-condensed"
-        android:textColor="@android:color/background_dark"
+        android:fontFamily="@font/kreon_light"
+        android:textColor="@color/neutral_font_color"
         android:textSize="18sp" />
 
     <TextView
@@ -26,19 +25,19 @@
         android:layout_weight="1"
         android:gravity="center"
         android:text="@string/name"
-        android:fontFamily="sans-serif-condensed"
-        android:textColor="@android:color/background_dark"
+        android:fontFamily="@font/kreon_light"
+        android:textColor="@color/neutral_font_color"
         android:textSize="18sp" />
 
     <TextView
         android:id="@+id/wealth_textView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
+        android:layout_weight=".75"
         android:gravity="center"
         android:text="@string/wealth"
-        android:fontFamily="sans-serif-condensed"
-        android:textColor="@android:color/background_dark"
+        android:fontFamily="@font/kreon_light"
+        android:textColor="@color/neutral_font_color"
         android:textSize="18sp" />
 
 </LinearLayout>

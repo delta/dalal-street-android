@@ -1,7 +1,8 @@
 <FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/black_background">
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/transactions_recyclerView"
@@ -19,8 +20,9 @@
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:text="@string/no_transactions_found"
-            android:textColor="@android:color/background_dark"
-            android:textSize="22sp" />
+            android:textColor="@color/neutral_font_color"
+            android:textSize="20sp"
+            android:fontFamily="@font/kreon_light"/>
 
     </RelativeLayout>
 
