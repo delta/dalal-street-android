@@ -20,6 +20,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -69,14 +70,14 @@ public class MarketDepthFragment extends Fragment implements LoaderManager.Loade
     @BindView(R.id.company_spinner)
     MaterialBetterSpinner companiesSpinner;
 
-    @BindView(R.id.bid_depth_card)
-    CardView bidDepthCard;
+    @BindView(R.id.bid_depth_layout)
+    LinearLayout bidDepthLayout;
 
     @BindView(R.id.bid_depth_rv)
     RecyclerView bidDepthRv;
 
-    @BindView(R.id.ask_depth_card)
-    CardView askDepthCard;
+    @BindView(R.id.ask_depth_layout)
+    LinearLayout askDepthLayout;
 
     @BindView(R.id.ask_depth_rv)
     RecyclerView askDepthRv;
@@ -104,8 +105,8 @@ public class MarketDepthFragment extends Fragment implements LoaderManager.Loade
     private BroadcastReceiver refreshMarketDepth = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            askDepthCard.setVisibility(View.VISIBLE);
-            bidDepthCard.setVisibility(View.VISIBLE);
+            askDepthLayout.setVisibility(View.VISIBLE);
+            bidDepthLayout.setVisibility(View.VISIBLE);
             bidDepthAdapter.swapData(bidArrayList);
             askDepthAdapter.swapData(askArrayList);
             loadingDialog.dismiss();
@@ -134,7 +135,7 @@ public class MarketDepthFragment extends Fragment implements LoaderManager.Loade
                     .create();
         }
 
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(getActivity(),android.R.layout.simple_dropdown_item_1line, StockUtils.getCompanyNamesArray());
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(getActivity(),R.layout.company_spinner_item, StockUtils.getCompanyNamesArray());
         companiesSpinner.setAdapter(arrayAdapter);
 
         bidArrayList = new ArrayList<>();
@@ -161,8 +162,8 @@ public class MarketDepthFragment extends Fragment implements LoaderManager.Loade
             getValues(currentCompany);
             unSubscribe(prevSubscriptionId);
             currentStockLayout.setVisibility(View.INVISIBLE);
-            askDepthCard.setVisibility(View.INVISIBLE);
-            bidDepthCard.setVisibility(View.INVISIBLE);
+            askDepthLayout.setVisibility(View.INVISIBLE);
+            bidDepthLayout.setVisibility(View.INVISIBLE);
             loadingDialog.show();
             getActivity().getSupportLoaderManager().restartLoader(Constants.COMPANY_PROFILE_LOADER_ID, bundle, this);
         });

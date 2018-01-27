@@ -8,4 +8,4 @@
     android:gravity="start"
     android:text=""
     android:textColor="@color/neutral_font_color"
-    android:textSize="22sp" />
+    android:textSize="20sp" />
