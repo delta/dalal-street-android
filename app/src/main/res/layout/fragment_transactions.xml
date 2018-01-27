@@ -1,5 +1,5 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -19,8 +19,9 @@
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:text="@string/no_transactions_found"
-            android:textColor="@android:color/background_light"
+            android:textColor="@android:color/background_dark"
             android:textSize="22sp" />
+
     </RelativeLayout>
 
 </FrameLayout>

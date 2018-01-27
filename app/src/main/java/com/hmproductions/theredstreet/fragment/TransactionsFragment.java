@@ -1,6 +1,7 @@
 package com.hmproductions.theredstreet.fragment;
 
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -29,6 +30,8 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import dalalstreet.api.DalalActionServiceGrpc;
 import dalalstreet.api.actions.GetTransactionsResponse;
 
@@ -37,15 +40,24 @@ import static com.hmproductions.theredstreet.utils.Constants.TRANSACTION_LOADER_
 /* Uses GetTransactions() to get user's latest transactions */
 public class TransactionsFragment extends Fragment implements LoaderManager.LoaderCallbacks<GetTransactionsResponse> {
 
+    private static final String LAST_TRANSACTION_ID = "last_transaction_id";
+
     @Inject
     DalalActionServiceGrpc.DalalActionServiceBlockingStub actionServiceStub;
 
+    @Inject
+    SharedPreferences preferences;
+
+    @BindView(R.id.noTransactions_relativeLayout)
     RelativeLayout noTransactionsRelativeLayout;
+
+    @BindView(R.id.transactions_recyclerView)
     RecyclerView transactionRecyclerView;
 
     private List<Transaction> transactionList = new ArrayList<>();
     private TransactionRecyclerAdapter adapter;
     private AlertDialog loadingDialog;
+    boolean paginate = true;
 
     public TransactionsFragment() {
         // Required empty public constructor
@@ -72,27 +84,48 @@ public class TransactionsFragment extends Fragment implements LoaderManager.Load
 
         DaggerDalalStreetApplicationComponent.builder().contextModule(new ContextModule(getContext())).build().inject(this);
         if (getActivity() != null) getActivity().setTitle("Transactions");
+        ButterKnife.bind(this,rootView);
 
         adapter = new TransactionRecyclerAdapter(getContext(), null);
 
-        noTransactionsRelativeLayout = rootView.findViewById(R.id.noTransactions_relativeLayout);
-        transactionRecyclerView = rootView.findViewById(R.id.transactions_recyclerView);
-
         getActivity().getSupportLoaderManager().restartLoader(TRANSACTION_LOADER_ID, null, this);
+        loadingDialog.show();
 
         transactionRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         transactionRecyclerView.setHasFixedSize(false);
+        transactionRecyclerView.addOnScrollListener(new CustomScrollListener());
         transactionRecyclerView.setAdapter(adapter);
 
         return rootView;
     }
 
     @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        preferences
+                .edit()
+                .putInt(LAST_TRANSACTION_ID,0)
+                .apply();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        preferences
+                .edit()
+                .putInt(LAST_TRANSACTION_ID,0)
+                .apply();
+
+    }
+
+    @Override
     public Loader<GetTransactionsResponse> onCreateLoader(int id, Bundle args) {
 
         if (getContext() != null) {
-            loadingDialog.show();
-            return new TransactionLoader(getContext(), actionServiceStub);
+
+            int lastId = preferences.getInt(LAST_TRANSACTION_ID,0);
+            Log.e("SAN","LAst id : " + lastId);
+            return new TransactionLoader(getContext(), actionServiceStub,lastId);
         }
         return null;
     }
@@ -101,7 +134,13 @@ public class TransactionsFragment extends Fragment implements LoaderManager.Load
     public void onLoadFinished(Loader<GetTransactionsResponse> loader, GetTransactionsResponse data) {
 
         loadingDialog.dismiss();
-        transactionList.clear();
+        Log.e("SAN","Trans size : " +  data.getTransactionsCount());
+        if(data.getTransactionsCount() == 10){
+            paginate = true;
+        }else {
+            paginate = false;
+        }
+
         for (int i = 0; i < data.getTransactionsCount(); ++i) {
             dalalstreet.api.models.Transaction currentTransaction = data.getTransactions(i);
             transactionList.add(new Transaction(
@@ -112,22 +151,55 @@ public class TransactionsFragment extends Fragment implements LoaderManager.Load
                     currentTransaction.getCreatedAt(),
                     currentTransaction.getTotal()
             ));
+            preferences.edit()
+                    .putInt(LAST_TRANSACTION_ID,currentTransaction.getId())
+                    .apply();
         }
-
 
         if (transactionList == null || transactionList.size() == 0) {
             transactionRecyclerView.setVisibility(View.GONE);
             noTransactionsRelativeLayout.setVisibility(View.VISIBLE);
         } else {
             adapter.swapData(transactionList);
-
             transactionRecyclerView.setVisibility(View.VISIBLE);
             noTransactionsRelativeLayout.setVisibility(View.GONE);
         }
-
     }
 
     @Override
     public void onLoaderReset(Loader<GetTransactionsResponse> loader) {
+    }
+
+    public class CustomScrollListener extends RecyclerView.OnScrollListener {
+        public CustomScrollListener() {
+        }
+
+        public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+            switch (newState) {
+                case RecyclerView.SCROLL_STATE_IDLE:
+                    System.out.println("The RecyclerView is not scrolling");
+                    break;
+                case RecyclerView.SCROLL_STATE_DRAGGING:
+                    System.out.println("Scrolling now");
+                    break;
+                case RecyclerView.SCROLL_STATE_SETTLING:
+                    System.out.println("Scroll Settling");
+                    break;
+
+            }
+
+        }
+
+        public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+            int visibleItemCount = recyclerView.getLayoutManager().getChildCount();
+            int totalItemCount = recyclerView.getLayoutManager().getItemCount();
+            int pastVisibleItems =  ((LinearLayoutManager)recyclerView.getLayoutManager()).findFirstVisibleItemPosition();
+            if (pastVisibleItems + visibleItemCount >= totalItemCount) {
+                if(paginate){
+                    getActivity().getSupportLoaderManager().restartLoader(TRANSACTION_LOADER_ID, null, TransactionsFragment.this);
+                    paginate = false;
+                }
+            }
+        }
     }
 }

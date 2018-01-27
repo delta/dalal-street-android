@@ -1,12 +1,14 @@
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v4.widget.NestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
+    android:layout_height="match_parent"
+    android:scrollbars="none"
+    android:padding="16dp">
+    
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="@dimen/activity_vertical_margin">
+        android:layout_height="wrap_content">
 
         <com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner
             android:id="@+id/company_spinner"
@@ -15,73 +17,201 @@
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
             android:hint="@string/pick_a_company"
-            app:met_textColorHint="@android:color/background_light"
-            app:met_textColor="@android:color/background_light"
+            app:met_textColorHint="@android:color/darker_gray"
+            app:met_textColor="@android:color/background_dark"
             app:met_floatingLabel="normal" />
 
-        <TextView
-            android:id="@+id/market_depth"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/company_spinner"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="15dp"
-            android:layout_marginBottom="10dp"
-            android:text="@string/market_depth"
-            android:textColor="@android:color/background_light"
-            android:textSize="25sp" />
-
-        <com.github.mikephil.charting.charts.BarChart
-            android:id="@+id/bidBarChart"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:layout_below="@id/market_depth" />
-
-        <TextView
-            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/bidBarChart"
-            android:layout_centerHorizontal="true"
-            android:layout_marginBottom="30dp"
-            android:text="@string/bid_market_depth"
-            android:textColor="@color/secTextColor"
-            android:textSize="14sp" />
+            android:id="@+id/current_stock_price_layout"
+            android:padding="10dp"
+            android:layout_below="@+id/company_spinner"
+            android:visibility="invisible">
 
-        <com.github.mikephil.charting.charts.BarChart
-            android:id="@+id/askBarChart"
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/current_stock_price_textView"
+                android:textColor="@android:color/background_dark"
+                android:textSize="20sp"
+                android:fontFamily="sans-serif-condensed"
+                android:layout_margin="10dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/prev_day_close_stock_price"
+                android:layout_toEndOf="@+id/current_stock_price_textView"
+                android:textSize="16sp"
+                android:textColor="#666666"
+                android:layout_alignBaseline="@+id/current_stock_price_textView"/>
+
+            <ImageView
+                android:id="@+id/arrow_image_view"
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:layout_toEndOf="@+id/prev_day_close_stock_price"
+                android:contentDescription="@string/company_profile"
+                android:src="@drawable/down_arrow"
+                android:layout_marginTop="14dp"/>
+
+        </RelativeLayout>
+
+        <android.support.v7.widget.CardView
             android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:layout_below="@id/bidBarChart"
-            android:layout_marginTop="35dp" />
-
-        <TextView
-            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/askBarChart"
-            android:layout_centerHorizontal="true"
-            android:layout_marginBottom="20dp"
-            android:text="@string/ask_market_depth"
-            android:textColor="@color/secTextColor"
-            android:textSize="14sp" />
+            android:id="@+id/bid_depth_card"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="5dp"
+            android:layout_marginRight="3dp"
+            android:layout_marginLeft="3dp"
+            android:clickable="true"
+            android:focusable="true"
+            app:cardElevation="5dp"
+            app:cardCornerRadius="3dp"
+            android:visibility="invisible"
+            android:layout_below="@+id/current_stock_price_layout">
 
-        <TextView
-            android:id="@+id/ch"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/askBarChart"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="40dp"
-            android:text="@string/company_history"
-            android:layout_marginBottom="10dp"
-            android:textColor="@android:color/background_light"
-            android:textSize="25sp" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
 
-        <com.github.mikephil.charting.charts.LineChart
-            android:id="@+id/history"
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="10dp"
+                    android:textSize="18sp"
+                    android:fontFamily="sans-serif-condensed"
+                    android:text="@string/biddepth"
+                    android:gravity="center"
+                    android:textColor="@android:color/background_dark"/>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@android:color/background_dark"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginBottom="5dp"
+                    android:padding="5dp">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:textSize="18sp"
+                        android:fontFamily="sans-serif-condensed"
+                        android:text="@string/volume"
+                        android:gravity="center"
+                        android:textColor="@android:color/background_dark"/>
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:textSize="18sp"
+                        android:fontFamily="sans-serif-condensed"
+                        android:text="@string/price"
+                        android:gravity="center"
+                        android:textColor="@android:color/background_dark"/>
+
+
+                </LinearLayout>
+                
+                <android.support.v7.widget.RecyclerView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:paddingLeft="6dp"
+                    android:paddingRight="6dp"
+                    android:id="@+id/bid_depth_rv"
+                    />
+
+            </LinearLayout>
+
+        </android.support.v7.widget.CardView>
+
+        <android.support.v7.widget.CardView
             android:layout_width="match_parent"
-            android:layout_height="300dp"
-            android:layout_below="@id/ch" />
+            android:layout_height="wrap_content"
+            android:id="@+id/ask_depth_card"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="5dp"
+            android:layout_marginRight="3dp"
+            android:layout_marginLeft="3dp"
+            android:clickable="true"
+            android:focusable="true"
+            app:cardElevation="5dp"
+            app:cardCornerRadius="3dp"
+            android:visibility="invisible"
+            android:layout_below="@+id/bid_depth_card">
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="10dp"
+                    android:textSize="18sp"
+                    android:fontFamily="sans-serif-condensed"
+                    android:text="@string/askdepth"
+                    android:gravity="center"
+                    android:textColor="@android:color/background_dark"/>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@android:color/background_dark"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginBottom="5dp"
+                    android:padding="5dp">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:textSize="18sp"
+                        android:fontFamily="sans-serif-condensed"
+                        android:text="@string/volume"
+                        android:gravity="center"
+                        android:textColor="@android:color/background_dark"/>
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:textSize="18sp"
+                        android:fontFamily="sans-serif-condensed"
+                        android:text="@string/price"
+                        android:gravity="center"
+                        android:textColor="@android:color/background_dark"/>
+
+
+                </LinearLayout>
+
+                <android.support.v7.widget.RecyclerView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:paddingLeft="6dp"
+                    android:paddingRight="6dp"
+                    android:id="@+id/ask_depth_rv"
+                    />
+
+            </LinearLayout>
+
+        </android.support.v7.widget.CardView>
+        
     </RelativeLayout>
 
-</ScrollView>
+</android.support.v4.widget.NestedScrollView>

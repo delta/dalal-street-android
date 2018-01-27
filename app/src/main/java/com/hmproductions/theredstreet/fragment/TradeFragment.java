@@ -157,6 +157,8 @@ public class TradeFragment extends Fragment {
         switch (orderResponse.getStatusCode().getNumber()) {
             case 0:
                 Toast.makeText(getContext(), "Order Placed", Toast.LENGTH_SHORT).show();
+                noOfStocksEditText.setText("");
+                orderPriceEditText.setText("");
                 break;
 
             case 1:

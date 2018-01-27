@@ -18,6 +18,8 @@ public class Constants {
     public static final String REFRESH_STOCKS_EXCHANGE_ACTION = "refresh-stock-exchange-action";
     public static final String REFRESH_OWNED_STOCKS_ACTION = "refresh-owned-stocks-action";
 
+    public static final String REFRESH_MARKET_DEPTH= "refresh_market_depth";
+
     public static final String RUPEE_SYMBOL = "₹";
 
     public static double MORTGAGE_DEPOSIT_RATE = 0.8;

@@ -167,5 +167,9 @@
     <string name="change">Change</string>
     <string name="volume">Volume</string>
     <string name="play">Play</string>
+    <string name="loading_more_transitions">Loading More Transitions...</string>
+    <string name="fetching_depth">Fetching Market Depth</string>
+    <string name="askdepth">AskDepth</string>
+    <string name="biddepth">BidDepth</string>
 
 </resources>
