@@ -4,14 +4,14 @@
 
     <item
         android:id="@+id/action_help"
-        android:title="Help"
-        android:icon="@drawable/help"
-        app:showAsAction="ifRoom"
-        android:orderInCategory="1"/>
+        android:icon="@drawable/help_action"
+        android:orderInCategory="1"
+        android:title="@string/help"
+        app:showAsAction="ifRoom" />
     <item
         android:id="@+id/action_logout"
+        android:icon="@drawable/logout_action"
+        android:orderInCategory="2"
         android:title="@string/logout"
-        android:icon="@drawable/logout"
-        app:showAsAction="ifRoom"
-        android:orderInCategory="2"/>
+        app:showAsAction="ifRoom" />
 </menu>

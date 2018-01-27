@@ -12,10 +12,12 @@ import dalalstreet.api.actions.GetTransactionsResponse;
 public class TransactionLoader extends AsyncTaskLoader<GetTransactionsResponse> {
 
     private DalalActionServiceGrpc.DalalActionServiceBlockingStub actionServiceBlockingStub;
+    private int lastId;
 
-    public TransactionLoader(@NonNull Context context, DalalActionServiceGrpc.DalalActionServiceBlockingStub actionServiceBlockingStub) {
+    public TransactionLoader(@NonNull Context context, DalalActionServiceGrpc.DalalActionServiceBlockingStub actionServiceBlockingStub,int lastId) {
         super(context);
         this.actionServiceBlockingStub = actionServiceBlockingStub;
+        this.lastId = lastId;
     }
 
     @Override
@@ -29,7 +31,7 @@ public class TransactionLoader extends AsyncTaskLoader<GetTransactionsResponse> 
         return actionServiceBlockingStub.getTransactions(GetTransactionsRequest
                 .newBuilder()
                 .setCount(0)
-                .setLastTransactionId(0)
+                .setLastTransactionId(lastId)
                 .build());
     }
 }

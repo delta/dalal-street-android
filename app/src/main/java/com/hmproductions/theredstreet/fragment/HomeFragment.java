@@ -109,7 +109,7 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
         if (getActivity() != null)
             getActivity().setTitle("Home");
 
-        rootView.findViewById(R.id.breakingNewsText).setSelected(true);
+        breakingNewsTextView.setSelected(true);
 
         linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
 
