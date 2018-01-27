@@ -32,6 +32,7 @@ import com.hmproductions.theredstreet.loaders.CompanyProfileLoader;
 import com.hmproductions.theredstreet.utils.Constants;
 import com.hmproductions.theredstreet.utils.StockUtils;
 import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner;
+import com.hmproductions.theredstreet.data.MarketDepth;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -283,6 +284,7 @@ public class MarketDepthFragment extends Fragment implements LoaderManager.Loade
                         }
                     });
         }
+
     }
 
     @Override
