@@ -11,7 +11,6 @@ import android.support.v4.content.Loader;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -124,7 +123,6 @@ public class TransactionsFragment extends Fragment implements LoaderManager.Load
         if (getContext() != null) {
 
             int lastId = preferences.getInt(LAST_TRANSACTION_ID,0);
-            Log.e("SAN","LAst id : " + lastId);
             return new TransactionLoader(getContext(), actionServiceStub,lastId);
         }
         return null;
@@ -134,7 +132,6 @@ public class TransactionsFragment extends Fragment implements LoaderManager.Load
     public void onLoadFinished(Loader<GetTransactionsResponse> loader, GetTransactionsResponse data) {
 
         loadingDialog.dismiss();
-        Log.e("SAN","Trans size : " +  data.getTransactionsCount());
         if(data.getTransactionsCount() == 10){
             paginate = true;
         }else {

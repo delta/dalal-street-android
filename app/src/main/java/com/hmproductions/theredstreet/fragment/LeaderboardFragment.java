@@ -9,35 +9,27 @@ import android.support.v4.content.Loader;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.hmproductions.theredstreet.data.NewsDetails;
-import com.hmproductions.theredstreet.loaders.LeaderBoardLoader;
-import com.hmproductions.theredstreet.loaders.NewsLoader;
-import com.hmproductions.theredstreet.utils.Constants;
-import com.hmproductions.theredstreet.utils.MiscellaneousUtils;
-import com.hmproductions.theredstreet.utils.StockUtils;
 import com.hmproductions.theredstreet.R;
 import com.hmproductions.theredstreet.adapter.LeaderboardRecyclerAdapter;
 import com.hmproductions.theredstreet.dagger.ContextModule;
 import com.hmproductions.theredstreet.dagger.DaggerDalalStreetApplicationComponent;
 import com.hmproductions.theredstreet.data.LeaderboardDetails;
+import com.hmproductions.theredstreet.loaders.LeaderBoardLoader;
+import com.hmproductions.theredstreet.utils.MiscellaneousUtils;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import dalalstreet.api.DalalActionServiceGrpc;
-import dalalstreet.api.actions.GetLeaderboard;
-import dalalstreet.api.actions.GetLeaderboardRequest;
 import dalalstreet.api.actions.GetLeaderboardResponse;
 import dalalstreet.api.models.LeaderboardRow;
 
@@ -45,8 +37,6 @@ import static com.hmproductions.theredstreet.utils.Constants.LEADER_BOARD_LOADER
 
 /* Uses GetLeaderboard() to set leader board table and to set user's current rank */
 public class LeaderboardFragment extends Fragment implements LoaderManager.LoaderCallbacks<GetLeaderboardResponse>{
-
-    private static final int LEADERBOARD_SIZE = 15;
 
     @Inject
     DalalActionServiceGrpc.DalalActionServiceBlockingStub actionServiceBlockingStub;
@@ -112,36 +102,41 @@ public class LeaderboardFragment extends Fragment implements LoaderManager.Loade
         leaderBoardDetailsList.clear();
         loadingDialog.show();
 
-        getActivity().getSupportLoaderManager().restartLoader(LEADER_BOARD_LOADER_ID, null, this);
+        if (getActivity() != null)
+            getActivity().getSupportLoaderManager().restartLoader(LEADER_BOARD_LOADER_ID, null, this);
     }
 
     @Override
     public Loader<GetLeaderboardResponse> onCreateLoader(int id, Bundle args) {
-        return new LeaderBoardLoader(getContext(),actionServiceBlockingStub);
+        if (getContext() != null)
+            return new LeaderBoardLoader(getContext(),actionServiceBlockingStub);
+        else
+            return null;
     }
 
     @Override
     public void onLoadFinished(Loader<GetLeaderboardResponse> loader, GetLeaderboardResponse data) {
         loadingDialog.dismiss();
+
         if (data.getStatusCode().getNumber() == 0) {
             personalRankTextView.setText(String.valueOf(data.getMyRank()));
             personalWealthTextView.setText(totalWorthTextView.getText().toString());
             personalNameTextView.setText(MiscellaneousUtils.username);
-            Log.e("SAN","Loaded data");
 
             for (int i = 0; i < data.getRankListCount(); ++i) {
                 LeaderboardRow currentRow = data.getRankList(i);
                 leaderBoardDetailsList.add(new LeaderboardDetails(currentRow.getRank(), currentRow.getUserName(), currentRow.getTotalWorth()));
             }
 
+            leaderboardRecyclerAdapter.swapData(leaderBoardDetailsList);
+
         } else {
             Toast.makeText(getContext(), "Internal server error", Toast.LENGTH_SHORT).show();
         }
-
     }
 
     @Override
     public void onLoaderReset(Loader<GetLeaderboardResponse> loader) {
-
+        // Do nothing
     }
 }

@@ -34,6 +34,8 @@ import com.hmproductions.theredstreet.utils.StockUtils;
 import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
@@ -105,6 +107,9 @@ public class MarketDepthFragment extends Fragment implements LoaderManager.Loade
         public void onReceive(Context context, Intent intent) {
             askDepthLayout.setVisibility(View.VISIBLE);
             bidDepthLayout.setVisibility(View.VISIBLE);
+            sortList(bidArrayList);
+            Collections.reverse(bidArrayList);
+            sortList(askArrayList);
             bidDepthAdapter.swapData(bidArrayList);
             askDepthAdapter.swapData(askArrayList);
             loadingDialog.dismiss();
@@ -213,6 +218,7 @@ public class MarketDepthFragment extends Fragment implements LoaderManager.Loade
                             bidArrayList.add(temp);
                         }
 
+
                         for (Map.Entry<Integer, Integer> map : value.getAskDepthMap().entrySet()) {
                             MarketDepth temp = new MarketDepth(map.getKey(), map.getValue());
                             askArrayList.add(temp);
@@ -283,6 +289,7 @@ public class MarketDepthFragment extends Fragment implements LoaderManager.Loade
                         }
                     });
         }
+
     }
 
     @Override
@@ -357,5 +364,14 @@ public class MarketDepthFragment extends Fragment implements LoaderManager.Loade
             }
         }
         return false;
+    }
+
+    private void sortList(List<MarketDepth> list) {
+        Collections.sort(list, (val1, val2) -> {
+
+            Integer price1 = val1.getPrice();
+            Integer price2 = val2.getPrice();
+            return price1.compareTo(price2);
+        });
     }
 }

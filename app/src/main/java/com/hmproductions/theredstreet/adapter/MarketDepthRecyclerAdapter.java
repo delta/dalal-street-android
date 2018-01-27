@@ -54,9 +54,7 @@ public class MarketDepthRecyclerAdapter extends RecyclerView.Adapter<MarketDepth
     }
 
     public void swapData(List<MarketDepth> list) {
-        List<MarketDepth> tempList = new ArrayList<>(list);
-        marketDepthList = tempList;
-        Collections.reverse(marketDepthList);
+        marketDepthList = list;
         notifyDataSetChanged();
     }
 

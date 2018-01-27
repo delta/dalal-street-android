@@ -6,11 +6,11 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.hmproductions.theredstreet.R;
 import com.hmproductions.theredstreet.data.Transaction;
+import com.hmproductions.theredstreet.utils.Constants;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -45,46 +45,46 @@ public class TransactionRecyclerAdapter extends RecyclerView.Adapter<Transaction
 
         switch (currentTransaction.getType()){
             case "FROM_EXCHANGE_TRANSACTION":
-                tempAssigningString = "Type : Exchange Transaction";
+                tempAssigningString = "Exchange";
                 holder.typeTextView.setText(tempAssigningString);
                 break;
 
             case "ORDER_FILL_TRANSACTION":
-                tempAssigningString = "Type : Order Fill Transaction";
+                tempAssigningString = "OrderFill";
                 holder.typeTextView.setText(tempAssigningString);
                 break;
 
             case "MORTGAGE_TRANSACTION":
                 if (currentTransaction.getNoOfStocks() < 0)
-                    tempAssigningString = "Type : Retrieve Mortgage Transaction";
+                    tempAssigningString = "Retrieve Mortgage";
                 else
-                    tempAssigningString = "Type : Mortgage Transaction";
+                    tempAssigningString = "Mortgage";
                 holder.typeTextView.setText(tempAssigningString);
                 break;
 
             case "DIVIDEND_TRANSACTION":
-                tempAssigningString = "Type : Dividend Transaction";
+                tempAssigningString = "Dividend";
                 holder.typeTextView.setText(tempAssigningString);
                 break;
         }
 
-        tempAssigningString = "CompanyTickerDetails : " + getCompanyNameFromStockId(currentTransaction.getStockId());
+        tempAssigningString =  getCompanyNameFromStockId(currentTransaction.getStockId());
         holder.companyTextView.setText(tempAssigningString);
 
-        tempAssigningString = "Number of stocks : " + String.valueOf(Math.abs(currentTransaction.getNoOfStocks()));
+        tempAssigningString = "Quantity : " + String.valueOf(Math.abs(currentTransaction.getNoOfStocks()));
         holder.noOfStocksTextView.setText(tempAssigningString);
-
-        tempAssigningString = "Stock price : " + String.valueOf(currentTransaction.getStockPrice());
-        holder.priceTextView.setText(tempAssigningString);
 
         tempAssigningString = "Time : " + parseDate(currentTransaction.getTime());
         holder.timeTextView.setText(tempAssigningString);
 
+        tempAssigningString = "Quantity : " + String.valueOf(Math.abs(currentTransaction.getNoOfStocks()))
+                    + " at " + Constants.RUPEE_SYMBOL + " " + String.valueOf(Math.abs(currentTransaction.getTotalMoney()));
+        holder.noOfStocksTextView.setText(tempAssigningString);
 
         if (currentTransaction.getTotalMoney() >= 0) {
-            holder.relativeLayout.setBackgroundColor(ContextCompat.getColor(context, R.color.greenTint));
+            holder.noOfStocksTextView.setTextColor(ContextCompat.getColor(context, R.color.neon_green));
         } else {
-            holder.relativeLayout.setBackgroundColor(ContextCompat.getColor(context, R.color.redTint));
+            holder.noOfStocksTextView.setTextColor(ContextCompat.getColor(context, R.color.redTint));
         }
     }
 
@@ -101,8 +101,7 @@ public class TransactionRecyclerAdapter extends RecyclerView.Adapter<Transaction
 
     class MyViewHolder extends RecyclerView.ViewHolder {
 
-        TextView typeTextView, companyTextView, noOfStocksTextView, priceTextView, timeTextView;
-        RelativeLayout relativeLayout;
+        TextView typeTextView, companyTextView, noOfStocksTextView, timeTextView;
 
         MyViewHolder(View itemView) {
 
@@ -111,15 +110,13 @@ public class TransactionRecyclerAdapter extends RecyclerView.Adapter<Transaction
             typeTextView = itemView.findViewById(R.id.transactionType_textView);
             companyTextView = itemView.findViewById(R.id.transactionCompany_textView);
             noOfStocksTextView = itemView.findViewById(R.id.noOfStocks_textView);
-            priceTextView = itemView.findViewById(R.id.stockPrice_textView);
             timeTextView = itemView.findViewById(R.id.time_textView);
-            relativeLayout = itemView.findViewById(R.id.list_item_relativeLayout);
         }
     }
 
     private String parseDate(String time) {
         String inputPattern = "yyyy-MM-dd'T'HH:mm:ss'Z'";
-        String outputPattern = "hh:mm a       'Date' : MMM dd, yyyy";
+        String outputPattern = "hh:mm a  MMM dd, yyyy";
         SimpleDateFormat inputFormat = new SimpleDateFormat(inputPattern, Locale.US);
         SimpleDateFormat outputFormat = new SimpleDateFormat(outputPattern, Locale.US);
 

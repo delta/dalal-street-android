@@ -23,7 +23,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/market_depth_volume"
             android:padding="5dp"
-            android:textSize="17sp"
+            android:textSize="16sp"
             android:fontFamily="@font/kreon_light"
             android:textColor="@color/neutral_font_color"
             android:gravity="center"/>
@@ -34,7 +34,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/market_depth_price"
             android:padding="5dp"
-            android:textSize="17sp"
+            android:textSize="16sp"
             android:fontFamily="@font/kreon_light"
             android:textColor="@color/neutral_font_color"
             android:gravity="center"/>
