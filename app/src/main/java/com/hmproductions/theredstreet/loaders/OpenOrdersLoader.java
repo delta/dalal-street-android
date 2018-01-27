@@ -11,7 +11,7 @@ import dalalstreet.api.actions.GetMyOpenOrdersResponse;
 
 public class OpenOrdersLoader extends AsyncTaskLoader<GetMyOpenOrdersResponse> {
 
-    DalalActionServiceGrpc.DalalActionServiceBlockingStub stub;
+    private DalalActionServiceGrpc.DalalActionServiceBlockingStub stub;
 
     public OpenOrdersLoader(@NonNull Context context, DalalActionServiceGrpc.DalalActionServiceBlockingStub stub) {
         super(context);

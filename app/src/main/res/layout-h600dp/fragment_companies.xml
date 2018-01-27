@@ -28,7 +28,8 @@
             android:gravity="center"
             android:text="@string/company"
             android:textColor="@color/neutral_font_color"
-            android:textSize="18sp" />
+            android:textSize="20sp"
+            android:textStyle="bold" />
 
         <TextView
             android:layout_width="0dp"
@@ -38,7 +39,8 @@
             android:gravity="center"
             android:text="@string/change"
             android:textColor="@color/neutral_font_color"
-            android:textSize="16sp" />
+            android:textSize="18sp"
+            android:textStyle="bold" />
 
         <TextView
             android:layout_width="0dp"
@@ -48,7 +50,8 @@
             android:gravity="center"
             android:text="@string/price"
             android:textColor="@color/neutral_font_color"
-            android:textSize="18sp" />
+            android:textSize="20sp"
+            android:textStyle="bold" />
 
         <TextView
             android:layout_width="0dp"
@@ -58,7 +61,8 @@
             android:gravity="center"
             android:text="@string/volume"
             android:textColor="@color/neutral_font_color"
-            android:textSize="18sp" />
+            android:textSize="20sp"
+            android:textStyle="bold" />
 
     </LinearLayout>
 

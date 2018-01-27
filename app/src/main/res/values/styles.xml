@@ -26,7 +26,7 @@
         <!-- Color when pressed -->
         <item name="colorAccent">@color/colorAccent</item>
         <!-- Default color for the dropdown arrow and line -->
-        <item name="colorControlNormal">@color/colorAccent</item>
+        <item name="colorControlNormal">@color/neutral_font_color</item>
     </style>
 
 

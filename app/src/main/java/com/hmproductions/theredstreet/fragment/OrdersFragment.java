@@ -1,6 +1,7 @@
 package com.hmproductions.theredstreet.fragment;
 
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -96,9 +97,9 @@ public class OrdersFragment extends Fragment implements
         return rootView;
     }
 
-    // Subscribe to getMyOrders() stream
+    // Subscribe to getMyOrders() stream (TESTED)
     private void getMyOrdersSubscriptionId() {
-        streamServiceStub.subscribe(SubscribeRequest.newBuilder().setDataStreamType(DataStreamType.MY_ORDERS).setDataStreamId("").build(),
+        new Thread(() -> streamServiceStub.subscribe(SubscribeRequest.newBuilder().setDataStreamType(DataStreamType.MY_ORDERS).setDataStreamId("").build(),
                 new StreamObserver<SubscribeResponse>() {
                     @Override
                     public void onNext(SubscribeResponse value) {
@@ -116,7 +117,7 @@ public class OrdersFragment extends Fragment implements
                     public void onCompleted() {
 
                     }
-                });
+                })).start();
     }
     private void subscribeToMyOrdersStream(SubscriptionId subscriptionId) {
         streamServiceStub.getMyOrderUpdates(subscriptionId, new StreamObserver<MyOrderUpdate>() {
@@ -255,6 +256,14 @@ public class OrdersFragment extends Fragment implements
 
                         }
                     });
+        }
+    }
+
+    private static class OrdersUpdateAsynctask extends AsyncTask<DalalStreamServiceGrpc, Void, SubscriptionId> {
+
+        @Override
+        protected SubscriptionId doInBackground(DalalStreamServiceGrpc... dalalStreamServiceGrpcs) {
+            return null;
         }
     }
 }

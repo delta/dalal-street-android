@@ -1,6 +1,5 @@
 package com.hmproductions.theredstreet.ui;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -27,16 +26,16 @@ import com.hmproductions.theredstreet.dagger.ContextModule;
 import com.hmproductions.theredstreet.dagger.DaggerDalalStreetApplicationComponent;
 import com.hmproductions.theredstreet.data.GlobalStockDetails;
 import com.hmproductions.theredstreet.data.StockDetails;
-import com.hmproductions.theredstreet.fragment.PortfolioFragment;
-import com.hmproductions.theredstreet.fragment.TradeFragment;
 import com.hmproductions.theredstreet.fragment.CompanyFragment;
-import com.hmproductions.theredstreet.fragment.MarketDepthFragment;
 import com.hmproductions.theredstreet.fragment.HomeFragment;
 import com.hmproductions.theredstreet.fragment.LeaderboardFragment;
+import com.hmproductions.theredstreet.fragment.MarketDepthFragment;
 import com.hmproductions.theredstreet.fragment.MortgageFragment;
 import com.hmproductions.theredstreet.fragment.NewsFragment;
 import com.hmproductions.theredstreet.fragment.OrdersFragment;
+import com.hmproductions.theredstreet.fragment.PortfolioFragment;
 import com.hmproductions.theredstreet.fragment.StockExchangeFragment;
+import com.hmproductions.theredstreet.fragment.TradeFragment;
 import com.hmproductions.theredstreet.fragment.TransactionsFragment;
 import com.hmproductions.theredstreet.utils.Constants;
 import com.hmproductions.theredstreet.utils.MiscellaneousUtils;
@@ -133,7 +132,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         OpenAndCloseDrawer();
 
-        getSupportFragmentManager().beginTransaction().add(R.id.home_activity_fragment_container, new HomeFragment()).commit();
+        getSupportFragmentManager().beginTransaction().add(R.id.home_activity_fragment_container, new OrdersFragment()).commit();
 
         ownedStockDetails = getIntent().getParcelableArrayListExtra(STOCKS_OWNED_KEY);
         globalStockDetails = getIntent().getParcelableArrayListExtra(GLOBAL_STOCKS_KEY);
