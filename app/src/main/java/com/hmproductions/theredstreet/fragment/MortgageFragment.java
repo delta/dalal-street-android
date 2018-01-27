@@ -258,13 +258,14 @@ public class MortgageFragment extends Fragment implements LoaderManager.LoaderCa
         String ownedString = " :  " + String.valueOf(stocksOwned);
         ownedTextView.setText(ownedString);
 
-        String tempString = " :  " + Constants.RUPEE_SYMBOL + " " + String.valueOf(StockUtils.getPriceFromStockId(MainActivity.globalStockDetails, stockId));
+        int currentPrice = StockUtils.getPriceFromStockId(MainActivity.globalStockDetails, stockId);
+        String tempString = " :  " + Constants.RUPEE_SYMBOL + " " + String.valueOf(currentPrice);
         currentPriceTextView.setText(tempString);
 
-        tempString = " :  " + String.valueOf(Constants.MORTGAGE_DEPOSIT_RATE) + " %";
+        tempString = " :  " + Constants.RUPEE_SYMBOL + " " + String.valueOf(Constants.MORTGAGE_DEPOSIT_RATE * currentPrice / 100);
         mortgageDepositTextView.setText(tempString);
 
-        tempString = " :  " + String.valueOf(Constants.MORTGAGE_RETRIEVE_RATE) + " %";
+        tempString = " :  " + Constants.RUPEE_SYMBOL + " " + String.valueOf(Constants.MORTGAGE_RETRIEVE_RATE * currentPrice / 100);
         mortgageRetrieveTextView.setText(tempString);
     }
 

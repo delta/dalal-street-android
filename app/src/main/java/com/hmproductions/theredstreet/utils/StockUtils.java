@@ -118,4 +118,13 @@ public class StockUtils {
         }
         return 0;
     }
+
+    public static int getPreviousDayCloseFromStockId(List<GlobalStockDetails> list, int stockId) {
+
+        for (GlobalStockDetails stockDetails : list) {
+            if (stockDetails.getStockId() == stockId)
+                return stockDetails.getPreviousDayClose();
+        }
+        return 0;
+    }
 }

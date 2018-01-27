@@ -126,7 +126,7 @@ public class MarketDepthFragment extends Fragment implements LoaderManager.Loade
         if (getActivity() != null) getActivity().setTitle("Market Depth");
         if (getContext() != null) {
             View dialogView = LayoutInflater.from(getContext()).inflate(R.layout.progress_dialog, null);
-            ((TextView) dialogView.findViewById(R.id.progressDialog_textView)).setText(R.string.fetching_depth);
+            ((TextView) dialogView.findViewById(R.id.progressDialog_textView)).setText(R.string.getting_depth);
             loadingDialog = new AlertDialog.Builder(getContext())
                     .setView(dialogView)
                     .setCancelable(false)

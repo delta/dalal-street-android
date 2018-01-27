@@ -3,16 +3,17 @@
 
     android:layout_width="match_parent"
     android:layout_height="@dimen/nav_header_height"
-    android:background="@drawable/thumbnail">
+    android:background="@raw/dalalcover2">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_above="@id/username_textView"
-        android:layout_marginStart="@dimen/activity_horizontal_margin"
+        android:layout_marginStart="16dp"
         android:text="@string/app_name"
+        android:textAllCaps="true"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
-        android:textColor="@android:color/white" />
+        android:textColor="@color/neon_green" />
 
     <TextView
         android:id="@+id/username_textView"
@@ -20,10 +21,21 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentStart="true"
-        android:layout_marginBottom="@dimen/activity_vertical_margin"
-        android:layout_marginStart="@dimen/activity_horizontal_margin"
+        android:layout_marginBottom="24dp"
+        android:layout_marginStart="16dp"
         android:text="@string/username"
+        android:textSize="20sp"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-        android:textColor="@android:color/white" />
+        android:textColor="@color/neon_blue" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:textColor="@color/neutral_font_color"
+        android:layout_marginBottom="2dp"
+        android:textSize="12sp"
+        android:text="@string/made_with_u2661_by_delta_force"/>
 
 </RelativeLayout>

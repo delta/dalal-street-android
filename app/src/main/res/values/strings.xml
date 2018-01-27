@@ -158,7 +158,7 @@
     <string name="stocks_in_exchange">Stocks in Exchange</string>
     <string name="n_a">N/A</string>
     <string name="quantity">Quantity</string>
-    <string name="price">Price (₹)</string>
+    <string name="price">Price(₹)</string>
     <string name="current_price">Current Price</string>
     <string name="stocks_owned">Stocks Owned</string>
     <string name="stocks_mortgaged">Stocks Mortgaged</string>
@@ -168,8 +168,10 @@
     <string name="volume">Volume</string>
     <string name="play">Play</string>
     <string name="loading_more_transactions">Loading More Transactions…</string>
-    <string name="fetching_depth">Fetching Market Depth</string>
+    <string name="getting_depth">Getting Market Details…</string>
     <string name="askdepth">Ask Depth</string>
     <string name="biddepth">Bid Depth</string>
+    <string name="worth">Worth</string>
+    <string name="made_with_u2661_by_delta_force">Made with ♡ by Delta Force</string>
 
 </resources>

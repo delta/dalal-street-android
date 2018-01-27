@@ -3,13 +3,14 @@ package com.hmproductions.theredstreet.data;
 public class Portfolio {
 
     private String companyName, shortname;
-    private int quantityOwned, price;
+    private int quantityOwned, price, previousDayClose;
 
-    public Portfolio(String shortname, String companyName, int quantityOwned, int price) {
+    public Portfolio(String shortname, String companyName, int quantityOwned, int price, int previousDayClose) {
         this.shortname = shortname;
         this.companyName = companyName;
         this.quantityOwned = quantityOwned;
         this.price = price;
+        this.previousDayClose = previousDayClose;
     }
 
     public String getCompanyName() {
@@ -38,5 +39,13 @@ public class Portfolio {
 
     public void setPrice(int price) {
         this.price = price;
+    }
+
+    public int getPreviousDayClose() {
+        return previousDayClose;
+    }
+
+    public void setPreviousDayClose(int previousDayClose) {
+        this.previousDayClose = previousDayClose;
     }
 }

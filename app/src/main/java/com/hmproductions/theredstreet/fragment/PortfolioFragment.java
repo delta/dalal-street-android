@@ -97,7 +97,8 @@ public class PortfolioFragment extends Fragment {
                     StockUtils.getShortNameForStockId(MainActivity.globalStockDetails, currentStockDetails.getStockId()),
                     StockUtils.getCompanyNameFromStockId(currentStockDetails.getStockId()),
                     currentStockDetails.getQuantity(),
-                    currentPrice
+                    currentPrice,
+                    StockUtils.getPreviousDayCloseFromStockId(MainActivity.globalStockDetails, currentStockDetails.getStockId())
             ));
         }
 
