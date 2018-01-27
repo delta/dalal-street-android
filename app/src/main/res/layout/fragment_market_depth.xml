@@ -2,10 +2,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:scrollbars="none"
     android:background="@color/black_background"
-    android:padding="16dp"
-    android:scrollbars="none">
-
+    android:padding="16dp">
+    
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -34,73 +34,78 @@
             android:layout_centerInParent="true"
             android:visibility="invisible">
 
-                <TextView
-                    android:id="@+id/current_stock_price_textView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="10dp"
-                    android:fontFamily="@font/kreon_light"
-                    android:textColor="@color/neutral_font_color"
-                    android:textSize="20sp" />
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true">
 
                 <TextView
-                    android:id="@+id/prev_day_close_stock_price"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignBaseline="@+id/current_stock_price_textView"
-                    android:layout_toEndOf="@+id/current_stock_price_textView"
+                    android:id="@+id/current_stock_price_textView"
+                    android:textColor="@color/neutral_font_color"
+                    android:textSize="20sp"
                     android:fontFamily="@font/kreon_light"
+                    android:layout_margin="10dp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/prev_day_close_stock_price"
+                    android:layout_toEndOf="@+id/current_stock_price_textView"
+                    android:textSize="16sp"
                     android:textColor="#BDBDBD"
-                    android:textSize="16sp" />
+                    android:fontFamily="@font/kreon_light"
+                    android:layout_alignBaseline="@+id/current_stock_price_textView"/>
 
                 <ImageView
                     android:id="@+id/arrow_image_view"
                     android:layout_width="20dp"
                     android:layout_height="20dp"
-                    android:layout_marginTop="12dp"
                     android:layout_toEndOf="@+id/prev_day_close_stock_price"
                     android:contentDescription="@string/company_profile"
-                    android:src="@drawable/down_arrow" />
+                    android:src="@drawable/down_arrow"
+                    android:layout_marginTop="12dp"/>
+
+            </RelativeLayout>
 
         </RelativeLayout>
 
         <LinearLayout
-            android:id="@+id/bid_depth_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/current_stock_price_layout"
+            android:id="@+id/bid_depth_layout"
+            android:orientation="vertical"
+            android:layout_marginTop="10dp"
             android:layout_marginBottom="5dp"
             android:layout_marginLeft="3dp"
-            android:layout_marginRight="3dp"
-            android:layout_marginTop="10dp"
+            android:visibility="invisible"
             android:background="@drawable/blue_border"
-            android:orientation="vertical"
-            android:visibility="invisible">
+            android:layout_below="@+id/current_stock_price_layout">
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="#20202C"
-                android:fontFamily="@font/kreon_light"
-                android:gravity="center"
                 android:padding="10dp"
+                android:textSize="20sp"
+                android:fontFamily="@font/kreon_light"
                 android:text="@string/biddepth"
-                android:textColor="@color/neutral_font_color"
-                android:textSize="20sp" />
+                android:gravity="center"
+                android:background="#20202C"
+                android:textColor="@color/neutral_font_color"/>
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:layout_marginEnd="1dp"
                 android:layout_marginStart="1dp"
-                android:background="@color/neutral_font_color" />
-
+                android:background="@color/neutral_font_color"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="3dp"
                 android:layout_marginTop="5dp"
+                android:layout_marginBottom="3dp"
                 android:padding="5dp">
 
                 <TextView
@@ -122,6 +127,7 @@
                     android:text="@string/price"
                     android:textColor="@color/neutral_font_color"
                     android:textSize="18sp" />
+
 
             </LinearLayout>
 
@@ -192,7 +198,6 @@
                     android:text="@string/price"
                     android:textColor="@color/neutral_font_color"
                     android:textSize="18sp" />
-
 
             </LinearLayout>
 
