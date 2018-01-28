@@ -5,6 +5,7 @@ public class Constants {
     public static final int NUMBER_OF_COMPANIES = 30;
 
     public static final int LOGIN_LOADER_ID = 101;
+    public static final int TRADE_LOADER_ID = 301;
     public static final int ORDERS_LOADER_ID = 401;
     public static final int MORTGAGE_DETAILS_LOADER_ID = 501;
     public static final int COMPANY_PROFILE_LOADER_ID = 601;

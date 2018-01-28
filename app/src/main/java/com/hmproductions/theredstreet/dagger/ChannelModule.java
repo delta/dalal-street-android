@@ -45,7 +45,7 @@ public class ChannelModule {
             channel = OkHttpChannelBuilder
                     .forAddress(HOST, PORT)
                     .sslSocketFactory(getSocketFactory(context))
-                    .hostnameVerifier((hostname, session) -> true) // TODO : Fix this verification
+                    .hostnameVerifier((hostname, session) -> true)
                     .build();
         } catch (KeyStoreException | CertificateException | IOException | NoSuchAlgorithmException | UnrecoverableKeyException |
                 KeyManagementException | GooglePlayServicesRepairableException | GooglePlayServicesNotAvailableException e) {

@@ -31,6 +31,8 @@ import dalalstreet.api.actions.LoginResponse;
 import dalalstreet.api.models.Stock;
 import io.grpc.ManagedChannel;
 
+import static com.hmproductions.theredstreet.ui.LoginActivity.EMAIL_KEY;
+import static com.hmproductions.theredstreet.ui.LoginActivity.PASSWORD_KEY;
 import static com.hmproductions.theredstreet.utils.Constants.LOGIN_LOADER_ID;
 
 public class SplashActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<LoginResponse> {
@@ -191,6 +193,13 @@ public class SplashActivity extends AppCompatActivity implements LoaderManager.L
             finish();
         } else {
             Toast.makeText(this, "Please login again", Toast.LENGTH_SHORT).show();
+
+            preferences
+                    .edit()
+                    .putString(EMAIL_KEY, null)
+                    .putString(PASSWORD_KEY, null)
+                    .apply();
+
             startActivity(new Intent(this, LoginActivity.class));
             finish();
         }

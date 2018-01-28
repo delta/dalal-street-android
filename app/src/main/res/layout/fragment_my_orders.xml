@@ -9,24 +9,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <TextView
-            android:id="@+id/openOrderText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="8dp"
-            android:fontFamily="@font/marcellus_sc"
-            android:text="@string/open_orders"
-            android:textColor="@color/neutral_font_color"
-            android:textSize="24sp"
-            android:textStyle="bold" />
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1.5dp"
-            android:layout_below="@+id/openOrderText"
-            android:layout_marginTop="0dp"
-            android:background="@android:color/background_light" />
-
         <android.support.v7.widget.RecyclerView
             android:id="@+id/orders_recyclerView"
             android:layout_width="match_parent"

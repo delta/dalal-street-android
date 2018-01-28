@@ -41,7 +41,7 @@ import dalalstreet.api.models.Stock;
 
 import static com.hmproductions.theredstreet.utils.StockUtils.getStockIdFromCompanyName;
 
-/* Uses GetCompanyProfile() for getting stock info TODO : Add scroll view for stock exchange fragment
+/* Uses GetCompanyProfile() for getting stock info
 *  Uses BuyStocksFromExchange() to buy appropriate stocks */
 public class StockExchangeFragment extends Fragment implements LoaderManager.LoaderCallbacks<GetCompanyProfileResponse> {
 

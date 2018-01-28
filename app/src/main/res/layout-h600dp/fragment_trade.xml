@@ -179,13 +179,4 @@
         android:textColor="@android:color/white"
         android:textSize="22sp" />
 
-    <ProgressBar
-        android:id="@+id/buySell_progressBar"
-        style="?android:attr/progressBarStyleLarge"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/bidAsk_button"
-        android:layout_marginBottom="12dp"
-        android:visibility="gone" />
-
 </RelativeLayout>

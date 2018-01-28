@@ -71,7 +71,7 @@ public class OrdersFragment extends Fragment implements
 
         View rootView = inflater.inflate(R.layout.fragment_my_orders, container, false);
 
-        if (getActivity() != null) getActivity().setTitle("My Order");
+        if (getActivity() != null) getActivity().setTitle("Open Orders");
         DaggerDalalStreetApplicationComponent.builder().contextModule(new ContextModule(getContext())).build().inject(this);
 
         orderRecyclerView = rootView.findViewById(R.id.orders_recyclerView);

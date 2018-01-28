@@ -3,7 +3,11 @@ package com.hmproductions.theredstreet.fragment;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.Loader;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +22,7 @@ import android.widget.Toast;
 import com.hmproductions.theredstreet.R;
 import com.hmproductions.theredstreet.dagger.ContextModule;
 import com.hmproductions.theredstreet.dagger.DaggerDalalStreetApplicationComponent;
+import com.hmproductions.theredstreet.loaders.TradeLoader;
 import com.hmproductions.theredstreet.ui.MainActivity;
 import com.hmproductions.theredstreet.utils.Constants;
 import com.hmproductions.theredstreet.utils.StockUtils;
@@ -32,12 +37,13 @@ import dalalstreet.api.DalalActionServiceGrpc;
 import dalalstreet.api.actions.PlaceOrderRequest;
 import dalalstreet.api.actions.PlaceOrderResponse;
 
+import static com.hmproductions.theredstreet.utils.Constants.TRADE_LOADER_ID;
 import static com.hmproductions.theredstreet.utils.StockUtils.getOrderTypeFromName;
 import static com.hmproductions.theredstreet.utils.StockUtils.getQuantityOwnedFromCompanyName;
 import static com.hmproductions.theredstreet.utils.StockUtils.getStockIdFromCompanyName;
 
 /* Uses PlaceOrder() to place buy or ask order */
-public class TradeFragment extends Fragment {
+public class TradeFragment extends Fragment implements LoaderManager.LoaderCallbacks<PlaceOrderResponse>{
 
     @Inject
     DalalActionServiceGrpc.DalalActionServiceBlockingStub actionServiceBlockingStub;
@@ -47,9 +53,6 @@ public class TradeFragment extends Fragment {
 
     @BindView(R.id.order_select_spinner)
     MaterialBetterSpinner orderSpinner;
-
-    @BindView(R.id.buySell_progressBar)
-    ProgressBar buySellProgressBar;
 
     @BindView(R.id.radioGroupStock)
     RadioGroup stockRadioGroup;
@@ -68,6 +71,23 @@ public class TradeFragment extends Fragment {
 
     public TradeFragment() {
         // Required empty public constructor
+    }
+
+    private AlertDialog loadingDialog;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        if (getContext() != null){
+            View dialogView = LayoutInflater.from(getContext()).inflate(R.layout.progress_dialog, null);
+            String tempString = "Placing Order...";
+            ((TextView) dialogView.findViewById(R.id.progressDialog_textView)).setText(tempString);
+            loadingDialog = new AlertDialog.Builder(getContext())
+                    .setView(dialogView)
+                    .setCancelable(false)
+                    .create();
+        }
     }
 
     @Override
@@ -138,21 +158,35 @@ public class TradeFragment extends Fragment {
         }
     }
 
-    public void addTransaction(){
+    private void addTransaction() {
+        if (getActivity() != null)
+            getActivity().getSupportLoaderManager().restartLoader(TRADE_LOADER_ID, null, this);
+    }
 
-        buySellProgressBar.setVisibility(View.VISIBLE);
+    @Override
+    public Loader<PlaceOrderResponse> onCreateLoader(int id, Bundle args) {
 
-        PlaceOrderResponse orderResponse = actionServiceBlockingStub.placeOrder(
-                PlaceOrderRequest
-                        .newBuilder()
-                        .setIsAsk(stockRadioGroup.getCheckedRadioButtonId() == R.id.ask_radioButton)
-                        .setStockId(getStockIdFromCompanyName(companySpinner.getText().toString()))
-                        .setOrderType(getOrderTypeFromName(orderSpinner.getText().toString()))
-                        .setPrice(Integer.parseInt(orderPriceEditText.getText().toString()))
-                        .setStockQuantity(Integer.parseInt(noOfStocksEditText.getText().toString()))
-                        .build());
+        loadingDialog.show();
 
-        buySellProgressBar.setVisibility(View.INVISIBLE);
+        PlaceOrderRequest orderRequest = PlaceOrderRequest
+                .newBuilder()
+                .setIsAsk(stockRadioGroup.getCheckedRadioButtonId() == R.id.ask_radioButton)
+                .setStockId(getStockIdFromCompanyName(companySpinner.getText().toString()))
+                .setOrderType(getOrderTypeFromName(orderSpinner.getText().toString()))
+                .setPrice(Integer.parseInt(orderPriceEditText.getText().toString()))
+                .setStockQuantity(Integer.parseInt(noOfStocksEditText.getText().toString()))
+                .build();
+
+        if (getContext() != null)
+            return new TradeLoader(getContext(), actionServiceBlockingStub, orderRequest);
+
+        return null;
+    }
+
+    @Override
+    public void onLoadFinished(Loader<PlaceOrderResponse> loader, PlaceOrderResponse orderResponse) {
+
+        loadingDialog.dismiss();
 
         switch (orderResponse.getStatusCode().getNumber()) {
             case 0:
@@ -173,5 +207,10 @@ public class TradeFragment extends Fragment {
                 Toast.makeText(getContext(), "Limit exceeded", Toast.LENGTH_SHORT).show();
                 break;
         }
+    }
+
+    @Override
+    public void onLoaderReset(Loader<PlaceOrderResponse> loader) {
+        // Do nothing
     }
 }

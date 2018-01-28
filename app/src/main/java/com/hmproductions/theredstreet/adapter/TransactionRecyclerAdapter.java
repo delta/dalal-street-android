@@ -1,6 +1,7 @@
 package com.hmproductions.theredstreet.adapter;
 
 import android.content.Context;
+import android.graphics.drawable.GradientDrawable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -71,20 +72,22 @@ public class TransactionRecyclerAdapter extends RecyclerView.Adapter<Transaction
         tempAssigningString =  getCompanyNameFromStockId(currentTransaction.getStockId());
         holder.companyTextView.setText(tempAssigningString);
 
-        tempAssigningString = "Quantity : " + String.valueOf(Math.abs(currentTransaction.getNoOfStocks()));
-        holder.noOfStocksTextView.setText(tempAssigningString);
-
-        tempAssigningString = "Time : " + parseDate(currentTransaction.getTime());
+        tempAssigningString = parseDate(currentTransaction.getTime());
         holder.timeTextView.setText(tempAssigningString);
 
-        tempAssigningString = "Quantity : " + String.valueOf(Math.abs(currentTransaction.getNoOfStocks()))
-                    + " at " + Constants.RUPEE_SYMBOL + " " + String.valueOf(Math.abs(currentTransaction.getTotalMoney()));
+        tempAssigningString = String.valueOf(Math.abs(currentTransaction.getNoOfStocks()))
+                    + " stocks @ " + Constants.RUPEE_SYMBOL + " " + String.valueOf(Math.abs(currentTransaction.getTotalMoney()));
         holder.noOfStocksTextView.setText(tempAssigningString);
 
+        GradientDrawable buySellDrawable = (GradientDrawable)holder.buySellTextView.getBackground();
         if (currentTransaction.getTotalMoney() >= 0) {
-            holder.noOfStocksTextView.setTextColor(ContextCompat.getColor(context, R.color.neon_green));
+            holder.buySellTextView.setTextColor(ContextCompat.getColor(context, R.color.neon_green));
+            buySellDrawable.setStroke(2, ContextCompat.getColor(context, R.color.neon_green));
+            holder.buySellTextView.setText(context.getString(R.string.buy));
         } else {
-            holder.noOfStocksTextView.setTextColor(ContextCompat.getColor(context, R.color.redTint));
+            holder.buySellTextView.setTextColor(ContextCompat.getColor(context, R.color.redTint));
+            buySellDrawable.setStroke(2, ContextCompat.getColor(context, R.color.redTint));
+            holder.buySellTextView.setText(context.getString(R.string.sell));
         }
     }
 
@@ -99,24 +102,9 @@ public class TransactionRecyclerAdapter extends RecyclerView.Adapter<Transaction
         notifyDataSetChanged();
     }
 
-    class MyViewHolder extends RecyclerView.ViewHolder {
-
-        TextView typeTextView, companyTextView, noOfStocksTextView, timeTextView;
-
-        MyViewHolder(View itemView) {
-
-            super(itemView);
-
-            typeTextView = itemView.findViewById(R.id.transactionType_textView);
-            companyTextView = itemView.findViewById(R.id.transactionCompany_textView);
-            noOfStocksTextView = itemView.findViewById(R.id.noOfStocks_textView);
-            timeTextView = itemView.findViewById(R.id.time_textView);
-        }
-    }
-
     private String parseDate(String time) {
         String inputPattern = "yyyy-MM-dd'T'HH:mm:ss'Z'";
-        String outputPattern = "hh:mm a  MMM dd, yyyy";
+        String outputPattern = "hh:mm a    MMM dd";
         SimpleDateFormat inputFormat = new SimpleDateFormat(inputPattern, Locale.US);
         SimpleDateFormat outputFormat = new SimpleDateFormat(outputPattern, Locale.US);
 
@@ -130,5 +118,21 @@ public class TransactionRecyclerAdapter extends RecyclerView.Adapter<Transaction
             e.printStackTrace();
         }
         return str;
+    }
+
+    class MyViewHolder extends RecyclerView.ViewHolder {
+
+        TextView typeTextView, companyTextView, noOfStocksTextView, timeTextView, buySellTextView;
+
+        MyViewHolder(View itemView) {
+
+            super(itemView);
+
+            typeTextView = itemView.findViewById(R.id.transactionType_textView);
+            companyTextView = itemView.findViewById(R.id.transactionCompany_textView);
+            noOfStocksTextView = itemView.findViewById(R.id.noOfStocks_textView);
+            timeTextView = itemView.findViewById(R.id.time_textView);
+            buySellTextView = itemView.findViewById(R.id.buySell_textView);
+        }
     }
 }

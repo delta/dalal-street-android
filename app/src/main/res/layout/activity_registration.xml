@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/black_background"
+    android:orientation="vertical"
+    android:paddingBottom="20dp">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/registration_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?colorPrimary"
+        android:orientation="horizontal"
+        android:theme="@style/Base.ThemeOverlay.AppCompat.Dark" />
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/name_inputLayout"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="12dp"
+        android:layout_weight="1"
+        android:paddingStart="12dp"
+        android:paddingEnd="2dp"
+        android:textColorHint="@color/neutral_font_color">
+
+        <EditText
+            android:id="@+id/name_editText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:fontFamily="@font/kreon_light"
+            android:hint="@string/name_lowercase"
+            android:inputType="textPersonName"
+            android:maxLength="30"
+            android:maxLines="1"
+            android:textColor="@color/neutral_font_color"
+            android:textSize="22sp" />
+
+    </android.support.design.widget.TextInputLayout>
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/email_inputLayout"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="12dp"
+        android:layout_weight="1"
+        android:paddingStart="12dp"
+        android:paddingEnd="2dp"
+        android:textColorHint="@color/neutral_font_color">
+
+        <EditText
+            android:id="@+id/email_editText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:fontFamily="@font/kreon_light"
+            android:hint="@string/email_address"
+            android:inputType="textEmailAddress"
+            android:maxLength="45"
+            android:maxLines="1"
+            android:textColor="@color/neutral_font_color"
+            android:textSize="22sp" />
+
+    </android.support.design.widget.TextInputLayout>
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/password_inputLayout"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="12dp"
+        android:layout_weight="1"
+        android:paddingStart="12dp"
+        android:paddingEnd="2dp"
+        android:hint="@string/password"
+        android:textColorHint="@color/neutral_font_color">
+
+        <EditText
+            android:id="@+id/password_editText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:fontFamily="@font/kreon_light"
+            android:inputType="textPassword"
+            android:maxLength="20"
+            android:maxLines="1"
+            android:textColor="@color/neon_orange"
+            android:textSize="22sp" />
+
+    </android.support.design.widget.TextInputLayout>
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/confirmPassword_inputLayout"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:paddingStart="12dp"
+        android:paddingEnd="2dp"
+        android:layout_marginTop="12dp"
+        android:layout_weight="1"
+        android:hint="@string/confirm_password"
+        android:textColorHint="@color/neutral_font_color">
+
+        <EditText
+            android:id="@+id/confirmPassword_editText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:fontFamily="@font/kreon_light"
+            android:inputType="textPassword"
+            android:maxLength="20"
+            android:maxLines="1"
+            android:textColor="@color/neon_orange"
+            android:textSize="22sp" />
+
+    </android.support.design.widget.TextInputLayout>
+
+    <AutoCompleteTextView
+        android:id="@+id/country_autoComplete"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:paddingStart="16dp"
+        android:paddingEnd="2dp"
+        android:layout_weight=".8"
+        android:ems="11"
+        android:fontFamily="@font/kreon_light"
+        android:hint="@string/nationality"
+        android:textColor="@color/neon_blue"
+        android:textColorHint="@color/neutral_font_color"
+        android:textSize="22sp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="22sp"
+        android:layout_weight="0.5"
+        android:paddingStart="12dp"
+        android:paddingEnd="2dp"
+        android:gravity="center"
+        android:fontFamily="@font/kreon_light"
+        android:textColor="@color/neon_green"
+        android:text="@string/in_game_cash"/>
+
+</LinearLayout>

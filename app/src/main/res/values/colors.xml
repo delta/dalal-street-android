@@ -20,5 +20,6 @@
     <color name="gold_medal">#FFD700</color>
     <color name="silver_medal">#C0C0C0</color>
     <color name="bronze_medal">#CD7F32</color>
+    <color name="divider_line_gray">#989898</color>
 
 </resources>
