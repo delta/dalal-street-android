@@ -3,12 +3,13 @@ package com.hmproductions.theredstreet.ui;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -69,31 +70,39 @@ public class LoginActivity extends AppCompatActivity implements LoaderManager.Lo
         emailEditText = findViewById(R.id.email_editText);
         passwordEditText = findViewById(R.id.password_editText);
 
-        String email = preferences.getString(EMAIL_KEY, null);
-        String password = preferences.getString(PASSWORD_KEY, null);
-        if (email != null && !email.equals("")) {
+        startLoginProcess();
+    }
 
-            Bundle bundle = new Bundle();
-            bundle.putString(EMAIL_KEY, email);
-            bundle.putString(PASSWORD_KEY, password);
+    private void startLoginProcess() {
 
-            emailEditText.setText(email);
-            passwordEditText.setText(password);
-
-            signingInAlertDialog.show();
-            getSupportLoaderManager().restartLoader(LOGIN_LOADER_ID, bundle, this);
+        if (MiscellaneousUtils.getConnectionInfo(this)) {
+            findViewById(R.id.play_button).setEnabled(true);
+        } else {
+            findViewById(R.id.play_button).setEnabled(false);
+            new Handler().postDelayed(() -> {
+                Snackbar.make(findViewById(android.R.id.content), "Internet Unavailable", Snackbar.LENGTH_INDEFINITE)
+                        .setAction("RETRY", view -> {
+                            startLoginProcess();
+                        })
+                        .show();
+            }, 500);
         }
     }
 
     @OnClick(R.id.play_button)
     void onLoginButtonClick() {
-        if (validateEmail() && validatePassword()) {
-            Bundle bundle = new Bundle();
-            bundle.putString(EMAIL_KEY, emailEditText.getText().toString());
-            bundle.putString(PASSWORD_KEY, passwordEditText.getText().toString());
+        if (MiscellaneousUtils.getConnectionInfo(this)) {
+            if (validateEmail() && validatePassword()) {
+                Bundle bundle = new Bundle();
+                bundle.putString(EMAIL_KEY, emailEditText.getText().toString());
+                bundle.putString(PASSWORD_KEY, passwordEditText.getText().toString());
 
-            signingInAlertDialog.show();
-            getSupportLoaderManager().restartLoader(LOGIN_LOADER_ID, bundle, this);
+                signingInAlertDialog.show();
+                getSupportLoaderManager().restartLoader(LOGIN_LOADER_ID, bundle, this);
+            }
+        } else {
+            Toast.makeText(this, "Check you internet connection", Toast.LENGTH_SHORT).show();
+            startLoginProcess();
         }
     }
 

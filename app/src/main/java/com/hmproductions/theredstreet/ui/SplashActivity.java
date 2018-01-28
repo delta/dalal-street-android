@@ -3,6 +3,8 @@ package com.hmproductions.theredstreet.ui;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
@@ -31,8 +33,6 @@ import dalalstreet.api.actions.LoginResponse;
 import dalalstreet.api.models.Stock;
 import io.grpc.ManagedChannel;
 
-import static com.hmproductions.theredstreet.ui.LoginActivity.EMAIL_KEY;
-import static com.hmproductions.theredstreet.ui.LoginActivity.PASSWORD_KEY;
 import static com.hmproductions.theredstreet.utils.Constants.LOGIN_LOADER_ID;
 
 public class SplashActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<LoginResponse> {
@@ -66,21 +66,47 @@ public class SplashActivity extends AppCompatActivity implements LoaderManager.L
         ButterKnife.bind(this);
         DaggerDalalStreetApplicationComponent.builder().contextModule(new ContextModule(this)).build().inject(this);
 
-        String email = preferences.getString(EMAIL_KEY, null);
-        String password = preferences.getString(PASSWORD_KEY, null);
-        if (email != null && !email.equals("")) {
+        setupSplashAnimations();
 
-            Bundle bundle = new Bundle();
-            bundle.putString(EMAIL_KEY, email);
-            bundle.putString(PASSWORD_KEY, password);
+        startLoginProcess(preferences.getString(EMAIL_KEY, null), preferences.getString(PASSWORD_KEY, null));
+    }
 
-            getSupportLoaderManager().restartLoader(LOGIN_LOADER_ID, bundle, this);
+    private void startLoginProcess(String email, String password) {
+
+        if (MiscellaneousUtils.getConnectionInfo(this)) {
+            if (email != null && !email.equals("")) {
+
+                Bundle bundle = new Bundle();
+                bundle.putString(EMAIL_KEY, email);
+                bundle.putString(PASSWORD_KEY, password);
+
+                getSupportLoaderManager().restartLoader(LOGIN_LOADER_ID, bundle, this);
+            } else {
+                preferences
+                        .edit()
+                        .putString(EMAIL_KEY, null)
+                        .putString(PASSWORD_KEY, null)
+                        .apply();
+
+                Intent intent = new Intent(this, LoginActivity.class);
+                startActivity(intent);
+                finish();
+            }
+            splashTimer.start();
         } else {
-            Intent intent = new Intent(this, LoginActivity.class);
-            startActivity(intent);
-            finish();
+            new Handler().postDelayed(() -> {
+                Snackbar.make(findViewById(android.R.id.content), "Internet Unavailable", Snackbar.LENGTH_INDEFINITE)
+                        .setAction("RETRY", view -> {
+                            startLoginProcess(email,password);
+                            splashText.setText(R.string.error_signing_in);
+                        })
+                        .show();
+                splashText.setText(R.string.error_signing_in);
+            }, 500);
         }
+    }
 
+    private void setupSplashAnimations() {
         drawer = new Thread(graphDrawView);
         drawer.start();
 
@@ -107,7 +133,6 @@ public class SplashActivity extends AppCompatActivity implements LoaderManager.L
                 }
             }
         };
-        splashTimer.start();
     }
 
     private void setSplashText(final CharSequence text) {

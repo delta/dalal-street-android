@@ -588,7 +588,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
 
         if(!isPresentInList) {
-            Log.v(":::", "adding");
             ownedStockDetails.add(new StockDetails(stockId, stockQuantity));
         }
     }

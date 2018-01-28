@@ -171,6 +171,7 @@
     <string name="confirm_password">Confirm Password</string>
     <string name="nationality">Nationality (Optional)</string>
     <string name="in_game_cash">In-Game cash alloted - ₹200000</string>
+    <string name="error_signing_in">Error Signing In</string>
 
     <string-array name="countries_array">
         <item>Afghanistan</item>
