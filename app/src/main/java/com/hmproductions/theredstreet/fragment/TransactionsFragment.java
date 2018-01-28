@@ -132,11 +132,7 @@ public class TransactionsFragment extends Fragment implements LoaderManager.Load
     public void onLoadFinished(Loader<GetTransactionsResponse> loader, GetTransactionsResponse data) {
 
         loadingDialog.dismiss();
-        if(data.getTransactionsCount() == 10){
-            paginate = true;
-        }else {
-            paginate = false;
-        }
+        paginate = data.getTransactionsCount() == 10;
 
         for (int i = 0; i < data.getTransactionsCount(); ++i) {
             dalalstreet.api.models.Transaction currentTransaction = data.getTransactions(i);
@@ -168,22 +164,8 @@ public class TransactionsFragment extends Fragment implements LoaderManager.Load
     }
 
     public class CustomScrollListener extends RecyclerView.OnScrollListener {
-        public CustomScrollListener() {
-        }
 
-        public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-            switch (newState) {
-                case RecyclerView.SCROLL_STATE_IDLE:
-                    System.out.println("The RecyclerView is not scrolling");
-                    break;
-                case RecyclerView.SCROLL_STATE_DRAGGING:
-                    System.out.println("Scrolling now");
-                    break;
-                case RecyclerView.SCROLL_STATE_SETTLING:
-                    System.out.println("Scroll Settling");
-                    break;
-
-            }
+        CustomScrollListener() {
 
         }
 
@@ -192,11 +174,20 @@ public class TransactionsFragment extends Fragment implements LoaderManager.Load
             int totalItemCount = recyclerView.getLayoutManager().getItemCount();
             int pastVisibleItems =  ((LinearLayoutManager)recyclerView.getLayoutManager()).findFirstVisibleItemPosition();
             if (pastVisibleItems + visibleItemCount >= totalItemCount) {
+
                 if(paginate){
-                    getActivity().getSupportLoaderManager().restartLoader(TRANSACTION_LOADER_ID, null, TransactionsFragment.this);
-                    paginate = false;
+                    if (getActivity() != null) {
+                        getActivity().getSupportLoaderManager().restartLoader(TRANSACTION_LOADER_ID, null, TransactionsFragment.this);
+                        paginate = false;
+                    }
                 }
             }
         }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        preferences.edit().putInt(LAST_TRANSACTION_ID, 0).apply();
     }
 }

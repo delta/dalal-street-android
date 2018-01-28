@@ -1,12 +1,17 @@
 package com.hmproductions.theredstreet.fragment;
 
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -80,6 +85,15 @@ public class MortgageFragment extends Fragment implements LoaderManager.LoaderCa
     public MortgageFragment() {
         // Required empty public constructor
     }
+
+    private BroadcastReceiver refreshStockPricesReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (getActivity() != null && intent.getAction() != null && intent.getAction().equalsIgnoreCase(Constants.REFRESH_STOCK_PRICES_ACTION)) {
+                getActivity().getSupportLoaderManager().restartLoader(Constants.MORTGAGE_DETAILS_LOADER_ID, null, MortgageFragment.this);
+            }
+        }
+    };
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -272,5 +286,23 @@ public class MortgageFragment extends Fragment implements LoaderManager.LoaderCa
     @Override
     public void onLoaderReset(Loader<GetMortgageDetailsResponse> loader) {
         // Do nothing
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (getContext() != null) {
+            LocalBroadcastManager.getInstance(getContext()).registerReceiver(
+                    refreshStockPricesReceiver, new IntentFilter(Constants.REFRESH_STOCK_PRICES_ACTION)
+            );
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (getContext() != null) {
+            LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(refreshStockPricesReceiver);
+        }
     }
 }

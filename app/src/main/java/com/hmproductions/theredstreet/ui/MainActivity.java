@@ -366,11 +366,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                                 }
                             }
 
+                            Log.v(":::", "order fill with total=" + String.valueOf(transaction.getTotal()));
+
                         } else if (transaction.getType() == TransactionType.FROM_EXCHANGE_TRANSACTION) {
 
                             changeTextViewValue(stockTextView, transaction.getTotal(), false);
                             changeTextViewValue(cashTextView, transaction.getTotal(), true);
-
                             updateOwnedStockIdAndQuantity(transaction.getStockId(), transaction.getStockQuantity(), true);
 
                         } else if (transaction.getType() == TransactionType.MORTGAGE_TRANSACTION) {

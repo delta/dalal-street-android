@@ -12,7 +12,7 @@ import dalalstreet.api.actions.GetTransactionsResponse;
 public class TransactionLoader extends AsyncTaskLoader<GetTransactionsResponse> {
 
     private DalalActionServiceGrpc.DalalActionServiceBlockingStub actionServiceBlockingStub;
-    private int lastId;
+    private int lastId = 0;
 
     public TransactionLoader(@NonNull Context context, DalalActionServiceGrpc.DalalActionServiceBlockingStub actionServiceBlockingStub,int lastId) {
         super(context);

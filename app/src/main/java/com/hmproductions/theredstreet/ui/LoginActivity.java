@@ -70,22 +70,22 @@ public class LoginActivity extends AppCompatActivity implements LoaderManager.Lo
         emailEditText = findViewById(R.id.email_editText);
         passwordEditText = findViewById(R.id.password_editText);
 
-        startLoginProcess();
+        startLoginProcess(false);
     }
 
-    private void startLoginProcess() {
+    private void startLoginProcess(boolean startedFromServerDown) {
 
         if (MiscellaneousUtils.getConnectionInfo(this)) {
             findViewById(R.id.play_button).setEnabled(true);
+
+            if (startedFromServerDown)
+                onLoginButtonClick();
         } else {
             findViewById(R.id.play_button).setEnabled(false);
-            new Handler().postDelayed(() -> {
-                Snackbar.make(findViewById(android.R.id.content), "Internet Unavailable", Snackbar.LENGTH_INDEFINITE)
-                        .setAction("RETRY", view -> {
-                            startLoginProcess();
-                        })
-                        .show();
-            }, 500);
+            new Handler().postDelayed(() -> Snackbar
+                    .make(findViewById(android.R.id.content), "Internet Unavailable", Snackbar.LENGTH_INDEFINITE)
+                    .setAction("RETRY", view -> startLoginProcess(true))
+                    .show(), 500);
         }
     }
 
@@ -101,8 +101,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderManager.Lo
                 getSupportLoaderManager().restartLoader(LOGIN_LOADER_ID, bundle, this);
             }
         } else {
-            Toast.makeText(this, "Check you internet connection", Toast.LENGTH_SHORT).show();
-            startLoginProcess();
+            startLoginProcess(false);
         }
     }
 
@@ -147,6 +146,13 @@ public class LoginActivity extends AppCompatActivity implements LoaderManager.Lo
     public void onLoadFinished(Loader<LoginResponse> loader, LoginResponse loginResponse) {
 
         signingInAlertDialog.dismiss();
+
+        if (loginResponse == null) {
+            Snackbar.make(findViewById(android.R.id.content), "Server Down", Snackbar.LENGTH_INDEFINITE)
+                    .setAction("RETRY", view -> startLoginProcess(true))
+                    .show();
+            return;
+        }
 
         if (loginResponse.getStatusCode().getNumber() == 0) {
 

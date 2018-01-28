@@ -53,9 +53,8 @@ public class SplashActivity extends AppCompatActivity implements LoaderManager.L
     public static final String USERNAME_KEY = "username-key";
     public static final String EMAIL_KEY = "email-key";
     static final String PASSWORD_KEY = "password-key";
-    public Thread drawer;
-    private boolean threadRun = true;
-    Thread splashTimer = null;
+
+    public Thread drawingThread;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,6 +71,8 @@ public class SplashActivity extends AppCompatActivity implements LoaderManager.L
     }
 
     private void startLoginProcess(String email, String password) {
+
+        splashText.setText(getString(R.string.signing_in));
 
         if (MiscellaneousUtils.getConnectionInfo(this)) {
             if (email != null && !email.equals("")) {
@@ -92,7 +93,7 @@ public class SplashActivity extends AppCompatActivity implements LoaderManager.L
                 startActivity(intent);
                 finish();
             }
-            splashTimer.start();
+
         } else {
             new Handler().postDelayed(() -> {
                 Snackbar.make(findViewById(android.R.id.content), "Internet Unavailable", Snackbar.LENGTH_INDEFINITE)
@@ -107,36 +108,8 @@ public class SplashActivity extends AppCompatActivity implements LoaderManager.L
     }
 
     private void setupSplashAnimations() {
-        drawer = new Thread(graphDrawView);
-        drawer.start();
-
-        splashTimer = new Thread() {
-            public void run() {
-                try {
-                    int splashTime = 0;
-                    while (threadRun) {
-
-                        sleep(150);
-
-                        if (splashTime % 10 < 3) {
-                            setSplashText("Signing In.");
-                        } else if (splashTime % 10 >= 3 && splashTime % 10 < 7) {
-                            setSplashText("Signing In..");
-                        } else if (splashTime % 10 >= 7) {
-                            setSplashText("Signing In...");
-                        }
-                        splashTime = splashTime + 1;
-                    }
-
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        };
-    }
-
-    private void setSplashText(final CharSequence text) {
-        runOnUiThread(() -> splashText.setText(text));
+        drawingThread = new Thread(graphDrawView);
+        drawingThread.start();
     }
 
     @Override
@@ -156,11 +129,12 @@ public class SplashActivity extends AppCompatActivity implements LoaderManager.L
     @Override
     public void onLoadFinished(Loader<LoginResponse> loader, LoginResponse loginResponse) {
 
-        threadRun = false;
-        try {
-            splashTimer.join();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        if (loginResponse == null) {
+            Snackbar.make(findViewById(android.R.id.content), "Server Down", Snackbar.LENGTH_INDEFINITE)
+                    .setAction("RETRY", view -> startLoginProcess(preferences.getString(EMAIL_KEY, null), preferences.getString(PASSWORD_KEY, null)))
+                    .show();
+            splashText.setText(R.string.error_server_down);
+            return;
         }
 
         if (loginResponse.getStatusCode().getNumber() == 0) {
@@ -233,9 +207,9 @@ public class SplashActivity extends AppCompatActivity implements LoaderManager.L
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (drawer != null) {
-            if (drawer.isAlive())
-                drawer.interrupt();
+        if (drawingThread != null) {
+            if (drawingThread.isAlive())
+                drawingThread.interrupt();
         }
     }
 

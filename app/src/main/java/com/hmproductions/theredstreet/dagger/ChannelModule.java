@@ -5,6 +5,7 @@ import android.content.Context;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.security.ProviderInstaller;
+import com.hmproductions.theredstreet.utils.Constants;
 import com.hmproductions.theredstreet.utils.MiscellaneousUtils;
 
 import java.io.ByteArrayInputStream;
@@ -33,9 +34,6 @@ import io.grpc.okhttp.OkHttpChannelBuilder;
 @Module
 public class ChannelModule {
 
-    private static final String HOST = "139.59.47.250";
-    private static final int PORT = 443;
-
     @Provides
     @DalalStreetApplicationScope
     public ManagedChannel getManagedChannel(Context context) {
@@ -43,7 +41,7 @@ public class ChannelModule {
         ManagedChannel channel = null;
         try {
             channel = OkHttpChannelBuilder
-                    .forAddress(HOST, PORT)
+                    .forAddress(Constants.HOST, Constants.PORT)
                     .sslSocketFactory(getSocketFactory(context))
                     .hostnameVerifier((hostname, session) -> true)
                     .build();

@@ -80,14 +80,14 @@ public class TransactionRecyclerAdapter extends RecyclerView.Adapter<Transaction
         holder.noOfStocksTextView.setText(tempAssigningString);
 
         GradientDrawable buySellDrawable = (GradientDrawable)holder.buySellTextView.getBackground();
-        if (currentTransaction.getTotalMoney() >= 0) {
-            holder.buySellTextView.setTextColor(ContextCompat.getColor(context, R.color.neon_green));
-            buySellDrawable.setStroke(2, ContextCompat.getColor(context, R.color.neon_green));
-            holder.buySellTextView.setText(context.getString(R.string.buy));
-        } else {
+        if (currentTransaction.getTotalMoney() < 0) {
             holder.buySellTextView.setTextColor(ContextCompat.getColor(context, R.color.redTint));
             buySellDrawable.setStroke(2, ContextCompat.getColor(context, R.color.redTint));
             holder.buySellTextView.setText(context.getString(R.string.sell));
+        } else {
+            holder.buySellTextView.setTextColor(ContextCompat.getColor(context, R.color.neon_green));
+            buySellDrawable.setStroke(2, ContextCompat.getColor(context, R.color.neon_green));
+            holder.buySellTextView.setText(context.getString(R.string.buy));
         }
     }
 

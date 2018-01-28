@@ -6,6 +6,11 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.util.DisplayMetrics;
 
+import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.net.Socket;
+import java.net.SocketAddress;
+
 public class MiscellaneousUtils {
 
     public static float convertDpToPixel(Context context, float dp){
@@ -20,6 +25,18 @@ public class MiscellaneousUtils {
             NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
             return (networkInfo != null && networkInfo.isConnected());
         } else {
+            return false;
+        }
+    }
+
+    public static boolean isReachableByTcp(String host, int port) {
+        try {
+            Socket socket = new Socket();
+            SocketAddress socketAddress = new InetSocketAddress(host, port);
+            socket.connect(socketAddress, 2000);
+            socket.close();
+            return true;
+        } catch (IOException e) {
             return false;
         }
     }

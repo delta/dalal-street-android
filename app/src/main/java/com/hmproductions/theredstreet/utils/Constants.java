@@ -2,6 +2,9 @@ package com.hmproductions.theredstreet.utils;
 
 public class Constants {
 
+    public static final String HOST = "139.59.47.250";
+    public static final int PORT = 443;
+
     public static final int NUMBER_OF_COMPANIES = 30;
 
     public static final int LOGIN_LOADER_ID = 101;
