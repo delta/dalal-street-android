@@ -13,6 +13,7 @@ import com.hmproductions.theredstreet.data.CompanyDetails;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -49,10 +50,10 @@ public class CompanyRecyclerAdapter extends RecyclerView.Adapter<CompanyRecycler
 
         holder.volumeTextView.setText(String.valueOf(currentCompanyDetails.getVolume()));
 
-        int diff = (currentCompanyDetails.getValue() - currentCompanyDetails.getPreviousDayClose()) / currentCompanyDetails.getPreviousDayClose();
-        holder.differenceTextView.setText(String.valueOf(Math.abs(diff)));
+        double diff = (double)(currentCompanyDetails.getValue() - currentCompanyDetails.getPreviousDayClose()) / (double)currentCompanyDetails.getPreviousDayClose() * 100.0;
+        holder.differenceTextView.setText(String.format(Locale.getDefault(),"%.1f", diff));
         if (diff < 0) {
-            holder.differenceTextView.setTextColor(ContextCompat.getColor(context, R.color.neon_orange));
+            holder.differenceTextView.setTextColor(ContextCompat.getColor(context, R.color.redTint));
         } else if (diff == 0) {
             holder.differenceTextView.setTextColor(ContextCompat.getColor(context, R.color.neutral_font_color));
         } else {

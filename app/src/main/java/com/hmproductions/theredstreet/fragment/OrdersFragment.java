@@ -10,6 +10,7 @@ import android.support.v4.content.Loader;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -168,6 +169,8 @@ public class OrdersFragment extends Fragment implements
                         currentAskOrder.getStockQuantity(),
                         currentAskOrder.getStockQuantityFulfilled()
                         ));
+                Log.v(":::", "Ask order with id " + currentAskOrder.getId());
+
             }
         }
 
@@ -183,6 +186,7 @@ public class OrdersFragment extends Fragment implements
                         currentBidOrder.getStockQuantity(),
                         currentBidOrder.getStockQuantityFulfilled()
                 ));
+                Log.v(":::", "Bid order with id " + currentBidOrder.getId());
             }
         }
 
@@ -214,6 +218,8 @@ public class OrdersFragment extends Fragment implements
                     .setPositiveButton("Cancel", (dialogInterface, i) -> {
                         CancelOrderResponse response = actionServiceBlockingStub.cancelOrder(
                                 CancelOrderRequest.newBuilder().setOrderId(orderId).setIsAsk(!bid).build());
+
+                        Log.v(":::", "cancelling with id " + orderId);
 
                         switch (response.getStatusCodeValue()) {
                             case 0:

@@ -20,10 +20,11 @@
         <item>Stoploss Order</item>
     </string-array>
 
+    <!-- TODO : Fix help text-->
     <string name="help">
-        Dalal street is a virtual stock exchange game, where the companies sell their stocks to the public at a price
-        \nwhich depends on the company market value and performance.
-        \nThe public then buy or sell the stocks among them for price based on the market events are stock transactions.
+        Dalal street is a virtual stock exchange game, where the companies sell their stocks to public at a price
+        \nwhich depends on the company\'s market value and performance.
+        \nThe public can buy or sell the stocks in market for price based on the market events are stock transactions.
         \nAt the end of the game, the player who makes the most money through the stock exchange wins.
         \nThe following is a guide explaining the structure of the game and what each feature of the game means.
 
@@ -154,7 +155,7 @@
     <string name="stocks_mortgaged">Stocks Mortgaged</string>
     <string name="mortgage_deposit_rate">Mortgage Deposit Rate</string>
     <string name="mortgage_retrival_rate">Mortgage Retrival Rate</string>
-    <string name="change">Change</string>
+    <string name="change">Change %</string>
     <string name="volume">Volume</string>
     <string name="play">Play</string>
     <string name="loading_more_transactions">Loading More Transactions…</string>
