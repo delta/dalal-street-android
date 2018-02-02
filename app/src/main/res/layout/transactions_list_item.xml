@@ -14,7 +14,6 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="5dp"
         android:fontFamily="@font/kreon_light"
-        android:text="@string/company"
         android:textAllCaps="true"
         android:textColor="@color/neutral_font_color"
         android:textSize="20sp" />
@@ -46,7 +45,6 @@
         android:layout_below="@id/noOfStocks_textView"
         android:layout_marginBottom="10dp"
         android:fontFamily="@font/kreon_light"
-        android:text="@string/time"
         android:textColor="@color/neutral_font_color"
         android:textSize="16sp" />
 

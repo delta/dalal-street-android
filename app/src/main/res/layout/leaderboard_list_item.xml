@@ -15,7 +15,6 @@
         android:layout_weight="1.2"
         android:fontFamily="@font/kreon_light"
         android:gravity="center"
-        android:text="@string/rank"
         android:textColor="@color/neutral_font_color"
         android:textSize="20sp" />
 
@@ -26,7 +25,6 @@
         android:layout_weight="2"
         android:fontFamily="@font/kreon_light"
         android:gravity="center"
-        android:text="@string/name"
         android:textColor="@color/neutral_font_color"
         android:textSize="20sp" />
 
@@ -37,7 +35,6 @@
         android:layout_weight="1.5"
         android:fontFamily="@font/kreon_light"
         android:gravity="center"
-        android:text="@string/wealth"
         android:textColor="@color/neutral_font_color"
         android:textSize="20sp" />
 
