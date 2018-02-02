@@ -24,6 +24,7 @@ import com.hmproductions.theredstreet.R;
 import com.hmproductions.theredstreet.dagger.ContextModule;
 import com.hmproductions.theredstreet.dagger.DaggerDalalStreetApplicationComponent;
 import com.hmproductions.theredstreet.loaders.CompanyProfileLoader;
+import com.hmproductions.theredstreet.utils.ConnectionUtils;
 import com.hmproductions.theredstreet.utils.Constants;
 import com.hmproductions.theredstreet.utils.StockUtils;
 import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner;
@@ -75,6 +76,8 @@ public class StockExchangeFragment extends Fragment implements LoaderManager.Loa
     private String lastCompanySelected = null;
     private AlertDialog loadingDialog;
 
+    private ConnectionUtils.OnNetworkDownHandler networkDownHandler;
+
     private BroadcastReceiver refreshStockPricesReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -88,6 +91,16 @@ public class StockExchangeFragment extends Fragment implements LoaderManager.Loa
 
     public StockExchangeFragment() {
         // Required empty public constructor
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        try {
+            networkDownHandler = (ConnectionUtils.OnNetworkDownHandler) context;
+        } catch (ClassCastException classCastException) {
+            throw new ClassCastException(context.toString() + " must implement network down hnadler.");
+        }
     }
 
     @Override
@@ -136,6 +149,12 @@ public class StockExchangeFragment extends Fragment implements LoaderManager.Loa
         } else if (noOfStocksEditText.getText().toString().trim().isEmpty()) {
             Toast.makeText(getActivity(), "Enter the number of Stocks", Toast.LENGTH_SHORT).show();
         } else {
+
+            if (!(ConnectionUtils.getConnectionInfo(getContext()) && ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT))) {
+                networkDownHandler.onNetworkDownError();
+                return;
+            }
+
             if (Integer.parseInt(noOfStocksEditText.getText().toString().trim()) <= currentStock.getStocksInExchange()) {
 
                 BuyStocksFromExchangeResponse response = actionServiceBlockingStub.buyStocksFromExchange(
@@ -205,6 +224,11 @@ public class StockExchangeFragment extends Fragment implements LoaderManager.Loa
     public void onLoadFinished(Loader<GetCompanyProfileResponse> loader, GetCompanyProfileResponse companyProfileResponse) {
 
         loadingDialog.dismiss();
+
+        if (companyProfileResponse == null) {
+            networkDownHandler.onNetworkDownError();
+            return;
+        }
 
         String temporaryTextViewString;
         currentStock = companyProfileResponse.getStockDetails();

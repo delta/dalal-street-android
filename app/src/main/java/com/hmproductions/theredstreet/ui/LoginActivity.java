@@ -19,6 +19,7 @@ import com.hmproductions.theredstreet.dagger.DaggerDalalStreetApplicationCompone
 import com.hmproductions.theredstreet.data.GlobalStockDetails;
 import com.hmproductions.theredstreet.data.StockDetails;
 import com.hmproductions.theredstreet.loaders.LoginLoader;
+import com.hmproductions.theredstreet.utils.ConnectionUtils;
 import com.hmproductions.theredstreet.utils.Constants;
 import com.hmproductions.theredstreet.utils.MiscellaneousUtils;
 
@@ -75,7 +76,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderManager.Lo
 
     private void startLoginProcess(boolean startedFromServerDown) {
 
-        if (MiscellaneousUtils.getConnectionInfo(this)) {
+        if (ConnectionUtils.getConnectionInfo(this)) {
             findViewById(R.id.play_button).setEnabled(true);
 
             if (startedFromServerDown)
@@ -91,7 +92,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderManager.Lo
 
     @OnClick(R.id.play_button)
     void onLoginButtonClick() {
-        if (MiscellaneousUtils.getConnectionInfo(this)) {
+        if (ConnectionUtils.getConnectionInfo(this)) {
             if (validateEmail() && validatePassword()) {
                 Bundle bundle = new Bundle();
                 bundle.putString(EMAIL_KEY, emailEditText.getText().toString());

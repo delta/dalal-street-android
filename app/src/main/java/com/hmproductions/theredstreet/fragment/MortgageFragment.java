@@ -30,6 +30,7 @@ import com.hmproductions.theredstreet.dagger.ContextModule;
 import com.hmproductions.theredstreet.dagger.DaggerDalalStreetApplicationComponent;
 import com.hmproductions.theredstreet.loaders.MortgageDetailsLoader;
 import com.hmproductions.theredstreet.ui.MainActivity;
+import com.hmproductions.theredstreet.utils.ConnectionUtils;
 import com.hmproductions.theredstreet.utils.Constants;
 import com.hmproductions.theredstreet.utils.StockUtils;
 
@@ -80,6 +81,8 @@ public class MortgageFragment extends Fragment implements LoaderManager.LoaderCa
     int stocksOwned = 0, stocksMortgaged = 0, stocksTransaction;
     Spinner companySpinner;
     String [] companiesArray;
+
+    private ConnectionUtils.OnNetworkDownHandler networkDownHandler;
     private AlertDialog loadingDialog;
 
     public MortgageFragment() {
@@ -94,6 +97,16 @@ public class MortgageFragment extends Fragment implements LoaderManager.LoaderCa
             }
         }
     };
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        try {
+            networkDownHandler = (ConnectionUtils.OnNetworkDownHandler) context;
+        } catch (ClassCastException classCastException) {
+            throw new ClassCastException(context.toString() + " must implement network down hnadler.");
+        }
+    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -255,6 +268,11 @@ public class MortgageFragment extends Fragment implements LoaderManager.LoaderCa
     public void onLoadFinished(Loader<GetMortgageDetailsResponse> loader, GetMortgageDetailsResponse response) {
 
         loadingDialog.dismiss();
+
+        if (response == null) {
+            networkDownHandler.onNetworkDownError();
+            return;
+        }
 
         int stockId = StockUtils.getStockIdFromCompanyName(companiesArray[companySpinner.getSelectedItemPosition()]);
         companySpinner.setEnabled(true);

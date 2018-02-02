@@ -1,6 +1,7 @@
 package com.hmproductions.theredstreet.fragment;
 
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -23,6 +24,7 @@ import com.hmproductions.theredstreet.dagger.ContextModule;
 import com.hmproductions.theredstreet.dagger.DaggerDalalStreetApplicationComponent;
 import com.hmproductions.theredstreet.data.Transaction;
 import com.hmproductions.theredstreet.loaders.TransactionLoader;
+import com.hmproductions.theredstreet.utils.ConnectionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,10 +58,22 @@ public class TransactionsFragment extends Fragment implements LoaderManager.Load
     private List<Transaction> transactionList = new ArrayList<>();
     private TransactionRecyclerAdapter adapter;
     private AlertDialog loadingDialog;
+    private ConnectionUtils.OnNetworkDownHandler networkDownHandler;
+
     boolean paginate = true;
 
     public TransactionsFragment() {
         // Required empty public constructor
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        try {
+            networkDownHandler = (ConnectionUtils.OnNetworkDownHandler) context;
+        } catch (ClassCastException classCastException) {
+            throw new ClassCastException(context.toString() + " must implement network down hnadler.");
+        }
     }
 
     @Override
@@ -99,15 +113,6 @@ public class TransactionsFragment extends Fragment implements LoaderManager.Load
     }
 
     @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        preferences
-                .edit()
-                .putInt(LAST_TRANSACTION_ID,0)
-                .apply();
-    }
-
-    @Override
     public void onDestroy() {
         super.onDestroy();
         preferences
@@ -132,6 +137,12 @@ public class TransactionsFragment extends Fragment implements LoaderManager.Load
     public void onLoadFinished(Loader<GetTransactionsResponse> loader, GetTransactionsResponse data) {
 
         loadingDialog.dismiss();
+
+        if (data == null) {
+            networkDownHandler.onNetworkDownError();
+            return;
+        }
+
         paginate = data.getTransactionsCount() == 10;
 
         for (int i = 0; i < data.getTransactionsCount(); ++i) {

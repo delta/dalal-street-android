@@ -5,6 +5,9 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.AsyncTaskLoader;
 
+import com.hmproductions.theredstreet.utils.ConnectionUtils;
+import com.hmproductions.theredstreet.utils.Constants;
+
 import dalalstreet.api.DalalActionServiceGrpc;
 import dalalstreet.api.actions.GetMortgageDetailsRequest;
 import dalalstreet.api.actions.GetMortgageDetailsResponse;
@@ -26,6 +29,9 @@ public class MortgageDetailsLoader extends AsyncTaskLoader<GetMortgageDetailsRes
     @Nullable
     @Override
     public GetMortgageDetailsResponse loadInBackground() {
-        return actionServiceBlockingStub.getMortgageDetails(GetMortgageDetailsRequest.newBuilder().build());
+        if (ConnectionUtils.getConnectionInfo(getContext()) && ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT))
+            return actionServiceBlockingStub.getMortgageDetails(GetMortgageDetailsRequest.newBuilder().build());
+        else
+            return null;
     }
 }

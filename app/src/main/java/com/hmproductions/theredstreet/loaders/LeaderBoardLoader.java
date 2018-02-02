@@ -5,6 +5,9 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.AsyncTaskLoader;
 
+import com.hmproductions.theredstreet.utils.ConnectionUtils;
+import com.hmproductions.theredstreet.utils.Constants;
+
 import dalalstreet.api.DalalActionServiceGrpc;
 import dalalstreet.api.actions.GetLeaderboardRequest;
 import dalalstreet.api.actions.GetLeaderboardResponse;
@@ -28,12 +31,15 @@ public class LeaderBoardLoader extends AsyncTaskLoader<GetLeaderboardResponse> {
     @Nullable
     @Override
     public GetLeaderboardResponse loadInBackground() {
-        return actionServiceBlockingStub.getLeaderboard(
-                GetLeaderboardRequest
-                        .newBuilder()
-                        .setCount(LEADERBOARD_SIZE)
-                        .setStartingId(1)
-                        .build()
-        );
+        if (ConnectionUtils.getConnectionInfo(getContext()) && ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT))
+            return actionServiceBlockingStub.getLeaderboard(
+                    GetLeaderboardRequest
+                            .newBuilder()
+                            .setCount(LEADERBOARD_SIZE)
+                            .setStartingId(1)
+                            .build()
+            );
+        else
+            return null;
     }
 }

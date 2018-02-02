@@ -3,8 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/black_background"
-    android:paddingStart="16dp"
-    android:paddingEnd="16dp">
+    android:paddingEnd="16dp"
+    android:paddingStart="16dp">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -14,6 +14,7 @@
             android:id="@+id/company_spinner"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
             android:hint="@string/pick_a_company"
             android:textSize="22sp"
             app:met_baseColor="@color/neutral_font_color"
@@ -21,7 +22,7 @@
             app:met_primaryColor="@color/neutral_font_color"
             app:met_textColor="@color/neutral_font_color"
             app:met_textColorHint="@color/neutral_font_color"
-            app:met_underlineColor="@color/neutral_font_color"  />
+            app:met_underlineColor="@color/neutral_font_color" />
 
         <LinearLayout
             android:id="@+id/currentStockPrice_linearLayout"

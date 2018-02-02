@@ -5,6 +5,9 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.AsyncTaskLoader;
 
+import com.hmproductions.theredstreet.utils.ConnectionUtils;
+import com.hmproductions.theredstreet.utils.Constants;
+
 import dalalstreet.api.DalalActionServiceGrpc;
 import dalalstreet.api.actions.GetTransactionsRequest;
 import dalalstreet.api.actions.GetTransactionsResponse;
@@ -28,10 +31,14 @@ public class TransactionLoader extends AsyncTaskLoader<GetTransactionsResponse> 
     @Nullable
     @Override
     public GetTransactionsResponse loadInBackground() {
-        return actionServiceBlockingStub.getTransactions(GetTransactionsRequest
-                .newBuilder()
-                .setCount(0)
-                .setLastTransactionId(lastId)
-                .build());
+        if (ConnectionUtils.getConnectionInfo(getContext()) && ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
+            return actionServiceBlockingStub.getTransactions(GetTransactionsRequest
+                    .newBuilder()
+                    .setCount(0)
+                    .setLastTransactionId(lastId)
+                    .build());
+        } else {
+            return null;
+        }
     }
 }

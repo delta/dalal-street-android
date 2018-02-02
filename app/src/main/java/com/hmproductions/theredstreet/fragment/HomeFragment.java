@@ -24,6 +24,7 @@ import android.widget.TextView;
 
 import com.hmproductions.theredstreet.adapter.CompanyTickerRecyclerAdapter;
 import com.hmproductions.theredstreet.data.CompanyTickerDetails;
+import com.hmproductions.theredstreet.utils.ConnectionUtils;
 import com.hmproductions.theredstreet.utils.Constants;
 import com.hmproductions.theredstreet.R;
 import com.hmproductions.theredstreet.adapter.NewsRecyclerAdapter;
@@ -71,6 +72,7 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
     LinearLayoutManager linearLayoutManager;
 
     List<CompanyTickerDetails> companyTickerDetailsList = new ArrayList<>();
+    ConnectionUtils.OnNetworkDownHandler networkDownHandler;
 
     Handler handler = new Handler();
 
@@ -97,6 +99,16 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
 
     public HomeFragment() {
         // Required empty public constructor
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        try {
+            networkDownHandler = (ConnectionUtils.OnNetworkDownHandler) context;
+        } catch (ClassCastException classCastException) {
+            throw new ClassCastException(context.toString() + " must implement network down hnadler.");
+        }
     }
 
     @Override
@@ -170,9 +182,14 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
     @Override
     public void onLoadFinished(Loader<List<NewsDetails>> loader, List<NewsDetails> data) {
 
+        if (data == null) {
+            networkDownHandler.onNetworkDownError();
+            return;
+        }
+
         StringBuilder builder = new StringBuilder("");
 
-        if (data != null && data.size()!=0) {
+        if (data.size()!=0) {
             newsRecyclerAdapter.swapData(data);
 
             for(GlobalStockDetails currentStockDetails : MainActivity.globalStockDetails){

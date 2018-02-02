@@ -1,5 +1,6 @@
 package com.hmproductions.theredstreet.fragment;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -21,6 +22,7 @@ import com.hmproductions.theredstreet.dagger.ContextModule;
 import com.hmproductions.theredstreet.dagger.DaggerDalalStreetApplicationComponent;
 import com.hmproductions.theredstreet.data.LeaderboardDetails;
 import com.hmproductions.theredstreet.loaders.LeaderBoardLoader;
+import com.hmproductions.theredstreet.utils.ConnectionUtils;
 import com.hmproductions.theredstreet.utils.MiscellaneousUtils;
 
 import java.util.ArrayList;
@@ -54,12 +56,25 @@ public class LeaderboardFragment extends Fragment implements LoaderManager.Loade
     TextView personalWealthTextView;
 
     private ArrayList<LeaderboardDetails> leaderBoardDetailsList = new ArrayList<>();
+
+    ConnectionUtils.OnNetworkDownHandler networkDownHandler;
+
     AlertDialog loadingDialog;
     TextView totalWorthTextView;
     LeaderboardRecyclerAdapter leaderboardRecyclerAdapter ;
 
     public LeaderboardFragment() {
         // Required empty public constructor
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        try {
+            networkDownHandler = (ConnectionUtils.OnNetworkDownHandler) context;
+        } catch (ClassCastException classCastException) {
+            throw new ClassCastException(context.toString() + " must implement network down hnadler.");
+        }
     }
 
     @Override
@@ -117,6 +132,11 @@ public class LeaderboardFragment extends Fragment implements LoaderManager.Loade
     @Override
     public void onLoadFinished(Loader<GetLeaderboardResponse> loader, GetLeaderboardResponse data) {
         loadingDialog.dismiss();
+
+        if (data == null) {
+            networkDownHandler.onNetworkDownError();
+            return;
+        }
 
         if (data.getStatusCode().getNumber() == 0) {
             personalRankTextView.setText(String.valueOf(data.getMyRank()));

@@ -19,28 +19,6 @@ public class MiscellaneousUtils {
         return dp * ((float)metrics.densityDpi / DisplayMetrics.DENSITY_DEFAULT);
     }
 
-    public static boolean getConnectionInfo(Context context) {
-        ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        if (connectivityManager != null) {
-            NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
-            return (networkInfo != null && networkInfo.isConnected());
-        } else {
-            return false;
-        }
-    }
-
-    public static boolean isReachableByTcp(String host, int port) {
-        try {
-            Socket socket = new Socket();
-            SocketAddress socketAddress = new InetSocketAddress(host, port);
-            socket.connect(socketAddress, 2000);
-            socket.close();
-            return true;
-        } catch (IOException e) {
-            return false;
-        }
-    }
-
     public static String sessionId = "dalalStreetSessionId";
     public static String username = null;
 

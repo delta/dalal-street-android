@@ -1,6 +1,7 @@
 package com.hmproductions.theredstreet.fragment;
 
 
+import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -23,6 +24,7 @@ import com.hmproductions.theredstreet.dagger.ContextModule;
 import com.hmproductions.theredstreet.dagger.DaggerDalalStreetApplicationComponent;
 import com.hmproductions.theredstreet.data.Order;
 import com.hmproductions.theredstreet.loaders.OpenOrdersLoader;
+import com.hmproductions.theredstreet.utils.ConnectionUtils;
 import com.hmproductions.theredstreet.utils.Constants;
 
 import java.util.ArrayList;
@@ -60,10 +62,22 @@ public class OrdersFragment extends Fragment implements
 
     private OrdersRecyclerAdapter ordersRecyclerAdapter;
     private SubscriptionId orderSubscriptionId = null;
+
+    private ConnectionUtils.OnNetworkDownHandler networkDownHandler;
     AlertDialog loadingOrdersDialog;
 
     public OrdersFragment() {
         // Required empty public constructor
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        try {
+            networkDownHandler = (ConnectionUtils.OnNetworkDownHandler) context;
+        } catch (ClassCastException classCastException) {
+            throw new ClassCastException(context.toString() + " must implement network down hnadler.");
+        }
     }
 
     @Override
@@ -150,6 +164,11 @@ public class OrdersFragment extends Fragment implements
 
     @Override
     public void onLoadFinished(Loader<GetMyOpenOrdersResponse> loader, GetMyOpenOrdersResponse response) {
+
+        if (response == null) {
+            networkDownHandler.onNetworkDownError();
+            return;
+        }
 
         ArrayList<Order> ordersList = new ArrayList<>();
 

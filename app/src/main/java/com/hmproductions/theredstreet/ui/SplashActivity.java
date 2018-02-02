@@ -8,7 +8,6 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -18,6 +17,7 @@ import com.hmproductions.theredstreet.dagger.DaggerDalalStreetApplicationCompone
 import com.hmproductions.theredstreet.data.GlobalStockDetails;
 import com.hmproductions.theredstreet.data.StockDetails;
 import com.hmproductions.theredstreet.loaders.LoginLoader;
+import com.hmproductions.theredstreet.utils.ConnectionUtils;
 import com.hmproductions.theredstreet.utils.Constants;
 import com.hmproductions.theredstreet.utils.MiscellaneousUtils;
 
@@ -75,7 +75,7 @@ public class SplashActivity extends AppCompatActivity implements LoaderManager.L
 
         splashText.setText(getString(R.string.signing_in));
 
-        if (MiscellaneousUtils.getConnectionInfo(this)) {
+        if (ConnectionUtils.getConnectionInfo(this)) {
             if (email != null && !email.equals("")) {
 
                 Bundle bundle = new Bundle();

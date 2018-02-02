@@ -18,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.hmproductions.theredstreet.utils.ConnectionUtils;
 import com.hmproductions.theredstreet.utils.Constants;
 import com.hmproductions.theredstreet.R;
 import com.hmproductions.theredstreet.adapter.NewsRecyclerAdapter;
@@ -47,6 +48,8 @@ public class NewsFragment extends Fragment implements LoaderManager.LoaderCallba
     TextView noNewsTextView;
     AlertDialog loadingNewsDialog;
 
+    private ConnectionUtils.OnNetworkDownHandler networkDownHandler;
+
     private BroadcastReceiver refreshNewsListReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -58,6 +61,16 @@ public class NewsFragment extends Fragment implements LoaderManager.LoaderCallba
 
     public NewsFragment() {
         // Required empty public constructor
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        try {
+            networkDownHandler = (ConnectionUtils.OnNetworkDownHandler) context;
+        } catch (ClassCastException classCastException) {
+            throw new ClassCastException(context.toString() + " must implement network down hnadler.");
+        }
     }
 
     @Override
@@ -96,6 +109,10 @@ public class NewsFragment extends Fragment implements LoaderManager.LoaderCallba
     public void onLoadFinished(Loader<List<NewsDetails>> loader, List<NewsDetails> data) {
 
         loadingNewsDialog.dismiss();
+
+        if (data == null) {
+            networkDownHandler.onNetworkDownError();
+        }
 
         if (data != null && data.size()!=0) {
             newsRecyclerAdapter.swapData(data);

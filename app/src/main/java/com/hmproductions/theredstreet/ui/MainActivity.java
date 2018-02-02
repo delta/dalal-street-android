@@ -45,6 +45,7 @@ import com.hmproductions.theredstreet.fragment.StockExchangeFragment;
 import com.hmproductions.theredstreet.fragment.TradeFragment;
 import com.hmproductions.theredstreet.fragment.TransactionsFragment;
 import com.hmproductions.theredstreet.loaders.SubscriptionLoader;
+import com.hmproductions.theredstreet.utils.ConnectionUtils;
 import com.hmproductions.theredstreet.utils.Constants;
 import com.hmproductions.theredstreet.utils.MiscellaneousUtils;
 import com.hmproductions.theredstreet.utils.StockUtils;
@@ -78,7 +79,8 @@ import static com.hmproductions.theredstreet.ui.LoginActivity.PASSWORD_KEY;
 /* Subscribes to GetTransactions*/
 public class MainActivity extends AppCompatActivity implements
         NavigationView.OnNavigationItemSelectedListener,
-        LoaderManager.LoaderCallbacks<List<Subscription>>{
+        LoaderManager.LoaderCallbacks<List<Subscription>>,
+        ConnectionUtils.OnNetworkDownHandler {
 
     private static final long DRAWER_DURATION = 450;
     public static final String CASH_WORTH_KEY = "cash-worth-key";
@@ -109,6 +111,8 @@ public class MainActivity extends AppCompatActivity implements
     public static List<StockDetails> ownedStockDetails;
     public static List<GlobalStockDetails> globalStockDetails;
     private List<SubscriptionId> subscriptionIds = new ArrayList<>();
+
+    private static boolean shouldUnsubscribe = true;
 
     @BindView(R.id.stockWorth_textView)
     TextView stockTextView;
@@ -551,8 +555,10 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        for (SubscriptionId currentSubscriptionId : subscriptionIds) {
-            streamServiceBlockingStub.unsubscribe(UnsubscribeRequest.newBuilder().setSubscriptionId(currentSubscriptionId).build());
+        if (shouldUnsubscribe) {
+            for (SubscriptionId currentSubscriptionId : subscriptionIds) {
+                streamServiceBlockingStub.unsubscribe(UnsubscribeRequest.newBuilder().setSubscriptionId(currentSubscriptionId).build());
+            }
         }
     }
 
@@ -578,6 +584,11 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void onLoadFinished(Loader<List<Subscription>> loader, List<Subscription> data) {
 
+        if (data == null) {
+            onNetworkDownError();
+            return;
+        }
+
         for (Subscription currentSubscription : data) {
 
             subscriptionIds.add(currentSubscription.getSubscriptionId());
@@ -599,5 +610,12 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void onLoaderReset(Loader<List<Subscription>> loader) {
         // Do nothing
+    }
+
+    @Override
+    public void onNetworkDownError() {
+        shouldUnsubscribe = false;
+        startActivity(new Intent(this, SplashActivity.class));
+        finish();
     }
 }

@@ -29,6 +29,8 @@ import com.hmproductions.theredstreet.dagger.ContextModule;
 import com.hmproductions.theredstreet.dagger.DaggerDalalStreetApplicationComponent;
 import com.hmproductions.theredstreet.data.MarketDepth;
 import com.hmproductions.theredstreet.loaders.CompanyProfileLoader;
+import com.hmproductions.theredstreet.ui.SplashActivity;
+import com.hmproductions.theredstreet.utils.ConnectionUtils;
 import com.hmproductions.theredstreet.utils.Constants;
 import com.hmproductions.theredstreet.utils.StockUtils;
 import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner;
@@ -95,6 +97,7 @@ public class MarketDepthFragment extends Fragment implements LoaderManager.Loade
     ImageView arrowImage;
 
     String currentCompany;
+    ConnectionUtils.OnNetworkDownHandler networkDownHandler;
 
     ArrayList<MarketDepth> bidArrayList, askArrayList;
 
@@ -118,6 +121,16 @@ public class MarketDepthFragment extends Fragment implements LoaderManager.Loade
 
     public MarketDepthFragment() {
         // Required empty public constructor
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        try {
+            networkDownHandler = (ConnectionUtils.OnNetworkDownHandler) context;
+        } catch (ClassCastException classCastException) {
+            throw new ClassCastException(context.toString() + " must implement network down hnadler.");
+        }
     }
 
     @Override
@@ -303,6 +316,11 @@ public class MarketDepthFragment extends Fragment implements LoaderManager.Loade
 
     @Override
     public void onLoadFinished(Loader<GetCompanyProfileResponse> loader, GetCompanyProfileResponse companyProfileResponse) {
+
+        if (companyProfileResponse == null) {
+            networkDownHandler.onNetworkDownError();
+            return;
+        }
 
         Stock currentStock = companyProfileResponse.getStockDetails();
 

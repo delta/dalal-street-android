@@ -5,6 +5,9 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.AsyncTaskLoader;
 
+import com.hmproductions.theredstreet.utils.ConnectionUtils;
+import com.hmproductions.theredstreet.utils.Constants;
+
 import dalalstreet.api.DalalActionServiceGrpc;
 import dalalstreet.api.actions.GetCompanyProfileRequest;
 import dalalstreet.api.actions.GetCompanyProfileResponse;
@@ -29,12 +32,15 @@ public class CompanyProfileLoader extends AsyncTaskLoader<GetCompanyProfileRespo
     @Nullable
     @Override
     public GetCompanyProfileResponse loadInBackground() {
-        return actionServiceBlockingStub.getCompanyProfile(
-                GetCompanyProfileRequest.newBuilder()
-                        .setStockId(stockId)
-                        .setGranularity(StockHistoryGranularity.OneDay)
-                        .setGetOnlyHistory(false)
-                        .build()
-        );
+        if (ConnectionUtils.getConnectionInfo(getContext()) && ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT))
+            return actionServiceBlockingStub.getCompanyProfile(
+                    GetCompanyProfileRequest.newBuilder()
+                            .setStockId(stockId)
+                            .setGranularity(StockHistoryGranularity.OneDay)
+                            .setGetOnlyHistory(false)
+                            .build()
+            );
+        else
+            return null;
     }
 }

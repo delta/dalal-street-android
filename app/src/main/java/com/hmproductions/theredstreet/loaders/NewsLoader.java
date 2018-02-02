@@ -5,6 +5,8 @@ import android.support.v4.content.AsyncTaskLoader;
 import android.widget.Toast;
 
 import com.hmproductions.theredstreet.data.NewsDetails;
+import com.hmproductions.theredstreet.utils.ConnectionUtils;
+import com.hmproductions.theredstreet.utils.Constants;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,23 +33,28 @@ public class NewsLoader extends AsyncTaskLoader<List<NewsDetails>> {
     @Override
     public List<NewsDetails> loadInBackground() {
 
-        List<NewsDetails> newsList = new ArrayList<>();
+        if (ConnectionUtils.getConnectionInfo(getContext()) && ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
 
-        GetMarketEventsResponse marketEventsResponse = actionServiceBlockingStub.getMarketEvents(
-                GetMarketEventsRequest.newBuilder().setCount(0).setLastEventId(0).build());
+            List<NewsDetails> newsList = new ArrayList<>();
 
-        if (marketEventsResponse.getStatusCode().getNumber() == 0) {
+            GetMarketEventsResponse marketEventsResponse = actionServiceBlockingStub.getMarketEvents(
+                    GetMarketEventsRequest.newBuilder().setCount(0).setLastEventId(0).build());
 
-            newsList.clear();
+            if (marketEventsResponse.getStatusCode().getNumber() == 0) {
 
-            for (MarketEvent currentMarketEvent : marketEventsResponse.getMarketEventsList()) {
-                newsList.add(new NewsDetails(currentMarketEvent.getCreatedAt(), currentMarketEvent.getHeadline(), currentMarketEvent.getText()));
+                newsList.clear();
+
+                for (MarketEvent currentMarketEvent : marketEventsResponse.getMarketEventsList()) {
+                    newsList.add(new NewsDetails(currentMarketEvent.getCreatedAt(), currentMarketEvent.getHeadline(), currentMarketEvent.getText()));
+                }
+
+                return newsList;
+
+            } else {
+                Toast.makeText(getContext(), "Server Error", Toast.LENGTH_SHORT).show();
+                return null;
             }
-
-            return newsList;
-
         } else {
-            Toast.makeText(getContext(), "Server Error", Toast.LENGTH_SHORT).show();
             return null;
         }
     }
