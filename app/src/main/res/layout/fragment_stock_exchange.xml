@@ -16,7 +16,6 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
             android:hint="@string/pick_a_company"
-            android:textSize="22sp"
             app:met_baseColor="@color/neutral_font_color"
             app:met_floatingLabel="normal"
             app:met_primaryColor="@color/neutral_font_color"

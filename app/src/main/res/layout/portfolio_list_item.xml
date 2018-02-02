@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/black_background"
@@ -25,7 +25,7 @@
             android:gravity="center"
             android:text="Google"
             android:textColor="@color/neutral_font_color"
-            android:textSize="22sp" />
+            android:textSize="20sp" />
 
         <TextView
             android:id="@+id/quantity_textView"
@@ -36,7 +36,7 @@
             android:gravity="center"
             android:text="23"
             android:textColor="@color/neutral_font_color"
-            android:textSize="22sp" />
+            android:textSize="20sp" />
 
         <TextView
             android:id="@+id/price_textView"
@@ -47,7 +47,7 @@
             android:gravity="center"
             android:text="225"
             android:textColor="@color/neutral_font_color"
-            android:textSize="22sp" />
+            android:textSize="20sp" />
 
         <TextView
             android:id="@+id/worth_textView"
@@ -58,15 +58,15 @@
             android:gravity="center"
             android:text="5175"
             android:textColor="@color/neon_blue"
-            android:textSize="22sp" />
+            android:textSize="20sp" />
 
     </LinearLayout>
 
     <View
         android:layout_width="match_parent"
-        android:layout_height="1dp"
+        android:layout_height=".75dp"
         android:layout_marginEnd="0dp"
         android:layout_marginStart="0dp"
-        android:background="#FFFFFF" />
+        android:background="#616161" />
 
 </LinearLayout>
