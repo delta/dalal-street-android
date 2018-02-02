@@ -1,4 +1,4 @@
-package com.hmproductions.theredstreet.fragment;
+package com.hmproductions.theredstreet.fragment.marketDepth;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -29,7 +29,6 @@ import com.hmproductions.theredstreet.dagger.ContextModule;
 import com.hmproductions.theredstreet.dagger.DaggerDalalStreetApplicationComponent;
 import com.hmproductions.theredstreet.data.MarketDepth;
 import com.hmproductions.theredstreet.loaders.CompanyProfileLoader;
-import com.hmproductions.theredstreet.ui.SplashActivity;
 import com.hmproductions.theredstreet.utils.ConnectionUtils;
 import com.hmproductions.theredstreet.utils.Constants;
 import com.hmproductions.theredstreet.utils.StockUtils;
@@ -59,7 +58,7 @@ import io.grpc.stub.StreamObserver;
 
 import static com.hmproductions.theredstreet.utils.StockUtils.getStockIdFromCompanyName;
 
-public class MarketDepthFragment extends Fragment implements LoaderManager.LoaderCallbacks<GetCompanyProfileResponse> {
+public class DepthTableFragment extends Fragment implements LoaderManager.LoaderCallbacks<GetCompanyProfileResponse> {
 
     private static final String COMPANY_NAME_KEY = "company-name-key";
 
@@ -119,7 +118,7 @@ public class MarketDepthFragment extends Fragment implements LoaderManager.Loade
         }
     };
 
-    public MarketDepthFragment() {
+    public DepthTableFragment() {
         // Required empty public constructor
     }
 
@@ -136,7 +135,7 @@ public class MarketDepthFragment extends Fragment implements LoaderManager.Loade
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        View rootView = inflater.inflate(R.layout.fragment_market_depth, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_depth_table, container, false);
 
         DaggerDalalStreetApplicationComponent.builder().contextModule(new ContextModule(getContext())).build().inject(this);
         ButterKnife.bind(this, rootView);

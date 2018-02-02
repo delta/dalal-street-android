@@ -3,7 +3,7 @@ package com.hmproductions.theredstreet.dagger;
 import com.hmproductions.theredstreet.fragment.OrdersFragment;
 import com.hmproductions.theredstreet.fragment.PortfolioFragment;
 import com.hmproductions.theredstreet.fragment.TradeFragment;
-import com.hmproductions.theredstreet.fragment.MarketDepthFragment;
+import com.hmproductions.theredstreet.fragment.marketDepth.DepthTableFragment;
 import com.hmproductions.theredstreet.fragment.HomeFragment;
 import com.hmproductions.theredstreet.fragment.LeaderboardFragment;
 import com.hmproductions.theredstreet.fragment.MortgageFragment;
@@ -25,7 +25,7 @@ public interface DalalStreetApplicationComponent {
     void inject(MainActivity mainActivity);
     void inject(SplashActivity splashActivity);
 
-    void inject(MarketDepthFragment marketDepthFragment);
+    void inject(DepthTableFragment depthTableFragment);
     void inject(HomeFragment homeFragment);
     void inject(TradeFragment tradeFragment);
     void inject(NewsFragment newsFragment);
