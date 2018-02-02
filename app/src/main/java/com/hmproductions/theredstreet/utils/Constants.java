@@ -7,6 +7,7 @@ public class Constants {
 
     public static final int NUMBER_OF_COMPANIES = 30;
 
+    public static final int SUBSCRIPTION_LOADER = 17;
     public static final int LOGIN_LOADER_ID = 101;
     public static final int TRADE_LOADER_ID = 301;
     public static final int ORDERS_LOADER_ID = 401;

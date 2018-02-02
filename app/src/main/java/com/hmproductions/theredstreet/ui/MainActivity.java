@@ -10,6 +10,8 @@ import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.Loader;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -29,6 +31,8 @@ import com.hmproductions.theredstreet.dagger.ContextModule;
 import com.hmproductions.theredstreet.dagger.DaggerDalalStreetApplicationComponent;
 import com.hmproductions.theredstreet.data.GlobalStockDetails;
 import com.hmproductions.theredstreet.data.StockDetails;
+import com.hmproductions.theredstreet.data.Subscription;
+import com.hmproductions.theredstreet.data.Subscription.SubscriptionType;
 import com.hmproductions.theredstreet.fragment.CompanyFragment;
 import com.hmproductions.theredstreet.fragment.HomeFragment;
 import com.hmproductions.theredstreet.fragment.LeaderboardFragment;
@@ -40,6 +44,7 @@ import com.hmproductions.theredstreet.fragment.PortfolioFragment;
 import com.hmproductions.theredstreet.fragment.StockExchangeFragment;
 import com.hmproductions.theredstreet.fragment.TradeFragment;
 import com.hmproductions.theredstreet.fragment.TransactionsFragment;
+import com.hmproductions.theredstreet.loaders.SubscriptionLoader;
 import com.hmproductions.theredstreet.utils.Constants;
 import com.hmproductions.theredstreet.utils.MiscellaneousUtils;
 import com.hmproductions.theredstreet.utils.StockUtils;
@@ -57,13 +62,10 @@ import dalalstreet.api.DalalActionServiceGrpc;
 import dalalstreet.api.DalalStreamServiceGrpc;
 import dalalstreet.api.actions.LogoutRequest;
 import dalalstreet.api.actions.LogoutResponse;
-import dalalstreet.api.datastreams.DataStreamType;
 import dalalstreet.api.datastreams.MarketEventUpdate;
 import dalalstreet.api.datastreams.StockExchangeDataPoint;
 import dalalstreet.api.datastreams.StockExchangeUpdate;
 import dalalstreet.api.datastreams.StockPricesUpdate;
-import dalalstreet.api.datastreams.SubscribeRequest;
-import dalalstreet.api.datastreams.SubscribeResponse;
 import dalalstreet.api.datastreams.SubscriptionId;
 import dalalstreet.api.datastreams.TransactionUpdate;
 import dalalstreet.api.datastreams.UnsubscribeRequest;
@@ -74,7 +76,9 @@ import static com.hmproductions.theredstreet.ui.LoginActivity.EMAIL_KEY;
 import static com.hmproductions.theredstreet.ui.LoginActivity.PASSWORD_KEY;
 
 /* Subscribes to GetTransactions*/
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends AppCompatActivity implements
+        NavigationView.OnNavigationItemSelectedListener,
+        LoaderManager.LoaderCallbacks<List<Subscription>>{
 
     private static final long DRAWER_DURATION = 450;
     public static final String CASH_WORTH_KEY = "cash-worth-key";
@@ -160,10 +164,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         updateValues();
 
-        getTransactionSubscriptionId();
-        getStockPricesSubscriptionId();
-        getStockExchangeSubscriptionId();
-        getMarketEventsSubscriptionId();
+        getSupportLoaderManager().restartLoader(Constants.SUBSCRIPTION_LOADER, null, this);
 
         StartMakingButtonsTransparent();
         updateStockWorthViaStreamUpdates();
@@ -324,15 +325,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         totalTextView.setText(String.valueOf(totalWorth));
     }
 
-    // Subscribes to transaction stream and gets updates (TESTED)
-    private void getTransactionSubscriptionId() {
-        SubscribeResponse subscribeResponse = streamServiceBlockingStub.subscribe(
-                SubscribeRequest.newBuilder().setDataStreamType(DataStreamType.TRANSACTIONS).setDataStreamId("").build()
-        );
-
-        subscribeToTransactionsStream(subscribeResponse.getSubscriptionId());
-    }
-
+    // Subscribes to transaction stream and gets updates (TESTED) TODO : Check order fill stream
     private void subscribeToTransactionsStream(SubscriptionId transactionsSubscriptionId) {
 
         streamServiceStub.getTransactionUpdates(transactionsSubscriptionId,
@@ -388,32 +381,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     // Subscribes to market events stream and gets updates (TESTED)
-    private void getMarketEventsSubscriptionId() {
-        streamServiceStub.subscribe(
-                SubscribeRequest.newBuilder().setDataStreamType(DataStreamType.MARKET_EVENTS).setDataStreamId("").build(),
-                new StreamObserver<SubscribeResponse>() {
-                    @Override
-                    public void onNext(SubscribeResponse value) {
-                        if (value.getStatusCode().getNumber() == 0) {
-                            subscriptionIds.add(value.getSubscriptionId());
-                            subscribeToMarketEventsUpdateStream(value.getSubscriptionId());
-                        } else
-                            Toast.makeText(MainActivity.this, "Server internal error", Toast.LENGTH_SHORT).show();
-                        onCompleted();
-                    }
-
-                    @Override
-                    public void onError(Throwable t) {
-
-                    }
-
-                    @Override
-                    public void onCompleted() {
-
-                    }
-                }
-        );
-    }
     private void subscribeToMarketEventsUpdateStream(SubscriptionId marketEventsSubscriptionId) {
 
         streamServiceStub.getMarketEventUpdates(marketEventsSubscriptionId,
@@ -437,33 +404,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     // Subscribes to stock prices stream and gets updates (TESTED)
-    private void getStockPricesSubscriptionId() {
-        streamServiceStub.subscribe(
-                SubscribeRequest.newBuilder().setDataStreamType(DataStreamType.STOCK_PRICES).setDataStreamId("").build(),
-                new StreamObserver<SubscribeResponse>() {
-                    @Override
-                    public void onNext(SubscribeResponse value) {
-                        if (value.getStatusCode().getNumber() == 0) {
-                            subscriptionIds.add(value.getSubscriptionId());
-                            subscribeToStockPricesStream(value.getSubscriptionId());
-                        } else
-                            Toast.makeText(MainActivity.this, "Server internal error", Toast.LENGTH_SHORT).show();
-                        onCompleted();
-                    }
-
-                    @Override
-                    public void onError(Throwable t) {
-
-                    }
-
-                    @Override
-                    public void onCompleted() {
-
-                    }
-                }
-        );
-    }
-
     private void subscribeToStockPricesStream(SubscriptionId stockPricesSubscriptionId) {
         streamServiceStub.getStockPricesUpdates(stockPricesSubscriptionId,
                 new StreamObserver<StockPricesUpdate>() {
@@ -492,33 +432,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     // Subscribes to stock exchange stream and gets updates globalStockDetails (TESTED)
-    private void getStockExchangeSubscriptionId() {
-        streamServiceStub.subscribe(
-                SubscribeRequest.newBuilder().setDataStreamType(DataStreamType.STOCK_EXCHANGE).setDataStreamId("").build(),
-                new StreamObserver<SubscribeResponse>() {
-                    @Override
-                    public void onNext(SubscribeResponse value) {
-                        if (value.getStatusCode().getNumber() == 0) {
-                            subscriptionIds.add(value.getSubscriptionId());
-                            subscribeToStockExchangeStream(value.getSubscriptionId());
-                        } else
-                            Toast.makeText(MainActivity.this, "Server internal error", Toast.LENGTH_SHORT).show();
-                        onCompleted();
-                    }
-
-                    @Override
-                    public void onError(Throwable t) {
-
-                    }
-
-                    @Override
-                    public void onCompleted() {
-
-                    }
-                }
-        );
-    }
-
     private void subscribeToStockExchangeStream(SubscriptionId stockExchangeSubscriptionId) {
 
         streamServiceStub.getStockExchangeUpdates(stockExchangeSubscriptionId,
@@ -655,5 +568,36 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public void onPause() {
         super.onPause();
         LocalBroadcastManager.getInstance(this).unregisterReceiver(refreshCashStockReceiver);
+    }
+
+    @Override
+    public Loader<List<Subscription>> onCreateLoader(int id, Bundle args) {
+        return new SubscriptionLoader(this, streamServiceBlockingStub);
+    }
+
+    @Override
+    public void onLoadFinished(Loader<List<Subscription>> loader, List<Subscription> data) {
+
+        for (Subscription currentSubscription : data) {
+
+            subscriptionIds.add(currentSubscription.getSubscriptionId());
+
+            if (currentSubscription.getType() == SubscriptionType.TRANSACTIONS)
+                subscribeToTransactionsStream(currentSubscription.getSubscriptionId());
+
+            if (currentSubscription.getType() == SubscriptionType.MARKET_EVENTS)
+                subscribeToMarketEventsUpdateStream(currentSubscription.getSubscriptionId());
+
+            if (currentSubscription.getType() == SubscriptionType.STOCK_EXCHANGE)
+                subscribeToStockExchangeStream(currentSubscription.getSubscriptionId());
+
+            if (currentSubscription.getType() == SubscriptionType.STOCK_PRICES)
+                subscribeToStockPricesStream(currentSubscription.getSubscriptionId());
+        }
+    }
+
+    @Override
+    public void onLoaderReset(Loader<List<Subscription>> loader) {
+        // Do nothing
     }
 }

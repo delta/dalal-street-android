@@ -125,7 +125,7 @@ public class TradeFragment extends Fragment implements LoaderManager.LoaderCallb
         orderSpinner.setOnItemClickListener((aV, view, i, l) -> orderPriceEditText.setEnabled(!aV.getItemAtPosition(i).toString().equals("Marker order")));
 
         return rootView;
-    } // todo : when user buys stock for first time
+    }
 
     @OnClick(R.id.bidAsk_button)
     void onBidAskButtonClick() {

@@ -46,7 +46,7 @@ public class OrdersRecyclerAdapter extends RecyclerView.Adapter<OrdersRecyclerAd
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
 
-        Order order = orderList.get(orderList.size()-position-1);
+        Order order = orderList.get(position);
         String tempString;
 
         tempString = (order.isBid()?"BID - ":"ASK - ") + StockUtils.getOrderTypeFromTypeId(order.getOrderType());
@@ -84,6 +84,7 @@ public class OrdersRecyclerAdapter extends RecyclerView.Adapter<OrdersRecyclerAd
     }
 
     public void swapData(List<Order> list) {
+
         orderList = list;
 
         Collections.sort(orderList, (o1, o2) -> {
