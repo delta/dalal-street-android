@@ -308,7 +308,8 @@ public class DepthTableFragment extends Fragment implements LoaderManager.Loader
     public Loader<GetCompanyProfileResponse> onCreateLoader(int id, Bundle args) {
 
         if (getContext() != null)
-            return new CompanyProfileLoader(getContext(), actionServiceBlockingStub, getStockIdFromCompanyName(args.getString(COMPANY_NAME_KEY)));
+            return new CompanyProfileLoader(getContext(), actionServiceBlockingStub
+                    , getStockIdFromCompanyName(args.getString(COMPANY_NAME_KEY)));
         else
             return null;
     }

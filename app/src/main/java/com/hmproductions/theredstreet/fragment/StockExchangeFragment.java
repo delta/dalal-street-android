@@ -150,7 +150,7 @@ public class StockExchangeFragment extends Fragment implements LoaderManager.Loa
             Toast.makeText(getActivity(), "Enter the number of Stocks", Toast.LENGTH_SHORT).show();
         } else {
 
-            if (!(ConnectionUtils.getConnectionInfo(getContext()) && ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT))) {
+            if (!(ConnectionUtils.getConnectionInfo(getContext()))) {
                 networkDownHandler.onNetworkDownError();
                 return;
             }

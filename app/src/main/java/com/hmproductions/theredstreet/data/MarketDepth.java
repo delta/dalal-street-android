@@ -1,13 +1,8 @@
 package com.hmproductions.theredstreet.data;
 
-import android.annotation.SuppressLint;
-import android.os.Parcel;
-import android.os.Parcelable;
+public class MarketDepth {
 
-@SuppressLint("ParcelCreator")
-public class MarketDepth implements Parcelable {
-
-    int price,volume;
+    private int price,volume;
 
     public MarketDepth(int price, int volume) {
         this.price = price;
@@ -28,16 +23,5 @@ public class MarketDepth implements Parcelable {
 
     public void setVolume(int volume) {
         this.volume = volume;
-    }
-
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel parcel, int i) {
-
     }
 }

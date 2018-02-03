@@ -1,17 +1,30 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/black_background">
+    android:background="@color/black_background"
+    android:orientation="vertical">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner
+        android:id="@+id/graph_company_spinner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/kreon_light"
+        android:hint="@string/pick_a_company"
+        android:layout_marginStart="12dp"
+        android:layout_marginEnd="12dp"
+        app:met_baseColor="@color/neutral_font_color"
+        app:met_floatingLabel="normal"
+        app:met_primaryColor="@color/neutral_font_color"
+        app:met_textColor="@color/neutral_font_color"
+        app:met_textColorHint="@color/neutral_font_color"
+        app:met_underlineColor="@color/neutral_font_color" />
+
+
+    <com.github.mikephil.charting.charts.LineChart
+        android:id="@+id/market_depth_chart"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_centerInParent="true"
-        android:text="Put the graph layout here."
-        android:textAllCaps="true"
-        android:textColor="@color/neutral_font_color"
-        android:textSize="20sp" />
+        android:background="@color/black_background" />
 
-</RelativeLayout>
+</LinearLayout>

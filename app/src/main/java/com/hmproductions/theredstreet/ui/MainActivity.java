@@ -36,7 +36,6 @@ import com.hmproductions.theredstreet.data.Subscription.SubscriptionType;
 import com.hmproductions.theredstreet.fragment.CompanyFragment;
 import com.hmproductions.theredstreet.fragment.HomeFragment;
 import com.hmproductions.theredstreet.fragment.LeaderboardFragment;
-import com.hmproductions.theredstreet.fragment.marketDepth.DepthTableFragment;
 import com.hmproductions.theredstreet.fragment.MortgageFragment;
 import com.hmproductions.theredstreet.fragment.NewsFragment;
 import com.hmproductions.theredstreet.fragment.OrdersFragment;

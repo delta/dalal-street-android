@@ -9,6 +9,7 @@ public class Constants {
 
     public static final int SUBSCRIPTION_LOADER = 17;
     public static final int LOGIN_LOADER_ID = 101;
+    public static final int STOCK_HISTORY_LOADER_ID = 201;
     public static final int TRADE_LOADER_ID = 301;
     public static final int ORDERS_LOADER_ID = 401;
     public static final int MORTGAGE_DETAILS_LOADER_ID = 501;
@@ -23,6 +24,7 @@ public class Constants {
     public static final String REFRESH_STOCKS_EXCHANGE_ACTION = "refresh-stock-exchange-action";
     public static final String REFRESH_OWNED_STOCKS_ACTION = "refresh-owned-stocks-action";
     public static final String REFRESH_MARKET_DEPTH= "refresh_market_depth";
+    public static final String DRAW_GRAPH_ACTION = "draw_graph_action";
     public static final String REFRESH_WORTH_TEXTVIEW_ACTION = "refresh-cash-worth-textview";
     public static final String REFRESH_DIVIDEND_ACTION = "refresh-cash-worth-textview";
     public static final String UPDATE_WORTH_VIA_STREAM_ACTION = "refresh-worth-via-stream-action";
