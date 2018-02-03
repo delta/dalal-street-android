@@ -7,6 +7,12 @@ import android.support.v4.content.AsyncTaskLoader;
 import com.hmproductions.theredstreet.utils.ConnectionUtils;
 import com.hmproductions.theredstreet.utils.Constants;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Collections;
+import java.util.Comparator;
+
 import dalalstreet.api.DalalActionServiceGrpc;
 import dalalstreet.api.actions.GetStockHistoryRequest;
 import dalalstreet.api.actions.GetStockHistoryResponse;
