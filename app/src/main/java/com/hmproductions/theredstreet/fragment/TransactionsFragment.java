@@ -117,10 +117,11 @@ public class TransactionsFragment extends Fragment implements LoaderManager.Load
         super.onDestroy();
         preferences
                 .edit()
-                .putInt(LAST_TRANSACTION_ID,0)
+                .remove(LAST_TRANSACTION_ID)
                 .apply();
 
     }
+
 
     @Override
     public Loader<GetTransactionsResponse> onCreateLoader(int id, Bundle args) {
@@ -199,6 +200,6 @@ public class TransactionsFragment extends Fragment implements LoaderManager.Load
     @Override
     public void onPause() {
         super.onPause();
-        preferences.edit().putInt(LAST_TRANSACTION_ID, 0).apply();
+        preferences.edit().remove(LAST_TRANSACTION_ID).apply();
     }
 }

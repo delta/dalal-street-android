@@ -159,4 +159,10 @@ public class LeaderboardFragment extends Fragment implements LoaderManager.Loade
     public void onLoaderReset(Loader<GetLeaderboardResponse> loader) {
         // Do nothing
     }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        leaderBoardDetailsList.clear();
+    }
 }

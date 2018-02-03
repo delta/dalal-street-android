@@ -1,20 +1,16 @@
 package com.hmproductions.theredstreet.fragment.marketDepth;
 
-
-import android.graphics.Color;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AlertDialog;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.github.mikephil.charting.charts.LineChart;
@@ -36,13 +32,9 @@ import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -51,37 +43,20 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import dalalstreet.api.DalalActionServiceGrpc;
-import dalalstreet.api.DalalStreamServiceGrpc;
 import dalalstreet.api.actions.GetStockHistoryResponse;
-import dalalstreet.api.datastreams.StockHistory;
 import dalalstreet.api.models.StockHistoryOuterClass;
 
 import static com.hmproductions.theredstreet.utils.StockUtils.getStockIdFromCompanyName;
 
-public class DepthGraphFragment extends Fragment implements LoaderManager.LoaderCallbacks<GetStockHistoryResponse>{
+public class DepthGraphFragment extends Fragment implements LoaderManager.LoaderCallbacks<GetStockHistoryResponse> {
 
     private static final String COMPANY_NAME_KEY = "company-name-key";
 
     @Inject
     DalalActionServiceGrpc.DalalActionServiceBlockingStub actionServiceBlockingStub;
 
-    @Inject
-    DalalStreamServiceGrpc.DalalStreamServiceStub streamServiceStub;
-
     @BindView(R.id.graph_company_spinner)
     MaterialBetterSpinner companiesSpinner;
-
-    @BindView(R.id.graph_current_stock_price_layout)
-    RelativeLayout currentStockLayout;
-
-    @BindView(R.id.graph_prev_day_close_stock_price)
-    TextView prevDayCloseText;
-
-    @BindView(R.id.graph_current_stock_price_textView)
-    TextView currentStockPriceText;
-
-    @BindView(R.id.graph_arrow_image_view)
-    ImageView arrowImage;
 
     @BindView(R.id.market_depth_chart)
     LineChart lineChart;
@@ -90,15 +65,24 @@ public class DepthGraphFragment extends Fragment implements LoaderManager.Loader
     ArrayList<Entry> yVals = new ArrayList<>();
     ArrayList<com.hmproductions.theredstreet.data.StockHistory> stockHistoryList = new ArrayList<>();
     ArrayList<com.hmproductions.theredstreet.data.StockHistory> trimmedStockHistoryList = new ArrayList<>();
-
     String currentCompany;
 
-    ConnectionUtils.OnNetworkDownHandler networkDownHandler;
     AlertDialog loadingDialog;
     LineDataSet set1;
+    private ConnectionUtils.OnNetworkDownHandler networkDownHandler;
 
     public DepthGraphFragment() {
         // Required empty public constructor
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        try {
+            networkDownHandler = (ConnectionUtils.OnNetworkDownHandler) context;
+        } catch (ClassCastException classCastException) {
+            throw new ClassCastException(context.toString() + " must implement network down handler.");
+        }
     }
 
     @Override
@@ -121,42 +105,37 @@ public class DepthGraphFragment extends Fragment implements LoaderManager.Loader
 
         ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(getActivity(), R.layout.company_spinner_item, StockUtils.getCompanyNamesArray());
         companiesSpinner.setAdapter(arrayAdapter);
-        
-        getData();
+        companiesSpinner.setSelected(false);
 
-
-        lineChart.setHighlightEnabled(true);
-        lineChart.setTouchEnabled(true);
-        lineChart.setDrawGridBackground(false);
-        lineChart.setGridColor(getResources().getColor(R.color.black_background));
         lineChart.setBackgroundColor(getResources().getColor(R.color.black_background));
-        lineChart.setScaleEnabled(false);
+        lineChart.setDrawGridBackground(false);
+        lineChart.setGridColor(getResources().getColor(R.color.neon_blue));
+        lineChart.setBorderColor(getResources().getColor(R.color.divider_line_gray));
         lineChart.setTouchEnabled(false);
-
-
+        lineChart.setDescription("");
 
         companiesSpinner.setOnItemClickListener((adapterView, view, i, l) -> {
             currentCompany = companiesSpinner.getText().toString();
             Bundle bundle = new Bundle();
             bundle.putString(COMPANY_NAME_KEY, currentCompany);
+            stockHistoryList.clear();
+            trimmedStockHistoryList.clear();
             xVals.clear();
             yVals.clear();
-            Log.e("SAN","size : " + xVals.size() + "  " + yVals.size());
-            if(!lineChart.isEmpty()){
+            if (!lineChart.isEmpty()) {
                 lineChart.invalidate();
                 lineChart.clear();
             }
             lineChart.clearFocus();
 
-            getActivity().getSupportLoaderManager().restartLoader(Constants.STOCK_HISTORY_LOADER_ID, bundle, this);
+            if(getActivity() != null && isAdded()){
+                loadingDialog.show();
+                getActivity().getSupportLoaderManager().restartLoader(Constants.STOCK_HISTORY_LOADER_ID, bundle, this);
+            }
+
         });
 
         return rootView;
-    }
-
-    private void getData() {
-
-
     }
 
     @Override
@@ -179,56 +158,52 @@ public class DepthGraphFragment extends Fragment implements LoaderManager.Loader
         for (Map.Entry<String, StockHistoryOuterClass.StockHistory> map : data.getStockHistoryMapMap().entrySet()) {
             com.hmproductions.theredstreet.data.StockHistory tempStockHistory =
                     new com.hmproductions.theredstreet.data.StockHistory(convertToDate(map.getKey())
-                            ,map.getValue().getClose());
+                            , map.getValue().getClose());
             stockHistoryList.add(tempStockHistory);
         }
         sortList(stockHistoryList);
         Collections.reverse(stockHistoryList);
 
-        for(int i=0 ; i<stockHistoryList.size() ;i++){
-        }
-
-        if(stockHistoryList.size() >= 10){
-            for (int i=0 ; i<10 ; i++){
+        if (stockHistoryList.size() >= 10) {
+            for (int i = 0; i < 10; i++) {
                 trimmedStockHistoryList.add(stockHistoryList.get(i));
             }
-        }else {
+        } else {
             trimmedStockHistoryList.addAll(stockHistoryList);
         }
 
         Collections.reverse(trimmedStockHistoryList);
-        for (int i=0 ; i<trimmedStockHistoryList.size() ; i++){
+        for (int i = 0; i < trimmedStockHistoryList.size(); i++) {
             xVals.add(parseDateString(convertToString(trimmedStockHistoryList.get(i).getStockDate())));
-            yVals.add(new Entry(trimmedStockHistoryList.get(i).getStockClose(),i));
-           // Log.e("SAN","X value : " + xVals + "  y value : " + yVals);
+            yVals.add(new Entry(trimmedStockHistoryList.get(i).getStockClose(), i));
         }
 
+        if(getActivity() != null && isAdded()){
+            set1 = new LineDataSet(yVals, "Stock Price");
+            set1.setFillAlpha(110);
+            set1.setLineWidth(1f);
+            set1.setColor(getResources().getColor(android.R.color.white));
+            set1.setCircleColor(getResources().getColor(android.R.color.black));
+            set1.setHighLightColor(getResources().getColor(R.color.divider_line_gray));
+            set1.setDrawFilled(false);
 
+            LineData lineData = new LineData(xVals, set1);
 
-        set1 = new LineDataSet(yVals, "Stock Price");
-        set1.setFillAlpha(110);
-        set1.setLineWidth(1f);
-        set1.setColor(getResources().getColor(android.R.color.white));
-        set1.setCircleColor(getResources().getColor(android.R.color.black));
-        set1.setHighLightColor(getResources().getColor(R.color.divider_line_gray));
-        set1.setDrawFilled(false);
-        
-        LineData lineData = new LineData(xVals,set1);
+            lineChart.setData(lineData);
+            lineChart.invalidate();
+            loadingDialog.dismiss();
 
-        lineChart.setData(lineData);
-        lineChart.invalidate();
-        lineChart.setDrawGridBackground(false);
-        lineChart.setDragEnabled(false);
-        lineChart.setScaleEnabled(false);
-        lineChart.setPinchZoom(false);
-
-        Legend legend = lineChart.getLegend();
-        legend.setTextColor(getResources().getColor(android.R.color.white));
-        XLabels xAxis = lineChart.getXLabels();
-        xAxis.setTextColor(getResources().getColor(android.R.color.white));
-        xAxis.setPosition(XLabels.XLabelPosition.BOTTOM);
-        YLabels yAxis1 = lineChart.getYLabels();
-        yAxis1.setTextColor(getResources().getColor(android.R.color.white));
+            Legend legend = lineChart.getLegend();
+            legend.setTextColor(getResources().getColor(android.R.color.white));
+            legend.setForm(Legend.LegendForm.LINE);
+            XLabels xAxis = lineChart.getXLabels();
+            xAxis.setTextColor(getResources().getColor(android.R.color.white));
+            xAxis.setPosition(XLabels.XLabelPosition.BOTTOM);
+            xAxis.setTextSize(9f);
+            YLabels yAxis1 = lineChart.getYLabels();
+            yAxis1.setTextColor(getResources().getColor(android.R.color.white));
+            yAxis1.setPosition(YLabels.YLabelPosition.LEFT);
+        }
 
 
     }
@@ -256,8 +231,8 @@ public class DepthGraphFragment extends Fragment implements LoaderManager.Loader
         return str;
     }
 
-    private Date convertToDate(String stringDate){
-        DateFormat format = new SimpleDateFormat( "yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.ENGLISH);
+    private Date convertToDate(String stringDate) {
+        DateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.ENGLISH);
         Date date = null;
         try {
             date = format.parse(stringDate);
@@ -267,21 +242,26 @@ public class DepthGraphFragment extends Fragment implements LoaderManager.Loader
         return date;
     }
 
-    private String convertToString(Date date){
-        DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'",Locale.ENGLISH);
-        String stringDate = df.format(date);
-        return stringDate;
+    private String convertToString(Date date) {
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.ENGLISH);
+        return df.format(date);
     }
 
     private void sortList(ArrayList<com.hmproductions.theredstreet.data.StockHistory> list) {
-        Collections.sort(list, new Comparator<com.hmproductions.theredstreet.data.StockHistory>() {
-            public int compare(com.hmproductions.theredstreet.data.StockHistory val1,
-                               com.hmproductions.theredstreet.data.StockHistory val2) {
+        Collections.sort(list, (val1, val2) -> {
 
-                Date date1 = val1.getStockDate();
-                Date date2 = val2.getStockDate();
-                return date1.compareTo(date2);
-            }
+            Date date1 = val1.getStockDate();
+            Date date2 = val2.getStockDate();
+            return date1.compareTo(date2);
         });
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        stockHistoryList.clear();
+        trimmedStockHistoryList.clear();
+        xVals.clear();
+        yVals.clear();
     }
 }
