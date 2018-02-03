@@ -19,6 +19,7 @@ import "actions/GetNotifications.proto";
 import "actions/GetTransactions.proto";
 import "actions/GetMortgageDetails.proto";
 import "actions/GetLeaderboard.proto";
+import "actions/GetStockHistory.proto";
 
 import "datastreams/Subscribe.proto";
 import "datastreams/MarketDepth.proto";
@@ -28,6 +29,7 @@ import "datastreams/StockPrices.proto";
 import "datastreams/StockExchange.proto";
 import "datastreams/MarketEvents.proto";
 import "datastreams/MyOrders.proto";
+import "datastreams/StockHistory.proto";
 
 service DalalActionService {
 	// Stock trading related functions
@@ -43,6 +45,7 @@ service DalalActionService {
 	rpc GetMyClosedBids(actions.GetMyClosedBidsRequest)					returns (actions.GetMyClosedBidsResponse);
 	rpc GetTransactions(actions.GetTransactionsRequest)   				returns (actions.GetTransactionsResponse);
 	rpc GetMortgageDetails(actions.GetMortgageDetailsRequest) 			returns (actions.GetMortgageDetailsResponse);
+	rpc GetStockHistory(actions.GetStockHistoryRequest)                 returns (actions.GetStockHistoryResponse);
 
 	// Getting general information
 	rpc GetCompanyProfile(actions.GetCompanyProfileRequest)				returns (actions.GetCompanyProfileResponse);
@@ -68,4 +71,5 @@ service DalalStreamService {
 	rpc GetStockExchangeUpdates(datastreams.SubscriptionId)	returns (stream datastreams.StockExchangeUpdate);
 	rpc GetStockPricesUpdates(datastreams.SubscriptionId)	returns (stream datastreams.StockPricesUpdate);
 	rpc GetTransactionUpdates(datastreams.SubscriptionId)	returns (stream datastreams.TransactionUpdate);
+	rpc GetStockHistoryUpdates(datastreams.SubscriptionId)  returns (stream datastreams.StockHistoryUpdate);
 }
