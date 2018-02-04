@@ -191,6 +191,11 @@ public class SplashActivity extends AppCompatActivity implements LoaderManager.L
                     Constants.MORTGAGE_RETRIEVE_RATE = entry.getValue();
             }
 
+            preferences.edit()
+                    .putString(Constants.MARKET_OPEN_TEXT_KEY, loginResponse.getMarketIsOpenHackyNotif())
+                    .putString(Constants.MARKET_CLOSED_TEXT_KEY, loginResponse.getMarketIsClosedHackyNotif())
+                    .apply();
+
             startActivity(intent);
             finish();
         } else {

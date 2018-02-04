@@ -36,6 +36,10 @@
             android:name=".ui.RegistrationActivity"
             android:screenOrientation="portrait"/>
 
+        <service
+            android:name=".notifications.NotificationService"
+            android:exported="false"/>
+
     </application>
 
 </manifest>

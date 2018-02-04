@@ -32,6 +32,8 @@ public class Constants {
 
     public static double MORTGAGE_DEPOSIT_RATE = 0.8;
     public static double MORTGAGE_RETRIEVE_RATE = 0.9;
+    public static final String MARKET_OPEN_TEXT_KEY = "market-open-text-key";
+    public static final String MARKET_CLOSED_TEXT_KEY = "market-closed-text-key";
 }
 
 /*  Login response : Constants

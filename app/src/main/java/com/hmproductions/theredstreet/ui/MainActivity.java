@@ -45,6 +45,7 @@ import com.hmproductions.theredstreet.fragment.TradeFragment;
 import com.hmproductions.theredstreet.fragment.TransactionsFragment;
 import com.hmproductions.theredstreet.fragment.marketDepth.MarketDepthFragment;
 import com.hmproductions.theredstreet.loaders.SubscriptionLoader;
+import com.hmproductions.theredstreet.notifications.NotificationService;
 import com.hmproductions.theredstreet.utils.ConnectionUtils;
 import com.hmproductions.theredstreet.utils.Constants;
 import com.hmproductions.theredstreet.utils.MiscellaneousUtils;
@@ -114,6 +115,7 @@ public class MainActivity extends AppCompatActivity implements
     private List<SubscriptionId> subscriptionIds = new ArrayList<>();
 
     private static boolean shouldUnsubscribe = true;
+    private static boolean logoutAction = false;
 
     @BindView(R.id.stockWorth_textView)
     TextView stockTextView;
@@ -327,6 +329,7 @@ public class MainActivity extends AppCompatActivity implements
             return;
         }
 
+        logoutAction = true;
         Intent intent = new Intent(this, LoginActivity.class);
         startActivity(intent);
         finish();
@@ -565,17 +568,6 @@ public class MainActivity extends AppCompatActivity implements
         }
     }
 
-    // Unsubscribes from all the streams subscribed in this activity.
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (shouldUnsubscribe) {
-            for (SubscriptionId currentSubscriptionId : subscriptionIds) {
-                streamServiceBlockingStub.unsubscribe(UnsubscribeRequest.newBuilder().setSubscriptionId(currentSubscriptionId).build());
-            }
-        }
-    }
-
     @Override
     public void onResume() {
         super.onResume();
@@ -637,5 +629,20 @@ public class MainActivity extends AppCompatActivity implements
         shouldUnsubscribe = false;
         startActivity(new Intent(this, SplashActivity.class));
         finish();
+    }
+
+    // Unsubscribes from all the streams subscribed in this activity.
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (shouldUnsubscribe) {
+            for (SubscriptionId currentSubscriptionId : subscriptionIds) {
+                streamServiceBlockingStub.unsubscribe(UnsubscribeRequest.newBuilder().setSubscriptionId(currentSubscriptionId).build());
+            }
+
+            if (!logoutAction) {
+                startService(new Intent(this, NotificationService.class));
+            }
+        }
     }
 }
