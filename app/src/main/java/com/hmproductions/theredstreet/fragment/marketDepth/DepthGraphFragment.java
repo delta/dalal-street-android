@@ -115,7 +115,7 @@ public class DepthGraphFragment extends Fragment implements LoaderManager.Loader
         lineChart.setBorderColor(getResources().getColor(R.color.neutral_font_color));
         lineChart.setTouchEnabled(false);
         lineChart.setDescription("");
-        lineChart.setValueTextSize(MiscellaneousUtils.convertDpToPixel(getContext(), 4));
+        lineChart.setValueTextSize(MiscellaneousUtils.convertDpToPixel(getContext(), 3));
         lineChart.setValueTextColor(getResources().getColor(R.color.neon_blue));
         lineChart.setNoDataText("Select a company to view depth timeline");
 
@@ -205,6 +205,7 @@ public class DepthGraphFragment extends Fragment implements LoaderManager.Loader
             xAxis.setTextColor(getResources().getColor(android.R.color.white));
             xAxis.setPosition(XLabels.XLabelPosition.BOTTOM);
             xAxis.setTextSize(9f);
+            xAxis.setSpaceBetweenLabels((int)MiscellaneousUtils.convertDpToPixel(getContext(), 2));
             YLabels yAxis1 = lineChart.getYLabels();
             yAxis1.setTextColor(getResources().getColor(android.R.color.white));
             yAxis1.setPosition(YLabels.YLabelPosition.LEFT);

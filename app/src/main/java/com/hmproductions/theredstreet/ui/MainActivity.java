@@ -129,6 +129,8 @@ public class MainActivity extends AppCompatActivity implements
     @BindView(R.id.drawer_edge_button)
     Button drawerEdgeButton;
 
+    AlertDialog helpDialog, logoutDialog;
+
     private BroadcastReceiver refreshCashStockReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -226,17 +228,19 @@ public class MainActivity extends AppCompatActivity implements
                         .setView(getLayoutInflater().inflate(R.layout.help_box, null))
                         .setCancelable(true)
                         .show();
+                helpDialog = builder.create();
                 return true;
 
             case R.id.action_logout:
-                new AlertDialog.Builder(this)
+                AlertDialog.Builder logOutBuilder = new AlertDialog.Builder(this);
+                logOutBuilder
                         .setMessage("Do you want to logout ?")
                         .setPositiveButton("Logout", (dialogInterface, i) -> logout())
                         .setNegativeButton(getString(R.string.cancel), (dialogInterface, i) -> dialogInterface.dismiss())
                         .setTitle("Confirm Logout")
                         .setCancelable(true)
                         .show();
-
+                logoutDialog = logOutBuilder.create();
                 return true;
 
             case android.R.id.home:
@@ -574,6 +578,12 @@ public class MainActivity extends AppCompatActivity implements
     public void onPause() {
         super.onPause();
         LocalBroadcastManager.getInstance(this).unregisterReceiver(refreshCashStockReceiver);
+        if(helpDialog != null){
+            helpDialog.dismiss();
+        }
+        if(logoutDialog != null){
+            logoutDialog.dismiss();
+        }
     }
 
     @Override

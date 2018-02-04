@@ -22,52 +22,52 @@
 
     <!-- TODO : Fix orders description text-->
     <string name="help">
-        <b><u>Welcome to Dalal Street !!</u></b>\n\nVirtual stock exchange game where players can trade stocks from market
+        <b><u>   Welcome to Dalal Street !!</u></b>\n\nVirtual stock exchange game where players can trade stocks from market
         for any company. The price of each stock depends on the company\'s market value and performance.
         At the end of the game duration, the player who amasses the most money (total worth) wins.
-        \n\nThe following is a guide explaining the structure of the game and what each feature of the game mean :-
+        \n The following is a guide explaining the structure of the game and what each feature of the game mean :-
 
         \n\n<b><u>Home</u></b>
-        \nThis tab show breaking news, company\'s stock price and previous day close.
+        \n   This tab show breaking news, company\'s stock price and previous day close.
 
         \n\n<b><u>Portfolio</u></b>
-        \nHere you can view you profile, total stocks worth and the number of stocks owned by you for each the company.
+        \n   Here you can view you profile, total stocks worth and the number of stocks owned by you for each the company.
 
         \n\n<b><u>Stock exchange</u></b>
-        \nThis is where you can buy stocks from exchange at the current rate of respective stocks.
+        \n   This is where you can buy stocks from exchange at the current rate of respective stocks.
 
         \n\n<b><u>Trade</u></b>
-        \nYou can buy or sell stocks to other players. You can ask for a particular number
+        \n   You can buy or sell stocks to other players. You can ask for a particular number
         of stocks at any price fixed by you. If someone is willing to sell their stocks at your price,
         order is filled and transaction details are issued. Equivalent amount will be deducted/added to your cash.\n\nThere are 3 types of Orders :\n\n
-        <b><u>Stoploss Order</u></b>\n
-        \nIn a stoploss order the transaction is made even if someone sells the stock for a price
+        <b><u>Stoploss Order</u></b>
+        \n   In a stoploss order the transaction is made even if someone sells the stock for a price
         higher than your asked price, provided that the margin of difference does not exceed a particular amount.
-        \n\nWhen selling your stocks, you can sell the stocks you already own for a price.
+        \n      When selling your stocks, you can sell the stocks you already own for a price.
 
         \n\n<b><u>Companies</u></b>
-        This tab shows current price of each stock at a glance and show percentage change in price compared to
+        \n   This tab shows current price of each stock at a glance and show percentage change in price compared to
         previous day close.
 
         \n\n<b><u>Bank Mortgage</u></b>
-        \nBank Mortgage can be used to mortgage stocks at the current price of the stocks in exchange and
+        \n   Bank Mortgage can be used to mortgage stocks at the current price of the stocks in exchange and
         equivalent cash will be added to your account. The mortgaged stocks can be can be bought back from the bank
         anytime later.
 
         \n\n<b><u>My Orders</u></b>
-        Here you can see all your open orders which might be fully or partially filled. You can click the orange
+        \n   Here you can see all your open orders which might be fully or partially filled. You can click the orange
         button to cancel the order anytime.
 
         \n\n<b><u>Transactions</u></b>
-        \nThis tab shows all your successful transactions.
+        \n   This tab shows all your successful transactions.
 
         \n\n<b><u>News</u></b>
-        \nThis tab shows all the market events belonging to different companies. This will help you in determining
+        \n   This tab shows all the market events belonging to different companies. This will help you in determining
         each company\'s performance, and give you an idea of what stocks to trade. Please note that these events
         are purely fictional and are nowhere related to the real market conditions.
 
         \n\n<b><u>Market depth</u></b>
-        Market depth tells you about various prices at which people have asked and bid stocks belonging to a
+        \n   Market depth tells you about various prices at which people have asked and bid stocks belonging to a
         particular company. It contains two tables for a given company, one for Bid depth and other one for Ask depth.
 
         \n\n<b><u>Do not hesitate to contact us if you face any problems.</u></b>
@@ -165,6 +165,8 @@
     <string name="error_signing_in">Error Signing In</string>
     <string name="error_server_down">Error Server Down</string>
     <string name="help_title">HELP</string>
+    <string name="select_a_company_to_view_depth">Select a company to view depth</string>
+    <string name="no_open_orders">No Open Orders</string>
 
     <string-array name="countries_array">
         <item>Afghanistan</item>

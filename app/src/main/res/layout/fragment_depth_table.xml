@@ -3,214 +3,249 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/black_background"
-    android:padding="16dp"
+    android:padding="12dp"
     android:scrollbars="none">
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
-
-        <com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner
-            android:id="@+id/company_spinner"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/kreon_light"
-            android:hint="@string/pick_a_company"
-            app:met_baseColor="@color/neutral_font_color"
-            app:met_floatingLabel="normal"
-            app:met_primaryColor="@color/neutral_font_color"
-            app:met_textColor="@color/neutral_font_color"
-            app:met_textColorHint="@color/neutral_font_color"
-            app:met_underlineColor="@color/neutral_font_color" />
-
-        <RelativeLayout
-            android:id="@+id/current_stock_price_layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:visibility="invisible">
-
-            <RelativeLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true">
-
-                <TextView
-                    android:id="@+id/current_stock_price_textView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="10dp"
-                    android:fontFamily="@font/kreon_light"
-                    android:textColor="@color/neutral_font_color"
-                    android:textSize="20sp" />
-
-                <TextView
-                    android:id="@+id/prev_day_close_stock_price"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignBaseline="@+id/current_stock_price_textView"
-                    android:layout_toEndOf="@+id/current_stock_price_textView"
-                    android:fontFamily="@font/kreon_light"
-                    android:textColor="#BDBDBD"
-                    android:textSize="16sp" />
-
-                <ImageView
-                    android:id="@+id/arrow_image_view"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:layout_marginTop="12dp"
-                    android:layout_toEndOf="@+id/prev_day_close_stock_price"
-                    android:contentDescription="@string/company_profile"
-                    android:src="@drawable/down_arrow" />
-
-            </RelativeLayout>
-
-        </RelativeLayout>
+        android:layout_height="match_parent">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:orientation="vertical">
 
-            <LinearLayout
-                android:id="@+id/bid_depth_layout"
-                android:layout_width="0dp"
+            <com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner
+                android:id="@+id/company_spinner"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="5dp"
-                android:layout_marginEnd="1dp"
-                android:layout_marginTop="10dp"
-                android:layout_weight="1"
-                android:background="@drawable/blue_border"
-                android:orientation="vertical"
+                android:fontFamily="@font/kreon_light"
+                android:hint="@string/pick_a_company"
+                app:met_baseColor="@color/neutral_font_color"
+                app:met_floatingLabel="normal"
+                app:met_primaryColor="@color/neutral_font_color"
+                app:met_textColor="@color/neutral_font_color"
+                app:met_textColorHint="@color/neutral_font_color"
+                app:met_underlineColor="@color/neutral_font_color" />
+
+            <RelativeLayout
+                android:id="@+id/current_stock_price_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:visibility="invisible">
 
-                <TextView
-                    android:layout_width="match_parent"
+                <RelativeLayout
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="#20202C"
-                    android:fontFamily="@font/kreon_light"
-                    android:gravity="center"
-                    android:padding="10dp"
-                    android:text="@string/biddepth"
-                    android:textColor="#FFA500"
-                    android:textSize="20sp" />
+                    android:layout_centerInParent="true">
 
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_marginEnd="1dp"
-                    android:layout_marginStart="1dp"
-                    android:background="@color/neutral_font_color" />
+                    <TextView
+                        android:id="@+id/current_stock_price_textView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="10dp"
+                        android:fontFamily="@font/kreon_light"
+                        android:textColor="@color/neutral_font_color"
+                        android:textSize="20sp" />
+
+                    <TextView
+                        android:id="@+id/prev_day_close_stock_price"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignBaseline="@+id/current_stock_price_textView"
+                        android:layout_toEndOf="@+id/current_stock_price_textView"
+                        android:fontFamily="@font/kreon_light"
+                        android:textColor="#BDBDBD"
+                        android:textSize="16sp" />
+
+                    <ImageView
+                        android:id="@+id/arrow_image_view"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_marginTop="12dp"
+                        android:layout_toEndOf="@+id/prev_day_close_stock_price"
+                        android:contentDescription="@string/company_profile"
+                        android:src="@drawable/down_arrow" />
+
+                </RelativeLayout>
+
+            </RelativeLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
 
                 <LinearLayout
-                    android:layout_width="match_parent"
+                    android:id="@+id/bid_depth_layout"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="3dp"
-                    android:layout_marginTop="5dp"
-                    android:padding="5dp">
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginEnd="1dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/blue_border"
+                    android:orientation="vertical"
+                    android:visibility="invisible">
 
                     <TextView
-                        android:layout_width="0dp"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
+                        android:background="#20202C"
                         android:fontFamily="@font/kreon_light"
                         android:gravity="center"
-                        android:text="@string/volume"
-                        android:textColor="@color/neutral_font_color"
-                        android:textSize="18sp" />
+                        android:padding="10dp"
+                        android:text="@string/biddepth"
+                        android:textColor="#FFA500"
+                        android:textSize="20sp" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginEnd="1dp"
+                        android:layout_marginStart="1dp"
+                        android:background="@color/neutral_font_color" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="3dp"
+                        android:layout_marginTop="5dp"
+                        android:padding="5dp">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:fontFamily="@font/kreon_light"
+                            android:gravity="center"
+                            android:text="@string/volume"
+                            android:textColor="@color/neutral_font_color"
+                            android:textSize="18sp" />
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:fontFamily="@font/kreon_light"
+                            android:gravity="center"
+                            android:text="@string/price"
+                            android:textColor="@color/neutral_font_color"
+                            android:textSize="18sp" />
+
+                    </LinearLayout>
+
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/bid_depth_rv"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:paddingLeft="6dp"
+                        android:paddingRight="6dp" />
 
                     <TextView
-                        android:layout_width="0dp"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:fontFamily="@font/kreon_light"
-                        android:gravity="center"
-                        android:text="@string/price"
-                        android:textColor="@color/neutral_font_color"
-                        android:textSize="18sp" />
+                        android:id="@+id/bid_depth_holder"
+                        android:textColor="@color/neon_blue"
+                        android:layout_gravity="center"
+                        android:layout_marginBottom="10dp"
+                        android:text="@string/no_open_orders"/>
 
                 </LinearLayout>
 
-                <android.support.v7.widget.RecyclerView
-                    android:id="@+id/bid_depth_rv"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:paddingLeft="6dp"
-                    android:paddingRight="6dp" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/ask_depth_layout"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="5dp"
-                android:layout_marginStart="1dp"
-                android:layout_marginTop="10dp"
-                android:layout_weight="1"
-                android:background="@drawable/blue_border"
-                android:orientation="vertical"
-                android:visibility="invisible">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="#20202C"
-                    android:fontFamily="@font/kreon_light"
-                    android:gravity="center"
-                    android:padding="10dp"
-                    android:text="@string/askdepth"
-                    android:textColor="#FFA500"
-                    android:textSize="20sp" />
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_marginEnd="1dp"
-                    android:layout_marginStart="1dp"
-                    android:background="@color/neutral_font_color" />
-
                 <LinearLayout
-                    android:layout_width="match_parent"
+                    android:id="@+id/ask_depth_layout"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="3dp"
-                    android:layout_marginTop="5dp"
-                    android:padding="5dp">
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginStart="1dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/blue_border"
+                    android:orientation="vertical"
+                    android:visibility="invisible">
 
                     <TextView
-                        android:layout_width="0dp"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
+                        android:background="#20202C"
                         android:fontFamily="@font/kreon_light"
                         android:gravity="center"
-                        android:text="@string/volume"
-                        android:textColor="@color/neutral_font_color"
-                        android:textSize="18sp" />
+                        android:padding="10dp"
+                        android:text="@string/askdepth"
+                        android:textColor="#FFA500"
+                        android:textSize="20sp" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginEnd="1dp"
+                        android:layout_marginStart="1dp"
+                        android:background="@color/neutral_font_color" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="3dp"
+                        android:layout_marginTop="5dp"
+                        android:padding="5dp">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:fontFamily="@font/kreon_light"
+                            android:gravity="center"
+                            android:text="@string/volume"
+                            android:textColor="@color/neutral_font_color"
+                            android:textSize="18sp" />
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:fontFamily="@font/kreon_light"
+                            android:gravity="center"
+                            android:text="@string/price"
+                            android:textColor="@color/neutral_font_color"
+                            android:textSize="18sp" />
+
+
+                    </LinearLayout>
+
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/ask_depth_rv"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:paddingLeft="6dp"
+                        android:paddingRight="6dp" />
 
                     <TextView
-                        android:layout_width="0dp"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:fontFamily="@font/kreon_light"
-                        android:gravity="center"
-                        android:text="@string/price"
-                        android:textColor="@color/neutral_font_color"
-                        android:textSize="18sp" />
-
+                        android:id="@+id/ask_depth_holder"
+                        android:textColor="@color/neon_blue"
+                        android:layout_gravity="center"
+                        android:layout_marginBottom="10dp"
+                        android:text="@string/no_open_orders"/>
 
                 </LinearLayout>
-
-                <android.support.v7.widget.RecyclerView
-                    android:id="@+id/ask_depth_rv"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:paddingLeft="6dp"
-                    android:paddingRight="6dp" />
 
             </LinearLayout>
 
         </LinearLayout>
 
-    </LinearLayout>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/depth_table_holder"
+            android:text="@string/select_a_company_to_view_depth"
+            android:layout_centerInParent="true"
+            android:fontFamily="@font/kreon_light"
+            android:textColor="#FFA500"/>
+
+    </RelativeLayout>
+
+
 
 </android.support.v4.widget.NestedScrollView>
