@@ -143,13 +143,13 @@
                         android:paddingRight="6dp" />
 
                     <TextView
+                        android:id="@+id/bid_depth_holder"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:id="@+id/bid_depth_holder"
-                        android:textColor="@color/neon_blue"
                         android:layout_gravity="center"
                         android:layout_marginBottom="10dp"
-                        android:text="@string/no_open_orders"/>
+                        android:text="@string/no_open_orders"
+                        android:textColor="@color/neon_blue" />
 
                 </LinearLayout>
 
@@ -221,13 +221,13 @@
                         android:paddingRight="6dp" />
 
                     <TextView
+                        android:id="@+id/ask_depth_holder"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:id="@+id/ask_depth_holder"
-                        android:textColor="@color/neon_blue"
                         android:layout_gravity="center"
                         android:layout_marginBottom="10dp"
-                        android:text="@string/no_open_orders"/>
+                        android:text="@string/no_open_orders"
+                        android:textColor="@color/neon_blue" />
 
                 </LinearLayout>
 
@@ -236,16 +236,15 @@
         </LinearLayout>
 
         <TextView
+            android:id="@+id/depth_table_holder"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/depth_table_holder"
-            android:text="@string/select_a_company_to_view_depth"
             android:layout_centerInParent="true"
             android:fontFamily="@font/kreon_light"
-            android:textColor="#FFA500"/>
+            android:text="@string/select_a_company_to_view_depth"
+            android:textColor="#FFA500" />
 
     </RelativeLayout>
-
 
 
 </android.support.v4.widget.NestedScrollView>

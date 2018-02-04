@@ -115,7 +115,7 @@ public class DepthGraphFragment extends Fragment implements LoaderManager.Loader
         lineChart.setBorderColor(getResources().getColor(R.color.neutral_font_color));
         lineChart.setTouchEnabled(false);
         lineChart.setDescription("");
-        lineChart.setValueTextSize(MiscellaneousUtils.convertDpToPixel(getContext(), 3));
+        lineChart.setValueTextSize(MiscellaneousUtils.convertDpToPixel(getContext(), 4));
         lineChart.setValueTextColor(getResources().getColor(R.color.neon_blue));
         lineChart.setNoDataText("Select a company to view depth timeline");
 

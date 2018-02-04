@@ -9,7 +9,7 @@
     <ImageView
         android:id="@+id/company_imageView"
         android:layout_width="match_parent"
-        android:layout_height="180dp"
+        android:layout_height="160dp"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:contentDescription="@string/company_image_description"
         android:scaleType="centerCrop" />
@@ -17,7 +17,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp">
+        android:layout_marginTop="2dp">
 
         <ImageView
             android:id="@+id/arrow_imageView"

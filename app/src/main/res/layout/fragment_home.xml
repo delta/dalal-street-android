@@ -19,7 +19,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_below="@id/companies_recyclerView"
-        android:layout_marginTop="6dp"
+        android:layout_marginTop="2dp"
         android:layout_marginStart="6dp"
         android:layout_marginEnd="6dp"
         android:ellipsize="marquee"
@@ -38,7 +38,7 @@
         android:layout_height="1px"
         android:layout_below="@+id/breakingNewsText"
         android:layout_marginStart="2dp"
-        android:layout_marginTop="2dp"
+        android:layout_marginTop="1dp"
         android:background="@color/neutral_font_color" />
 
     <FrameLayout
@@ -52,8 +52,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:divider="@android:color/transparent"
-            android:dividerHeight="5dp"
-            android:paddingTop="4dp" />
+            android:paddingTop="2dp" />
 
         <RelativeLayout
             android:id="@+id/loadingNews_relativeLayout"

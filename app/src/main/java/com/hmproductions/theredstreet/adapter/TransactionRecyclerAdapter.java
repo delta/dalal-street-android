@@ -15,7 +15,7 @@ import com.hmproductions.theredstreet.utils.Constants;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
@@ -73,7 +73,8 @@ public class TransactionRecyclerAdapter extends RecyclerView.Adapter<Transaction
         holder.companyTextView.setText(tempAssigningString);
 
         tempAssigningString = parseDate(currentTransaction.getTime());
-        holder.timeTextView.setText(tempAssigningString);
+        if (tempAssigningString != null)
+            holder.timeTextView.setText(tempAssigningString);
 
         tempAssigningString = String.valueOf(Math.abs(currentTransaction.getNoOfStocks()))
                     + " stocks @ " + Constants.RUPEE_SYMBOL + " " + String.valueOf(Math.abs(currentTransaction.getTotalMoney()));
@@ -108,12 +109,14 @@ public class TransactionRecyclerAdapter extends RecyclerView.Adapter<Transaction
         SimpleDateFormat inputFormat = new SimpleDateFormat(inputPattern, Locale.US);
         SimpleDateFormat outputFormat = new SimpleDateFormat(outputPattern, Locale.US);
 
-        Date date;
         String str = null;
 
         try {
-            date = inputFormat.parse(time);
-            str = outputFormat.format(date);
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(inputFormat.parse(time));
+            calendar.add(Calendar.HOUR_OF_DAY, 5);
+            calendar.add(Calendar.MINUTE, 30);
+            str = outputFormat.format(calendar.getTime());
         } catch (ParseException e) {
             e.printStackTrace();
         }
