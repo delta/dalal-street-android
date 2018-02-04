@@ -23,9 +23,11 @@ import com.github.mikephil.charting.utils.YLabels;
 import com.hmproductions.theredstreet.R;
 import com.hmproductions.theredstreet.dagger.ContextModule;
 import com.hmproductions.theredstreet.dagger.DaggerDalalStreetApplicationComponent;
+import com.hmproductions.theredstreet.data.StockHistory;
 import com.hmproductions.theredstreet.loaders.StockHistoryLoader;
 import com.hmproductions.theredstreet.utils.ConnectionUtils;
 import com.hmproductions.theredstreet.utils.Constants;
+import com.hmproductions.theredstreet.utils.MiscellaneousUtils;
 import com.hmproductions.theredstreet.utils.StockUtils;
 import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner;
 
@@ -68,7 +70,7 @@ public class DepthGraphFragment extends Fragment implements LoaderManager.Loader
     String currentCompany;
 
     AlertDialog loadingDialog;
-    LineDataSet set1;
+    LineDataSet lineDataSet;
     private ConnectionUtils.OnNetworkDownHandler networkDownHandler;
 
     public DepthGraphFragment() {
@@ -109,10 +111,13 @@ public class DepthGraphFragment extends Fragment implements LoaderManager.Loader
 
         lineChart.setBackgroundColor(getResources().getColor(R.color.black_background));
         lineChart.setDrawGridBackground(false);
-        lineChart.setGridColor(getResources().getColor(R.color.neon_blue));
-        lineChart.setBorderColor(getResources().getColor(R.color.divider_line_gray));
+        lineChart.setGridColor(getResources().getColor(R.color.neutral_font_color));
+        lineChart.setBorderColor(getResources().getColor(R.color.neutral_font_color));
         lineChart.setTouchEnabled(false);
         lineChart.setDescription("");
+        lineChart.setValueTextSize(MiscellaneousUtils.convertDpToPixel(getContext(), 4));
+        lineChart.setValueTextColor(getResources().getColor(R.color.neon_blue));
+        lineChart.setNoDataText("Select a company to view depth timeline");
 
         companiesSpinner.setOnItemClickListener((adapterView, view, i, l) -> {
             currentCompany = companiesSpinner.getText().toString();
@@ -128,21 +133,19 @@ public class DepthGraphFragment extends Fragment implements LoaderManager.Loader
             }
             lineChart.clearFocus();
 
-            if(getActivity() != null && isAdded()){
+            if (getActivity() != null && isAdded()) {
                 loadingDialog.show();
                 getActivity().getSupportLoaderManager().restartLoader(Constants.STOCK_HISTORY_LOADER_ID, bundle, this);
             }
-
         });
-
         return rootView;
     }
 
     @Override
     public Loader<GetStockHistoryResponse> onCreateLoader(int id, Bundle args) {
         if (getContext() != null)
-            return new StockHistoryLoader(getContext(), actionServiceBlockingStub
-                    , getStockIdFromCompanyName(args.getString(COMPANY_NAME_KEY)));
+            return new StockHistoryLoader(getContext(), actionServiceBlockingStub,
+                    getStockIdFromCompanyName(args.getString(COMPANY_NAME_KEY)));
         else
             return null;
     }
@@ -178,16 +181,16 @@ public class DepthGraphFragment extends Fragment implements LoaderManager.Loader
             yVals.add(new Entry(trimmedStockHistoryList.get(i).getStockClose(), i));
         }
 
-        if(getActivity() != null && isAdded()){
-            set1 = new LineDataSet(yVals, "Stock Price");
-            set1.setFillAlpha(110);
-            set1.setLineWidth(1f);
-            set1.setColor(getResources().getColor(android.R.color.white));
-            set1.setCircleColor(getResources().getColor(android.R.color.black));
-            set1.setHighLightColor(getResources().getColor(R.color.divider_line_gray));
-            set1.setDrawFilled(false);
+        if (getActivity() != null && isAdded()) {
+            lineDataSet = new LineDataSet(yVals, "Stock Price");
+            lineDataSet.setLineWidth(4f);
+            lineDataSet.setColor(getResources().getColor(R.color.neon_green));
+            lineDataSet.setCircleColor(getResources().getColor(R.color.redTint));
+            lineDataSet.setCircleSize(MiscellaneousUtils.convertDpToPixel(getContext(), 1));
+            lineDataSet.setHighLightColor(getResources().getColor(R.color.neon_green));
+            lineDataSet.setDrawFilled(false);
 
-            LineData lineData = new LineData(xVals, set1);
+            LineData lineData = new LineData(xVals, lineDataSet);
 
             lineChart.setData(lineData);
             lineChart.invalidate();
@@ -195,6 +198,8 @@ public class DepthGraphFragment extends Fragment implements LoaderManager.Loader
 
             Legend legend = lineChart.getLegend();
             legend.setTextColor(getResources().getColor(android.R.color.white));
+            legend.setTextSize(MiscellaneousUtils.convertDpToPixel(getContext(), 2));
+            legend.setPosition(Legend.LegendPosition.BELOW_CHART_RIGHT);
             legend.setForm(Legend.LegendForm.LINE);
             XLabels xAxis = lineChart.getXLabels();
             xAxis.setTextColor(getResources().getColor(android.R.color.white));
@@ -204,13 +209,11 @@ public class DepthGraphFragment extends Fragment implements LoaderManager.Loader
             yAxis1.setTextColor(getResources().getColor(android.R.color.white));
             yAxis1.setPosition(YLabels.YLabelPosition.LEFT);
         }
-
-
     }
 
     @Override
     public void onLoaderReset(Loader<GetStockHistoryResponse> loader) {
-
+        // Do nothing
     }
 
     private String parseDateString(String time) {
@@ -247,7 +250,7 @@ public class DepthGraphFragment extends Fragment implements LoaderManager.Loader
         return df.format(date);
     }
 
-    private void sortList(ArrayList<com.hmproductions.theredstreet.data.StockHistory> list) {
+    private void sortList(ArrayList<StockHistory> list) {
         Collections.sort(list, (val1, val2) -> {
 
             Date date1 = val1.getStockDate();

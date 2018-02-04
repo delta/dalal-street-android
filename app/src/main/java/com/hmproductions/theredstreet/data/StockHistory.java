@@ -4,8 +4,8 @@ import java.util.Date;
 
 public class StockHistory {
 
-    Date stockDate;
-    int stockClose;
+    private Date stockDate;
+    private int stockClose;
 
     public StockHistory(Date stockDate, int stockClose) {
         this.stockDate = stockDate;

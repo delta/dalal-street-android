@@ -3,8 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/black_background"
-    android:orientation="vertical"
-    android:padding="12dp">
+    android:orientation="vertical">
 
     <com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner
         android:id="@+id/graph_company_spinner"
@@ -12,6 +11,8 @@
         android:layout_height="wrap_content"
         android:fontFamily="@font/kreon_light"
         android:hint="@string/pick_a_company"
+        android:layout_marginStart="12dp"
+        android:layout_marginEnd="12dp"
         app:met_baseColor="@color/neutral_font_color"
         app:met_floatingLabel="normal"
         app:met_primaryColor="@color/neutral_font_color"
@@ -24,7 +25,6 @@
         android:id="@+id/market_depth_chart"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/black_background"
-        android:padding="8dp" />
+        android:background="@color/black_background" />
 
 </LinearLayout>
