@@ -95,6 +95,15 @@ public class DepthTableFragment extends Fragment implements LoaderManager.Loader
     @BindView(R.id.arrow_image_view)
     ImageView arrowImage;
 
+    @BindView(R.id.depth_table_holder)
+    TextView depthTableTv;
+
+    @BindView(R.id.bid_depth_holder)
+    TextView bidDepthHolderTv;
+
+    @BindView(R.id.ask_depth_holder)
+    TextView askDepthHolderTv;
+
     String currentCompany;
     ConnectionUtils.OnNetworkDownHandler networkDownHandler;
 
@@ -107,14 +116,28 @@ public class DepthTableFragment extends Fragment implements LoaderManager.Loader
     private BroadcastReceiver refreshMarketDepth = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            askDepthLayout.setVisibility(View.VISIBLE);
-            bidDepthLayout.setVisibility(View.VISIBLE);
-            sortList(bidArrayList);
-            Collections.reverse(bidArrayList);
-            sortList(askArrayList);
-            bidDepthAdapter.swapData(bidArrayList);
-            askDepthAdapter.swapData(askArrayList);
-            loadingDialog.dismiss();
+            if (getActivity() != null && isAdded()) {
+                if (askArrayList.size() == 0) {
+                    askDepthHolderTv.setVisibility(View.VISIBLE);
+                } else if (askArrayList.size() > 0) {
+                    askDepthHolderTv.setVisibility(View.GONE);
+                }
+
+                if (bidArrayList.size() == 0) {
+                    bidDepthHolderTv.setVisibility(View.VISIBLE);
+                } else if (bidArrayList.size() > 0) {
+                    bidDepthHolderTv.setVisibility(View.GONE);
+                }
+                askDepthLayout.setVisibility(View.VISIBLE);
+                bidDepthLayout.setVisibility(View.VISIBLE);
+                depthTableTv.setVisibility(View.INVISIBLE);
+                sortList(bidArrayList);
+                Collections.reverse(bidArrayList);
+                sortList(askArrayList);
+                bidDepthAdapter.swapData(bidArrayList);
+                askDepthAdapter.swapData(askArrayList);
+                loadingDialog.dismiss();
+            }
         }
     };
 
@@ -179,8 +202,10 @@ public class DepthTableFragment extends Fragment implements LoaderManager.Loader
             currentStockLayout.setVisibility(View.INVISIBLE);
             askDepthLayout.setVisibility(View.INVISIBLE);
             bidDepthLayout.setVisibility(View.INVISIBLE);
-            loadingDialog.show();
-            getActivity().getSupportLoaderManager().restartLoader(Constants.COMPANY_PROFILE_LOADER_ID, bundle, this);
+            if (getActivity() != null && isAdded()) {
+                loadingDialog.show();
+                getActivity().getSupportLoaderManager().restartLoader(Constants.COMPANY_PROFILE_LOADER_ID, bundle, this);
+            }
         });
 
         return rootView;
@@ -322,20 +347,22 @@ public class DepthTableFragment extends Fragment implements LoaderManager.Loader
             return;
         }
 
-        Stock currentStock = companyProfileResponse.getStockDetails();
+        if (getActivity() != null && isAdded()) {
+            Stock currentStock = companyProfileResponse.getStockDetails();
 
-        int currentPrice = currentStock.getCurrentPrice();
-        int prevDayClose = currentStock.getPreviousDayClose();
+            int currentPrice = currentStock.getCurrentPrice();
+            int prevDayClose = currentStock.getPreviousDayClose();
 
-        currentStockLayout.setVisibility(View.VISIBLE);
-        String currentStockPrice = "Current Stock Price : " + Constants.RUPEE_SYMBOL + String.valueOf(currentPrice);
-        currentStockPriceText.setText(currentStockPrice);
-        String prevDayClosePrice = Constants.RUPEE_SYMBOL + String.valueOf(prevDayClose);
-        prevDayCloseText.setText(String.valueOf(prevDayClosePrice));
-        if (currentPrice >= prevDayClose) {
-            arrowImage.setImageResource(R.drawable.up_arrow);
-        } else {
-            arrowImage.setImageResource(R.drawable.down_arrow);
+            currentStockLayout.setVisibility(View.VISIBLE);
+            String currentStockPrice = "Current Stock Price : " + Constants.RUPEE_SYMBOL + String.valueOf(currentPrice);
+            currentStockPriceText.setText(currentStockPrice);
+            String prevDayClosePrice = Constants.RUPEE_SYMBOL + String.valueOf(prevDayClose);
+            prevDayCloseText.setText(String.valueOf(prevDayClosePrice));
+            if (currentPrice >= prevDayClose) {
+                arrowImage.setImageResource(R.drawable.up_arrow);
+            } else {
+                arrowImage.setImageResource(R.drawable.down_arrow);
+            }
         }
     }
 

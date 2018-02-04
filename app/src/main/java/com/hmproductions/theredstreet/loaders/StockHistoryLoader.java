@@ -34,7 +34,7 @@ public class StockHistoryLoader extends AsyncTaskLoader<GetStockHistoryResponse>
             return actionServiceBlockingStub.getStockHistory(GetStockHistoryRequest
                     .newBuilder()
                     .setStockId(stockId)
-                    .setResolution(StockHistoryResolution.FifteenMinutes)
+                    .setResolution(StockHistoryResolution.SixtyMinutes)
                     .build()
             );
         else
