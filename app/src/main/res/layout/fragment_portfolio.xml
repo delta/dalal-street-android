@@ -6,7 +6,6 @@
     android:paddingTop="8dp">
 
     <RelativeLayout
-        android:id="@+id/portfolio_relativeLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -72,7 +71,7 @@
             android:layout_height="1dp"
             android:layout_below="@+id/headings_tab_linearLayout"
             android:layout_margin="4dp"
-            android:background="@android:color/background_light" />
+            android:background="@color/neutral_font_color" />
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/portfolio_recyclerView"
@@ -95,7 +94,7 @@
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:text="@string/you_don_t_own_any_stocks"
-            android:textColor="@android:color/background_dark"
+            android:textColor="@color/neutral_font_color"
             android:textSize="22sp" />
 
     </RelativeLayout>

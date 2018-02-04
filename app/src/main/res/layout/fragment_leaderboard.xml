@@ -20,7 +20,7 @@
             android:fontFamily="@font/kreon_light"
             android:gravity="center"
             android:text="@string/rank"
-            android:textColor="@android:color/background_light"
+            android:textColor="@color/neutral_font_color"
             android:textSize="20sp"
             android:textStyle="bold" />
 
@@ -31,7 +31,7 @@
             android:fontFamily="@font/kreon_light"
             android:gravity="center"
             android:text="@string/name"
-            android:textColor="@android:color/background_light"
+            android:textColor="@color/neutral_font_color"
             android:textSize="20sp"
             android:textStyle="bold" />
 
@@ -42,7 +42,7 @@
             android:fontFamily="@font/kreon_light"
             android:gravity="center"
             android:text="@string/wealth"
-            android:textColor="@android:color/background_light"
+            android:textColor="@color/neutral_font_color"
             android:textSize="20sp"
             android:textStyle="bold" />
 

@@ -6,7 +6,6 @@
     android:padding="12dp">
 
     <TextView
-        android:id="@+id/help"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:fontFamily="@font/kreon_light"

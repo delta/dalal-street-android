@@ -53,6 +53,7 @@ public class SplashActivity extends AppCompatActivity implements LoaderManager.L
 
     public static final String USERNAME_KEY = "username-key";
     public static final String EMAIL_KEY = "email-key";
+    public static final String MARKET_OPEN_KEY = "market-open-key";
     static final String PASSWORD_KEY = "password-key";
 
     public Thread drawingThread;
@@ -177,6 +178,7 @@ public class SplashActivity extends AppCompatActivity implements LoaderManager.L
             intent.putExtra(USERNAME_KEY, loginResponse.getUser().getName());
             intent.putExtra(MainActivity.CASH_WORTH_KEY, loginResponse.getUser().getCash());
             intent.putExtra(MainActivity.TOTAL_WORTH_KEY, loginResponse.getUser().getTotal());
+            intent.putExtra(MARKET_OPEN_KEY, loginResponse.getIsMarketOpen());
 
             intent.putParcelableArrayListExtra(MainActivity.STOCKS_OWNED_KEY, stocksOwnedList);
             intent.putParcelableArrayListExtra(MainActivity.GLOBAL_STOCKS_KEY, globalStockList);

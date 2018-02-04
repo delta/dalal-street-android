@@ -51,7 +51,6 @@
             android:id="@+id/news_recyclerView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:divider="@android:color/transparent"
             android:paddingTop="2dp" />
 
         <RelativeLayout

@@ -5,11 +5,8 @@
     <color name="colorPrimaryDark">#111111</color>
     <color name="colorAccent">#39FF14</color>
     <color name="background">#FFFFFF</color>
-    <color name="transparent">#00FFFF</color>
-    <color name="secTextColor">#7f838e</color>
 
     <color name="redTint">#ff0000</color>
-    <color name="greenTint">#b2ffb2</color>
 
     <color name="black_background">#30303C</color>
     <color name="neutral_font_color">#FFFFFF</color>

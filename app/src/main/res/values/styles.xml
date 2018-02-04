@@ -30,14 +30,6 @@
     </style>
 
 
-    <style name="SplashTheme" parent="Theme.AppCompat.NoActionBar">
-        <item name="background">@drawable/splash</item>
-    </style>
-
-    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
-
-    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
-
     <style name="TabHeadingStyle" parent="@android:style/TextAppearance.Widget.TabWidget">
         <item name="android:textSize">18sp</item>
         <item name="android:textAllCaps">true</item>

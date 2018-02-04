@@ -2,17 +2,12 @@
     <string name="app_name">Dalal Street</string>
 
     <string name="login_text">LOGIN</string>
-    <string name="login_button">Login</string>
     <string name="email_hint">Email</string>
     <string name="password_hint">Password</string>
     <string name="title_activity_home">Home</string>
 
     <string name="open">Open</string>
     <string name="close">Close</string>
-
-    <string name="action_settings">Settings</string>
-
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 
     <string-array name="orderType">
         <item>Limit Order</item>
@@ -74,9 +69,6 @@
         \nHave fun filled Pragyan 2018!
 
     </string>
-    <string name="cash">Cash</string>
-    <string name="stock">Stock</string>
-    <string name="total">Total</string>
     <string name="username">Username</string>
     <string name="cash_worth">Cash Worth</string>
     <string name="order_type">Order type</string>
@@ -89,10 +81,7 @@
     <string name="enter_the_number_of_stocks">Enter the number of stocks</string>
     <string name="logout">Logout</string>
     <string name="stock_details">Stock Details</string>
-    <string name="bid_market_depth">Bid Market Depth</string>
-    <string name="ask_market_depth">Ask Market Depth</string>
     <string name="market_depth">Market Depth</string>
-    <string name="company_history">Company History</string>
     <string name="buy_stocks">Buy Stocks from Exchange</string>
     <string name="number_of_stocks">Number of Stocks</string>
     <string name="wealth">WEALTH</string>
@@ -103,35 +92,24 @@
     <string name="portfolio">Portfolio</string>
     <string name="news">News</string>
     <string name="stock_exchange">Stock Exchange</string>
-    <string name="buy_sell">Buy/Sell</string>
     <string name="mortgage">Mortgage</string>
     <string name="my_orders">My Orders</string>
     <string name="transactions">Transactions</string>
     <string name="leaderboard">Leaderboard</string>
     <string name="stock_worth">Stock Worth</string>
     <string name="total_worth">Total Worth</string>
-    <string name="number_of_stocks_you_own_n_a">Number of stocks you own : N/A</string>
-    <string name="number_of_stocks_mortgaged_n_a">Number of stocks mortgaged : N/A</string>
-    <string name="breaking_news">Breaking News:</string>
     <string name="no_transactions_found">No transactions found.</string>
     <string name="news_not_available">News not available.</string>
     <string name="company_image_description">company_image_view</string>
     <string name="getting_fresh_news">Getting fresh news…</string>
-    <string name="loading">Loading…</string>
     <string name="loading_leaderboard">Getting LeaderBoard…</string>
     <string name="loading_transaction">Getting Transactions…</string>
-    <string name="dalal">DALAL \n STREET</string>
     <string name="companies">Companies</string>
     <string name="trade">Trade</string>
     <string name="company">Company</string>
-    <string name="stock_price">Stock Price</string>
-    <string name="time">Time</string>
-    <string name="type">Type</string>
-    <string name="no_company_selected">No Company Selected</string>
     <string name="cancel">Cancel</string>
     <string name="no_orders_pending">Looks like you don\'t have any\norders pending…</string>
     <string name="getting_your_orders">Getting your orders…</string>
-    <string name="open_orders">Open Orders</string>
     <string name="you_don_t_own_any_stocks">You don\'t own any stocks.</string>
     <string name="daily_high">Daily High</string>
     <string name="daily_low">Daily Low</string>
@@ -148,7 +126,6 @@
     <string name="change">Change %</string>
     <string name="volume">Volume</string>
     <string name="play">Play</string>
-    <string name="loading_more_transactions">Loading More Transactions…</string>
     <string name="getting_depth">Getting Market Details…</string>
     <string name="askdepth">Ask Depth</string>
     <string name="biddepth">Bid Depth</string>

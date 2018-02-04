@@ -186,7 +186,7 @@
             android:background="@drawable/black_white_rounded_button"
             android:fontFamily="@font/marcellus_sc"
             android:text="@string/bid"
-            android:textColor="@android:color/white"
+            android:textColor="@color/neutral_font_color"
             android:textSize="22sp" />
 
     </RelativeLayout>

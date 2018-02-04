@@ -76,6 +76,7 @@ import io.grpc.stub.StreamObserver;
 import static com.hmproductions.theredstreet.ui.LoginActivity.EMAIL_KEY;
 import static com.hmproductions.theredstreet.ui.LoginActivity.PASSWORD_KEY;
 
+// TODO : Volume - Companies fragment, Buy Limit
 /* Subscribes to GetTransactions*/
 public class MainActivity extends AppCompatActivity implements
         NavigationView.OnNavigationItemSelectedListener,
@@ -174,6 +175,15 @@ public class MainActivity extends AppCompatActivity implements
 
         StartMakingButtonsTransparent();
         updateStockWorthViaStreamUpdates();
+
+        if (!getIntent().getBooleanExtra(SplashActivity.MARKET_OPEN_KEY, false)) {
+            new AlertDialog.Builder(this)
+                    .setTitle("Market Closed")
+                    .setMessage("Market will open at 8 pm. Sorry for the inconvience.")
+                    .setCancelable(true)
+                    .setPositiveButton("CLOSE", (dI, i) -> dI.dismiss())
+                    .show();
+        }
     }
 
     private void BindDrawerViews() {

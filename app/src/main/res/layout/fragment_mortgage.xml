@@ -21,7 +21,7 @@
             android:layout_marginEnd="12dp"
             android:layout_marginStart="12dp"
             android:layout_weight="1"
-            android:backgroundTint="@android:color/background_light"
+            android:backgroundTint="@color/neutral_font_color"
             android:hint="@string/pick_a_company"
             android:textColorHint="@color/neutral_font_color" />
 
@@ -198,7 +198,6 @@
         </RadioGroup>
 
         <android.support.design.widget.TextInputLayout
-            android:id="@+id/mortgage_stock_input"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_marginBottom="2dp"
