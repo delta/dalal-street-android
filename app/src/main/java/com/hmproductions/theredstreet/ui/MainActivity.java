@@ -573,6 +573,7 @@ public class MainActivity extends AppCompatActivity implements
         super.onResume();
         IntentFilter intentFilter = new IntentFilter(Constants.REFRESH_DIVIDEND_ACTION);
         intentFilter.addAction(Constants.REFRESH_WORTH_TEXTVIEW_ACTION);
+        intentFilter.addAction(Constants.UPDATE_WORTH_VIA_STREAM_ACTION);
         LocalBroadcastManager.getInstance(this).registerReceiver(refreshCashStockReceiver, new IntentFilter(intentFilter));
     }
 
@@ -585,6 +586,10 @@ public class MainActivity extends AppCompatActivity implements
         }
         if(logoutDialog != null){
             logoutDialog.dismiss();
+        }
+
+        if (!logoutAction) {
+            startService(new Intent(this, NotificationService.class));
         }
     }
 
@@ -638,10 +643,6 @@ public class MainActivity extends AppCompatActivity implements
         if (shouldUnsubscribe) {
             for (SubscriptionId currentSubscriptionId : subscriptionIds) {
                 streamServiceBlockingStub.unsubscribe(UnsubscribeRequest.newBuilder().setSubscriptionId(currentSubscriptionId).build());
-            }
-
-            if (!logoutAction) {
-                startService(new Intent(this, NotificationService.class));
             }
         }
     }

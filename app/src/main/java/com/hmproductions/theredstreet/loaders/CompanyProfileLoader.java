@@ -33,9 +33,7 @@ public class CompanyProfileLoader extends AsyncTaskLoader<GetCompanyProfileRespo
     public GetCompanyProfileResponse loadInBackground() {
         if (ConnectionUtils.getConnectionInfo(getContext()) && ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT))
             return actionServiceBlockingStub.getCompanyProfile(
-                    GetCompanyProfileRequest.newBuilder()
-                            .setStockId(stockId)
-                            .build()
+                    GetCompanyProfileRequest.newBuilder().setStockId(stockId).build()
             );
         else
             return null;

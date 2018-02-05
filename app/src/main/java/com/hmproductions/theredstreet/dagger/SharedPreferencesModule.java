@@ -7,7 +7,7 @@ import android.preference.PreferenceManager;
 import dagger.Module;
 import dagger.Provides;
 
-@Module
+@Module (includes = ContextModule.class)
 public class SharedPreferencesModule {
 
     @Provides

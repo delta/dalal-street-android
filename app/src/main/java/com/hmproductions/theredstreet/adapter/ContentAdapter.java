@@ -38,7 +38,7 @@ public class ContentAdapter extends FragmentPagerAdapter {
             case 0:
                 return "Table";
             default:
-                return "Timeline";
+                return "Chart";
         }
     }
 }

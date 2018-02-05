@@ -1,6 +1,7 @@
 package com.hmproductions.theredstreet.dagger;
 
 import android.content.Context;
+import android.os.Build;
 
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
@@ -31,7 +32,7 @@ import dagger.Provides;
 import io.grpc.ManagedChannel;
 import io.grpc.okhttp.OkHttpChannelBuilder;
 
-@Module
+@Module (includes = ContextModule.class)
 public class ChannelModule {
 
     @Provides

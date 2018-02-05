@@ -17,7 +17,6 @@
         android:layout_marginStart="12dp"
         android:layout_weight="1"
         android:backgroundTint="@color/neutral_font_color"
-        android:hint="@string/pick_a_company"
         android:textColorHint="@color/neutral_font_color" />
 
     <LinearLayout

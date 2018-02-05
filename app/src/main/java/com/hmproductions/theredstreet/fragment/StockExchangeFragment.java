@@ -15,8 +15,10 @@ import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,7 +29,6 @@ import com.hmproductions.theredstreet.loaders.CompanyProfileLoader;
 import com.hmproductions.theredstreet.utils.ConnectionUtils;
 import com.hmproductions.theredstreet.utils.Constants;
 import com.hmproductions.theredstreet.utils.StockUtils;
-import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner;
 
 import javax.inject.Inject;
 
@@ -40,19 +41,14 @@ import dalalstreet.api.actions.BuyStocksFromExchangeResponse;
 import dalalstreet.api.actions.GetCompanyProfileResponse;
 import dalalstreet.api.models.Stock;
 
-import static com.hmproductions.theredstreet.utils.StockUtils.getStockIdFromCompanyName;
-
 /* Uses GetCompanyProfile() for getting stock info
 *  Uses BuyStocksFromExchange() to buy appropriate stocks */
 public class StockExchangeFragment extends Fragment implements LoaderManager.LoaderCallbacks<GetCompanyProfileResponse> {
 
-    private static final String COMPANY_NAME_KEY = "company-name-key";
+    private static final String COMPANY_STOCK_ID_KEY = "company-stock-id-key";
 
     @Inject
     DalalActionServiceGrpc.DalalActionServiceBlockingStub actionServiceBlockingStub;
-
-    @BindView(R.id.company_spinner)
-    MaterialBetterSpinner companySpinner;
 
     @BindView(R.id.noOfStocks_editText)
     EditText noOfStocksEditText;
@@ -73,8 +69,11 @@ public class StockExchangeFragment extends Fragment implements LoaderManager.Loa
     TextView stockInExchangeTextView;
 
     private Stock currentStock;
-    private String lastCompanySelected = null;
+    private int lastSelectedStockId;
     private AlertDialog loadingDialog;
+
+    Spinner companySpinner;
+    String [] companiesArray;
 
     private ConnectionUtils.OnNetworkDownHandler networkDownHandler;
 
@@ -83,7 +82,7 @@ public class StockExchangeFragment extends Fragment implements LoaderManager.Loa
         public void onReceive(Context context, Intent intent) {
             if (getActivity() != null && intent.getAction() != null && intent.getAction().equalsIgnoreCase(Constants.REFRESH_STOCK_PRICES_ACTION)) {
                 Bundle bundle = new Bundle();
-                bundle.putString(COMPANY_NAME_KEY, lastCompanySelected);
+                bundle.putInt(COMPANY_STOCK_ID_KEY, lastSelectedStockId);
                 getActivity().getSupportLoaderManager().restartLoader(Constants.COMPANY_PROFILE_LOADER_ID, bundle, StockExchangeFragment.this);
             }
         }
@@ -127,15 +126,26 @@ public class StockExchangeFragment extends Fragment implements LoaderManager.Loa
         if (getActivity() != null) getActivity().setTitle("Stock Exchange");
         DaggerDalalStreetApplicationComponent.builder().contextModule(new ContextModule(getContext())).build().inject(this);
 
+        companiesArray = StockUtils.getCompanyNamesArray();
+
         companySpinner = rootView.findViewById(R.id.company_spinner);
-        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(getActivity(), R.layout.company_spinner_item, StockUtils.getCompanyNamesArray());
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(getActivity(), R.layout.company_spinner_item, companiesArray);
         companySpinner.setAdapter(arrayAdapter);
 
-        companySpinner.setOnItemClickListener((adapterView, view, position, id) -> {
-            Bundle bundle = new Bundle();
-            bundle.putString(COMPANY_NAME_KEY, companySpinner.getText().toString());
-            lastCompanySelected = companySpinner.getText().toString();
-            getActivity().getSupportLoaderManager().restartLoader(Constants.COMPANY_PROFILE_LOADER_ID, bundle, this);
+        companySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                int stockId = StockUtils.getStockIdFromCompanyName(companiesArray[position]);
+                Bundle bundle = new Bundle();
+                bundle.putInt(COMPANY_STOCK_ID_KEY, stockId);
+                lastSelectedStockId = stockId;
+                getActivity().getSupportLoaderManager().restartLoader(Constants.COMPANY_PROFILE_LOADER_ID, bundle, StockExchangeFragment.this);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
         });
 
         return rootView;
@@ -144,9 +154,7 @@ public class StockExchangeFragment extends Fragment implements LoaderManager.Loa
     @OnClick(R.id.buyExchange_button)
     void onBuyExchangeButtonClick() {
 
-        if (companySpinner.getText().toString().trim().isEmpty()) {
-            Toast.makeText(getActivity(), getString(R.string.pick_a_company), Toast.LENGTH_SHORT).show();
-        } else if (noOfStocksEditText.getText().toString().trim().isEmpty()) {
+        if (noOfStocksEditText.getText().toString().trim().isEmpty()) {
             Toast.makeText(getActivity(), "Enter the number of Stocks", Toast.LENGTH_SHORT).show();
         } else {
 
@@ -160,7 +168,7 @@ public class StockExchangeFragment extends Fragment implements LoaderManager.Loa
                 BuyStocksFromExchangeResponse response = actionServiceBlockingStub.buyStocksFromExchange(
                         BuyStocksFromExchangeRequest
                                 .newBuilder()
-                                .setStockId(getStockIdFromCompanyName(companySpinner.getText().toString()))
+                                .setStockId(lastSelectedStockId)
                                 .setStockQuantity(Integer.parseInt(noOfStocksEditText.getText().toString()))
                                 .build()
                 );
@@ -172,7 +180,7 @@ public class StockExchangeFragment extends Fragment implements LoaderManager.Loa
 
                         if (getActivity() != null) {
                             Bundle bundle = new Bundle();
-                            bundle.putString(COMPANY_NAME_KEY, lastCompanySelected);
+                            bundle.putInt(COMPANY_STOCK_ID_KEY, lastSelectedStockId);
                             getActivity().getSupportLoaderManager().restartLoader(Constants.COMPANY_PROFILE_LOADER_ID, bundle, this);
                         }
                         break;
@@ -215,7 +223,7 @@ public class StockExchangeFragment extends Fragment implements LoaderManager.Loa
         stockInExchangeTextView.setText("");
 
         if (getContext() != null)
-            return new CompanyProfileLoader(getContext(), actionServiceBlockingStub, getStockIdFromCompanyName(args.getString(COMPANY_NAME_KEY)));
+            return new CompanyProfileLoader(getContext(), actionServiceBlockingStub, args.getInt(COMPANY_STOCK_ID_KEY));
         else
             return null;
     }

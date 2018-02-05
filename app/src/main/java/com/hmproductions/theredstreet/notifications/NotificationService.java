@@ -47,11 +47,12 @@ public class NotificationService extends IntentService {
 
     public NotificationService() {
         super("NotificationService");
-        DaggerDalalStreetApplicationComponent.builder().contextModule(new ContextModule(this)).build().inject(this);
     }
 
     @Override
     protected void onHandleIntent(@Nullable Intent intent) {
+
+        DaggerDalalStreetApplicationComponent.builder().contextModule(new ContextModule(this)).build().inject(this);
 
         buildNotification();
 
@@ -66,13 +67,15 @@ public class NotificationService extends IntentService {
 
                         Notification notification = value.getNotification();
 
-                        Log.v(":::", notification.getText());
                         if (notification.getText().equals(preferences.getString(Constants.MARKET_OPEN_TEXT_KEY, null))) {
                             builder.setContentTitle("Market Open")
                                     .setContentText("Dalal Street market has opened just now !");
                         } else if (notification.getText().equals(preferences.getString(Constants.MARKET_CLOSED_TEXT_KEY, null))) {
                                 builder.setContentTitle("Market Closed")
                                         .setContentText("Market has closed now.");
+                        } else {
+                            builder.setContentTitle("Event Update")
+                                    .setContentText(notification.getText());
                         }
 
                         NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
@@ -90,7 +93,7 @@ public class NotificationService extends IntentService {
                             notificationChannel.setVibrationPattern(new long[]{100,200,400});
                             notificationManager.createNotificationChannel(notificationChannel);
                         }
-                        
+
                         if (notificationManager != null) {
                             notificationManager.notify(NOTIFICATION_ID, builder.build());
                         }

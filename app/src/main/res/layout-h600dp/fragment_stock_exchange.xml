@@ -5,18 +5,16 @@
     android:background="@color/black_background"
     android:padding="@dimen/activity_vertical_margin">
 
-    <com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner
+    <Spinner
         android:id="@+id/company_spinner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="10dp"
         android:hint="@string/pick_a_company"
-        app:met_baseColor="@color/neutral_font_color"
-        app:met_floatingLabel="normal"
-        app:met_primaryColor="@color/neutral_font_color"
-        app:met_textColor="@color/neutral_font_color"
-        app:met_textColorHint="@color/neutral_font_color"
-        app:met_underlineColor="@color/neutral_font_color"  />
+        android:backgroundTint="@color/neutral_font_color"
+        android:textColorHint="@color/neutral_font_color" />
 
     <LinearLayout
         android:id="@+id/currentStockPrice_linearLayout"
