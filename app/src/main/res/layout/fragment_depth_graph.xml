@@ -14,12 +14,12 @@
         android:layout_marginTop="6dp"
         android:fontFamily="@font/kreon_light"
         android:hint="@string/pick_a_company"
-        app:met_baseColor="@color/neutral_font_color"
+        app:met_baseColor="@color/neon_orange"
         app:met_floatingLabel="normal"
-        app:met_primaryColor="@color/neutral_font_color"
+        app:met_primaryColor="@color/neon_orange"
         app:met_textColor="@color/neutral_font_color"
         app:met_textColorHint="@color/neutral_font_color"
-        app:met_underlineColor="@color/neutral_font_color" />
+        app:met_underlineColor="@color/neon_orange" />
 
 
     <com.github.mikephil.charting.charts.LineChart

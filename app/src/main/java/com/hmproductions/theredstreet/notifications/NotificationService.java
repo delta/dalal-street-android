@@ -15,7 +15,9 @@ import android.util.Log;
 import com.hmproductions.theredstreet.R;
 import com.hmproductions.theredstreet.dagger.ContextModule;
 import com.hmproductions.theredstreet.dagger.DaggerDalalStreetApplicationComponent;
+import com.hmproductions.theredstreet.ui.MainActivity;
 import com.hmproductions.theredstreet.ui.SplashActivity;
+import com.hmproductions.theredstreet.utils.ConnectionUtils;
 import com.hmproductions.theredstreet.utils.Constants;
 
 import javax.inject.Inject;
@@ -42,7 +44,7 @@ public class NotificationService extends IntentService {
 
     @Inject
     SharedPreferences preferences;
-    
+
     private NotificationCompat.Builder builder = null;
 
     public NotificationService() {
@@ -50,65 +52,78 @@ public class NotificationService extends IntentService {
     }
 
     @Override
+    public int onStartCommand(@Nullable Intent intent, int flags, int startId) {
+        Log.v(":::", "on start command called");
+        onHandleIntent(intent);
+        return START_STICKY;
+    }
+
+    @Override
     protected void onHandleIntent(@Nullable Intent intent) {
 
         DaggerDalalStreetApplicationComponent.builder().contextModule(new ContextModule(this)).build().inject(this);
 
+        Log.v(":::", "starting service ");
         buildNotification();
 
-        SubscribeResponse subscribeResponse = streamServiceBlockingStub.
-                subscribe(SubscribeRequest.newBuilder().setDataStreamType(DataStreamType.NOTIFICATIONS).setDataStreamId("").build());
+        if (preferences.getBoolean(MainActivity.USER_LOGGED_IN, false)) {
 
-        streamServiceStub.getNotificationUpdates(subscribeResponse.getSubscriptionId(),
+            SubscribeResponse subscribeResponse = streamServiceBlockingStub.
+                    subscribe(SubscribeRequest.newBuilder().setDataStreamType(DataStreamType.NOTIFICATIONS).setDataStreamId("").build());
 
-                new StreamObserver<NotificationUpdate>() {
-                    @Override
-                    public void onNext(NotificationUpdate value) {
 
-                        Notification notification = value.getNotification();
+            streamServiceStub.getNotificationUpdates(subscribeResponse.getSubscriptionId(),
 
-                        if (notification.getText().equals(preferences.getString(Constants.MARKET_OPEN_TEXT_KEY, null))) {
-                            builder.setContentTitle("Market Open")
-                                    .setContentText("Dalal Street market has opened just now !");
-                        } else if (notification.getText().equals(preferences.getString(Constants.MARKET_CLOSED_TEXT_KEY, null))) {
+                    new StreamObserver<NotificationUpdate>() {
+                        @Override
+                        public void onNext(NotificationUpdate value) {
+
+                            Notification notification = value.getNotification();
+
+                            if (notification.getText().equals(preferences.getString(Constants.MARKET_OPEN_TEXT_KEY, null))) {
+                                builder.setContentTitle("Market Open")
+                                        .setContentText("Dalal Street market has opened just now !");
+                            } else if (notification.getText().equals(preferences.getString(Constants.MARKET_CLOSED_TEXT_KEY, null))) {
                                 builder.setContentTitle("Market Closed")
                                         .setContentText("Market has closed now.");
-                        } else {
-                            builder.setContentTitle("Event Update")
-                                    .setContentText(notification.getText());
+                            } else {
+                                builder.setContentTitle("Event Update")
+                                        .setContentText(notification.getText());
+                            }
+
+                            NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && notificationManager != null) {
+                                builder.setChannelId(NotificationChannel.DEFAULT_CHANNEL_ID);
+                                NotificationChannel notificationChannel = new NotificationChannel(
+                                        NotificationChannel.DEFAULT_CHANNEL_ID,
+                                        getString(R.string.dalal_street_notifications),
+                                        NotificationManager.IMPORTANCE_DEFAULT);
+
+                                notificationChannel.enableLights(true);
+                                notificationChannel.setLightColor(R.color.neon_green);
+                                notificationChannel.enableVibration(true);
+                                notificationChannel.setVibrationPattern(new long[]{100, 200, 400});
+                                notificationManager.createNotificationChannel(notificationChannel);
+                            }
+
+                            if (notificationManager != null) {
+                                notificationManager.notify(NOTIFICATION_ID, builder.build());
+                            }
                         }
 
-                        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+                        @Override
+                        public void onError(Throwable t) {
 
-                        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && notificationManager != null) {
-                            builder.setChannelId(NotificationChannel.DEFAULT_CHANNEL_ID);
-                            NotificationChannel notificationChannel = new NotificationChannel(
-                                    NotificationChannel.DEFAULT_CHANNEL_ID,
-                                    getString(R.string.dalal_street_notifications),
-                                    NotificationManager.IMPORTANCE_DEFAULT);
-
-                            notificationChannel.enableLights(true);
-                            notificationChannel.setLightColor(R.color.neon_green);
-                            notificationChannel.enableVibration(true);
-                            notificationChannel.setVibrationPattern(new long[]{100,200,400});
-                            notificationManager.createNotificationChannel(notificationChannel);
                         }
 
-                        if (notificationManager != null) {
-                            notificationManager.notify(NOTIFICATION_ID, builder.build());
+                        @Override
+                        public void onCompleted() {
+
                         }
-                    }
+                    });
+        }
 
-                    @Override
-                    public void onError(Throwable t) {
-
-                    }
-
-                    @Override
-                    public void onCompleted() {
-
-                    }
-                });
     }
 
     private void buildNotification() {

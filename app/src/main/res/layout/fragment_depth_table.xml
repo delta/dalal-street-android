@@ -21,12 +21,12 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/kreon_light"
                 android:hint="@string/pick_a_company"
-                app:met_baseColor="@color/neutral_font_color"
+                app:met_baseColor="@color/neon_orange"
                 app:met_floatingLabel="normal"
-                app:met_primaryColor="@color/neutral_font_color"
+                app:met_primaryColor="@color/neon_orange"
                 app:met_textColor="@color/neutral_font_color"
                 app:met_textColorHint="@color/neutral_font_color"
-                app:met_underlineColor="@color/neutral_font_color" />
+                app:met_underlineColor="@color/neon_orange" />
 
             <RelativeLayout
                 android:id="@+id/current_stock_price_layout"
@@ -242,7 +242,9 @@
             android:layout_centerInParent="true"
             android:fontFamily="@font/kreon_light"
             android:text="@string/select_a_company_to_view_depth"
-            android:textColor="#FFA500" />
+            android:textColor="@color/neon_green"
+            android:textSize="20sp"
+            android:textStyle="bold" />
 
     </RelativeLayout>
 

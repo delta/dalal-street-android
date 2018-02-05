@@ -89,6 +89,7 @@ public class MainActivity extends AppCompatActivity implements
     public static final String TOTAL_WORTH_KEY = "total-worth-key";
     public static final String STOCKS_OWNED_KEY = "stocks-owned-key";
     public static final String GLOBAL_STOCKS_KEY = "global-stocks-key";
+    public static final String USER_LOGGED_IN = "user-logged-in";
 
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
 
@@ -323,6 +324,7 @@ public class MainActivity extends AppCompatActivity implements
                     .edit()
                     .putString(EMAIL_KEY, null)
                     .putString(PASSWORD_KEY, null)
+                    .putBoolean(USER_LOGGED_IN, false)
                     .apply();
         } else {
             Toast.makeText(this, "Connection Error", Toast.LENGTH_SHORT).show();
@@ -590,6 +592,7 @@ public class MainActivity extends AppCompatActivity implements
 
         if (!logoutAction) {
             startService(new Intent(this, NotificationService.class));
+            preferences.edit().putBoolean(USER_LOGGED_IN, true).apply();
         }
     }
 

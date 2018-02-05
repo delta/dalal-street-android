@@ -178,7 +178,7 @@
                 android:layout_height="wrap_content"
                 android:ems="10"
                 android:fontFamily="@font/kreon_light"
-                android:hint="@string/number_of_stocks"
+                android:hint="@string/enter_the_number_of_stocks"
                 android:inputType="number"
                 android:textColor="@color/neutral_font_color"
                 android:textSize="20sp" />
