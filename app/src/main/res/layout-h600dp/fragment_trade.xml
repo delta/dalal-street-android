@@ -137,10 +137,11 @@
 
         <EditText
             android:id="@+id/noOfStocks_editText"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="48dp"
             android:ems="10"
-            android:hint="@string/number_of_stocks"
+            android:hint="@string/enter_the_number_of_stocks"
             android:inputType="number"
             android:textColor="@color/neutral_font_color" />
 

@@ -90,7 +90,6 @@ public class MainActivity extends AppCompatActivity implements
     public static final String TOTAL_WORTH_KEY = "total-worth-key";
     public static final String STOCKS_OWNED_KEY = "stocks-owned-key";
     public static final String GLOBAL_STOCKS_KEY = "global-stocks-key";
-    public static final String USER_LOGGED_IN = "user-logged-in";
 
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
 
@@ -167,7 +166,7 @@ public class MainActivity extends AppCompatActivity implements
 
         OpenAndCloseDrawer();
 
-        getSupportFragmentManager().beginTransaction().add(R.id.home_activity_fragment_container, new NotificationFragment()).commit();
+        getSupportFragmentManager().beginTransaction().add(R.id.home_activity_fragment_container, new HomeFragment()).commit();
 
         ownedStockDetails = getIntent().getParcelableArrayListExtra(STOCKS_OWNED_KEY);
         globalStockDetails = getIntent().getParcelableArrayListExtra(GLOBAL_STOCKS_KEY);
@@ -183,7 +182,7 @@ public class MainActivity extends AppCompatActivity implements
         if (!getIntent().getBooleanExtra(SplashActivity.MARKET_OPEN_KEY, false)) {
             new AlertDialog.Builder(this)
                     .setTitle("Market Closed")
-                    .setMessage("Market will open at 8 pm. Sorry for the inconvience.")
+                    .setMessage("Market will open at 8 pm. Sorry for the inconvenience.")
                     .setCancelable(true)
                     .setPositiveButton("CLOSE", (dI, i) -> dI.dismiss())
                     .show();
@@ -329,7 +328,6 @@ public class MainActivity extends AppCompatActivity implements
                     .edit()
                     .putString(EMAIL_KEY, null)
                     .putString(PASSWORD_KEY, null)
-                    .putBoolean(USER_LOGGED_IN, false)
                     .apply();
         } else {
             Toast.makeText(this, "Connection Error", Toast.LENGTH_SHORT).show();
@@ -353,7 +351,7 @@ public class MainActivity extends AppCompatActivity implements
         totalTextView.setText(String.valueOf(totalWorth));
     }
 
-    // Subscribes to transaction stream and gets updates (TESTED) TODO : Check order fill stream
+    // Subscribes to transaction stream and gets updates (TESTED)
     private void subscribeToTransactionsStream(SubscriptionId transactionsSubscriptionId) {
 
         streamServiceStub.getTransactionUpdates(transactionsSubscriptionId,
@@ -371,7 +369,6 @@ public class MainActivity extends AppCompatActivity implements
 
                         } else if (transaction.getType() == TransactionType.ORDER_FILL_TRANSACTION) {
 
-                            Log.v(":::", "order fill with total=" + String.valueOf(transaction.getTotal()));
                             updateOwnedStockIdAndQuantity(transaction.getStockId(), Math.abs(transaction.getStockQuantity()), transaction.getStockQuantity() > 0);
 
                             Intent intent = new Intent(Constants.REFRESH_WORTH_TEXTVIEW_ACTION);
@@ -597,7 +594,8 @@ public class MainActivity extends AppCompatActivity implements
 
         if (!logoutAction) {
             startService(new Intent(this, NotificationService.class));
-            preferences.edit().putBoolean(USER_LOGGED_IN, true).apply();
+        } else {
+            stopService(new Intent(this, NotificationService.class));
         }
     }
 

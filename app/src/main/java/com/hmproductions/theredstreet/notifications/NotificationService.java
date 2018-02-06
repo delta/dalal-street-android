@@ -15,9 +15,7 @@ import android.util.Log;
 import com.hmproductions.theredstreet.R;
 import com.hmproductions.theredstreet.dagger.ContextModule;
 import com.hmproductions.theredstreet.dagger.DaggerDalalStreetApplicationComponent;
-import com.hmproductions.theredstreet.ui.MainActivity;
 import com.hmproductions.theredstreet.ui.SplashActivity;
-import com.hmproductions.theredstreet.utils.ConnectionUtils;
 import com.hmproductions.theredstreet.utils.Constants;
 
 import javax.inject.Inject;
@@ -66,64 +64,60 @@ public class NotificationService extends IntentService {
         Log.v(":::", "starting service ");
         buildNotification();
 
-        if (preferences.getBoolean(MainActivity.USER_LOGGED_IN, false)) {
-
-            SubscribeResponse subscribeResponse = streamServiceBlockingStub.
-                    subscribe(SubscribeRequest.newBuilder().setDataStreamType(DataStreamType.NOTIFICATIONS).setDataStreamId("").build());
+        SubscribeResponse subscribeResponse = streamServiceBlockingStub.
+                subscribe(SubscribeRequest.newBuilder().setDataStreamType(DataStreamType.NOTIFICATIONS).setDataStreamId("").build());
 
 
-            streamServiceStub.getNotificationUpdates(subscribeResponse.getSubscriptionId(),
+        streamServiceStub.getNotificationUpdates(subscribeResponse.getSubscriptionId(),
 
-                    new StreamObserver<NotificationUpdate>() {
-                        @Override
-                        public void onNext(NotificationUpdate value) {
+                new StreamObserver<NotificationUpdate>() {
+                    @Override
+                    public void onNext(NotificationUpdate value) {
 
-                            Notification notification = value.getNotification();
+                        Notification notification = value.getNotification();
 
-                            if (notification.getText().equals(preferences.getString(Constants.MARKET_OPEN_TEXT_KEY, null))) {
-                                builder.setContentTitle("Market Open")
-                                        .setContentText("Dalal Street market has opened just now !");
-                            } else if (notification.getText().equals(preferences.getString(Constants.MARKET_CLOSED_TEXT_KEY, null))) {
-                                builder.setContentTitle("Market Closed")
-                                        .setContentText("Market has closed now.");
-                            } else {
-                                builder.setContentTitle("Event Update")
-                                        .setContentText(notification.getText());
-                            }
-
-                            NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && notificationManager != null) {
-                                builder.setChannelId(NotificationChannel.DEFAULT_CHANNEL_ID);
-                                NotificationChannel notificationChannel = new NotificationChannel(
-                                        NotificationChannel.DEFAULT_CHANNEL_ID,
-                                        getString(R.string.dalal_street_notifications),
-                                        NotificationManager.IMPORTANCE_DEFAULT);
-
-                                notificationChannel.enableLights(true);
-                                notificationChannel.setLightColor(R.color.neon_green);
-                                notificationChannel.enableVibration(true);
-                                notificationChannel.setVibrationPattern(new long[]{100, 200, 400});
-                                notificationManager.createNotificationChannel(notificationChannel);
-                            }
-
-                            if (notificationManager != null) {
-                                notificationManager.notify(NOTIFICATION_ID, builder.build());
-                            }
+                        if (notification.getText().equals(preferences.getString(Constants.MARKET_OPEN_TEXT_KEY, null))) {
+                            builder.setContentTitle("Market Open")
+                                    .setContentText("Dalal Street market has opened just now !");
+                        } else if (notification.getText().equals(preferences.getString(Constants.MARKET_CLOSED_TEXT_KEY, null))) {
+                            builder.setContentTitle("Market Closed")
+                                    .setContentText("Market has closed now.");
+                        } else {
+                            builder.setContentTitle("Event Update")
+                                    .setContentText(notification.getText());
                         }
 
-                        @Override
-                        public void onError(Throwable t) {
+                        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && notificationManager != null) {
+                            builder.setChannelId(NotificationChannel.DEFAULT_CHANNEL_ID);
+                            NotificationChannel notificationChannel = new NotificationChannel(
+                                    NotificationChannel.DEFAULT_CHANNEL_ID,
+                                    getString(R.string.dalal_street_notifications),
+                                    NotificationManager.IMPORTANCE_DEFAULT);
+
+                            notificationChannel.enableLights(true);
+                            notificationChannel.setLightColor(R.color.neon_green);
+                            notificationChannel.enableVibration(true);
+                            notificationChannel.setVibrationPattern(new long[]{100, 200, 400});
+                            notificationManager.createNotificationChannel(notificationChannel);
                         }
 
-                        @Override
-                        public void onCompleted() {
-
+                        if (notificationManager != null) {
+                            notificationManager.notify(NOTIFICATION_ID, builder.build());
                         }
-                    });
-        }
+                    }
 
+                    @Override
+                    public void onError(Throwable t) {
+
+                    }
+
+                    @Override
+                    public void onCompleted() {
+
+                    }
+                });
     }
 
     private void buildNotification() {

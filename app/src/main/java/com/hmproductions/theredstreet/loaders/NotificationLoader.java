@@ -15,10 +15,12 @@ import dalalstreet.api.actions.GetNotificationsResponse;
 public class NotificationLoader extends AsyncTaskLoader<GetNotificationsResponse> {
 
     private DalalActionServiceGrpc.DalalActionServiceBlockingStub actionServiceBlockingStub;
+    private int lastId;
 
-    public NotificationLoader(@NonNull Context context, DalalActionServiceGrpc.DalalActionServiceBlockingStub stub) {
+    public NotificationLoader(@NonNull Context context, DalalActionServiceGrpc.DalalActionServiceBlockingStub stub,int lastId) {
         super(context);
         this.actionServiceBlockingStub = stub;
+        this.lastId = lastId;
     }
 
     @Override
@@ -31,7 +33,7 @@ public class NotificationLoader extends AsyncTaskLoader<GetNotificationsResponse
     public GetNotificationsResponse loadInBackground() {
         if (ConnectionUtils.getConnectionInfo(getContext()) && ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT))
             return actionServiceBlockingStub.getNotifications(
-                    GetNotificationsRequest.newBuilder().setLastNotificationId(0).setCount(10).build());
+                    GetNotificationsRequest.newBuilder().setLastNotificationId(lastId).setCount(10).build());
         else
             return null;
     }
