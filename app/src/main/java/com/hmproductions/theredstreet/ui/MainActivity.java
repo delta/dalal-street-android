@@ -45,6 +45,7 @@ import com.hmproductions.theredstreet.fragment.TradeFragment;
 import com.hmproductions.theredstreet.fragment.TransactionsFragment;
 import com.hmproductions.theredstreet.fragment.marketDepth.MarketDepthFragment;
 import com.hmproductions.theredstreet.loaders.SubscriptionLoader;
+import com.hmproductions.theredstreet.notifications.NotificationFragment;
 import com.hmproductions.theredstreet.notifications.NotificationService;
 import com.hmproductions.theredstreet.utils.ConnectionUtils;
 import com.hmproductions.theredstreet.utils.Constants;
@@ -166,7 +167,7 @@ public class MainActivity extends AppCompatActivity implements
 
         OpenAndCloseDrawer();
 
-        getSupportFragmentManager().beginTransaction().add(R.id.home_activity_fragment_container, new HomeFragment()).commit();
+        getSupportFragmentManager().beginTransaction().add(R.id.home_activity_fragment_container, new NotificationFragment()).commit();
 
         ownedStockDetails = getIntent().getParcelableArrayListExtra(STOCKS_OWNED_KEY);
         globalStockDetails = getIntent().getParcelableArrayListExtra(GLOBAL_STOCKS_KEY);
@@ -270,6 +271,10 @@ public class MainActivity extends AppCompatActivity implements
         Fragment fragment = null;
 
         switch (item.getItemId()) {
+
+            case R.id.notifications_action:
+                fragment = new NotificationFragment();
+                break;
             case R.id.nav_home:
                 fragment = new HomeFragment();
                 break;

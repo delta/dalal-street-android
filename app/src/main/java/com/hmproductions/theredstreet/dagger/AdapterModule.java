@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.hmproductions.theredstreet.adapter.CompanyTickerRecyclerAdapter;
 import com.hmproductions.theredstreet.adapter.NewsRecyclerAdapter;
+import com.hmproductions.theredstreet.adapter.NotificationRecyclerAdapter;
 import com.hmproductions.theredstreet.adapter.PortfolioRecyclerAdapter;
 
 import dagger.Module;
@@ -28,5 +29,11 @@ public class AdapterModule {
     @DalalStreetApplicationScope
     public PortfolioRecyclerAdapter getPortfolioRecyclerAdapter(Context context) {
         return new PortfolioRecyclerAdapter(context, null);
+    }
+
+    @Provides
+    @DalalStreetApplicationScope
+    NotificationRecyclerAdapter getNotificationRecyclerAdapter(Context context) {
+        return new NotificationRecyclerAdapter(context, null);
     }
 }

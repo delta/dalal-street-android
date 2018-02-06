@@ -17,6 +17,7 @@ public class Constants {
     public static final int NEWS_LOADER_ID = 701;
     public static final int LEADER_BOARD_LOADER_ID = 801;
     public static final int TRANSACTION_LOADER_ID = 901;
+    public static final int NOTIFICATION_LOADER_ID = 1001;
 
     public static final String REFRESH_NEWS_ACTION = "refresh-news-action";
     public static final String REFRESH_PRICE_TICKER_ACTION = "refresh-price-ticker-action";

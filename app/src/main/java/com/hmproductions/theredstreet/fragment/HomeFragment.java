@@ -107,7 +107,7 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
         try {
             networkDownHandler = (ConnectionUtils.OnNetworkDownHandler) context;
         } catch (ClassCastException classCastException) {
-            throw new ClassCastException(context.toString() + " must implement network down hnadler.");
+            throw new ClassCastException(context.toString() + " must implement network down handler.");
         }
     }
 

@@ -104,7 +104,7 @@ public class MortgageFragment extends Fragment implements LoaderManager.LoaderCa
         try {
             networkDownHandler = (ConnectionUtils.OnNetworkDownHandler) context;
         } catch (ClassCastException classCastException) {
-            throw new ClassCastException(context.toString() + " must implement network down hnadler.");
+            throw new ClassCastException(context.toString() + " must implement network down handler.");
         }
     }
 

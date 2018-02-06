@@ -98,7 +98,7 @@ public class StockExchangeFragment extends Fragment implements LoaderManager.Loa
         try {
             networkDownHandler = (ConnectionUtils.OnNetworkDownHandler) context;
         } catch (ClassCastException classCastException) {
-            throw new ClassCastException(context.toString() + " must implement network down hnadler.");
+            throw new ClassCastException(context.toString() + " must implement network down handler.");
         }
     }
 
