@@ -1,16 +1,22 @@
 package com.hmproductions.theredstreet.notifications;
 
-import android.app.IntentService;
+import android.app.AlarmManager;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.app.Service;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.media.RingtoneManager;
 import android.os.Build;
+import android.os.IBinder;
+import android.os.SystemClock;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
-import android.util.Log;
+import android.support.v4.content.LocalBroadcastManager;
 
 import com.hmproductions.theredstreet.R;
 import com.hmproductions.theredstreet.dagger.ContextModule;
@@ -25,10 +31,11 @@ import dalalstreet.api.datastreams.DataStreamType;
 import dalalstreet.api.datastreams.NotificationUpdate;
 import dalalstreet.api.datastreams.SubscribeRequest;
 import dalalstreet.api.datastreams.SubscribeResponse;
+import dalalstreet.api.datastreams.SubscriptionId;
 import dalalstreet.api.models.Notification;
 import io.grpc.stub.StreamObserver;
 
-public class NotificationService extends IntentService {
+public class NotificationService extends Service {
 
     private static final String CHANNEL_ID = "miscellaneous";
     private static final int RC_NOTIF_CLICK = 19;
@@ -44,31 +51,74 @@ public class NotificationService extends IntentService {
     SharedPreferences preferences;
 
     private NotificationCompat.Builder builder = null;
+    SubscriptionId subscriptionId;
+    boolean isLoggedIn = true;
 
-    public NotificationService() {
-        super("NotificationService");
+    private BroadcastReceiver stopNotifBroadcast = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            isLoggedIn = false;
+        }
+    };
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(Constants.STOP_NOTIFICATION);
+        LocalBroadcastManager.getInstance(this).registerReceiver(stopNotifBroadcast, intentFilter);
+
     }
 
     @Override
     public int onStartCommand(@Nullable Intent intent, int flags, int startId) {
-        Log.v(":::", "on start command called");
-        onHandleIntent(intent);
+        onHandleIntent();
         return START_STICKY;
     }
 
+    @Nullable
     @Override
-    protected void onHandleIntent(@Nullable Intent intent) {
+    public IBinder onBind(Intent intent) {
+        return null;
+    }
+
+    protected void onHandleIntent() {
 
         DaggerDalalStreetApplicationComponent.builder().contextModule(new ContextModule(this)).build().inject(this);
 
-        Log.v(":::", "starting service ");
         buildNotification();
 
-        SubscribeResponse subscribeResponse = streamServiceBlockingStub.
-                subscribe(SubscribeRequest.newBuilder().setDataStreamType(DataStreamType.NOTIFICATIONS).setDataStreamId("").build());
+        streamServiceStub.
+                subscribe(SubscribeRequest.newBuilder()
+                        .setDataStreamType(DataStreamType.NOTIFICATIONS)
+                        .setDataStreamId("")
+                        .build(), new StreamObserver<SubscribeResponse>() {
+                    @Override
+                    public void onNext(SubscribeResponse value) {
+                        if (value.getStatusCode().getNumber() == 0) {
+                            subscriptionId = value.getSubscriptionId();
+                            subscribeNotif(subscriptionId);
+                        }
+                    }
+
+                    @Override
+                    public void onError(Throwable t) {
+
+                    }
+
+                    @Override
+                    public void onCompleted() {
+
+                    }
+                });
 
 
-        streamServiceStub.getNotificationUpdates(subscribeResponse.getSubscriptionId(),
+
+    }
+
+    private void subscribeNotif(SubscriptionId subscriptionId) {
+
+        streamServiceStub.getNotificationUpdates(subscriptionId,
 
                 new StreamObserver<NotificationUpdate>() {
                     @Override
@@ -104,7 +154,10 @@ public class NotificationService extends IntentService {
                         }
 
                         if (notificationManager != null) {
-                            notificationManager.notify(NOTIFICATION_ID, builder.build());
+                            if(isLoggedIn){
+                                notificationManager.notify(NOTIFICATION_ID, builder.build());
+                            }
+
                         }
                     }
 
@@ -121,6 +174,7 @@ public class NotificationService extends IntentService {
     }
 
     private void buildNotification() {
+
         builder = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setContentIntent(contentIntent())
                 .setSmallIcon(R.drawable.market_depth_icon)
@@ -130,5 +184,30 @@ public class NotificationService extends IntentService {
 
     private PendingIntent contentIntent() {
         return PendingIntent.getActivity(this, RC_NOTIF_CLICK, new Intent(this, SplashActivity.class), PendingIntent.FLAG_UPDATE_CURRENT);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if(isLoggedIn){
+            Intent broadcastIntent = new Intent("NotifServiceBroadcast");
+            sendBroadcast(broadcastIntent);
+        }
+    }
+
+    @Override
+    public void onTaskRemoved(Intent rootIntent) {
+
+        if(isLoggedIn){
+            Intent restartServiceTask = new Intent(getApplicationContext(),this.getClass());
+            restartServiceTask.setPackage(getPackageName());
+            PendingIntent restartPendingIntent =PendingIntent.getService(getApplicationContext(), 1,restartServiceTask, PendingIntent.FLAG_ONE_SHOT);
+            AlarmManager myAlarmService = (AlarmManager) getApplicationContext().getSystemService(ALARM_SERVICE);
+            myAlarmService.set(
+                    AlarmManager.ELAPSED_REALTIME,
+                    SystemClock.elapsedRealtime() + 100,
+                    restartPendingIntent);
+        }
+        super.onTaskRemoved(rootIntent);
     }
 }

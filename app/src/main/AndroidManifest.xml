@@ -38,7 +38,17 @@
 
         <service
             android:name=".notifications.NotificationService"
-            android:exported="false"/>
+            android:enabled="true"/>
+
+        <receiver
+            android:name=".notifications.NotificationBroadCastReceiver"
+            android:enabled="true"
+            android:exported="true"
+            android:label="RestartServiceWhenStopped">
+            <intent-filter>
+                <action android:name="NotifServiceBroadcast"/>
+            </intent-filter>
+        </receiver>
 
     </application>
 
