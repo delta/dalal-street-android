@@ -1,5 +1,6 @@
 package com.hmproductions.theredstreet.ui;
 
+import android.app.ActivityManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -19,7 +20,6 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
@@ -135,6 +135,9 @@ public class MainActivity extends AppCompatActivity implements
 
     AlertDialog helpDialog, logoutDialog;
 
+    Intent notifIntent;
+    private NotificationService notificationService;
+
     private BroadcastReceiver refreshCashStockReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -187,6 +190,24 @@ public class MainActivity extends AppCompatActivity implements
                     .setPositiveButton("CLOSE", (dI, i) -> dI.dismiss())
                     .show();
         }
+
+        notificationService = new NotificationService();
+        notifIntent = new Intent(this, NotificationService.class);
+        if (!isMyServiceRunning(notificationService.getClass())) {
+            startService(notifIntent);
+        }
+    }
+
+    private boolean isMyServiceRunning(Class<?> serviceClass) {
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        if (manager != null) {
+            for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+                if (serviceClass.getName().equals(service.service.getClassName())) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     private void BindDrawerViews() {
@@ -323,6 +344,9 @@ public class MainActivity extends AppCompatActivity implements
 
         if (logoutResponse.getStatusCode().getNumber() == 0) {
             Toast.makeText(this, "Logged Out", Toast.LENGTH_SHORT).show();
+
+            Intent stopNotifIntent = new Intent(Constants.STOP_NOTIFICATION);
+            LocalBroadcastManager.getInstance(MainActivity.this).sendBroadcast(stopNotifIntent);
 
             preferences
                     .edit()
@@ -556,7 +580,7 @@ public class MainActivity extends AppCompatActivity implements
                         runOnUiThread(() -> drawerEdgeButton.setAlpha((float) (drawerEdgeButton.getAlpha() - 0.01)));
                     }
                 } catch (InterruptedException e) {
-                    Log.e(LOG_TAG, "Interrupted Exception");
+
                 }
             }
         }.start();
@@ -592,11 +616,11 @@ public class MainActivity extends AppCompatActivity implements
             logoutDialog.dismiss();
         }
 
-        if (!logoutAction) {
+        /*if (!logoutAction) {
             startService(new Intent(this, NotificationService.class));
         } else {
             stopService(new Intent(this, NotificationService.class));
-        }
+        }*/
     }
 
     @Override
@@ -645,6 +669,7 @@ public class MainActivity extends AppCompatActivity implements
     // Unsubscribes from all the streams subscribed in this activity.
     @Override
     protected void onDestroy() {
+        stopService(notifIntent);
         super.onDestroy();
         if (shouldUnsubscribe) {
             for (SubscriptionId currentSubscriptionId : subscriptionIds) {
@@ -652,4 +677,6 @@ public class MainActivity extends AppCompatActivity implements
             }
         }
     }
+
+
 }
