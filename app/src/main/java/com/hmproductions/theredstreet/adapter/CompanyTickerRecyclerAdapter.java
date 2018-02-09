@@ -34,10 +34,7 @@ public class CompanyTickerRecyclerAdapter extends RecyclerView.Adapter<CompanyTi
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
-        if(companyTickerDetailsList != null){
-            position = position % companyTickerDetailsList.size();
-        }
-
+        position = position % companyTickerDetailsList.size();
 
         CompanyTickerDetails currentCompanyTickerDetails = companyTickerDetailsList.get(position);
         int downArrowResourceId = R.drawable.down_arrow;
@@ -60,10 +57,7 @@ public class CompanyTickerRecyclerAdapter extends RecyclerView.Adapter<CompanyTi
 
     @Override
     public int getItemCount() {
-        if(companyTickerDetailsList != null)
-            return companyTickerDetailsList.size();
-        else
-            return 0;
+        return Integer.MAX_VALUE;
     }
 
     public void swapData(List<CompanyTickerDetails> companyTickerDetailsList) {
