@@ -107,6 +107,12 @@ public class LoginActivity extends AppCompatActivity implements LoaderManager.Lo
         }
     }
 
+//    TODO : Remove commments
+//    @OnClick(R.id.clickRegister_textView)
+//    void onRegisterButtonClick() {
+//        startActivity(new Intent(this, RegistrationActivity.class));
+//    }
+
     private boolean validateEmail() {
 
         if (emailEditText.getText().toString().trim().isEmpty()) {

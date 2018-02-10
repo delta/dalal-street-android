@@ -27,6 +27,7 @@ public interface DalalStreetApplicationComponent {
     void inject(LoginActivity loginActivity);
     void inject(MainActivity mainActivity);
     void inject(SplashActivity splashActivity);
+    // TODO : void inject(RegistrationActivity registrationActivity);
 
     void inject(DepthTableFragment depthTableFragment);
     void inject(DepthGraphFragment depthGraphFragment);

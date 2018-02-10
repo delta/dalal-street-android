@@ -91,8 +91,6 @@ public class MainActivity extends AppCompatActivity implements
     public static final String STOCKS_OWNED_KEY = "stocks-owned-key";
     public static final String GLOBAL_STOCKS_KEY = "global-stocks-key";
 
-    private static final String LOG_TAG = MainActivity.class.getSimpleName();
-
     @Inject
     DalalActionServiceGrpc.DalalActionServiceBlockingStub actionServiceBlockingStub;
 
@@ -116,7 +114,6 @@ public class MainActivity extends AppCompatActivity implements
     private List<SubscriptionId> subscriptionIds = new ArrayList<>();
 
     private static boolean shouldUnsubscribe = true;
-    private static boolean logoutAction = false;
 
     @BindView(R.id.stockWorth_textView)
     TextView stockTextView;
@@ -136,7 +133,6 @@ public class MainActivity extends AppCompatActivity implements
     AlertDialog helpDialog, logoutDialog;
 
     Intent notifIntent;
-    private NotificationService notificationService;
 
     private BroadcastReceiver refreshCashStockReceiver = new BroadcastReceiver() {
         @Override
@@ -177,7 +173,7 @@ public class MainActivity extends AppCompatActivity implements
 
         updateValues();
 
-        getSupportLoaderManager().restartLoader(Constants.SUBSCRIPTION_LOADER, null, this);
+        getSupportLoaderManager().restartLoader(Constants.SUBSCRIPTION_LOADER_ID, null, this);
 
         StartMakingButtonsTransparent();
         updateStockWorthViaStreamUpdates();
@@ -191,7 +187,7 @@ public class MainActivity extends AppCompatActivity implements
                     .show();
         }
 
-        notificationService = new NotificationService();
+        NotificationService notificationService = new NotificationService();
         notifIntent = new Intent(this, NotificationService.class);
         if (!isMyServiceRunning(notificationService.getClass())) {
             startService(notifIntent);
@@ -343,9 +339,8 @@ public class MainActivity extends AppCompatActivity implements
         LogoutResponse logoutResponse = actionServiceBlockingStub.logout(LogoutRequest.newBuilder().build());
 
         if (logoutResponse.getStatusCode().getNumber() == 0) {
-            Toast.makeText(this, "Logged Out", Toast.LENGTH_SHORT).show();
 
-            Intent stopNotifIntent = new Intent(Constants.STOP_NOTIFICATION);
+            Intent stopNotifIntent = new Intent(Constants.STOP_NOTIFICATION_ACTION);
             LocalBroadcastManager.getInstance(MainActivity.this).sendBroadcast(stopNotifIntent);
 
             preferences
@@ -358,7 +353,6 @@ public class MainActivity extends AppCompatActivity implements
             return;
         }
 
-        logoutAction = true;
         Intent intent = new Intent(this, LoginActivity.class);
         startActivity(intent);
         finish();
@@ -615,12 +609,6 @@ public class MainActivity extends AppCompatActivity implements
         if(logoutDialog != null){
             logoutDialog.dismiss();
         }
-
-        /*if (!logoutAction) {
-            startService(new Intent(this, NotificationService.class));
-        } else {
-            stopService(new Intent(this, NotificationService.class));
-        }*/
     }
 
     @Override
@@ -672,11 +660,12 @@ public class MainActivity extends AppCompatActivity implements
         stopService(notifIntent);
         super.onDestroy();
         if (shouldUnsubscribe) {
-            for (SubscriptionId currentSubscriptionId : subscriptionIds) {
-                streamServiceBlockingStub.unsubscribe(UnsubscribeRequest.newBuilder().setSubscriptionId(currentSubscriptionId).build());
-            }
+            new Handler().post(() -> {
+                for (SubscriptionId currentSubscriptionId : subscriptionIds) {
+                    streamServiceBlockingStub.unsubscribe(
+                            UnsubscribeRequest.newBuilder().setSubscriptionId(currentSubscriptionId).build());
+                }
+            });
         }
     }
-
-
 }

@@ -16,7 +16,7 @@
         <activity
             android:name=".ui.LoginActivity"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustPan"/>
+            android:windowSoftInputMode="adjustPan" />
 
         <activity
             android:name=".ui.MainActivity"
@@ -32,21 +32,26 @@
             </intent-filter>
         </activity>
 
+        <!-- TODO : Remove comments
         <activity
             android:name=".ui.RegistrationActivity"
-            android:screenOrientation="portrait"/>
+            android:parentActivityName=".ui.LoginActivity"
+            android:screenOrientation="portrait" /> -->
 
         <service
             android:name=".notifications.NotificationService"
-            android:enabled="true"/>
+            android:enabled="true" />
 
         <receiver
-            android:name=".notifications.NotificationBroadCastReceiver"
+            android:name=".notifications.NotificationBroadcastReceiver"
             android:enabled="true"
             android:exported="true"
             android:label="RestartServiceWhenStopped">
+
             <intent-filter>
-                <action android:name="NotifServiceBroadcast"/>
+
+                <action android:name="NotifServiceBroadcast" />
+
             </intent-filter>
         </receiver>
 

@@ -54,7 +54,7 @@ public class NotificationService extends Service {
     SubscriptionId subscriptionId;
     boolean isLoggedIn = true;
 
-    private BroadcastReceiver stopNotifBroadcast = new BroadcastReceiver() {
+    private BroadcastReceiver stopNotificationServiceBroadcast = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             isLoggedIn = false;
@@ -64,15 +64,13 @@ public class NotificationService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(Constants.STOP_NOTIFICATION);
-        LocalBroadcastManager.getInstance(this).registerReceiver(stopNotifBroadcast, intentFilter);
-
+        IntentFilter intentFilter = new IntentFilter(Constants.STOP_NOTIFICATION_ACTION);
+        LocalBroadcastManager.getInstance(this).registerReceiver(stopNotificationServiceBroadcast, intentFilter);
     }
 
     @Override
     public int onStartCommand(@Nullable Intent intent, int flags, int startId) {
-        onHandleIntent();
+        startSubscription();
         return START_STICKY;
     }
 
@@ -82,7 +80,7 @@ public class NotificationService extends Service {
         return null;
     }
 
-    protected void onHandleIntent() {
+    protected void startSubscription() {
 
         DaggerDalalStreetApplicationComponent.builder().contextModule(new ContextModule(this)).build().inject(this);
 
@@ -97,7 +95,7 @@ public class NotificationService extends Service {
                     public void onNext(SubscribeResponse value) {
                         if (value.getStatusCode().getNumber() == 0) {
                             subscriptionId = value.getSubscriptionId();
-                            subscribeNotif(subscriptionId);
+                            subscribeToNotificationsStream(subscriptionId);
                         }
                     }
 
@@ -111,12 +109,9 @@ public class NotificationService extends Service {
 
                     }
                 });
-
-
-
     }
 
-    private void subscribeNotif(SubscriptionId subscriptionId) {
+    private void subscribeToNotificationsStream(SubscriptionId subscriptionId) {
 
         streamServiceStub.getNotificationUpdates(subscriptionId,
 
@@ -157,7 +152,6 @@ public class NotificationService extends Service {
                             if(isLoggedIn){
                                 notificationManager.notify(NOTIFICATION_ID, builder.build());
                             }
-
                         }
                     }
 
@@ -203,10 +197,9 @@ public class NotificationService extends Service {
             restartServiceTask.setPackage(getPackageName());
             PendingIntent restartPendingIntent =PendingIntent.getService(getApplicationContext(), 1,restartServiceTask, PendingIntent.FLAG_ONE_SHOT);
             AlarmManager myAlarmService = (AlarmManager) getApplicationContext().getSystemService(ALARM_SERVICE);
-            myAlarmService.set(
-                    AlarmManager.ELAPSED_REALTIME,
-                    SystemClock.elapsedRealtime() + 100,
-                    restartPendingIntent);
+            if (myAlarmService != null) {
+                myAlarmService.set(AlarmManager.ELAPSED_REALTIME, SystemClock.elapsedRealtime() + 100, restartPendingIntent);
+            }
         }
         super.onTaskRemoved(rootIntent);
     }

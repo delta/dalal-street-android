@@ -390,5 +390,6 @@
         <item>Zimbabwe</item>
     </string-array>
     <string name="notifications">Notifications</string>
+    <string name="not_registered_click_here_to_register">Not registered? Click here to register</string>
 
 </resources>
