@@ -1,5 +1,6 @@
 package com.hmproductions.theredstreet.ui;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -72,6 +73,15 @@ public class LoginActivity extends AppCompatActivity implements LoaderManager.Lo
         emailEditText = findViewById(R.id.email_editText);
         passwordEditText = findViewById(R.id.password_editText);
 
+        if (getIntent().getStringExtra(RegistrationActivity.REGISTER_MESSAGE_KEY) != null) {
+            new AlertDialog.Builder(this)
+                    .setTitle("Registration Message")
+                    .setMessage(getIntent().getStringExtra(RegistrationActivity.REGISTER_MESSAGE_KEY))
+                    .setPositiveButton("OKAY", (dI, i) -> dI.dismiss())
+                    .setCancelable(false)
+                    .show();
+        }
+
         startLoginProcess(false);
     }
 
@@ -107,11 +117,10 @@ public class LoginActivity extends AppCompatActivity implements LoaderManager.Lo
         }
     }
 
-//    TODO : Remove commments
-//    @OnClick(R.id.clickRegister_textView)
-//    void onRegisterButtonClick() {
-//        startActivity(new Intent(this, RegistrationActivity.class));
-//    }
+    @OnClick(R.id.clickRegister_textView)
+    void onRegisterButtonClick() {
+        startActivity(new Intent(this, RegistrationActivity.class));
+    }
 
     private boolean validateEmail() {
 
@@ -229,6 +238,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderManager.Lo
             finish();
         } else {
             Toast.makeText(this, "Invalid Credentials", Toast.LENGTH_SHORT).show();
+            passwordEditText.setText("");
         }
     }
 

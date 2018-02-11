@@ -32,11 +32,10 @@
             </intent-filter>
         </activity>
 
-        <!-- TODO : Remove comments
         <activity
             android:name=".ui.RegistrationActivity"
             android:parentActivityName=".ui.LoginActivity"
-            android:screenOrientation="portrait" /> -->
+            android:screenOrientation="portrait" />
 
         <service
             android:name=".notifications.NotificationService"
@@ -49,10 +48,9 @@
             android:label="RestartServiceWhenStopped">
 
             <intent-filter>
-
                 <action android:name="NotifServiceBroadcast" />
-
             </intent-filter>
+
         </receiver>
 
     </application>

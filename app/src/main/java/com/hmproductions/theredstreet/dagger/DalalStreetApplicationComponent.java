@@ -11,10 +11,12 @@ import com.hmproductions.theredstreet.fragment.MortgageFragment;
 import com.hmproductions.theredstreet.fragment.NewsFragment;
 import com.hmproductions.theredstreet.fragment.StockExchangeFragment;
 import com.hmproductions.theredstreet.fragment.TransactionsFragment;
+import com.hmproductions.theredstreet.loaders.LoginLoader;
 import com.hmproductions.theredstreet.notifications.NotificationFragment;
 import com.hmproductions.theredstreet.notifications.NotificationService;
 import com.hmproductions.theredstreet.ui.MainActivity;
 import com.hmproductions.theredstreet.ui.LoginActivity;
+import com.hmproductions.theredstreet.ui.RegistrationActivity;
 import com.hmproductions.theredstreet.ui.SplashActivity;
 
 import dagger.Component;
@@ -27,7 +29,7 @@ public interface DalalStreetApplicationComponent {
     void inject(LoginActivity loginActivity);
     void inject(MainActivity mainActivity);
     void inject(SplashActivity splashActivity);
-    // TODO : void inject(RegistrationActivity registrationActivity);
+    void inject(RegistrationActivity registrationActivity);
 
     void inject(DepthTableFragment depthTableFragment);
     void inject(DepthGraphFragment depthGraphFragment);

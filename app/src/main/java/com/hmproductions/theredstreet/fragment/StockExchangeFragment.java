@@ -177,6 +177,7 @@ public class StockExchangeFragment extends Fragment implements LoaderManager.Loa
 
                     case 0:
                         Toast.makeText(getContext(), "Stocks bought", Toast.LENGTH_SHORT).show();
+                        noOfStocksEditText.setText("");
 
                         if (getActivity() != null) {
                             Bundle bundle = new Bundle();
