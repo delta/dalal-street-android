@@ -336,26 +336,39 @@ public class MainActivity extends AppCompatActivity implements
 
     public void logout() {
 
-        LogoutResponse logoutResponse = actionServiceBlockingStub.logout(LogoutRequest.newBuilder().build());
-
-        if (logoutResponse.getStatusCode().getNumber() == 0) {
-
-            Intent stopNotifIntent = new Intent(Constants.STOP_NOTIFICATION_ACTION);
-            LocalBroadcastManager.getInstance(MainActivity.this).sendBroadcast(stopNotifIntent);
-
-            preferences
-                    .edit()
-                    .putString(EMAIL_KEY, null)
-                    .putString(PASSWORD_KEY, null)
-                    .apply();
-        } else {
-            Toast.makeText(this, "Connection Error", Toast.LENGTH_SHORT).show();
-            return;
+        Handler handler = new Handler();
+        if (shouldUnsubscribe) {
+            handler.post(() -> {
+                for (SubscriptionId currentSubscriptionId : subscriptionIds) {
+                    streamServiceBlockingStub.unsubscribe(
+                            UnsubscribeRequest.newBuilder().setSubscriptionId(currentSubscriptionId).build());
+                }
+            });
         }
 
-        Intent intent = new Intent(this, LoginActivity.class);
-        startActivity(intent);
-        finish();
+        handler.postDelayed(() -> {
+            LogoutResponse logoutResponse = actionServiceBlockingStub.logout(LogoutRequest.newBuilder().build());
+
+            if (logoutResponse.getStatusCode().getNumber() == 0) {
+
+                Intent stopNotifIntent = new Intent(Constants.STOP_NOTIFICATION_ACTION);
+                LocalBroadcastManager.getInstance(MainActivity.this).sendBroadcast(stopNotifIntent);
+
+                preferences
+                        .edit()
+                        .putString(EMAIL_KEY, null)
+                        .putString(PASSWORD_KEY, null)
+                        .apply();
+            } else {
+                Toast.makeText(MainActivity.this, "Connection Error", Toast.LENGTH_SHORT).show();
+                onNetworkDownError();
+                return;
+            }
+
+            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+            startActivity(intent);
+            finish();
+        }, 1000);
     }
 
     public void updateValues() {
@@ -659,13 +672,5 @@ public class MainActivity extends AppCompatActivity implements
     protected void onDestroy() {
         stopService(notifIntent);
         super.onDestroy();
-        if (shouldUnsubscribe) {
-            new Handler().post(() -> {
-                for (SubscriptionId currentSubscriptionId : subscriptionIds) {
-                    streamServiceBlockingStub.unsubscribe(
-                            UnsubscribeRequest.newBuilder().setSubscriptionId(currentSubscriptionId).build());
-                }
-            });
-        }
     }
 }

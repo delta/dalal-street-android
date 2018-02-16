@@ -4,6 +4,7 @@ package com.hmproductions.theredstreet.fragment;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
@@ -257,25 +258,27 @@ public class OrdersFragment extends Fragment implements
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (orderSubscriptionId != null) {
-            streamServiceStub.unsubscribe(UnsubscribeRequest.newBuilder().setSubscriptionId(orderSubscriptionId).build(),
-                    new StreamObserver<UnsubscribeResponse>() {
-                        @Override
-                        public void onNext(UnsubscribeResponse value) {
-                            onCompleted();
-                        }
+        new Handler().post(() -> {
+            if (orderSubscriptionId != null) {
+                streamServiceStub.unsubscribe(UnsubscribeRequest.newBuilder().setSubscriptionId(orderSubscriptionId).build(),
+                        new StreamObserver<UnsubscribeResponse>() {
+                            @Override
+                            public void onNext(UnsubscribeResponse value) {
+                                onCompleted();
+                            }
 
-                        @Override
-                        public void onError(Throwable t) {
+                            @Override
+                            public void onError(Throwable t) {
 
-                        }
+                            }
 
-                        @Override
-                        public void onCompleted() {
+                            @Override
+                            public void onCompleted() {
 
-                        }
-                    });
-        }
+                            }
+                        });
+            }
+        });
     }
 
     private static class OrdersUpdateAsynctask extends AsyncTask<DalalStreamServiceGrpc, Void, SubscriptionId> {

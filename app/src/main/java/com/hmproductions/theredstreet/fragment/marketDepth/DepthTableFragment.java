@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
@@ -302,31 +303,32 @@ public class DepthTableFragment extends Fragment implements LoaderManager.Loader
 
     public void unsubscribe(SubscriptionId prevSubscriptionId) {
 
-        if (prevSubscriptionId != null) {
-            streamServiceStub.unsubscribe(
-                    UnsubscribeRequest.newBuilder()
-                            .setSubscriptionId(prevSubscriptionId)
-                            .build(),
-                    new StreamObserver<UnsubscribeResponse>() {
-                        @Override
-                        public void onNext(UnsubscribeResponse value) {
-                            if (!(value.getStatusCode().getNumber() == 0))
-                                Toast.makeText(getContext(), "Server internal error", Toast.LENGTH_SHORT).show();
-                            onCompleted();
-                        }
+        new Handler().post(() -> {
+            if (prevSubscriptionId != null) {
+                streamServiceStub.unsubscribe(
+                        UnsubscribeRequest.newBuilder()
+                                .setSubscriptionId(prevSubscriptionId)
+                                .build(),
+                        new StreamObserver<UnsubscribeResponse>() {
+                            @Override
+                            public void onNext(UnsubscribeResponse value) {
+                                if (!(value.getStatusCode().getNumber() == 0))
+                                    Toast.makeText(getContext(), "Server internal error", Toast.LENGTH_SHORT).show();
+                                onCompleted();
+                            }
 
-                        @Override
-                        public void onError(Throwable t) {
+                            @Override
+                            public void onError(Throwable t) {
 
-                        }
+                            }
 
-                        @Override
-                        public void onCompleted() {
+                            @Override
+                            public void onCompleted() {
 
-                        }
-                    });
-        }
-
+                            }
+                        });
+            }
+        });
     }
 
     @Override
