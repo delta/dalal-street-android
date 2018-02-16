@@ -10,12 +10,10 @@ import android.widget.TextView;
 import com.hmproductions.theredstreet.R;
 import com.hmproductions.theredstreet.data.Notification;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
-import java.util.Locale;
+
+import static com.hmproductions.theredstreet.utils.MiscellaneousUtils.parseDate;
 
 public class NotificationRecyclerAdapter extends RecyclerView.Adapter<NotificationRecyclerAdapter.NotificationViewHolder> {
 
@@ -60,25 +58,5 @@ public class NotificationRecyclerAdapter extends RecyclerView.Adapter<Notificati
             notificationTextTextView = itemView.findViewById(R.id.notification_textView);
             createdAtTextView = itemView.findViewById(R.id.createdAt_textView);
         }
-    }
-
-    private String parseDate(String time) {
-        String inputPattern = "yyyy-MM-dd'T'HH:mm:ss'Z'";
-        String outputPattern = "hh:mm a    MMM dd";
-        SimpleDateFormat inputFormat = new SimpleDateFormat(inputPattern, Locale.US);
-        SimpleDateFormat outputFormat = new SimpleDateFormat(outputPattern, Locale.US);
-
-        String str = null;
-
-        try {
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTime(inputFormat.parse(time));
-            calendar.add(Calendar.HOUR_OF_DAY, 5);
-            calendar.add(Calendar.MINUTE, 30);
-            str = outputFormat.format(calendar.getTime());
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        return str;
     }
 }

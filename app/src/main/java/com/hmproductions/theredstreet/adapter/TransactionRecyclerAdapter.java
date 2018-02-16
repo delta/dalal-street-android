@@ -19,6 +19,7 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
+import static com.hmproductions.theredstreet.utils.MiscellaneousUtils.parseDate;
 import static com.hmproductions.theredstreet.utils.StockUtils.getCompanyNameFromStockId;
 
 public class TransactionRecyclerAdapter extends RecyclerView.Adapter<TransactionRecyclerAdapter.MyViewHolder> {
@@ -101,26 +102,6 @@ public class TransactionRecyclerAdapter extends RecyclerView.Adapter<Transaction
     public void swapData(List<Transaction> newList) {
         transactionList = newList;
         notifyDataSetChanged();
-    }
-
-    private String parseDate(String time) {
-        String inputPattern = "yyyy-MM-dd'T'HH:mm:ss'Z'";
-        String outputPattern = "hh:mm a    MMM dd";
-        SimpleDateFormat inputFormat = new SimpleDateFormat(inputPattern, Locale.US);
-        SimpleDateFormat outputFormat = new SimpleDateFormat(outputPattern, Locale.US);
-
-        String str = null;
-
-        try {
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTime(inputFormat.parse(time));
-            calendar.add(Calendar.HOUR_OF_DAY, 5);
-            calendar.add(Calendar.MINUTE, 30);
-            str = outputFormat.format(calendar.getTime());
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        return str;
     }
 
     class MyViewHolder extends RecyclerView.ViewHolder {

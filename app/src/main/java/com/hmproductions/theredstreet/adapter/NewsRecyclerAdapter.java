@@ -13,6 +13,8 @@ import com.hmproductions.theredstreet.data.NewsDetails;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.hmproductions.theredstreet.utils.MiscellaneousUtils.parseDate;
+
 public class NewsRecyclerAdapter extends RecyclerView.Adapter<NewsRecyclerAdapter.MyViewHolder>{
 
     private Context context;
@@ -32,18 +34,11 @@ public class NewsRecyclerAdapter extends RecyclerView.Adapter<NewsRecyclerAdapte
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
 
-        holder.headlinesTextView.setText(newsList.get(position).getHeadlines());
-        holder.createdAtTextView.setText(newsList.get(position).getCreatedAt());
+        NewsDetails currentNewsDetails = newsList.get(position);
 
-        if (newsList.get(position).getContent() != null) {
-            holder.contentTextView.setText(newsList.get(position).getContent());
-            holder.contentTextView.setVisibility(View.VISIBLE);
-            holder.createdAtTextView.setVisibility(View.VISIBLE);
-        }
-        else {
-            holder.contentTextView.setVisibility(View.GONE);
-            holder.createdAtTextView.setVisibility(View.GONE);
-        }
+        holder.headlinesTextView.setText(currentNewsDetails.getHeadlines());
+        holder.createdAtTextView.setText(parseDate(currentNewsDetails.getCreatedAt()));
+        holder.contentTextView.setText(currentNewsDetails.getContent());
     }
 
     @Override

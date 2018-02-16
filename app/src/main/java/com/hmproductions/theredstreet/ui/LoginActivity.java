@@ -95,7 +95,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderManager.Lo
         } else {
             findViewById(R.id.play_button).setEnabled(false);
             new Handler().postDelayed(() -> Snackbar
-                    .make(findViewById(android.R.id.content), "Internet Unavailable", Snackbar.LENGTH_INDEFINITE)
+                    .make(findViewById(android.R.id.content), "Please check internet connection", Snackbar.LENGTH_INDEFINITE)
                     .setAction("RETRY", view -> startLoginProcess(true))
                     .show(), 500);
         }

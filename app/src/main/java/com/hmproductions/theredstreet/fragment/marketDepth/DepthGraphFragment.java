@@ -48,6 +48,7 @@ import dalalstreet.api.DalalActionServiceGrpc;
 import dalalstreet.api.actions.GetStockHistoryResponse;
 import dalalstreet.api.models.StockHistoryOuterClass;
 
+import static com.hmproductions.theredstreet.utils.MiscellaneousUtils.parseDate;
 import static com.hmproductions.theredstreet.utils.StockUtils.getStockIdFromCompanyName;
 
 public class DepthGraphFragment extends Fragment implements LoaderManager.LoaderCallbacks<GetStockHistoryResponse> {
@@ -177,7 +178,7 @@ public class DepthGraphFragment extends Fragment implements LoaderManager.Loader
 
         Collections.reverse(trimmedStockHistoryList);
         for (int i = 0; i < trimmedStockHistoryList.size(); i++) {
-            xVals.add(parseDateString(convertToString(trimmedStockHistoryList.get(i).getStockDate())));
+            xVals.add(parseDate(convertToString(trimmedStockHistoryList.get(i).getStockDate())));
             yVals.add(new Entry(trimmedStockHistoryList.get(i).getStockClose(), i));
         }
 
@@ -215,24 +216,6 @@ public class DepthGraphFragment extends Fragment implements LoaderManager.Loader
     @Override
     public void onLoaderReset(Loader<GetStockHistoryResponse> loader) {
         // Do nothing
-    }
-
-    private String parseDateString(String time) {
-        String inputPattern = "yyyy-MM-dd'T'HH:mm:ss'Z'";
-        String outputPattern = "hh:mm a MMM dd";
-        SimpleDateFormat inputFormat = new SimpleDateFormat(inputPattern, Locale.US);
-        SimpleDateFormat outputFormat = new SimpleDateFormat(outputPattern, Locale.US);
-
-        Date date;
-        String str = null;
-
-        try {
-            date = inputFormat.parse(time);
-            str = outputFormat.format(date);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        return str;
     }
 
     private Date convertToDate(String stringDate) {

@@ -10,6 +10,10 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Locale;
 
 public class MiscellaneousUtils {
 
@@ -17,6 +21,26 @@ public class MiscellaneousUtils {
         Resources resources = context.getResources();
         DisplayMetrics metrics = resources.getDisplayMetrics();
         return dp * ((float)metrics.densityDpi / DisplayMetrics.DENSITY_DEFAULT);
+    }
+
+    public static String parseDate(String time) {
+        String inputPattern = "yyyy-MM-dd'T'HH:mm:ss'Z'";
+        String outputPattern = "hh:mm a   MMM dd";
+        SimpleDateFormat inputFormat = new SimpleDateFormat(inputPattern, Locale.US);
+        SimpleDateFormat outputFormat = new SimpleDateFormat(outputPattern, Locale.US);
+
+        String str = null;
+
+        try {
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(inputFormat.parse(time));
+            calendar.add(Calendar.HOUR_OF_DAY, 5);
+            calendar.add(Calendar.MINUTE, 30);
+            str = outputFormat.format(calendar.getTime());
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return str;
     }
 
     public static String sessionId = "dalalStreetSessionId";

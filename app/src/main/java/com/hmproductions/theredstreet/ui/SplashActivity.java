@@ -98,7 +98,7 @@ public class SplashActivity extends AppCompatActivity implements LoaderManager.L
 
         } else {
             new Handler().postDelayed(() -> {
-                Snackbar.make(findViewById(android.R.id.content), "Internet Unavailable", Snackbar.LENGTH_INDEFINITE)
+                Snackbar.make(findViewById(android.R.id.content), "Please check internet connection", Snackbar.LENGTH_INDEFINITE)
                         .setAction("RETRY", view -> {
                             startLoginProcess(email,password);
                             splashText.setText(R.string.error_signing_in);
