@@ -137,7 +137,7 @@
     <string name="email_address">Email Address</string>
     <string name="password">Password</string>
     <string name="confirm_password">Confirm Password</string>
-    <string name="nationality">Nationality (Optional)</string>
+    <string name="nationality">Nationality</string>
     <string name="in_game_cash">In-Game cash alloted - ₹200000</string>
     <string name="error_signing_in">Error Signing In</string>
     <string name="error_server_down">Error Server Down</string>
@@ -203,7 +203,7 @@
         <item>Cuba</item>
         <item>Cyprus</item>
         <item>Czech Republic</item>
-        <item>Democratic Republic of the Congo</item>
+        <item>Republic of Congo</item>
         <item>Denmark</item>
         <item>Djibouti</item>
         <item>Dominica</item>
@@ -220,7 +220,7 @@
         <item>Falkland Islands</item>
         <item>Fiji</item>
         <item>Finland</item>
-        <item>Former Yugoslav Republic of Macedonia</item>
+        <item>Republic of Macedonia</item>
         <item>France</item>
         <item>French Guiana</item>
         <item>French Polynesia</item>
@@ -240,7 +240,7 @@
         <item>Guinea-Bissau</item>
         <item>Guyana</item>
         <item>Haiti</item>
-        <item>Heard Island and McDonald Islands</item>
+        <item>Heard &amp; McDonald Islands</item>
         <item>Honduras</item>
         <item>Hong Kong</item>
         <item>Hungary</item>
@@ -328,7 +328,7 @@
         <item>Saint Kitts and Nevis</item>
         <item>Saint Lucia</item>
         <item>Saint Pierre and Miquelon</item>
-        <item>Saint Vincent and the Grenadines</item>
+        <item>Saint Vincent</item>
         <item>Samoa</item>
         <item>San Marino</item>
         <item>Saudi Arabia</item>
@@ -342,7 +342,7 @@
         <item>Solomon Islands</item>
         <item>Somalia</item>
         <item>South Africa</item>
-        <item>South Georgia and the South Sandwich Islands</item>
+        <item>South Georgia Islands</item>
         <item>South Korea</item>
         <item>South Sudan</item>
         <item>Spain</item>
@@ -375,7 +375,7 @@
         <item>United Arab Emirates</item>
         <item>United Kingdom</item>
         <item>United States</item>
-        <item>United States Minor Outlying Islands</item>
+        <item>US Outlying Islands</item>
         <item>Uruguay</item>
         <item>Uzbekistan</item>
         <item>Vanuatu</item>
@@ -391,5 +391,7 @@
     </string-array>
     <string name="notifications">Notifications</string>
     <string name="not_registered_click_here_to_register">Not registered? Click here to register</string>
+    <string name="registering">Registering…</string>
+    <string name="fullname">Full Name</string>
 
 </resources>

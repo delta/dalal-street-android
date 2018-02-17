@@ -49,6 +49,9 @@ public class RegistrationActivity extends AppCompatActivity implements LoaderMan
     @BindView(R.id.name_editText)
     EditText nameEditText;
 
+    @BindView(R.id.username_editText)
+    EditText usernameEditText;
+
     @BindView(R.id.password_editText)
     TextView passwordEditText;
 
@@ -69,7 +72,7 @@ public class RegistrationActivity extends AppCompatActivity implements LoaderMan
         ButterKnife.bind(this);
 
         View dialogView = LayoutInflater.from(this).inflate(R.layout.progress_dialog, null);
-        ((TextView) dialogView.findViewById(R.id.progressDialog_textView)).setText(R.string.getting_your_orders);
+        ((TextView) dialogView.findViewById(R.id.progressDialog_textView)).setText(R.string.registering);
         registrationAlertDialog = new AlertDialog.Builder(this).setView(dialogView).setCancelable(false).create();
 
         setSupportActionBar(registrationToolbar);
@@ -96,9 +99,11 @@ public class RegistrationActivity extends AppCompatActivity implements LoaderMan
         if (item.getItemId() == R.id.register_action) {
 
             if (nameEditText.getText().toString().isEmpty() || nameEditText.getText().toString().equals("")) {
-                Toast.makeText(this, "Please enter your name", Toast.LENGTH_SHORT).show();
-            } else if (passwordEditText.getText().toString().length() < 8) {
-                Toast.makeText(this, "Password must be at least 8 characters", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Please enter your full name", Toast.LENGTH_SHORT).show();
+            } else if (passwordEditText.getText().toString().length() < 6) {
+                Toast.makeText(this, "Password must be at least 6 characters", Toast.LENGTH_SHORT).show();
+            } else if (usernameEditText.getText().toString().isEmpty() || usernameEditText.getText().toString().equals("")) {
+                Toast.makeText(this, "Please enter your username", Toast.LENGTH_SHORT).show();
             } else if (!passwordEditText.getText().toString().equals(confirmPasswordEditText.getText().toString())) {
                 Toast.makeText(this, "Confirm password mismatch", Toast.LENGTH_SHORT).show();
             } else if (emailEditText.getText().toString().isEmpty() || emailEditText.getText().toString().equals("")) {
@@ -120,7 +125,7 @@ public class RegistrationActivity extends AppCompatActivity implements LoaderMan
         RegistrationDetails registrationDetails = new RegistrationDetails(
                 nameEditText.getText().toString(),
                 passwordEditText.getText().toString(),
-                nameEditText.getText().toString(),
+                usernameEditText.getText().toString(),
                 countryAutoComplete.getText().toString(),
                 emailEditText.getText().toString()
         );

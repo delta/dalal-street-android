@@ -1,7 +1,6 @@
 package com.hmproductions.theredstreet.dagger;
 
 import android.content.Context;
-import android.os.Build;
 
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;

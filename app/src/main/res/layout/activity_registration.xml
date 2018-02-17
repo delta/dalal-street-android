@@ -18,9 +18,9 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginTop="12dp"
-        android:layout_weight="1"
-        android:paddingStart="12dp"
+        android:layout_weight=".8"
         android:paddingEnd="2dp"
+        android:paddingStart="12dp"
         android:textColorHint="@color/neutral_font_color">
 
         <EditText
@@ -29,7 +29,7 @@
             android:layout_height="wrap_content"
             android:ems="10"
             android:fontFamily="@font/kreon_light"
-            android:hint="@string/name_lowercase"
+            android:hint="@string/fullname"
             android:inputType="textPersonName"
             android:maxLength="30"
             android:maxLines="1"
@@ -42,9 +42,32 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginTop="12dp"
-        android:layout_weight="1"
-        android:paddingStart="12dp"
+        android:layout_weight=".8"
         android:paddingEnd="2dp"
+        android:paddingStart="12dp"
+        android:textColorHint="@color/neutral_font_color">
+
+        <EditText
+            android:id="@+id/username_editText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:fontFamily="@font/kreon_light"
+            android:hint="@string/username"
+            android:inputType="textPersonName"
+            android:maxLength="20"
+            android:maxLines="1"
+            android:textColor="@color/neutral_font_color"
+            android:textSize="22sp" />
+    </android.support.design.widget.TextInputLayout>
+
+    <android.support.design.widget.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="12dp"
+        android:layout_weight=".8"
+        android:paddingEnd="2dp"
+        android:paddingStart="12dp"
         android:textColorHint="@color/neutral_font_color">
 
         <EditText
@@ -66,10 +89,10 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginTop="12dp"
-        android:layout_weight="1"
-        android:paddingStart="12dp"
-        android:paddingEnd="2dp"
+        android:layout_weight=".8"
         android:hint="@string/password"
+        android:paddingEnd="2dp"
+        android:paddingStart="12dp"
         android:textColorHint="@color/neutral_font_color">
 
         <EditText
@@ -89,11 +112,11 @@
     <android.support.design.widget.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:paddingStart="12dp"
-        android:paddingEnd="2dp"
         android:layout_marginTop="12dp"
-        android:layout_weight="1"
+        android:layout_weight=".8"
         android:hint="@string/confirm_password"
+        android:paddingEnd="2dp"
+        android:paddingStart="12dp"
         android:textColorHint="@color/neutral_font_color">
 
         <EditText
@@ -114,12 +137,14 @@
         android:id="@+id/country_autoComplete"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
-        android:paddingStart="16dp"
-        android:paddingEnd="2dp"
         android:layout_weight=".8"
         android:ems="11"
         android:fontFamily="@font/kreon_light"
         android:hint="@string/nationality"
+        android:maxLength="30"
+        android:maxLines="1"
+        android:paddingEnd="2dp"
+        android:paddingStart="16dp"
         android:textColor="@color/neon_blue"
         android:textColorHint="@color/neutral_font_color"
         android:textSize="22sp" />
@@ -127,13 +152,13 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="22sp"
         android:layout_weight="0.5"
-        android:paddingStart="12dp"
-        android:paddingEnd="2dp"
-        android:gravity="center"
         android:fontFamily="@font/kreon_light"
+        android:gravity="center"
+        android:paddingEnd="2dp"
+        android:paddingStart="12dp"
+        android:text="@string/in_game_cash"
         android:textColor="@color/neon_green"
-        android:text="@string/in_game_cash"/>
+        android:textSize="22sp" />
 
 </LinearLayout>

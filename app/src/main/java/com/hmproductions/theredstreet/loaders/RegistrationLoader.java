@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.AsyncTaskLoader;
+import android.util.Log;
 
 import com.hmproductions.theredstreet.data.RegistrationDetails;
 import com.hmproductions.theredstreet.utils.ConnectionUtils;
@@ -24,10 +25,15 @@ public class RegistrationLoader extends AsyncTaskLoader<Register.RegisterRespons
         this.registrationDetails = registrationDetails;
     }
 
+    @Override
+    protected void onStartLoading() {
+        forceLoad();
+    }
+
     @Nullable
     @Override
     public Register.RegisterResponse loadInBackground() {
-        if (ConnectionUtils.getConnectionInfo(getContext()) && ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT))
+        if (ConnectionUtils.getConnectionInfo(getContext()) && ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
             return actionServiceBlockingStub.register(
                     Register.RegisterRequest.newBuilder()
                             .setCountry(registrationDetails.getCountry())
@@ -36,6 +42,7 @@ public class RegistrationLoader extends AsyncTaskLoader<Register.RegisterRespons
                             .setPassword(registrationDetails.getPassword())
                             .setUserName(registrationDetails.getUsername())
                             .build());
+        }
         else
             return null;
     }
