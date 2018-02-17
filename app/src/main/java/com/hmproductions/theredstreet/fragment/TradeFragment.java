@@ -212,24 +212,12 @@ public class TradeFragment extends Fragment implements LoaderManager.LoaderCallb
             return;
         }
 
-        switch (orderResponse.getStatusCode().getNumber()) {
-            case 0:
-                Toast.makeText(getContext(), "Order Placed", Toast.LENGTH_SHORT).show();
-                noOfStocksEditText.setText("");
-                orderPriceEditText.setText("");
-                break;
-
-            case 1:
-                Toast.makeText(getContext(), "Internal server error", Toast.LENGTH_SHORT).show();
-                break;
-
-            case 2:
-                Toast.makeText(getContext(), "Market Closed", Toast.LENGTH_SHORT).show();
-                break;
-
-            default:
-                Toast.makeText(getContext(), "Limit exceeded", Toast.LENGTH_SHORT).show();
-                break;
+        if (orderResponse.getStatusCodeValue() == 0) {
+            Toast.makeText(getContext(), "Order Placed", Toast.LENGTH_SHORT).show();
+            noOfStocksEditText.setText("");
+            orderPriceEditText.setText("");
+        } else {
+            Toast.makeText(getContext(), orderResponse.getStatusMessage(), Toast.LENGTH_SHORT).show();
         }
     }
 

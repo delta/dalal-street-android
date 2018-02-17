@@ -186,29 +186,13 @@ public class StockExchangeFragment extends Fragment implements LoaderManager.Loa
                         }
                         break;
 
-                    case 1:
-                        Toast.makeText(getContext(), "Internal server error", Toast.LENGTH_SHORT).show();
-                        break;
-
-                    case 2:
-                        Toast.makeText(getContext(), "Market closed", Toast.LENGTH_SHORT).show();
-                        break;
-
-                    case 4:
-                        Toast.makeText(getContext(), "Insufficient cash", Toast.LENGTH_SHORT).show();
-                        break;
-
-                    case 5:
-                        Toast.makeText(getContext(), "Buy limit exceeded", Toast.LENGTH_SHORT).show();
-                        break;
-
                     default:
-                        Toast.makeText(getContext(), "Insufficient stocks error", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), response.getStatusMessage(), Toast.LENGTH_SHORT).show();
                         break;
                 }
 
             } else {
-                Toast.makeText(getActivity(), "Insufficient stocks in market", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "Insufficient stocks in exchange", Toast.LENGTH_SHORT).show();
             }
         }
     }

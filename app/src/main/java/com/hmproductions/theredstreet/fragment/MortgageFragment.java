@@ -236,10 +236,8 @@ public class MortgageFragment extends Fragment implements LoaderManager.LoaderCa
 
                     stocksEditText.setText("");
 
-                } else if (mortgageStocksResponse.getStatusCode().getNumber() == 2) {
-                    Toast.makeText(getContext(), "Market is Closed", Toast.LENGTH_SHORT).show();
                 } else {
-                    Toast.makeText(getContext(), "Inconsistent data server error", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), mortgageStocksResponse.getStatusMessage(), Toast.LENGTH_SHORT).show();
                 }
 
             } else {
@@ -271,14 +269,12 @@ public class MortgageFragment extends Fragment implements LoaderManager.LoaderCa
 
                     stocksEditText.setText("");
 
-                } else if (retrieveStocksResponse.getStatusCode().getNumber() == 2) {
-                    Toast.makeText(getContext(), "Market is Closed", Toast.LENGTH_SHORT).show();
                 } else {
-                    Toast.makeText(getContext(), "Inconsistent data server error", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), retrieveStocksResponse.getStatusMessage(), Toast.LENGTH_SHORT).show();
                 }
 
             } else {
-                Toast.makeText(getActivity(), "You dont have sufficient stocks mortgaged", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "You don't have sufficient stocks mortgaged", Toast.LENGTH_SHORT).show();
             }
         } else {
             Toast.makeText(getContext(), "Select mortgage or retrieve", Toast.LENGTH_SHORT).show();

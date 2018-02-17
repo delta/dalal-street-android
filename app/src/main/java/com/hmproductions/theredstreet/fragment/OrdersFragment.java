@@ -231,23 +231,19 @@ public class OrdersFragment extends Fragment implements
                     .setCancelable(true)
                     .setMessage("Do you want to cancel this order ?")
                     .setPositiveButton("Cancel", (dialogInterface, i) -> {
-                        CancelOrderResponse response = actionServiceBlockingStub.cancelOrder(
-                                CancelOrderRequest.newBuilder().setOrderId(orderId).setIsAsk(!bid).build());
+                        new Handler().post(() -> {
+                            CancelOrderResponse response = actionServiceBlockingStub.cancelOrder(
+                                    CancelOrderRequest.newBuilder().setOrderId(orderId).setIsAsk(!bid).build());
 
-                        switch (response.getStatusCodeValue()) {
-                            case 0:
+                            if (response.getStatusCodeValue() == 0) {
                                 Toast.makeText(getContext(), "Order cancelled", Toast.LENGTH_SHORT).show();
                                 if (getActivity() != null)
                                     getActivity().getSupportLoaderManager().restartLoader(Constants.ORDERS_LOADER_ID, null, OrdersFragment.this);
-                                break;
+                            } else {
+                                Toast.makeText(getContext(), response.getStatusMessage(), Toast.LENGTH_SHORT).show();
+                            }
+                        });
 
-                            case 1:
-                            case 3:
-                                Toast.makeText(getContext(), "Inconsistent data server error", Toast.LENGTH_SHORT).show();
-
-                            case 2:
-                                Toast.makeText(getContext(), "Market is closed", Toast.LENGTH_SHORT).show();
-                        }
                     })
                     .setNegativeButton("Back", (dialogInterface, i) -> dialogInterface.dismiss());
             builder.show();
