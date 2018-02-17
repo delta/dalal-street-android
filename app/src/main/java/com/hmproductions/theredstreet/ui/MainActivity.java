@@ -20,6 +20,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
@@ -51,6 +52,7 @@ import com.hmproductions.theredstreet.utils.ConnectionUtils;
 import com.hmproductions.theredstreet.utils.Constants;
 import com.hmproductions.theredstreet.utils.MiscellaneousUtils;
 import com.hmproductions.theredstreet.utils.StockUtils;
+import com.hmproductions.theredstreet.utils.TinyDB;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -133,6 +135,7 @@ public class MainActivity extends AppCompatActivity implements
     AlertDialog helpDialog, logoutDialog;
 
     Intent notifIntent;
+    NotificationService notificationService = new NotificationService();
 
     private BroadcastReceiver refreshCashStockReceiver = new BroadcastReceiver() {
         @Override
@@ -154,6 +157,9 @@ public class MainActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        TinyDB tinyDB = new TinyDB(this);
+        tinyDB.remove(Constants.NOTIFICATION_SHARED_PREF);
+        tinyDB.remove(Constants.NOTIFICATION_NEWS_SHARED_PREF);
         DaggerDalalStreetApplicationComponent.builder().contextModule(new ContextModule(this)).build().inject(this);
         ButterKnife.bind(this);
 
@@ -187,8 +193,9 @@ public class MainActivity extends AppCompatActivity implements
                     .show();
         }
 
-        NotificationService notificationService = new NotificationService();
+
         notifIntent = new Intent(this, NotificationService.class);
+
         if (!isMyServiceRunning(notificationService.getClass())) {
             startService(notifIntent);
         }
@@ -199,10 +206,12 @@ public class MainActivity extends AppCompatActivity implements
         if (manager != null) {
             for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
                 if (serviceClass.getName().equals(service.service.getClassName())) {
+                    Log.e("SAN","running : true" );
                     return true;
                 }
             }
         }
+        Log.e("SAN","running : false" );
         return false;
     }
 
