@@ -21,11 +21,12 @@
 
         <ImageView
             android:id="@+id/arrow_imageView"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
             android:layout_alignParentEnd="true"
-            android:layout_marginEnd="6dp"
+            android:layout_marginEnd="4dp"
             android:contentDescription="@string/company_profile"
+            android:foregroundGravity="center"
             android:src="@drawable/down_arrow" />
 
         <TextView
@@ -33,19 +34,20 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
-            android:layout_marginStart="6dp"
+            android:layout_marginStart="2dp"
             android:fontFamily="@font/marcellus_sc"
+            android:gravity="center"
             android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
             android:textColor="@color/neutral_font_color"
-            android:textSize="24sp" />
+            android:textSize="22sp" />
 
         <TextView
             android:id="@+id/lastDayClose_textView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="4dp"
             android:layout_toStartOf="@+id/arrow_imageView"
             android:fontFamily="@font/kreon_light"
+            android:gravity="center"
             android:textColor="@color/neutral_font_color"
             android:textSize="22sp" />
 

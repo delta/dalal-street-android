@@ -7,6 +7,7 @@ import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.security.ProviderInstaller;
 import com.hmproductions.theredstreet.utils.Constants;
 import com.hmproductions.theredstreet.utils.MiscellaneousUtils;
+import com.squareup.okhttp.ConnectionSpec;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -43,6 +44,7 @@ public class ChannelModule {
             channel = OkHttpChannelBuilder
                     .forAddress(Constants.HOST, Constants.PORT)
                     .sslSocketFactory(getSocketFactory(context))
+                    .connectionSpec(ConnectionSpec.MODERN_TLS)
                     .hostnameVerifier((hostname, session) -> true)
                     .build();
         } catch (KeyStoreException | CertificateException | IOException | NoSuchAlgorithmException | UnrecoverableKeyException |
