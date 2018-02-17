@@ -5,6 +5,7 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.app.TaskStackBuilder;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -18,6 +19,7 @@ import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 
 import org.pragyan.dalal18.R;
 import org.pragyan.dalal18.dagger.ContextModule;
@@ -34,6 +36,7 @@ import dalalstreet.api.DalalStreamServiceGrpc;
 import dalalstreet.api.datastreams.DataStreamType;
 import dalalstreet.api.datastreams.MarketEventUpdate;
 import dalalstreet.api.datastreams.NotificationUpdate;
+import dalalstreet.api.datastreams.Subscribe;
 import dalalstreet.api.datastreams.SubscribeRequest;
 import dalalstreet.api.datastreams.SubscribeResponse;
 import dalalstreet.api.datastreams.SubscriptionId;
@@ -129,6 +132,7 @@ public class NotificationService extends Service {
 
     private void subscribeToNewsStream(SubscriptionId newsSubscriptionId) {
 
+        Log.e("SAN","sub to news stream");
         buildNotification();
         streamServiceStub.getMarketEventUpdates(newsSubscriptionId, new StreamObserver<MarketEventUpdate>() {
             @Override
@@ -194,6 +198,7 @@ public class NotificationService extends Service {
 
     protected void startSubscription() {
 
+        Log.e("SAN","subscribe to stub");
         streamServiceStub.
                 subscribe(SubscribeRequest.newBuilder()
                         .setDataStreamType(DataStreamType.NOTIFICATIONS)
@@ -325,7 +330,9 @@ public class NotificationService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        Log.e("SAN","ondestroy");
         if(isLoggedIn){
+            Log.e("SAN","CAlling broadcast");
             Intent broadcastIntent = new Intent("NotifServiceBroadcast");
             sendBroadcast(broadcastIntent);
         }
