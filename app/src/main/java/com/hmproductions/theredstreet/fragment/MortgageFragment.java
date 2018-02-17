@@ -84,6 +84,9 @@ public class MortgageFragment extends Fragment implements LoaderManager.LoaderCa
     @BindView(R.id.depositPriceText_textView)
     TextView depositPriceTextTextView;
 
+    @BindView(R.id.mortgage_button)
+    Button mortgageButton;
+
     int stocksOwned = 0, stocksMortgaged = 0, stocksTransaction, lastStockId = 1;
     Spinner companySpinner;
     String [] companiesArray;
@@ -157,7 +160,6 @@ public class MortgageFragment extends Fragment implements LoaderManager.LoaderCa
         });
 
         mortgageRadioGroup.setOnCheckedChangeListener((radioGroup, id) -> {
-            Button mortgageButton = rootView.findViewById(R.id.mortgage_button);
             int currentPrice = StockUtils.getPriceFromStockId(MainActivity.globalStockDetails, lastStockId);
 
             if (id == R.id.mortgage_radioButton) {
@@ -326,6 +328,31 @@ public class MortgageFragment extends Fragment implements LoaderManager.LoaderCa
 
         String tempString = " :  " + Constants.RUPEE_SYMBOL + " " + String.valueOf(currentPrice);
         currentPriceTextView.setText(tempString);
+
+        if (mortgageRadioGroup.getCheckedRadioButtonId() == R.id.mortgage_radioButton) {
+            mortgageButton.setText(R.string.mortgage_uppercase);
+            mortgageRateTextTextView.setText(R.string.mortgage_deposit_rate);
+
+            String temp = " :  " + String.valueOf(Constants.MORTGAGE_DEPOSIT_RATE) + "%";
+            mortgageRateTextView.setText(temp);
+
+            depositPriceTextTextView.setText(R.string.deposit_rate_per_stock);
+
+            temp = " :  " + Constants.RUPEE_SYMBOL + " " + String.valueOf(Constants.MORTGAGE_DEPOSIT_RATE * currentPrice / 100);
+            depositPriceTextView.setText(temp);
+
+        } else if (mortgageRadioGroup.getCheckedRadioButtonId() == R.id.retrieve_radioButton){
+            mortgageButton.setText(R.string.retrieve_uppercase);
+            mortgageRateTextTextView.setText(R.string.mortgage_retrival_rate);
+
+            depositPriceTextTextView.setText(R.string.retrieval_rate_per_stock);
+
+            String temp = " :  " + String.valueOf(Constants.MORTGAGE_RETRIEVE_RATE) + "%";
+            mortgageRateTextView.setText(temp);
+
+            temp = " :  " + Constants.RUPEE_SYMBOL + " " + String.valueOf(Constants.MORTGAGE_RETRIEVE_RATE * currentPrice / 100);
+            depositPriceTextView.setText(temp);
+        }
     }
 
     @Override

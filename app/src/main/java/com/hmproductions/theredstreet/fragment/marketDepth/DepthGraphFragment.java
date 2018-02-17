@@ -160,9 +160,7 @@ public class DepthGraphFragment extends Fragment implements LoaderManager.Loader
         }
 
         for (Map.Entry<String, StockHistoryOuterClass.StockHistory> map : data.getStockHistoryMapMap().entrySet()) {
-            com.hmproductions.theredstreet.data.StockHistory tempStockHistory =
-                    new com.hmproductions.theredstreet.data.StockHistory(convertToDate(map.getKey())
-                            , map.getValue().getClose());
+            StockHistory tempStockHistory = new StockHistory(convertToDate(map.getKey()), map.getValue().getClose());
             stockHistoryList.add(tempStockHistory);
         }
         sortList(stockHistoryList);
