@@ -78,7 +78,7 @@ import io.grpc.stub.StreamObserver;
 import static com.hmproductions.theredstreet.ui.LoginActivity.EMAIL_KEY;
 import static com.hmproductions.theredstreet.ui.LoginActivity.PASSWORD_KEY;
 
-// TODO : Volume - Companies fragment, Buy Limit
+// TODO : Volume - Companies fragment, Buy Limit, constants, int64
 /* Subscribes to GetTransactions*/
 public class MainActivity extends AppCompatActivity implements
         NavigationView.OnNavigationItemSelectedListener,

@@ -12,10 +12,12 @@ import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioGroup;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,7 +29,6 @@ import com.hmproductions.theredstreet.ui.MainActivity;
 import com.hmproductions.theredstreet.utils.ConnectionUtils;
 import com.hmproductions.theredstreet.utils.Constants;
 import com.hmproductions.theredstreet.utils.StockUtils;
-import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner;
 
 import javax.inject.Inject;
 
@@ -50,10 +51,10 @@ public class TradeFragment extends Fragment implements LoaderManager.LoaderCallb
     DalalActionServiceGrpc.DalalActionServiceBlockingStub actionServiceBlockingStub;
 
     @BindView(R.id.company_spinner)
-    MaterialBetterSpinner companySpinner;
+    Spinner companySpinner;
 
     @BindView(R.id.order_select_spinner)
-    MaterialBetterSpinner orderSpinner;
+    Spinner orderSpinner;
 
     @BindView(R.id.radioGroupStock)
     RadioGroup stockRadioGroup;
@@ -124,21 +125,37 @@ public class TradeFragment extends Fragment implements LoaderManager.LoaderCallb
             bidAskButton.setText(id==R.id.bid_radioButton?"BID":"ASK");
         });
 
-        companySpinner.setOnItemClickListener((adapterView, view, position, l) -> {
-            int stocksOwned = StockUtils.getQuantityOwnedFromCompanyName(MainActivity.ownedStockDetails, companySpinner.getText().toString());
-            String tempString = " :  " + String.valueOf(stocksOwned);
-            stocksOwnedTextView.setText(tempString);
+        companySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                int stocksOwned = StockUtils.getQuantityOwnedFromCompanyName(MainActivity.ownedStockDetails, companySpinner.getSelectedItem().toString());
+                String tempString = " :  " + String.valueOf(stocksOwned);
+                stocksOwnedTextView.setText(tempString);
 
-            tempString = " : " + Constants.RUPEE_SYMBOL + " " +
-                    String.valueOf(StockUtils.getPriceFromStockId(MainActivity.globalStockDetails, StockUtils.getStockIdFromCompanyName(companySpinner.getText().toString())));
-            currentPriceTextView.setText(tempString);
+                tempString = " : " + Constants.RUPEE_SYMBOL + " " + String.valueOf(
+                        StockUtils.getPriceFromStockId(MainActivity.globalStockDetails, StockUtils.getStockIdFromCompanyName(companySpinner.getSelectedItem().toString())));
+                currentPriceTextView.setText(tempString);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
         });
 
-        orderSpinner.setOnItemClickListener((aV, view, i, l) -> {
-            if (aV.getItemAtPosition(i).toString().equals("Market Order")) {
-                orderPriceEditText.setVisibility(View.GONE);
-            } else {
-                orderPriceEditText.setVisibility(View.VISIBLE);
+        orderSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> aV, View view, int i, long l) {
+                if (aV.getItemAtPosition(i).toString().equals("Market Order")) {
+                    orderPriceEditText.setVisibility(View.GONE);
+                } else {
+                    orderPriceEditText.setVisibility(View.VISIBLE);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
             }
         });
 
@@ -148,13 +165,7 @@ public class TradeFragment extends Fragment implements LoaderManager.LoaderCallb
     @OnClick(R.id.bidAsk_button)
     void onBidAskButtonClick() {
 
-        if(companySpinner.getText().toString().trim().isEmpty()){
-            Toast.makeText(getActivity(), "Select a company", Toast.LENGTH_SHORT).show();
-        }
-        else if(orderSpinner.getText().toString().trim().isEmpty()){
-            Toast.makeText(getActivity(), "Select an Order", Toast.LENGTH_SHORT).show();
-        }
-        else if(noOfStocksEditText.getText().toString().trim().isEmpty()){
+        if(noOfStocksEditText.getText().toString().trim().isEmpty()){
             Toast.makeText(getActivity(), "Enter the number of stocks", Toast.LENGTH_SHORT).show();
         }
         else if (stockRadioGroup.getCheckedRadioButtonId() == -1){
@@ -162,7 +173,7 @@ public class TradeFragment extends Fragment implements LoaderManager.LoaderCallb
         } else if (orderPriceEditText.getVisibility() == View.VISIBLE && orderPriceEditText.getText().toString().trim().isEmpty()) {
             Toast.makeText(getActivity(), "Enter the order price", Toast.LENGTH_SHORT).show();
         } else if (stockRadioGroup.getCheckedRadioButtonId() == R.id.ask_radioButton) {
-            int validQuantity = getQuantityOwnedFromCompanyName(MainActivity.ownedStockDetails, companySpinner.getText().toString());
+            int validQuantity = getQuantityOwnedFromCompanyName(MainActivity.ownedStockDetails, companySpinner.getSelectedItem().toString());
             int askingQuantity = Integer.parseInt(noOfStocksEditText.getText().toString());
 
             if (askingQuantity > validQuantity) {
@@ -190,8 +201,8 @@ public class TradeFragment extends Fragment implements LoaderManager.LoaderCallb
         PlaceOrderRequest orderRequest = PlaceOrderRequest
                 .newBuilder()
                 .setIsAsk(stockRadioGroup.getCheckedRadioButtonId() == R.id.ask_radioButton)
-                .setStockId(getStockIdFromCompanyName(companySpinner.getText().toString()))
-                .setOrderType(getOrderTypeFromName(orderSpinner.getText().toString()))
+                .setStockId(getStockIdFromCompanyName(companySpinner.getSelectedItem().toString()))
+                .setOrderType(getOrderTypeFromName(orderSpinner.getSelectedItem().toString()))
                 .setPrice(price)
                 .setStockQuantity(Integer.parseInt(noOfStocksEditText.getText().toString()))
                 .build();

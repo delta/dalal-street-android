@@ -230,7 +230,7 @@ public class OrdersFragment extends Fragment implements
                     .setTitle("Cancel Confirm")
                     .setCancelable(true)
                     .setMessage("Do you want to cancel this order ?")
-                    .setPositiveButton("Cancel", (dialogInterface, i) -> {
+                    .setPositiveButton("Yes", (dialogInterface, i) -> {
                         new Handler().post(() -> {
                             CancelOrderResponse response = actionServiceBlockingStub.cancelOrder(
                                     CancelOrderRequest.newBuilder().setOrderId(orderId).setIsAsk(!bid).build());
@@ -245,7 +245,7 @@ public class OrdersFragment extends Fragment implements
                         });
 
                     })
-                    .setNegativeButton("Back", (dialogInterface, i) -> dialogInterface.dismiss());
+                    .setNegativeButton("No", (dialogInterface, i) -> dialogInterface.dismiss());
             builder.show();
         }
     }

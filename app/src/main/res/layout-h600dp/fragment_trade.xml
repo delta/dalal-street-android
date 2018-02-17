@@ -1,5 +1,4 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/black_background"
@@ -7,35 +6,29 @@
     android:paddingEnd="12dp"
     android:paddingStart="12dp">
 
-    <com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner
+    <Spinner
         android:id="@+id/company_spinner"
-        style="@style/ThemeSpinner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="20dp"
+        android:backgroundTint="@color/neutral_font_color"
         android:hint="@string/pick_a_company"
-        app:met_baseColor="@color/neutral_font_color"
-        app:met_floatingLabel="normal"
-        app:met_primaryColor="@color/neutral_font_color"
-        app:met_textColor="@color/neutral_font_color"
-        app:met_textColorHint="@color/neutral_font_color"
-        app:met_underlineColor="@color/neutral_font_color" />
+        android:textColorHint="@color/neutral_font_color" />
 
-    <com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner
+    <Spinner
         android:id="@+id/order_select_spinner"
-        style="@style/ThemeSpinner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/company_spinner"
-        android:layout_marginTop="12dp"
-        android:hint="@string/order_type"
-        app:met_baseColor="@color/neutral_font_color"
-        app:met_floatingLabel="normal"
-        app:met_primaryColor="@color/neutral_font_color"
-        app:met_textColor="@color/neutral_font_color"
-        app:met_textColorHint="@color/neutral_font_color"
-        app:met_underlineColor="@color/neutral_font_color" />
-
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginTop="20dp"
+        android:backgroundTint="@color/neutral_font_color"
+        android:hint="@string/pick_a_company"
+        android:textColorHint="@color/neutral_font_color" />
 
     <RadioGroup
         android:id="@+id/radioGroupStock"
@@ -132,7 +125,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/currentStockPrice_linearLayout"
-        android:layout_marginTop="15dp"
+        android:layout_marginTop="20dp"
         android:textColorHint="@color/neutral_font_color">
 
         <EditText
@@ -153,7 +146,7 @@
         android:layout_height="wrap_content"
         android:layout_alignStart="@+id/no_of_stocks_input"
         android:layout_below="@+id/no_of_stocks_input"
-        android:layout_marginTop="15dp"
+        android:layout_marginTop="20dp"
         android:textColorHint="@color/neutral_font_color">
 
         <EditText
