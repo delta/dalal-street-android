@@ -72,13 +72,19 @@ public class MortgageFragment extends Fragment implements LoaderManager.LoaderCa
     @BindView(R.id.currentPrice_textView)
     TextView currentPriceTextView;
 
-    @BindView(R.id.mortgageDeposit_textView)
-    TextView mortgageDepositTextView;
+    @BindView(R.id.mortgageRate_textView)
+    TextView mortgageRateTextView;
 
-    @BindView(R.id.mortgageRetrieve_textView)
-    TextView mortgageRetrieveTextView;
+    @BindView(R.id.mortgageRateText_textView)
+    TextView mortgageRateTextTextView;
 
-    int stocksOwned = 0, stocksMortgaged = 0, stocksTransaction;
+    @BindView(R.id.depositPrice_textView)
+    TextView depositPriceTextView;
+
+    @BindView(R.id.depositPriceText_textView)
+    TextView depositPriceTextTextView;
+
+    int stocksOwned = 0, stocksMortgaged = 0, stocksTransaction, lastStockId = 1;
     Spinner companySpinner;
     String [] companiesArray;
 
@@ -152,7 +158,32 @@ public class MortgageFragment extends Fragment implements LoaderManager.LoaderCa
 
         mortgageRadioGroup.setOnCheckedChangeListener((radioGroup, id) -> {
             Button mortgageButton = rootView.findViewById(R.id.mortgage_button);
-            mortgageButton.setText(id==R.id.mortgage_radioButton?"MORTGAGE":"RETRIEVE");
+            int currentPrice = StockUtils.getPriceFromStockId(MainActivity.globalStockDetails, lastStockId);
+
+            if (id == R.id.mortgage_radioButton) {
+                mortgageButton.setText(R.string.mortgage_uppercase);
+                mortgageRateTextTextView.setText(R.string.mortgage_deposit_rate);
+
+                String temp = " :  " + String.valueOf(Constants.MORTGAGE_DEPOSIT_RATE) + "%";
+                mortgageRateTextView.setText(temp);
+
+                depositPriceTextTextView.setText(R.string.deposit_rate_per_stock);
+
+                temp = " :  " + Constants.RUPEE_SYMBOL + " " + String.valueOf(Constants.MORTGAGE_DEPOSIT_RATE * currentPrice / 100);
+                depositPriceTextView.setText(temp);
+
+            } else {
+                mortgageButton.setText(R.string.retrieve_uppercase);
+                mortgageRateTextTextView.setText(R.string.mortgage_retrival_rate);
+
+                depositPriceTextTextView.setText(R.string.retrieval_rate_per_stock);
+
+                String temp = " :  " + String.valueOf(Constants.MORTGAGE_RETRIEVE_RATE) + "%";
+                mortgageRateTextView.setText(temp);
+
+                temp = " :  " + Constants.RUPEE_SYMBOL + " " + String.valueOf(Constants.MORTGAGE_RETRIEVE_RATE * currentPrice / 100);
+                depositPriceTextView.setText(temp);
+            }
         });
 
         String ownedString = "N/A";
@@ -290,15 +321,11 @@ public class MortgageFragment extends Fragment implements LoaderManager.LoaderCa
         String ownedString = " :  " + String.valueOf(stocksOwned);
         ownedTextView.setText(ownedString);
 
+        lastStockId = stockId;
         int currentPrice = StockUtils.getPriceFromStockId(MainActivity.globalStockDetails, stockId);
+
         String tempString = " :  " + Constants.RUPEE_SYMBOL + " " + String.valueOf(currentPrice);
         currentPriceTextView.setText(tempString);
-
-        tempString = " :  " + Constants.RUPEE_SYMBOL + " " + String.valueOf(Constants.MORTGAGE_DEPOSIT_RATE * currentPrice / 100);
-        mortgageDepositTextView.setText(tempString);
-
-        tempString = " :  " + Constants.RUPEE_SYMBOL + " " + String.valueOf(Constants.MORTGAGE_RETRIEVE_RATE * currentPrice / 100);
-        mortgageRetrieveTextView.setText(tempString);
     }
 
     @Override
