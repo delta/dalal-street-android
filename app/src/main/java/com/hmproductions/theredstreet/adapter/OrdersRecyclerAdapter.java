@@ -19,6 +19,8 @@ import com.hmproductions.theredstreet.utils.StockUtils;
 import java.util.Collections;
 import java.util.List;
 
+import dalalstreet.api.models.OrderType;
+
 public class OrdersRecyclerAdapter extends RecyclerView.Adapter<OrdersRecyclerAdapter.MyViewHolder> {
 
     private Context context;
@@ -49,10 +51,10 @@ public class OrdersRecyclerAdapter extends RecyclerView.Adapter<OrdersRecyclerAd
         Order order = orderList.get(position);
         String tempString;
 
-        tempString = (order.isBid()?"BID - ":"ASK - ") + StockUtils.getOrderTypeFromTypeId(order.getOrderType());
+        tempString = (order.isBid() ? "BID - " : "ASK - ") + StockUtils.getOrderTypeFromTypeId(order.getOrderType());
         holder.typeTextView.setText(tempString);
 
-        if (holder.typeTextView.getText().toString().substring(0,3).equals("BID"))
+        if (holder.typeTextView.getText().toString().substring(0, 3).equals("BID"))
             holder.typeTextView.setTextColor(ContextCompat.getColor(context, R.color.neon_green));
         else
             holder.typeTextView.setTextColor(ContextCompat.getColor(context, R.color.neon_blue));
@@ -63,17 +65,21 @@ public class OrdersRecyclerAdapter extends RecyclerView.Adapter<OrdersRecyclerAd
         tempString = String.valueOf(order.getStockQuantityFulfilled()) + " / " + String.valueOf(order.getStockQuantity());
         holder.quantityTextView.setText(tempString);
 
-        tempString = (order.getStockQuantityFulfilled()==0?"Placed ":order.getStockQuantity()==order.getStockQuantityFulfilled()?"Filled":"Partially Filled") + " at " +
-                Constants.RUPEE_SYMBOL + " " + String.valueOf(order.getPrice() + "/stock");
-        holder.priceTextView.setText(tempString);
+        if (order.getOrderType() == OrderType.MARKET_VALUE) {
+            holder.priceTextView.setVisibility(View.GONE);
+        } else {
+            holder.priceTextView.setVisibility(View.VISIBLE);
+            tempString = (order.getStockQuantityFulfilled() == 0 ? "Placed " : order.getStockQuantity() == order.getStockQuantityFulfilled() ? "Filled" : "Partially Filled") + " at " +
+                    Constants.RUPEE_SYMBOL + " " + String.valueOf(order.getPrice() + "/stock");
+            holder.priceTextView.setText(tempString);
+        }
 
-        if(order.getStockQuantity()==order.getStockQuantityFulfilled())
+        if (order.getStockQuantity() == order.getStockQuantityFulfilled())
             holder.cancelButton.setEnabled(false);
 
         holder.quantitySeekbar.setMax(order.getStockQuantity());
         holder.quantitySeekbar.setProgress(order.getStockQuantityFulfilled());
 
-        //holder.quantitySeekbar.getProgressDrawable().setColorFilter(new PorterDuffColorFilter(ContextCompat.getColor(context, R.color.neon_green), PorterDuff.Mode.SRC_IN));
         holder.quantitySeekbar.setOnTouchListener((view, motionEvent) -> true);
     }
 
@@ -112,7 +118,7 @@ public class OrdersRecyclerAdapter extends RecyclerView.Adapter<OrdersRecyclerAd
         }
     }
 
-    class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+    class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         TextView typeTextView, priceTextView, quantityTextView, companyNameTextView;
         Button cancelButton;
@@ -121,11 +127,11 @@ public class OrdersRecyclerAdapter extends RecyclerView.Adapter<OrdersRecyclerAd
         MyViewHolder(View view) {
             super(view);
 
-            typeTextView= view.findViewById(R.id.orderType_textView);
-            priceTextView= view.findViewById(R.id.orderPrice_textView);
-            quantityTextView= view.findViewById(R.id.quantity_textView);
-            companyNameTextView= view.findViewById(R.id.company_textView);
-            cancelButton= view.findViewById(R.id.cancel_button);
+            typeTextView = view.findViewById(R.id.orderType_textView);
+            priceTextView = view.findViewById(R.id.orderPrice_textView);
+            quantityTextView = view.findViewById(R.id.quantity_textView);
+            companyNameTextView = view.findViewById(R.id.company_textView);
+            cancelButton = view.findViewById(R.id.cancel_button);
             quantitySeekbar = view.findViewById(R.id.stockDisplay_seekBar);
 
             cancelButton.setOnClickListener(this);

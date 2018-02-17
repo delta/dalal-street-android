@@ -2,7 +2,6 @@ package com.hmproductions.theredstreet.fragment;
 
 
 import android.content.Context;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -279,13 +278,5 @@ public class OrdersFragment extends Fragment implements
                         });
             }
         });
-    }
-
-    private static class OrdersUpdateAsynctask extends AsyncTask<DalalStreamServiceGrpc, Void, SubscriptionId> {
-
-        @Override
-        protected SubscriptionId doInBackground(DalalStreamServiceGrpc... dalalStreamServiceGrpcs) {
-            return null;
-        }
     }
 }

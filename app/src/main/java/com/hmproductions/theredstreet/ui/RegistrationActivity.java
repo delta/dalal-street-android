@@ -1,19 +1,19 @@
 package com.hmproductions.theredstreet.ui;
 
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -43,8 +43,8 @@ public class RegistrationActivity extends AppCompatActivity implements LoaderMan
     @BindView(R.id.registration_toolbar)
     Toolbar registrationToolbar;
 
-    @BindView(R.id.country_autoComplete)
-    AutoCompleteTextView countryAutoComplete;
+    @BindView(R.id.country_spinner)
+    Spinner countrySpinner;
 
     @BindView(R.id.name_editText)
     EditText nameEditText;
@@ -83,8 +83,9 @@ public class RegistrationActivity extends AppCompatActivity implements LoaderMan
         }
 
         String[] countries = getResources().getStringArray(R.array.countries_array);
-        ArrayAdapter<String> countriesAdapter = new ArrayAdapter<>(this, R.layout.company_spinner_item, countries);
-        countryAutoComplete.setAdapter(countriesAdapter);
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(this, R.layout.company_spinner_item, countries);
+        countrySpinner.setAdapter(arrayAdapter);
+        countrySpinner.setSelection(98);
     }
 
     @Override
@@ -108,8 +109,6 @@ public class RegistrationActivity extends AppCompatActivity implements LoaderMan
                 Toast.makeText(this, "Confirm password mismatch", Toast.LENGTH_SHORT).show();
             } else if (emailEditText.getText().toString().isEmpty() || emailEditText.getText().toString().equals("")) {
                 Toast.makeText(this, "Please enter valid email ID", Toast.LENGTH_SHORT).show();
-            } else if(countryAutoComplete.getText().toString().isEmpty() || countryAutoComplete.getText().toString().equals("")) {
-                Toast.makeText(this, "Please select your country", Toast.LENGTH_SHORT).show();
             } else {
                 getSupportLoaderManager().restartLoader(Constants.REGISTRATION_LOADER_ID, null, this);
             }
@@ -126,7 +125,7 @@ public class RegistrationActivity extends AppCompatActivity implements LoaderMan
                 nameEditText.getText().toString(),
                 passwordEditText.getText().toString(),
                 usernameEditText.getText().toString(),
-                countryAutoComplete.getText().toString(),
+                countrySpinner.getSelectedItem().toString(),
                 emailEditText.getText().toString()
         );
 
@@ -138,7 +137,7 @@ public class RegistrationActivity extends AppCompatActivity implements LoaderMan
     public void onLoadFinished(Loader<RegisterResponse> loader, RegisterResponse response) {
 
         registrationAlertDialog.dismiss();
-        String message = null;
+        String message;
 
         if (response == null) {
             startActivity(new Intent(this, SplashActivity.class));

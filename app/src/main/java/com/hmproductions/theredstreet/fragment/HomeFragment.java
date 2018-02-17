@@ -22,18 +22,18 @@ import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.hmproductions.theredstreet.adapter.CompanyTickerRecyclerAdapter;
-import com.hmproductions.theredstreet.data.CompanyTickerDetails;
-import com.hmproductions.theredstreet.utils.ConnectionUtils;
-import com.hmproductions.theredstreet.utils.Constants;
 import com.hmproductions.theredstreet.R;
+import com.hmproductions.theredstreet.adapter.CompanyTickerRecyclerAdapter;
 import com.hmproductions.theredstreet.adapter.NewsRecyclerAdapter;
 import com.hmproductions.theredstreet.dagger.ContextModule;
 import com.hmproductions.theredstreet.dagger.DaggerDalalStreetApplicationComponent;
+import com.hmproductions.theredstreet.data.CompanyTickerDetails;
 import com.hmproductions.theredstreet.data.GlobalStockDetails;
 import com.hmproductions.theredstreet.data.NewsDetails;
 import com.hmproductions.theredstreet.loaders.NewsLoader;
 import com.hmproductions.theredstreet.ui.MainActivity;
+import com.hmproductions.theredstreet.utils.ConnectionUtils;
+import com.hmproductions.theredstreet.utils.Constants;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,7 +44,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import dalalstreet.api.DalalActionServiceGrpc;
 
-public class HomeFragment extends Fragment implements LoaderManager.LoaderCallbacks<List<NewsDetails>>{
+public class HomeFragment extends Fragment implements LoaderManager.LoaderCallbacks<List<NewsDetails>> {
 
     private static final int COMPANY_TICKER_DURATION = 2500;
 
@@ -87,9 +87,9 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
 
                 StringBuilder builder = new StringBuilder("");
                 if (MainActivity.globalStockDetails.size() > 0) {
-                    for(GlobalStockDetails currentStockDetails : MainActivity.globalStockDetails){
+                    for (GlobalStockDetails currentStockDetails : MainActivity.globalStockDetails) {
                         builder.append(currentStockDetails.getShortName()).append(" : ").append(currentStockDetails.getPrice());
-                        builder.append(currentStockDetails.getUp()==1?"\u2191":"\u2193").append("     ");
+                        builder.append(currentStockDetails.getUp() == 1 ? "\u2191" : "\u2193").append("     ");
                     }
                 }
                 breakingNewsTextView.setText(builder.toString());
@@ -142,7 +142,7 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
             @Override
             public void run() {
                 int position = linearLayoutManager.findFirstVisibleItemPosition();
-                companiesRecyclerView.smoothScrollToPosition(position+1);
+                companiesRecyclerView.smoothScrollToPosition(position + 1);
                 handler.postDelayed(this, COMPANY_TICKER_DURATION);
             }
         };
@@ -163,10 +163,10 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
                     currentStockDetails.getFullName(),
                     null,
                     currentStockDetails.getPreviousDayClose(),
-                    currentStockDetails.getUp()==0));
+                    currentStockDetails.getUp() == 0));
         }
 
-        if (companyTickerDetailsList != null && companyTickerDetailsList.size()!=0) {
+        if (companyTickerDetailsList != null && companyTickerDetailsList.size() != 0) {
             companyTickerRecyclerAdapter.swapData(companyTickerDetailsList);
         }
 
@@ -189,12 +189,12 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
 
         StringBuilder builder = new StringBuilder("");
 
-        if (data.size()!=0) {
+        if (data.size() != 0) {
             newsRecyclerAdapter.swapData(data);
 
-            for(GlobalStockDetails currentStockDetails : MainActivity.globalStockDetails){
+            for (GlobalStockDetails currentStockDetails : MainActivity.globalStockDetails) {
                 builder.append(currentStockDetails.getShortName()).append(" : ").append(currentStockDetails.getPrice());
-                builder.append(currentStockDetails.getUp()==1?"\u2191":"\u2193").append("     ");
+                builder.append(currentStockDetails.getUp() == 1 ? "↑" : "↓").append("     ");
             }
         }
 

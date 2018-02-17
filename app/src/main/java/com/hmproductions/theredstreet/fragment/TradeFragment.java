@@ -134,7 +134,13 @@ public class TradeFragment extends Fragment implements LoaderManager.LoaderCallb
             currentPriceTextView.setText(tempString);
         });
 
-        orderSpinner.setOnItemClickListener((aV, view, i, l) -> orderPriceEditText.setEnabled(!aV.getItemAtPosition(i).toString().equals("Marker order")));
+        orderSpinner.setOnItemClickListener((aV, view, i, l) -> {
+            if (aV.getItemAtPosition(i).toString().equals("Market Order")) {
+                orderPriceEditText.setVisibility(View.GONE);
+            } else {
+                orderPriceEditText.setVisibility(View.VISIBLE);
+            }
+        });
 
         return rootView;
     }
@@ -153,7 +159,7 @@ public class TradeFragment extends Fragment implements LoaderManager.LoaderCallb
         }
         else if (stockRadioGroup.getCheckedRadioButtonId() == -1){
             Toast.makeText(getActivity(), "Select order type", Toast.LENGTH_SHORT).show();
-        } else if (orderPriceEditText.isEnabled() && orderPriceEditText.getText().toString().trim().isEmpty()) {
+        } else if (orderPriceEditText.getVisibility() == View.VISIBLE && orderPriceEditText.getText().toString().trim().isEmpty()) {
             Toast.makeText(getActivity(), "Enter the order price", Toast.LENGTH_SHORT).show();
         } else if (stockRadioGroup.getCheckedRadioButtonId() == R.id.ask_radioButton) {
             int validQuantity = getQuantityOwnedFromCompanyName(MainActivity.ownedStockDetails, companySpinner.getText().toString());
@@ -180,12 +186,13 @@ public class TradeFragment extends Fragment implements LoaderManager.LoaderCallb
 
         loadingDialog.show();
 
+        int price = orderPriceEditText.getVisibility()==View.GONE?0:Integer.parseInt(orderPriceEditText.getText().toString());
         PlaceOrderRequest orderRequest = PlaceOrderRequest
                 .newBuilder()
                 .setIsAsk(stockRadioGroup.getCheckedRadioButtonId() == R.id.ask_radioButton)
                 .setStockId(getStockIdFromCompanyName(companySpinner.getText().toString()))
                 .setOrderType(getOrderTypeFromName(orderSpinner.getText().toString()))
-                .setPrice(Integer.parseInt(orderPriceEditText.getText().toString()))
+                .setPrice(price)
                 .setStockQuantity(Integer.parseInt(noOfStocksEditText.getText().toString()))
                 .build();
 

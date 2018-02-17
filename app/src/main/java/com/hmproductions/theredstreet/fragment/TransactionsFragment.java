@@ -1,14 +1,19 @@
 package com.hmproductions.theredstreet.fragment;
 
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -61,6 +66,15 @@ public class TransactionsFragment extends Fragment implements LoaderManager.Load
     private ConnectionUtils.OnNetworkDownHandler networkDownHandler;
 
     boolean paginate = true;
+
+    private BroadcastReceiver connectionChangeReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.getAction() != null && intent.getAction().equals(ConnectivityManager.CONNECTIVITY_ACTION)) {
+                networkDownHandler.onNetworkDownError();
+            }
+        }
+    };
 
     public TransactionsFragment() {
         // Required empty public constructor
@@ -198,8 +212,18 @@ public class TransactionsFragment extends Fragment implements LoaderManager.Load
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        if (getContext() != null) {
+            LocalBroadcastManager.getInstance(getContext()).registerReceiver(connectionChangeReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
+        }
+    }
+
+    @Override
     public void onPause() {
         super.onPause();
         preferences.edit().remove(LAST_TRANSACTION_ID).apply();
+        if (getContext() != null)
+            LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(connectionChangeReceiver);
     }
 }
