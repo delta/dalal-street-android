@@ -7,7 +7,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AlertDialog;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -169,7 +168,6 @@ public class DepthGraphFragment extends Fragment implements LoaderManager.Loader
 
         if (stockHistoryList.size() >= 10) {
             for (int i = 0; i < 10; i++) {
-                Log.e("SAN","Depth graph : " + stockHistoryList.get(i).getStockClose());
                 trimmedStockHistoryList.add(stockHistoryList.get(i));
             }
         } else {

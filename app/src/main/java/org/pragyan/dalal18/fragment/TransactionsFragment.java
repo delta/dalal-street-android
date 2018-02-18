@@ -17,7 +17,6 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -144,7 +143,6 @@ public class TransactionsFragment extends Fragment implements LoaderManager.Load
         if (getContext() != null) {
 
             int lastId = preferences.getInt(LAST_TRANSACTION_ID,0);
-            Log.e("SAN","trans id : " + lastId);
             return new TransactionLoader(getContext(), actionServiceStub,lastId);
         }
         return null;
@@ -208,9 +206,6 @@ public class TransactionsFragment extends Fragment implements LoaderManager.Load
                         getActivity().getSupportLoaderManager().restartLoader(TRANSACTION_LOADER_ID, null, TransactionsFragment.this);
                         paginate = false;
                     }
-                }else {
-                    //preferences.edit().putInt(LAST_TRANSACTION_ID,0).apply();
-                    Log.e("SAN","last id in pagei : " +  preferences.getInt(LAST_TRANSACTION_ID,0));
                 }
             }
         }
