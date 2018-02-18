@@ -167,8 +167,9 @@ public class TradeFragment extends Fragment implements LoaderManager.LoaderCallb
 
         if(noOfStocksEditText.getText().toString().trim().isEmpty()){
             Toast.makeText(getActivity(), "Enter the number of stocks", Toast.LENGTH_SHORT).show();
-        }
-        else if (stockRadioGroup.getCheckedRadioButtonId() == -1){
+        } else if(Integer.parseInt(noOfStocksEditText.getText().toString()) == 0){
+            Toast.makeText(getActivity(), "Enter valid number of stocks", Toast.LENGTH_SHORT).show();
+        } else if (stockRadioGroup.getCheckedRadioButtonId() == -1){
             Toast.makeText(getActivity(), "Select order type", Toast.LENGTH_SHORT).show();
         } else if (orderPriceEditText.getVisibility() == View.VISIBLE && orderPriceEditText.getText().toString().trim().isEmpty()) {
             Toast.makeText(getActivity(), "Enter the order price", Toast.LENGTH_SHORT).show();

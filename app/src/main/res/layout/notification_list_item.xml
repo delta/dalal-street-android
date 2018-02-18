@@ -3,16 +3,20 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/black_background"
-    android:padding="8dp">
+    android:paddingStart="8dp"
+    android:paddingEnd="8dp"
+    android:paddingBottom="8dp">
 
     <TextView
         android:id="@+id/notification_textView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:text="hello this is just a example  notification to check it"
         android:layout_alignParentStart="true"
         android:layout_marginEnd="12dp"
         android:layout_marginStart="6dp"
-        android:layout_marginTop="8dp"
+        android:layout_below="@+id/createdAt_textView"
+        android:layout_marginTop="3dp"
         android:fontFamily="@font/kreon_light"
         android:textColor="@color/neutral_font_color"
         android:textSize="22sp" />
@@ -21,6 +25,7 @@
         android:id="@+id/createdAt_textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:text="08:17 PM  feb 17"
         android:layout_alignParentEnd="true"
         android:layout_alignParentTop="true"
         android:layout_marginEnd="4dp"

@@ -115,6 +115,7 @@
         android:layout_below="@+id/login_cardView"
         android:gravity="center"
         android:text="@string/not_registered_click_here_to_register"
+        android:fontFamily="@font/kreon_light"
         android:textColor="@color/neon_blue"
         android:textSize="18sp"
         android:textStyle="bold" />

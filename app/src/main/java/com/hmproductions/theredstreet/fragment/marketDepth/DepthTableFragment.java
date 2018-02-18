@@ -252,20 +252,24 @@ public class DepthTableFragment extends Fragment implements LoaderManager.Loader
                     public void onNext(MarketDepthUpdate value) {
 
                         for (Map.Entry<Integer, Integer> map : value.getBidDepthMap().entrySet()) {
-                            MarketDepth temp = new MarketDepth(map.getKey(), map.getValue());
-                            bidArrayList.add(temp);
+                            if(map.getKey() > 0 ){
+                                MarketDepth temp = new MarketDepth(map.getKey(), map.getValue());
+                                bidArrayList.add(temp);
+                            }
                         }
 
 
                         for (Map.Entry<Integer, Integer> map : value.getAskDepthMap().entrySet()) {
-                            MarketDepth temp = new MarketDepth(map.getKey(), map.getValue());
-                            askArrayList.add(temp);
+                            if(map.getKey() > 0){
+                                MarketDepth temp = new MarketDepth(map.getKey(), map.getValue());
+                                askArrayList.add(temp);
+                            }
                         }
 
                         for (Map.Entry<Integer, Integer> map : value.getBidDepthDiffMap().entrySet()) {
                             int price = map.getKey();
                             int volume = map.getValue();
-                            if (!containsBid(price, volume)) {
+                            if (!containsBid(price, volume) && price>0) {
                                 bidArrayList.add(new MarketDepth(price, volume));
                             }
                         }
@@ -273,7 +277,7 @@ public class DepthTableFragment extends Fragment implements LoaderManager.Loader
                         for (Map.Entry<Integer, Integer> map : value.getAskDepthDiffMap().entrySet()) {
                             int price = map.getKey();
                             int volume = map.getValue();
-                            if (!containsAsk(price, volume)) {
+                            if (!containsAsk(price, volume) && price>0) {
                                 askArrayList.add(new MarketDepth(price, volume));
                             }
                         }
@@ -358,7 +362,7 @@ public class DepthTableFragment extends Fragment implements LoaderManager.Loader
             currentStockLayout.setVisibility(View.VISIBLE);
             String currentStockPrice = "Current Stock Price : " + Constants.RUPEE_SYMBOL + String.valueOf(currentPrice);
             currentStockPriceText.setText(currentStockPrice);
-            String prevDayClosePrice = Constants.RUPEE_SYMBOL + String.valueOf(prevDayClose);
+            String prevDayClosePrice = Constants.RUPEE_SYMBOL + String.valueOf(Math.abs(currentPrice - prevDayClose));
             prevDayCloseText.setText(String.valueOf(prevDayClosePrice));
             if (currentPrice >= prevDayClose) {
                 arrowImage.setImageResource(R.drawable.up_arrow);
