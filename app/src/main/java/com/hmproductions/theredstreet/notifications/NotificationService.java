@@ -5,7 +5,6 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
-import android.app.TaskStackBuilder;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -29,7 +28,6 @@ import com.hmproductions.theredstreet.utils.Constants;
 import com.hmproductions.theredstreet.utils.TinyDB;
 
 import java.util.ArrayList;
-import java.util.Random;
 
 import javax.inject.Inject;
 
@@ -37,12 +35,9 @@ import dalalstreet.api.DalalStreamServiceGrpc;
 import dalalstreet.api.datastreams.DataStreamType;
 import dalalstreet.api.datastreams.MarketEventUpdate;
 import dalalstreet.api.datastreams.NotificationUpdate;
-import dalalstreet.api.datastreams.Subscribe;
 import dalalstreet.api.datastreams.SubscribeRequest;
 import dalalstreet.api.datastreams.SubscribeResponse;
 import dalalstreet.api.datastreams.SubscriptionId;
-import dalalstreet.api.datastreams.UnsubscribeRequest;
-import dalalstreet.api.datastreams.UnsubscribeResponse;
 import dalalstreet.api.models.MarketEvent;
 import dalalstreet.api.models.Notification;
 import io.grpc.stub.StreamObserver;
@@ -53,10 +48,6 @@ public class NotificationService extends Service {
     private static final int RC_NOTIF_CLICK = 19;
     private static final int NOTIFICATION_ID = 3;
     private static final int NEWS_NOTIFICATION_ID = 4;
-
-
-    @Inject
-    DalalStreamServiceGrpc.DalalStreamServiceBlockingStub streamServiceBlockingStub;
 
     @Inject
     DalalStreamServiceGrpc.DalalStreamServiceStub streamServiceStub;

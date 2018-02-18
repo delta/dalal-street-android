@@ -120,6 +120,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderManager.Lo
     @OnClick(R.id.clickRegister_textView)
     void onRegisterButtonClick() {
         startActivity(new Intent(this, RegistrationActivity.class));
+        finish();
     }
 
     private boolean validateEmail() {

@@ -137,7 +137,6 @@ public class MainActivity extends AppCompatActivity implements
     AlertDialog helpDialog, logoutDialog;
 
     Intent notifIntent;
-    NotificationService notificationService = new NotificationService();
 
     private BroadcastReceiver refreshCashStockReceiver = new BroadcastReceiver() {
         @Override
@@ -197,25 +196,10 @@ public class MainActivity extends AppCompatActivity implements
 
 
         notifIntent = new Intent(this, NotificationService.class);
-
-        if (!isMyServiceRunning(notificationService.getClass())) {
-            startService(notifIntent);
-        }
+        startService(notifIntent);
     }
 
-    private boolean isMyServiceRunning(Class<?> serviceClass) {
-        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
-        if (manager != null) {
-            for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
-                if (serviceClass.getName().equals(service.service.getClassName())) {
-                    Log.e("SAN","running : true" );
-                    return true;
-                }
-            }
-        }
-        Log.e("SAN","running : false" );
-        return false;
-    }
+
 
     private void BindDrawerViews() {
 
@@ -626,6 +610,9 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void onPause() {
         super.onPause();
+        Log.e("SAN","crash on pause");
+        preferences.edit().remove(LAST_TRANSACTION_ID).apply();
+        preferences.edit().remove(LAST_NOTIFICATION_ID).apply();
         LocalBroadcastManager.getInstance(this).unregisterReceiver(refreshCashStockReceiver);
         if(helpDialog != null){
             helpDialog.dismiss();
@@ -682,6 +669,7 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     protected void onDestroy() {
         stopService(notifIntent);
+        Log.e("SAN","crash on des");
         preferences.edit().remove(LAST_TRANSACTION_ID).apply();
         preferences.edit().remove(LAST_NOTIFICATION_ID).apply();
         super.onDestroy();
