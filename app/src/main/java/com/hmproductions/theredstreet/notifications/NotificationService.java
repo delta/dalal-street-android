@@ -81,6 +81,7 @@ public class NotificationService extends Service {
 
     @Override
     public int onStartCommand(@Nullable Intent intent, int flags, int startId) {
+
         DaggerDalalStreetApplicationComponent.builder().contextModule(new ContextModule(this)).build().inject(this);
 
         tinyDB = new TinyDB(this);
@@ -120,6 +121,7 @@ public class NotificationService extends Service {
 
                     @Override
                     public void onCompleted() {
+
 
                     }
                 });
@@ -175,11 +177,6 @@ public class NotificationService extends Service {
                         notificationManager.notify(NEWS_NOTIFICATION_ID, builder.build());
                     }
                 }
-
-
-
-
-
 
             }
 
@@ -347,7 +344,6 @@ public class NotificationService extends Service {
                 myAlarmService.set(AlarmManager.ELAPSED_REALTIME, SystemClock.elapsedRealtime() + 500,
                             restartPendingIntent);
             }
-
         }
         super.onTaskRemoved(rootIntent);
     }
