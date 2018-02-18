@@ -130,7 +130,8 @@
     <string name="stock_worth">Stock Worth</string>
     <string name="total_worth">Total Worth</string>
     <string name="no_transactions_found">No transactions found.</string>
-    <string name="news_not_available">News not available.</string>
+    <string name="news_not_available">No News.</string>
+    <string name="notifications_not_available">No Notifications.</string>
     <string name="company_image_description">company_image_view</string>
     <string name="getting_fresh_news">Getting fresh news…</string>
     <string name="loading_leaderboard">Getting LeaderBoard…</string>
@@ -429,5 +430,6 @@
     <string name="retrieve_uppercase">RETRIEVE</string>
     <string name="deposit_rate_per_stock">Deposit Rate/Stock</string>
     <string name="register">REGISTER</string>
+    <string name="news_details">News Details</string>
 
 </resources>

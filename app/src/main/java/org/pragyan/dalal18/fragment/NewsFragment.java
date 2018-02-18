@@ -13,11 +13,13 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import org.pragyan.dalal18.ui.NewsDetailsActivity;
 import org.pragyan.dalal18.utils.ConnectionUtils;
 import org.pragyan.dalal18.utils.Constants;
 import org.pragyan.dalal18.R;
@@ -27,6 +29,7 @@ import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent;
 import org.pragyan.dalal18.data.NewsDetails;
 import org.pragyan.dalal18.loaders.NewsLoader;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -47,6 +50,7 @@ public class NewsFragment extends Fragment implements LoaderManager.LoaderCallba
     RecyclerView newsRecyclerView;
     TextView noNewsTextView;
     AlertDialog loadingNewsDialog;
+    List<NewsDetails> newsDetailsList = new ArrayList<>();
 
     private ConnectionUtils.OnNetworkDownHandler networkDownHandler;
 
@@ -94,6 +98,16 @@ public class NewsFragment extends Fragment implements LoaderManager.LoaderCallba
             loadingNewsDialog = new AlertDialog.Builder(getContext()).setView(dialogView).setCancelable(false).create();
         }
 
+        newsRecyclerAdapter.setOnClickListener(new NewsRecyclerAdapter.OnClickListener() {
+            @Override
+            public void itemClicked(View view, int position) {
+
+                Intent intent = new Intent(getContext(), NewsDetailsActivity.class);
+                intent.putExtra("newsdetails", newsDetailsList.get(position));
+                startActivity(intent);
+            }
+        });
+
         getActivity().getSupportLoaderManager().restartLoader(NEWS_LOADER_ID, null, this);
 
         return rootView;
@@ -116,6 +130,8 @@ public class NewsFragment extends Fragment implements LoaderManager.LoaderCallba
         }
 
         if (data.size()!=0) {
+            newsDetailsList = data;
+            Log.e("SAN",newsDetailsList.size() + "");
             newsRecyclerAdapter.swapData(data);
             noNewsTextView.setVisibility(View.GONE);
             newsRecyclerView.setVisibility(View.VISIBLE);
