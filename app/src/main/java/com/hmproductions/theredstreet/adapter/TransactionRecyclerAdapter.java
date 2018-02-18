@@ -78,7 +78,7 @@ public class TransactionRecyclerAdapter extends RecyclerView.Adapter<Transaction
             holder.timeTextView.setText(tempAssigningString);
 
         tempAssigningString = String.valueOf(Math.abs(currentTransaction.getNoOfStocks()))
-                    + " stocks @ " + Constants.RUPEE_SYMBOL + " " + String.valueOf(Math.abs(currentTransaction.getTotalMoney()));
+                    + " stocks @ " + Constants.RUPEE_SYMBOL + " " + String.valueOf(Math.abs(currentTransaction.getStockPrice()));
         holder.noOfStocksTextView.setText(tempAssigningString);
 
         GradientDrawable buySellDrawable = (GradientDrawable)holder.buySellTextView.getBackground();

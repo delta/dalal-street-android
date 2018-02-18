@@ -93,13 +93,16 @@ public class PortfolioFragment extends Fragment {
                 }
             }
 
-            portfolioList.add(new Portfolio(
-                    StockUtils.getShortNameForStockId(MainActivity.globalStockDetails, currentStockDetails.getStockId()),
-                    StockUtils.getCompanyNameFromStockId(currentStockDetails.getStockId()),
-                    currentStockDetails.getQuantity(),
-                    currentPrice,
-                    StockUtils.getPreviousDayCloseFromStockId(MainActivity.globalStockDetails, currentStockDetails.getStockId())
-            ));
+            if(currentStockDetails.getQuantity() != 0){
+                portfolioList.add(new Portfolio(
+                        StockUtils.getShortNameForStockId(MainActivity.globalStockDetails, currentStockDetails.getStockId()),
+                        StockUtils.getCompanyNameFromStockId(currentStockDetails.getStockId()),
+                        currentStockDetails.getQuantity(),
+                        currentPrice,
+                        StockUtils.getPreviousDayCloseFromStockId(MainActivity.globalStockDetails, currentStockDetails.getStockId())
+                ));
+            }
+
         }
 
         if (portfolioList.size() > 0) {

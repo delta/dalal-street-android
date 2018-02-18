@@ -87,6 +87,8 @@ public class MainActivity extends AppCompatActivity implements
         LoaderManager.LoaderCallbacks<List<Subscription>>,
         ConnectionUtils.OnNetworkDownHandler {
 
+    private static final String LAST_TRANSACTION_ID = "last_transaction_id";
+    private static final String LAST_NOTIFICATION_ID = "last_notification_id";
     private static final long DRAWER_DURATION = 450;
     public static final String CASH_WORTH_KEY = "cash-worth-key";
     public static final String TOTAL_WORTH_KEY = "total-worth-key";
@@ -680,6 +682,8 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     protected void onDestroy() {
         stopService(notifIntent);
+        preferences.edit().remove(LAST_TRANSACTION_ID).apply();
+        preferences.edit().remove(LAST_NOTIFICATION_ID).apply();
         super.onDestroy();
     }
 }

@@ -206,7 +206,7 @@ public class DepthGraphFragment extends Fragment implements LoaderManager.Loader
             xAxis.setTextColor(getResources().getColor(android.R.color.white));
             xAxis.setPosition(XLabels.XLabelPosition.BOTTOM);
             xAxis.setTextSize(9f);
-            xAxis.setSpaceBetweenLabels((int)MiscellaneousUtils.convertDpToPixel(getContext(), 2));
+            xAxis.setSpaceBetweenLabels((int)MiscellaneousUtils.convertDpToPixel(getContext(), 1));
             YLabels yAxis1 = lineChart.getYLabels();
             yAxis1.setTextColor(getResources().getColor(android.R.color.white));
             yAxis1.setPosition(YLabels.YLabelPosition.LEFT);
