@@ -1,6 +1,5 @@
 package com.hmproductions.theredstreet.ui;
 
-import android.app.ActivityManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -20,7 +19,6 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
@@ -80,7 +78,7 @@ import io.grpc.stub.StreamObserver;
 import static com.hmproductions.theredstreet.ui.LoginActivity.EMAIL_KEY;
 import static com.hmproductions.theredstreet.ui.LoginActivity.PASSWORD_KEY;
 
-// TODO : Volume - Companies fragment, Buy Limit, constants, int64
+// TODO : Volume - Companies fragment, Buy Limit, constants, int64, icon
 /* Subscribes to GetTransactions*/
 public class MainActivity extends AppCompatActivity implements
         NavigationView.OnNavigationItemSelectedListener,
@@ -400,6 +398,7 @@ public class MainActivity extends AppCompatActivity implements
                             Intent intent = new Intent(Constants.REFRESH_WORTH_TEXTVIEW_ACTION);
                             intent.putExtra(TOTAL_WORTH_KEY, transaction.getTotal());
                             LocalBroadcastManager.getInstance(MainActivity.this).sendBroadcast(intent);
+                            LocalBroadcastManager.getInstance(MainActivity.this).sendBroadcast(new Intent(Constants.REFRESH_OWNED_STOCKS_ACTION));
 
                         } else if (transaction.getType() == TransactionType.FROM_EXCHANGE_TRANSACTION) {
 
@@ -610,7 +609,6 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void onPause() {
         super.onPause();
-        Log.e("SAN","crash on pause");
         preferences.edit().remove(LAST_TRANSACTION_ID).apply();
         preferences.edit().remove(LAST_NOTIFICATION_ID).apply();
         LocalBroadcastManager.getInstance(this).unregisterReceiver(refreshCashStockReceiver);
@@ -669,7 +667,6 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     protected void onDestroy() {
         stopService(notifIntent);
-        Log.e("SAN","crash on des");
         preferences.edit().remove(LAST_TRANSACTION_ID).apply();
         preferences.edit().remove(LAST_NOTIFICATION_ID).apply();
         super.onDestroy();

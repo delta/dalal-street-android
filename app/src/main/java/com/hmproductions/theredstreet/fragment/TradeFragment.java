@@ -1,13 +1,17 @@
 package com.hmproductions.theredstreet.fragment;
 
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -73,6 +77,21 @@ public class TradeFragment extends Fragment implements LoaderManager.LoaderCallb
 
     private AlertDialog loadingDialog;
     private ConnectionUtils.OnNetworkDownHandler networkDownHandler;
+
+    private BroadcastReceiver refreshOwnedStockDetails = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if ( intent.getAction() != null && intent.getAction().equals(Constants.REFRESH_OWNED_STOCKS_ACTION) ) {
+                int stocksOwned = StockUtils.getQuantityOwnedFromCompanyName(MainActivity.ownedStockDetails, companySpinner.getSelectedItem().toString());
+                String tempString = " :  " + String.valueOf(stocksOwned);
+                stocksOwnedTextView.setText(tempString);
+
+                tempString = " : " + Constants.RUPEE_SYMBOL + " " + String.valueOf(
+                        StockUtils.getPriceFromStockId(MainActivity.globalStockDetails, StockUtils.getStockIdFromCompanyName(companySpinner.getSelectedItem().toString())));
+                currentPriceTextView.setText(tempString);
+            }
+        }
+    };
 
     public TradeFragment() {
         // Required empty public constructor
@@ -236,5 +255,21 @@ public class TradeFragment extends Fragment implements LoaderManager.LoaderCallb
     @Override
     public void onLoaderReset(Loader<PlaceOrderResponse> loader) {
         // Do nothing
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (getContext() != null) {
+            LocalBroadcastManager.getInstance(getContext())
+                    .registerReceiver(refreshOwnedStockDetails, new IntentFilter(Constants.REFRESH_OWNED_STOCKS_ACTION));
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (getContext() != null)
+            LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(refreshOwnedStockDetails);
     }
 }

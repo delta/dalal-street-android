@@ -111,7 +111,6 @@ public class OrdersFragment extends Fragment implements
         return rootView;
     }
 
-    // Subscribe to getMyOrders() stream (TESTED)
     private void getMyOrdersSubscriptionId() {
         new Thread(() -> streamServiceStub.subscribe(SubscribeRequest.newBuilder().setDataStreamType(DataStreamType.MY_ORDERS).setDataStreamId("").build(),
                 new StreamObserver<SubscribeResponse>() {
@@ -133,11 +132,16 @@ public class OrdersFragment extends Fragment implements
                     }
                 })).start();
     }
+
     private void subscribeToMyOrdersStream(SubscriptionId subscriptionId) {
         streamServiceStub.getMyOrderUpdates(subscriptionId, new StreamObserver<MyOrderUpdate>() {
             @Override
             public void onNext(MyOrderUpdate orderUpdate) {
-                ordersRecyclerAdapter.orderUpdate(orderUpdate.getId(), orderUpdate.getTradeQuantity(), orderUpdate.getIsClosed());
+                if (getActivity() != null) {
+                    getActivity().runOnUiThread(() -> {
+                        getActivity().getSupportLoaderManager().restartLoader(Constants.ORDERS_LOADER_ID, null, OrdersFragment.this);
+                    });
+                }
             }
 
             @Override

@@ -398,5 +398,6 @@
     <string name="retrieve_uppercase">RETRIEVE</string>
     <string name="deposit_rate_per_stock">Deposit Rate/Stock</string>
     <string name="india">India</string>
+    <string name="register">REGISTER</string>
 
 </resources>
