@@ -608,6 +608,10 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void onPause() {
         super.onPause();
+<<<<<<< HEAD
+=======
+        Log.e("SAN","crash on pause");
+>>>>>>> Transaction and Login backstack fix
         preferences.edit().remove(LAST_TRANSACTION_ID).apply();
         preferences.edit().remove(LAST_NOTIFICATION_ID).apply();
         LocalBroadcastManager.getInstance(this).unregisterReceiver(refreshCashStockReceiver);
@@ -666,6 +670,7 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     protected void onDestroy() {
         stopService(notifIntent);
+        Log.e("SAN","crash on des");
         preferences.edit().remove(LAST_TRANSACTION_ID).apply();
         preferences.edit().remove(LAST_NOTIFICATION_ID).apply();
         super.onDestroy();
