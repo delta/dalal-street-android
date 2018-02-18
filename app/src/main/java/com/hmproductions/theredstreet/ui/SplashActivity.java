@@ -132,7 +132,7 @@ public class SplashActivity extends AppCompatActivity implements LoaderManager.L
     public void onLoadFinished(Loader<LoginResponse> loader, LoginResponse loginResponse) {
 
         if (loginResponse == null) {
-            Snackbar.make(findViewById(android.R.id.content), "Server Down", Snackbar.LENGTH_INDEFINITE)
+            Snackbar.make(findViewById(android.R.id.content), "Check your internet connection.", Snackbar.LENGTH_INDEFINITE)
                     .setAction("RETRY", view -> startLoginProcess(preferences.getString(EMAIL_KEY, null), preferences.getString(PASSWORD_KEY, null)))
                     .show();
             splashText.setText(R.string.error_server_down);

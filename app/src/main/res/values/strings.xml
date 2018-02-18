@@ -136,11 +136,14 @@
     <string name="password">Password</string>
     <string name="confirm_password">Confirm Password</string>
     <string name="error_signing_in">Error Signing In</string>
-    <string name="error_server_down">Error Server Down</string>
+    <string name="error_server_down">Server Unreachable</string>
     <string name="help_title">HELP</string>
     <string name="select_a_company_to_view_depth">Select a company to view depth</string>
     <string name="no_open_orders">No Open Orders</string>
     <string name="dalal_street_notifications">Dalal Street Notifications</string>
+
+    <string name="up_arrow">&#8593;</string>
+    <string name="down_arrow">&#8595;</string>
 
     <string-array name="countries_array">
         <item>Afghanistan</item>
