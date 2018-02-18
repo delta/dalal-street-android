@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Build;
+
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -17,6 +18,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PagerSnapHelper;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SnapHelper;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -196,11 +198,9 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
             for (GlobalStockDetails currentStockDetails : MainActivity.globalStockDetails) {
 
                 builder.append(currentStockDetails.getShortName()).append(" : ").append(currentStockDetails.getPrice());
-
                 if (android.os.Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT) {
                     builder.append(currentStockDetails.getUp()==1?"\u2191":"\u2193");
                 }
-
                 builder.append("     ");
             }
         }

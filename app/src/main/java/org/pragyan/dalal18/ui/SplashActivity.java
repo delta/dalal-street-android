@@ -1,5 +1,7 @@
 package org.pragyan.dalal18.ui;
 
+import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;

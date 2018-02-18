@@ -51,7 +51,6 @@
             android:icon="@drawable/mortgage_icon"
             android:title="@string/mortgage" />
 
-
     </group>
 
     <group android:id="@+id/view_category">
