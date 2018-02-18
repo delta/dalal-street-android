@@ -3,7 +3,6 @@ package com.hmproductions.theredstreet.adapter;
 import android.content.Context;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -73,7 +72,6 @@ public class OrdersRecyclerAdapter extends RecyclerView.Adapter<OrdersRecyclerAd
             holder.priceTextView.setText(tempString);
         }
 
-        Log.v(":::", "" + order.getStockQuantityFulfilled());
         holder.quantitySeekbar.setMax(order.getStockQuantity());
         holder.quantitySeekbar.setProgress(order.getStockQuantityFulfilled());
 

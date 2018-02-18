@@ -18,7 +18,6 @@ import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
 
 import com.hmproductions.theredstreet.R;
 import com.hmproductions.theredstreet.dagger.ContextModule;
@@ -130,7 +129,6 @@ public class NotificationService extends Service {
 
     private void subscribeToNewsStream(SubscriptionId newsSubscriptionId) {
 
-        Log.e("SAN","sub to news stream");
         buildNotification();
         streamServiceStub.getMarketEventUpdates(newsSubscriptionId, new StreamObserver<MarketEventUpdate>() {
             @Override
@@ -196,7 +194,6 @@ public class NotificationService extends Service {
 
     protected void startSubscription() {
 
-        Log.e("SAN","subscribe to stub");
         streamServiceStub.
                 subscribe(SubscribeRequest.newBuilder()
                         .setDataStreamType(DataStreamType.NOTIFICATIONS)
@@ -328,9 +325,7 @@ public class NotificationService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Log.e("SAN","ondestroy");
         if(isLoggedIn){
-            Log.e("SAN","CAlling broadcast");
             Intent broadcastIntent = new Intent("NotifServiceBroadcast");
             sendBroadcast(broadcastIntent);
         }
