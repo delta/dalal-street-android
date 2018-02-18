@@ -20,6 +20,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
@@ -87,6 +88,7 @@ public class MainActivity extends AppCompatActivity implements
         LoaderManager.LoaderCallbacks<List<Subscription>>,
         ConnectionUtils.OnNetworkDownHandler {
 
+    public static final String SESSION_KEY = "session-key";
     private static final String LAST_TRANSACTION_ID = "last_transaction_id";
     private static final String LAST_NOTIFICATION_ID = "last_notification_id";
     private static final long DRAWER_DURATION = 450;
@@ -351,6 +353,7 @@ public class MainActivity extends AppCompatActivity implements
                         .edit()
                         .putString(EMAIL_KEY, null)
                         .putString(PASSWORD_KEY, null)
+                        .putString(SESSION_KEY,null)
                         .apply();
             } else {
                 Toast.makeText(MainActivity.this, "Connection Error", Toast.LENGTH_SHORT).show();
@@ -550,7 +553,6 @@ public class MainActivity extends AppCompatActivity implements
     // Method is called when stock price update is received
     private void updateStockWorthViaStreamUpdates() {
         int netStockWorth = 0, rate = 0;
-
         for (StockDetails currentOwnedDetails : ownedStockDetails) {
             for (GlobalStockDetails details : globalStockDetails) {
                 if (details.getStockId() == currentOwnedDetails.getStockId()) {

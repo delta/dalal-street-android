@@ -206,8 +206,6 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
             newsList = data;
             newsRecyclerAdapter.swapData(data);
         }
-
-
         loadingRelativeLayout.setVisibility(View.GONE);
         newsRecyclerView.setVisibility(View.VISIBLE);
     }

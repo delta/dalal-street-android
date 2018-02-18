@@ -253,7 +253,12 @@ public class DepthTableFragment extends Fragment implements LoaderManager.Loader
 
                         for (Map.Entry<Integer, Integer> map : value.getBidDepthMap().entrySet()) {
                             if(map.getKey() > 0 ){
-                                MarketDepth temp = new MarketDepth(map.getKey(), map.getValue());
+                                int price = map.getKey();
+                                int volume = map.getValue();
+                                if(price == 0){
+                                    price = Integer.MAX_VALUE;
+                                }
+                                MarketDepth temp = new MarketDepth(price, volume);
                                 bidArrayList.add(temp);
                             }
                         }
@@ -269,6 +274,9 @@ public class DepthTableFragment extends Fragment implements LoaderManager.Loader
                         for (Map.Entry<Integer, Integer> map : value.getBidDepthDiffMap().entrySet()) {
                             int price = map.getKey();
                             int volume = map.getValue();
+                            if(price == 0){
+                                price = Integer.MAX_VALUE;
+                            }
                             if (!containsBid(price, volume) && price>0) {
                                 bidArrayList.add(new MarketDepth(price, volume));
                             }
