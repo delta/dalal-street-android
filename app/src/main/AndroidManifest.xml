@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.hmproductions.theredstreet">
+    package="org.pragyan.dalal18">
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
@@ -14,17 +14,17 @@
         android:theme="@style/AppTheme">
 
         <activity
-            android:name=".ui.LoginActivity"
+            android:name="org.pragyan.dalal18.ui.LoginActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan" />
 
         <activity
-            android:name=".ui.MainActivity"
-            android:parentActivityName=".ui.LoginActivity"
+            android:name="org.pragyan.dalal18.ui.MainActivity"
+            android:parentActivityName="org.pragyan.dalal18.ui.LoginActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan" />
 
-        <activity android:name=".ui.SplashActivity">
+        <activity android:name="org.pragyan.dalal18.ui.SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -33,16 +33,16 @@
         </activity>
 
         <activity
-            android:name=".ui.RegistrationActivity"
-            android:parentActivityName=".ui.LoginActivity"
+            android:name="org.pragyan.dalal18.ui.RegistrationActivity"
+            android:parentActivityName="org.pragyan.dalal18.ui.LoginActivity"
             android:screenOrientation="portrait" />
 
         <service
-            android:name=".notifications.NotificationService"
+            android:name="org.pragyan.dalal18.notifications.NotificationService"
             android:enabled="true" />
 
         <receiver
-            android:name=".notifications.NotificationBroadcastReceiver"
+            android:name="org.pragyan.dalal18.notifications.NotificationBroadcastReceiver"
             android:enabled="true"
             android:exported="true"
             android:label="RestartServiceWhenStopped">
