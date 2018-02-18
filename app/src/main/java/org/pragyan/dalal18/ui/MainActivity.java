@@ -53,6 +53,7 @@ import org.pragyan.dalal18.utils.MiscellaneousUtils;
 import org.pragyan.dalal18.utils.StockUtils;
 import org.pragyan.dalal18.utils.TinyDB;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -79,7 +80,7 @@ import io.grpc.stub.StreamObserver;
 import static org.pragyan.dalal18.ui.LoginActivity.EMAIL_KEY;
 import static org.pragyan.dalal18.ui.LoginActivity.PASSWORD_KEY;
 
-// TODO : Volume - Companies fragment, Buy Limit, constants, int64, icon
+// TODO : Buy Limit
 /* Subscribes to GetTransactions*/
 public class MainActivity extends AppCompatActivity implements
         NavigationView.OnNavigationItemSelectedListener,
@@ -112,8 +113,8 @@ public class MainActivity extends AppCompatActivity implements
     private DrawerLayout drawerLayout;
     private ActionBarDrawerToggle toggle;
 
-    public static List<StockDetails> ownedStockDetails;
-    public static List<GlobalStockDetails> globalStockDetails;
+    public static List<StockDetails> ownedStockDetails = new ArrayList<>();
+    public static List<GlobalStockDetails> globalStockDetails = new ArrayList<>();
     private List<SubscriptionId> subscriptionIds = new ArrayList<>();
 
     private static boolean shouldUnsubscribe = true;
@@ -369,9 +370,10 @@ public class MainActivity extends AppCompatActivity implements
         int totalWorth = getIntent().getIntExtra(TOTAL_WORTH_KEY, -1);
         int stockWorth = totalWorth - cashWorth;
 
-        cashTextView.setText(String.valueOf(cashWorth));
-        stockTextView.setText(String.valueOf(stockWorth));
-        totalTextView.setText(String.valueOf(totalWorth));
+        DecimalFormat formatter = new DecimalFormat("##,##,###");
+        cashTextView.setText(formatter.format(cashWorth));
+        stockTextView.setText(formatter.format(stockWorth));
+        totalTextView.setText(formatter.format(totalWorth));
     }
 
     // Subscribes to transaction stream and gets updates (TESTED)
@@ -559,13 +561,19 @@ public class MainActivity extends AppCompatActivity implements
             netStockWorth += currentOwnedDetails.getQuantity() * rate;
         }
 
-        stockTextView.setText(String.valueOf(netStockWorth));
-        totalTextView.setText(String.valueOf(netStockWorth + Integer.parseInt(cashTextView.getText().toString())));
+        DecimalFormat formatter = new DecimalFormat("##,##,###");
+        stockTextView.setText(formatter.format(netStockWorth));
+
+        String temp = cashTextView.getText().toString();
+        temp = temp.replace(",", "");
+        totalTextView.setText(formatter.format(netStockWorth + Integer.parseInt(temp)));
     }
 
     private void changeTextViewValue(TextView textView, int value, boolean increase) {
-        int previousValue = Integer.parseInt(textView.getText().toString());
-        textView.setText(String.valueOf(previousValue + (increase ? value : -1 * value)));
+        String temp = textView.getText().toString();
+        temp = temp.replace(",", "");
+        int previousValue = Integer.parseInt(temp);
+        textView.setText(new DecimalFormat("##,##,###").format(previousValue + (increase ? value : -1 * value)));
     }
 
     // Starts making drawer button translucent
@@ -574,14 +582,16 @@ public class MainActivity extends AppCompatActivity implements
         new Thread() {
             @Override
             public void run() {
-                try {
-                    while (drawerEdgeButton.getAlpha() > 0.70) {
+
+                while (drawerEdgeButton.getAlpha() > 0.70) {
+                    try {
                         Thread.sleep(175);
                         runOnUiThread(() -> drawerEdgeButton.setAlpha((float) (drawerEdgeButton.getAlpha() - 0.01)));
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
                     }
-                } catch (InterruptedException e) {
-
                 }
+
             }
         }.start();
     }
@@ -611,10 +621,10 @@ public class MainActivity extends AppCompatActivity implements
         preferences.edit().remove(LAST_TRANSACTION_ID).apply();
         preferences.edit().remove(LAST_NOTIFICATION_ID).apply();
         LocalBroadcastManager.getInstance(this).unregisterReceiver(refreshCashStockReceiver);
-        if(helpDialog != null){
+        if (helpDialog != null) {
             helpDialog.dismiss();
         }
-        if(logoutDialog != null){
+        if (logoutDialog != null) {
             logoutDialog.dismiss();
         }
     }

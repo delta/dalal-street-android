@@ -15,12 +15,6 @@ public class AdapterModule {
 
     @Provides
     @DalalStreetApplicationScope
-    public NewsRecyclerAdapter getNewsRecyclerAdapter(Context context) {
-        return new NewsRecyclerAdapter(context, null);
-    }
-
-    @Provides
-    @DalalStreetApplicationScope
     public CompanyTickerRecyclerAdapter getCompanyRecyclerAdapter(Context context) {
         return new CompanyTickerRecyclerAdapter(context ,null);
     }

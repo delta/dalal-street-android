@@ -7,9 +7,6 @@ public class NewsDetails implements Parcelable{
 
     private String headlines, content, createdAt,imagePath;
 
-    public NewsDetails() {
-    }
-
     public NewsDetails( String createdAt, String headlines, String content, String imagePath) {
         this.headlines = headlines;
         this.content = content;
@@ -69,8 +66,8 @@ public class NewsDetails implements Parcelable{
         }
 
         @Override
-        public NewsDetails[] newArray(int i) {
-            return new NewsDetails[0];
+        public NewsDetails[] newArray(int size) {
+            return new NewsDetails[size];
         }
     };
 

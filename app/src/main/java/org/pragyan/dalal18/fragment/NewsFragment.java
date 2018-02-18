@@ -39,15 +39,16 @@ import dalalstreet.api.DalalActionServiceGrpc;
 import static org.pragyan.dalal18.utils.Constants.NEWS_LOADER_ID;
 
 /* Gets latest news from GetMarketEvents action*/
-public class NewsFragment extends Fragment implements LoaderManager.LoaderCallbacks<List<NewsDetails>>{
+public class NewsFragment extends Fragment implements
+        LoaderManager.LoaderCallbacks<List<NewsDetails>>,
+        NewsRecyclerAdapter.NewsItemClickListener{
 
     @Inject
     DalalActionServiceGrpc.DalalActionServiceBlockingStub actionServiceBlockingStub;
 
-    @Inject
+    RecyclerView newsRecyclerView;
     NewsRecyclerAdapter newsRecyclerAdapter;
 
-    RecyclerView newsRecyclerView;
     TextView noNewsTextView;
     AlertDialog loadingNewsDialog;
     List<NewsDetails> newsDetailsList = new ArrayList<>();
@@ -88,6 +89,8 @@ public class NewsFragment extends Fragment implements LoaderManager.LoaderCallba
         newsRecyclerView = rootView.findViewById(R.id.news_recyclerView);
         noNewsTextView = rootView.findViewById(R.id.noNews_textView);
 
+        newsRecyclerAdapter = new NewsRecyclerAdapter(getContext(), null, this);
+
         newsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         newsRecyclerView.setHasFixedSize(false);
         newsRecyclerView.setAdapter(newsRecyclerAdapter);
@@ -97,16 +100,6 @@ public class NewsFragment extends Fragment implements LoaderManager.LoaderCallba
             ((TextView) dialogView.findViewById(R.id.progressDialog_textView)).setText(R.string.getting_fresh_news);
             loadingNewsDialog = new AlertDialog.Builder(getContext()).setView(dialogView).setCancelable(false).create();
         }
-
-        newsRecyclerAdapter.setOnClickListener(new NewsRecyclerAdapter.OnClickListener() {
-            @Override
-            public void itemClicked(View view, int position) {
-
-                Intent intent = new Intent(getContext(), NewsDetailsActivity.class);
-                intent.putExtra("newsdetails", newsDetailsList.get(position));
-                startActivity(intent);
-            }
-        });
 
         getActivity().getSupportLoaderManager().restartLoader(NEWS_LOADER_ID, null, this);
 
@@ -160,5 +153,12 @@ public class NewsFragment extends Fragment implements LoaderManager.LoaderCallba
         if (getContext() != null)
             LocalBroadcastManager.getInstance(getContext())
                     .unregisterReceiver(refreshNewsListReceiver);
+    }
+
+    @Override
+    public void onNewsClicked(View view, int position) {
+        Intent intent = new Intent(getContext(), NewsDetailsActivity.class);
+        intent.putExtra(NewsDetailsActivity.NEWS_DETAILS_KEY, newsDetailsList.get(position));
+        startActivity(intent);
     }
 }

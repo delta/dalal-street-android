@@ -23,6 +23,8 @@ import static org.pragyan.dalal18.utils.MiscellaneousUtils.parseDate;
 
 public class NewsDetailsActivity extends AppCompatActivity {
 
+    public static final String NEWS_DETAILS_KEY = "news-details=key";
+
     @BindView(R.id.news_details_toolbar)
     Toolbar newsDetailsToolbar;
 
@@ -47,7 +49,7 @@ public class NewsDetailsActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         Intent i = getIntent();
-        NewsDetails newsDetails = i.getParcelableExtra("newsdetails");
+        NewsDetails newsDetails = i.getParcelableExtra(NEWS_DETAILS_KEY);
 
         View dialogView = LayoutInflater.from(this).inflate(R.layout.progress_dialog, null);
         ((TextView) dialogView.findViewById(R.id.progressDialog_textView)).setText(R.string.registering);

@@ -20,15 +20,16 @@ public class NewsRecyclerAdapter extends RecyclerView.Adapter<NewsRecyclerAdapte
 
     private Context context;
     private List<NewsDetails> newsList = new ArrayList<>();
-    OnClickListener onClickListener;
+    private NewsItemClickListener onNewsClickListener;
 
-    public NewsRecyclerAdapter(Context context, List<NewsDetails> newsList) {
-        this.newsList = newsList;
-        this.context = context;
+    public interface NewsItemClickListener{
+        void onNewsClicked(View view, int position);
     }
 
-    public void setOnClickListener(OnClickListener onClickListener){
-        this.onClickListener = onClickListener;
+    public NewsRecyclerAdapter(Context context, List<NewsDetails> newsList, NewsItemClickListener listener) {
+        this.newsList = newsList;
+        this.context = context;
+        this.onNewsClickListener = listener;
     }
 
     @Override
@@ -45,8 +46,6 @@ public class NewsRecyclerAdapter extends RecyclerView.Adapter<NewsRecyclerAdapte
         holder.headlinesTextView.setText(currentNewsDetails.getHeadlines());
         holder.createdAtTextView.setText(parseDate(currentNewsDetails.getCreatedAt()));
         holder.contentTextView.setText(currentNewsDetails.getContent());
-
-        holder.newsLayout.setOnClickListener(view -> onClickListener.itemClicked(view,position));
     }
 
     @Override
@@ -60,7 +59,7 @@ public class NewsRecyclerAdapter extends RecyclerView.Adapter<NewsRecyclerAdapte
         notifyDataSetChanged();
     }
 
-    class MyViewHolder extends RecyclerView.ViewHolder {
+    class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         TextView headlinesTextView, contentTextView, createdAtTextView;
         RelativeLayout newsLayout;
@@ -71,10 +70,13 @@ public class NewsRecyclerAdapter extends RecyclerView.Adapter<NewsRecyclerAdapte
             contentTextView = view.findViewById(R.id.news_content);
             createdAtTextView = view.findViewById(R.id.createdAt_textView);
             newsLayout = view.findViewById(R.id.news_layout);
-        }
-    }
 
-    public interface OnClickListener{
-        void itemClicked(View view,int position);
+            view.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View view) {
+            onNewsClickListener.onNewsClicked(view, getAdapterPosition());
+        }
     }
 }

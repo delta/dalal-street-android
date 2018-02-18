@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Build;
-
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -47,15 +46,12 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import dalalstreet.api.DalalActionServiceGrpc;
 
-public class HomeFragment extends Fragment implements LoaderManager.LoaderCallbacks<List<NewsDetails>> {
+public class HomeFragment extends Fragment implements LoaderManager.LoaderCallbacks<List<NewsDetails>>, NewsRecyclerAdapter.NewsItemClickListener {
 
     private static final int COMPANY_TICKER_DURATION = 2500;
 
     @Inject
     DalalActionServiceGrpc.DalalActionServiceBlockingStub actionServiceBlockingStub;
-
-    @Inject
-    NewsRecyclerAdapter newsRecyclerAdapter;
 
     @Inject
     CompanyTickerRecyclerAdapter companyTickerRecyclerAdapter;
@@ -73,6 +69,7 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
     TextView breakingNewsTextView;
 
     LinearLayoutManager linearLayoutManager;
+    NewsRecyclerAdapter newsRecyclerAdapter;
 
     List<CompanyTickerDetails> companyTickerDetailsList = new ArrayList<>();
     List<NewsDetails> newsList = new ArrayList<>();
@@ -136,19 +133,11 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
         SnapHelper companiesSnapHelper = new PagerSnapHelper();
         companiesSnapHelper.attachToRecyclerView(companiesRecyclerView);
 
+        newsRecyclerAdapter = new NewsRecyclerAdapter(getContext(), null, this);
+
         newsRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         newsRecyclerView.setHasFixedSize(true);
         newsRecyclerView.setAdapter(newsRecyclerAdapter);
-
-        newsRecyclerAdapter.setOnClickListener(new NewsRecyclerAdapter.OnClickListener() {
-            @Override
-            public void itemClicked(View view, int position) {
-
-                Intent intent = new Intent(getContext(), NewsDetailsActivity.class);
-                intent.putExtra("newsdetails", newsList.get(position));
-                startActivity(intent);
-            }
-        });
 
         setValues();
 
@@ -250,5 +239,12 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
         if (getContext() != null)
             LocalBroadcastManager.getInstance(getContext())
                     .unregisterReceiver(refreshNewsListReceiver);
+    }
+
+    @Override
+    public void onNewsClicked(View view, int position) {
+        Intent intent = new Intent(getContext(), NewsDetailsActivity.class);
+        intent.putExtra(NewsDetailsActivity.NEWS_DETAILS_KEY, newsList.get(position));
+        startActivity(intent);
     }
 }
