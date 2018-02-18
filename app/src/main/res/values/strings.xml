@@ -71,7 +71,6 @@
     </string>
     <string name="username">Username</string>
     <string name="cash_worth">Cash Worth</string>
-    <string name="order_type">Order type</string>
     <string name="pick_a_company">Pick a Company</string>
     <string name="ask">ASK</string>
     <string name="bid">BID</string>
@@ -83,7 +82,6 @@
     <string name="stock_details">Stock Details</string>
     <string name="market_depth">Market Depth</string>
     <string name="buy_stocks">Buy Stocks from Exchange</string>
-    <string name="number_of_stocks">Number of Stocks</string>
     <string name="wealth">WEALTH</string>
     <string name="name">NAME</string>
     <string name="rank">RANK</string>
@@ -137,8 +135,6 @@
     <string name="email_address">Email Address</string>
     <string name="password">Password</string>
     <string name="confirm_password">Confirm Password</string>
-    <string name="nationality">Nationality</string>
-    <string name="in_game_cash">In-Game cash alloted - ₹200000</string>
     <string name="error_signing_in">Error Signing In</string>
     <string name="error_server_down">Error Server Down</string>
     <string name="help_title">HELP</string>
@@ -392,12 +388,10 @@
     <string name="notifications">Notifications</string>
     <string name="not_registered_click_here_to_register">Not registered? Click here to register</string>
     <string name="registering">Registering…</string>
-    <string name="fullname">Full Name</string>
     <string name="retrieval_rate_per_stock">Retrieval Rate/Stock</string>
     <string name="mortgage_uppercase">MORTGAGE</string>
     <string name="retrieve_uppercase">RETRIEVE</string>
     <string name="deposit_rate_per_stock">Deposit Rate/Stock</string>
-    <string name="india">India</string>
     <string name="register">REGISTER</string>
 
 </resources>

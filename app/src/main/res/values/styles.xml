@@ -22,13 +22,6 @@
 
     </style>
 
-    <style name="ThemeSpinner">
-        <!-- Color when pressed -->
-        <item name="colorAccent">@color/colorAccent</item>
-        <!-- Default color for the dropdown arrow and line -->
-        <item name="colorControlNormal">@color/neutral_font_color</item>
-    </style>
-
 
     <style name="TabHeadingStyle" parent="@android:style/TextAppearance.Widget.TabWidget">
         <item name="android:textSize">18sp</item>
