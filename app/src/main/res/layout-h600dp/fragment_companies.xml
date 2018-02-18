@@ -9,8 +9,9 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="8dp"
-        android:fontFamily="@font/marcellus_sc"
+        android:fontFamily="@font/kreon_light"
         android:text="@string/stock_details"
+        android:textAllCaps="true"
         android:textColor="@color/neon_blue"
         android:textSize="30sp" />
 
@@ -18,8 +19,8 @@
         android:id="@+id/headings_tab_linearLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="2dp"
-        android:layout_below="@+id/stock_details">
+        android:layout_below="@+id/stock_details"
+        android:layout_marginTop="2dp">
 
         <TextView
             android:layout_width="0dp"
@@ -35,7 +36,7 @@
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1.4"
+            android:layout_weight="1"
             android:fontFamily="@font/kreon_light"
             android:gravity="center"
             android:text="@string/change"
@@ -46,21 +47,10 @@
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="2"
-            android:fontFamily="@font/kreon_light"
-            android:gravity="center"
-            android:text="@string/price"
-            android:textColor="@color/neutral_font_color"
-            android:textSize="20sp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
             android:layout_weight="1.5"
             android:fontFamily="@font/kreon_light"
             android:gravity="center"
-            android:text="@string/volume"
+            android:text="@string/price"
             android:textColor="@color/neutral_font_color"
             android:textSize="20sp"
             android:textStyle="bold" />

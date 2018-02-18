@@ -78,7 +78,6 @@ public class CompanyFragment extends Fragment {
                     currentStockDetail.getFullName(),
                     currentStockDetail.getShortName(),
                     currentStockDetail.getPrice(),
-                    -1,
                     currentStockDetail.getPreviousDayClose())
             );
         }

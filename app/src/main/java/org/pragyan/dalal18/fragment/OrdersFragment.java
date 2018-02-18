@@ -8,6 +8,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -49,7 +50,9 @@ import dalalstreet.api.models.Bid;
 import io.grpc.stub.StreamObserver;
 
 public class OrdersFragment extends Fragment implements
-        LoaderManager.LoaderCallbacks<GetMyOpenOrdersResponse>, OrdersRecyclerAdapter.OnOrderClickListener{
+        LoaderManager.LoaderCallbacks<GetMyOpenOrdersResponse>,
+        OrdersRecyclerAdapter.OnOrderClickListener,
+        SwipeRefreshLayout.OnRefreshListener{
 
     @Inject
     DalalActionServiceGrpc.DalalActionServiceBlockingStub actionServiceBlockingStub;
@@ -58,7 +61,8 @@ public class OrdersFragment extends Fragment implements
     DalalStreamServiceGrpc.DalalStreamServiceStub streamServiceStub;
 
     RecyclerView orderRecyclerView;
-    RelativeLayout emptyOrderRelativeLayout, recyclerContainerRelativeLayout;
+    RelativeLayout emptyOrderRelativeLayout;
+    SwipeRefreshLayout recyclerContainerSwipeRefreshLayout;
 
     private OrdersRecyclerAdapter ordersRecyclerAdapter;
     private SubscriptionId orderSubscriptionId = null;
@@ -90,9 +94,10 @@ public class OrdersFragment extends Fragment implements
 
         orderRecyclerView = rootView.findViewById(R.id.orders_recyclerView);
         emptyOrderRelativeLayout = rootView.findViewById(R.id.emptyOrders_relativeLayout);
-        recyclerContainerRelativeLayout = rootView.findViewById(R.id.recyclerViewsContainer_relativeLayout);
+        recyclerContainerSwipeRefreshLayout = rootView.findViewById(R.id.ordersRecycler_swipeRefreshLayout);
 
         ordersRecyclerAdapter = new OrdersRecyclerAdapter(getContext(), null, this);
+        recyclerContainerSwipeRefreshLayout.setOnRefreshListener(this);
 
         orderRecyclerView.setHasFixedSize(false);
         orderRecyclerView.setAdapter(ordersRecyclerAdapter);
@@ -138,9 +143,7 @@ public class OrdersFragment extends Fragment implements
             @Override
             public void onNext(MyOrderUpdate orderUpdate) {
                 if (getActivity() != null) {
-                    getActivity().runOnUiThread(() -> {
-                        getActivity().getSupportLoaderManager().restartLoader(Constants.ORDERS_LOADER_ID, null, OrdersFragment.this);
-                    });
+                    getActivity().runOnUiThread(() -> getActivity().getSupportLoaderManager().restartLoader(Constants.ORDERS_LOADER_ID, null, OrdersFragment.this));
                 }
             }
 
@@ -173,6 +176,8 @@ public class OrdersFragment extends Fragment implements
             networkDownHandler.onNetworkDownError();
             return;
         }
+
+        recyclerContainerSwipeRefreshLayout.setRefreshing(false);
 
         ArrayList<Order> ordersList = new ArrayList<>();
 
@@ -213,10 +218,10 @@ public class OrdersFragment extends Fragment implements
 
         if (ordersList.size() > 0) {
             ordersRecyclerAdapter.swapData(ordersList);
-            recyclerContainerRelativeLayout.setVisibility(View.VISIBLE);
+            recyclerContainerSwipeRefreshLayout.setVisibility(View.VISIBLE);
             emptyOrderRelativeLayout.setVisibility(View.GONE);
         } else {
-            recyclerContainerRelativeLayout.setVisibility(View.GONE);
+            recyclerContainerSwipeRefreshLayout.setVisibility(View.GONE);
             emptyOrderRelativeLayout.setVisibility(View.VISIBLE);
         }
     }
@@ -234,21 +239,18 @@ public class OrdersFragment extends Fragment implements
                     .setTitle("Cancel Confirm")
                     .setCancelable(true)
                     .setMessage("Do you want to cancel this order ?")
-                    .setPositiveButton("Yes", (dialogInterface, i) -> {
-                        new Handler().post(() -> {
-                            CancelOrderResponse response = actionServiceBlockingStub.cancelOrder(
-                                    CancelOrderRequest.newBuilder().setOrderId(orderId).setIsAsk(!bid).build());
+                    .setPositiveButton("Yes", (dialogInterface, i) -> new Handler().post(() -> {
+                        CancelOrderResponse response = actionServiceBlockingStub.cancelOrder(
+                                CancelOrderRequest.newBuilder().setOrderId(orderId).setIsAsk(!bid).build());
 
-                            if (response.getStatusCodeValue() == 0) {
-                                Toast.makeText(getContext(), "Order cancelled", Toast.LENGTH_SHORT).show();
-                                if (getActivity() != null)
-                                    getActivity().getSupportLoaderManager().restartLoader(Constants.ORDERS_LOADER_ID, null, OrdersFragment.this);
-                            } else {
-                                Toast.makeText(getContext(), response.getStatusMessage(), Toast.LENGTH_SHORT).show();
-                            }
-                        });
-
-                    })
+                        if (response.getStatusCodeValue() == 0) {
+                            Toast.makeText(getContext(), "Order cancelled", Toast.LENGTH_SHORT).show();
+                            if (getActivity() != null)
+                                getActivity().getSupportLoaderManager().restartLoader(Constants.ORDERS_LOADER_ID, null, OrdersFragment.this);
+                        } else {
+                            Toast.makeText(getContext(), response.getStatusMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    }))
                     .setNegativeButton("No", (dialogInterface, i) -> dialogInterface.dismiss());
             builder.show();
         }
@@ -278,5 +280,11 @@ public class OrdersFragment extends Fragment implements
                         });
             }
         });
+    }
+
+    @Override
+    public void onRefresh() {
+        if (getActivity() != null)
+            getActivity().getSupportLoaderManager().restartLoader(Constants.ORDERS_LOADER_ID, null, this);
     }
 }

@@ -243,12 +243,14 @@ public class TradeFragment extends Fragment implements LoaderManager.LoaderCallb
             return;
         }
 
-        if (orderResponse.getStatusCodeValue() == 0) {
-            Toast.makeText(getContext(), "Order Placed", Toast.LENGTH_SHORT).show();
-            noOfStocksEditText.setText("");
-            orderPriceEditText.setText("");
-        } else {
-            Toast.makeText(getContext(), orderResponse.getStatusMessage(), Toast.LENGTH_SHORT).show();
+        if (getContext() != null) {
+            if (orderResponse.getStatusCodeValue() == 0) {
+                Toast.makeText(getContext(), "Order Placed", Toast.LENGTH_SHORT).show();
+                noOfStocksEditText.setText("");
+                orderPriceEditText.setText("");
+            } else {
+                Toast.makeText(getContext(), orderResponse.getStatusMessage(), Toast.LENGTH_SHORT).show();
+            }
         }
     }
 

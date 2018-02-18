@@ -5,8 +5,8 @@
     android:background="@color/black_background"
     android:padding="2dp">
 
-    <RelativeLayout
-        android:id="@+id/recyclerViewsContainer_relativeLayout"
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/ordersRecycler_swipeRefreshLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -16,7 +16,7 @@
             android:layout_height="match_parent"
             android:layout_marginTop="4dp" />
 
-    </RelativeLayout>
+    </android.support.v4.widget.SwipeRefreshLayout>
 
     <RelativeLayout
         android:id="@+id/emptyOrders_relativeLayout"

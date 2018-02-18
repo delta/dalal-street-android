@@ -39,7 +39,7 @@ public class CompanyRecyclerAdapter extends RecyclerView.Adapter<CompanyRecycler
 
         CompanyDetails currentCompanyDetails = list.get(position);
 
-        if (currentCompanyDetails.getCompany().length() > 9) {
+        if (currentCompanyDetails.getCompany().length() > 14) {
             holder.companyNameTextView.setText(currentCompanyDetails.getShortName());
         } else {
             holder.companyNameTextView.setText(currentCompanyDetails.getCompany());
@@ -47,8 +47,6 @@ public class CompanyRecyclerAdapter extends RecyclerView.Adapter<CompanyRecycler
 
         String temporaryString = String.valueOf(currentCompanyDetails.getValue()) + "/stock";
         holder.priceTextView.setText(temporaryString);
-
-        holder.volumeTextView.setText(String.valueOf(currentCompanyDetails.getVolume()));
 
         double diff = (double)(currentCompanyDetails.getValue() - currentCompanyDetails.getPreviousDayClose()) / (double)currentCompanyDetails.getPreviousDayClose() * 100.0;
         holder.differenceTextView.setText(String.format(Locale.getDefault(),"%.1f", diff));
@@ -79,9 +77,6 @@ public class CompanyRecyclerAdapter extends RecyclerView.Adapter<CompanyRecycler
 
         @BindView(R.id.price_textView)
         TextView priceTextView;
-
-        @BindView(R.id.volume_textView)
-        TextView volumeTextView;
 
         @BindView(R.id.difference_textView)
         TextView differenceTextView;

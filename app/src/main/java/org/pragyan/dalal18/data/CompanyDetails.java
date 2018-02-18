@@ -3,13 +3,12 @@ package org.pragyan.dalal18.data;
 public class CompanyDetails {
 
     private String company, shortName;
-    private int value, volume, previousDayClose;
+    private int value, previousDayClose;
 
-    public CompanyDetails(String company, String shortName, int value, int volume, int previousDayClose) {
+    public CompanyDetails(String company, String shortName, int value, int previousDayClose) {
         this.shortName = shortName;
         this.company = company;
         this.value = value;
-        this.volume = volume;
         this.previousDayClose = previousDayClose;
     }
 
@@ -35,14 +34,6 @@ public class CompanyDetails {
 
     public void setValue(int value) {
         this.value = value;
-    }
-
-    public int getVolume() {
-        return volume;
-    }
-
-    public void setVolume(int volume) {
-        this.volume = volume;
     }
 
     public int getPreviousDayClose() {
