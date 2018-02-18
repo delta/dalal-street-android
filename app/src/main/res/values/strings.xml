@@ -17,9 +17,16 @@
 
     <!-- TODO : Fix orders description text-->
     <string name="help">
-        <b><u>   Welcome to Dalal Street !!</u></b>\n\nVirtual stock exchange game where players can trade stocks from market
-        for any company. The price of each stock depends on the company\'s market value and performance.
-        At the end of the game duration, the player who amasses the most money (total worth) wins.
+        <b><u>   Welcome to Dalal Street !!</u></b>
+
+        \n\n<b><u>The Objective</u></b>
+        \n  Each player begins the game with ₹20,000. Your objective is to use this money to maximise your profit at the end of 7 days.
+
+        \n\n<b><u>How do i make money?</u></b>
+        \n These are the two ways to make money :-
+        \nBuying stocks at low prices and selling them at higher prices.
+        \nShort selling stocks and then buying them back for a lower price.
+
         \n The following is a guide explaining the structure of the game and what each feature of the game mean :-
 
          \n\n<b><u>Notifications</u></b>
@@ -96,7 +103,7 @@
 
     </string>
     <string name="username">Username</string>
-    <string name="cash_worth">Cash Worth</string>
+    <string name="cash_worth">Cash In Hand</string>
     <string name="pick_a_company">Pick a Company</string>
     <string name="ask">ASK</string>
     <string name="bid">BID</string>
@@ -117,7 +124,7 @@
     <string name="news">News</string>
     <string name="stock_exchange">Stock Exchange</string>
     <string name="mortgage">Mortgage</string>
-    <string name="my_orders">My Orders</string>
+    <string name="my_orders">Open Orders</string>
     <string name="transactions">Transactions</string>
     <string name="leaderboard">Leaderboard</string>
     <string name="stock_worth">Stock Worth</string>

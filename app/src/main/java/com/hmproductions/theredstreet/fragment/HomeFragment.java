@@ -195,7 +195,7 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
             for (GlobalStockDetails currentStockDetails : MainActivity.globalStockDetails) {
 
                 builder.append(currentStockDetails.getShortName()).append(" : ").append(currentStockDetails.getPrice());
-                builder.append(currentStockDetails.getUp() == 1 ? getString(R.string.up_arrow) : getString(R.string.down_arrow)).append("     ");
+                builder.append("     ");
             }
         }
 
