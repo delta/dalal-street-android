@@ -12,6 +12,7 @@ import android.support.v4.content.Loader;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -121,6 +122,7 @@ public class NotificationFragment extends Fragment implements LoaderManager.Load
 
         if (getContext() != null) {
             int lastId = preferences.getInt(LAST_NOTIFICATION_ID, 0);
+            Log.e("SAN","notif id : " + lastId);
             return new NotificationLoader(getContext(), actionServiceBlockingStub, lastId);
         } else {
             return null;
