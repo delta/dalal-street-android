@@ -1,5 +1,7 @@
 package com.hmproductions.theredstreet.ui;
 
+import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -7,10 +9,13 @@ import android.os.Handler;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
 import com.hmproductions.theredstreet.R;
 import com.hmproductions.theredstreet.dagger.ContextModule;
 import com.hmproductions.theredstreet.dagger.DaggerDalalStreetApplicationComponent;
@@ -65,12 +70,34 @@ public class SplashActivity extends AppCompatActivity implements LoaderManager.L
         ButterKnife.bind(this);
 
         ButterKnife.bind(this);
-        DaggerDalalStreetApplicationComponent.builder().contextModule(new ContextModule(this)).build().inject(this);
+        if(isGooglePlayServicesAvailable()){
+            DaggerDalalStreetApplicationComponent.builder().contextModule(new ContextModule(this)).build().inject(this);
 
-        setupSplashAnimations();
+            setupSplashAnimations();
 
-        startLoginProcess(preferences.getString(EMAIL_KEY, null), preferences.getString(PASSWORD_KEY, null));
+            startLoginProcess(preferences.getString(EMAIL_KEY, null), preferences.getString(PASSWORD_KEY, null));
+
+        }else{
+            AlertDialog.Builder playServicesBuilder = new AlertDialog.Builder(this);
+            playServicesBuilder
+                    .setMessage("Dalal Street requires latest version of google play services.")
+                    .setPositiveButton("Close", (dialogInterface, i) -> finish())
+                    .setTitle("Update PlayServices")
+                    .setCancelable(true)
+                    .show();
+        }
     }
+
+    private boolean isGooglePlayServicesAvailable() {
+        GoogleApiAvailability googleApiAvailability = GoogleApiAvailability.getInstance();
+        Integer resultCode = googleApiAvailability.isGooglePlayServicesAvailable(this);
+        if (resultCode != ConnectionResult.SUCCESS) {
+           return false;
+        }else {
+            return true;
+        }
+    }
+
 
     private void startLoginProcess(String email, String password) {
 
