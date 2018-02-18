@@ -14,8 +14,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:text="@string/news_not_available"
+        android:text="@string/notifications_not_available"
         android:textAllCaps="true"
+        android:fontFamily="@font/kreon_light"
         android:textColor="@color/neutral_font_color"
         android:textSize="24sp"
         android:visibility="gone" />

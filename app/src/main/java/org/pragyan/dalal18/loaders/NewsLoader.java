@@ -45,7 +45,8 @@ public class NewsLoader extends AsyncTaskLoader<List<NewsDetails>> {
                 newsList.clear();
 
                 for (MarketEvent currentMarketEvent : marketEventsResponse.getMarketEventsList()) {
-                    newsList.add(new NewsDetails(currentMarketEvent.getCreatedAt(), currentMarketEvent.getHeadline(), currentMarketEvent.getText()));
+                    newsList.add(new NewsDetails(currentMarketEvent.getCreatedAt(), currentMarketEvent.getHeadline(),
+                            currentMarketEvent.getText(), currentMarketEvent.getImagePath()));
                 }
 
                 return newsList;

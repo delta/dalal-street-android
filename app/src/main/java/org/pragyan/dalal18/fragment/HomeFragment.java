@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Build;
+
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -33,6 +34,7 @@ import org.pragyan.dalal18.data.GlobalStockDetails;
 import org.pragyan.dalal18.data.NewsDetails;
 import org.pragyan.dalal18.loaders.NewsLoader;
 import org.pragyan.dalal18.ui.MainActivity;
+import org.pragyan.dalal18.ui.NewsDetailsActivity;
 import org.pragyan.dalal18.utils.ConnectionUtils;
 import org.pragyan.dalal18.utils.Constants;
 
@@ -73,6 +75,7 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
     LinearLayoutManager linearLayoutManager;
 
     List<CompanyTickerDetails> companyTickerDetailsList = new ArrayList<>();
+    List<NewsDetails> newsList = new ArrayList<>();
     ConnectionUtils.OnNetworkDownHandler networkDownHandler;
 
     Handler handler = new Handler();
@@ -137,6 +140,16 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
         newsRecyclerView.setHasFixedSize(true);
         newsRecyclerView.setAdapter(newsRecyclerAdapter);
 
+        newsRecyclerAdapter.setOnClickListener(new NewsRecyclerAdapter.OnClickListener() {
+            @Override
+            public void itemClicked(View view, int position) {
+
+                Intent intent = new Intent(getContext(), NewsDetailsActivity.class);
+                intent.putExtra("newsdetails", newsList.get(position));
+                startActivity(intent);
+            }
+        });
+
         setValues();
 
         Runnable runnable = new Runnable() {
@@ -171,6 +184,18 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
             companyTickerRecyclerAdapter.swapData(companyTickerDetailsList);
         }
 
+
+        StringBuilder builder = new StringBuilder("");
+        for (GlobalStockDetails currentStockDetails : MainActivity.globalStockDetails) {
+
+            builder.append(currentStockDetails.getShortName()).append(" : ").append(currentStockDetails.getPrice());
+            if (getActivity() != null && android.os.Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT) {
+                builder.append(currentStockDetails.getUp()==1?"\u2191":"\u2193");
+            }
+            builder.append("     ");
+        }
+        breakingNewsTextView.setText(builder.toString());
+
     }
 
     @Override
@@ -188,24 +213,16 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
             return;
         }
 
-        StringBuilder builder = new StringBuilder("");
+
 
         if (data.size() != 0) {
+            newsList = data;
             newsRecyclerAdapter.swapData(data);
 
-            for (GlobalStockDetails currentStockDetails : MainActivity.globalStockDetails) {
 
-                builder.append(currentStockDetails.getShortName()).append(" : ").append(currentStockDetails.getPrice());
-
-                if (android.os.Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT) {
-                    builder.append(currentStockDetails.getUp()==1?"\u2191":"\u2193");
-                }
-
-                builder.append("     ");
-            }
         }
 
-        breakingNewsTextView.setText(builder.toString());
+
         loadingRelativeLayout.setVisibility(View.GONE);
         newsRecyclerView.setVisibility(View.VISIBLE);
     }

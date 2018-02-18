@@ -12,4 +12,5 @@ message MarketEvent {
     sint32 emotion_score = 5;
     bool   is_global = 7;
     string created_at = 6;
+    string image_path = 8;
 }
