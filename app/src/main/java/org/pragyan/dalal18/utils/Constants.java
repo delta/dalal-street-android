@@ -2,6 +2,9 @@ package org.pragyan.dalal18.utils;
 
 public class Constants {
 
+    /* Test host - 139.59.47.250
+     *  Test port - 443          */
+
     public static final String HOST = "dalal.pragyan.org";
     public static final int PORT = 9001;
 

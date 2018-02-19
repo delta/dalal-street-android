@@ -48,7 +48,7 @@ import static org.pragyan.dalal18.utils.StockUtils.getOrderTypeFromName;
 import static org.pragyan.dalal18.utils.StockUtils.getQuantityOwnedFromCompanyName;
 import static org.pragyan.dalal18.utils.StockUtils.getStockIdFromCompanyName;
 
-/* Uses PlaceOrder() to place buy or ask order */
+/* Uses PlaceOrder() to place buy or ask order TODO : Notifications */
 public class TradeFragment extends Fragment implements LoaderManager.LoaderCallbacks<PlaceOrderResponse>{
 
     @Inject
@@ -81,7 +81,8 @@ public class TradeFragment extends Fragment implements LoaderManager.LoaderCallb
     private BroadcastReceiver refreshOwnedStockDetails = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            if ( intent.getAction() != null && intent.getAction().equals(Constants.REFRESH_OWNED_STOCKS_ACTION) ) {
+            if ( intent.getAction() != null && (intent.getAction().equals(Constants.REFRESH_OWNED_STOCKS_ACTION) ||
+                    intent.getAction().equals(Constants.REFRESH_STOCK_PRICES_ACTION))) {
                 int stocksOwned = StockUtils.getQuantityOwnedFromCompanyName(MainActivity.ownedStockDetails, companySpinner.getSelectedItem().toString());
                 String tempString = " :  " + String.valueOf(stocksOwned);
                 stocksOwnedTextView.setText(tempString);
@@ -265,8 +266,10 @@ public class TradeFragment extends Fragment implements LoaderManager.LoaderCallb
     public void onResume() {
         super.onResume();
         if (getContext() != null) {
+            IntentFilter intentFilter = new IntentFilter(Constants.REFRESH_OWNED_STOCKS_ACTION);
+            intentFilter.addAction(Constants.REFRESH_STOCK_PRICES_ACTION);
             LocalBroadcastManager.getInstance(getContext())
-                    .registerReceiver(refreshOwnedStockDetails, new IntentFilter(Constants.REFRESH_OWNED_STOCKS_ACTION));
+                    .registerReceiver(refreshOwnedStockDetails, intentFilter);
         }
     }
 
