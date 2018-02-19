@@ -1,6 +1,7 @@
 package org.pragyan.dalal18.adapter;
 
 import android.content.Context;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.text.Spanned;
@@ -39,6 +40,8 @@ public class MarketDepthRecyclerAdapter extends RecyclerView.Adapter<MarketDepth
         int price = marketDepthList.get(position).getPrice();
         if(price == 0 ||  price == Integer.MAX_VALUE){
             holder.price.setText("M.O");
+            holder.price.setTextColor(ContextCompat.getColor(context, R.color.neon_blue));
+            holder.volume.setTextColor(ContextCompat.getColor(context, R.color.neon_blue));
         }else {
             holder.price.setText(fromHtml(String.valueOf(price)));
         }

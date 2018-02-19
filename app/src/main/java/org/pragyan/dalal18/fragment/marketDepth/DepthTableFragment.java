@@ -105,6 +105,9 @@ public class DepthTableFragment extends Fragment implements LoaderManager.Loader
     @BindView(R.id.ask_depth_holder)
     TextView askDepthHolderTv;
 
+    @BindView(R.id.market_order_text)
+    TextView marketOrderText;
+
     String currentCompany;
     ConnectionUtils.OnNetworkDownHandler networkDownHandler;
 
@@ -131,6 +134,7 @@ public class DepthTableFragment extends Fragment implements LoaderManager.Loader
                 }
                 askDepthLayout.setVisibility(View.VISIBLE);
                 bidDepthLayout.setVisibility(View.VISIBLE);
+                marketOrderText.setVisibility(View.VISIBLE);
                 depthTableTv.setVisibility(View.INVISIBLE);
                 sortList(bidArrayList);
                 Collections.reverse(bidArrayList);
@@ -252,7 +256,7 @@ public class DepthTableFragment extends Fragment implements LoaderManager.Loader
                     public void onNext(MarketDepthUpdate value) {
 
                         for (Map.Entry<Integer, Integer> map : value.getBidDepthMap().entrySet()) {
-                            if(map.getKey() > 0 ){
+                            if(map.getKey() >= 0 ){
                                 int price = map.getKey();
                                 int volume = map.getValue();
                                 if(price == 0){
@@ -265,7 +269,7 @@ public class DepthTableFragment extends Fragment implements LoaderManager.Loader
 
 
                         for (Map.Entry<Integer, Integer> map : value.getAskDepthMap().entrySet()) {
-                            if(map.getKey() > 0){
+                            if(map.getKey() >= 0){
                                 MarketDepth temp = new MarketDepth(map.getKey(), map.getValue());
                                 askArrayList.add(temp);
                             }
