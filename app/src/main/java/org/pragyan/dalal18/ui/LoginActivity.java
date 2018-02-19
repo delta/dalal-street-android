@@ -35,6 +35,8 @@ import dalalstreet.api.actions.LoginRequest;
 import dalalstreet.api.actions.LoginResponse;
 import dalalstreet.api.models.Stock;
 import io.grpc.ManagedChannel;
+import io.grpc.Metadata;
+import io.grpc.stub.MetadataUtils;
 
 import static org.pragyan.dalal18.utils.Constants.LOGIN_LOADER_ID;
 
@@ -49,6 +51,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderManager.Lo
 
     public static final String USERNAME_KEY = "username-key";
     public static final String EMAIL_KEY = "email-key";
+    public static final String SESSION_KEY = "session-key";
     public static final String MARKET_OPEN_KEY = "market-open-key";
     static final String PASSWORD_KEY = "password-key";
 
@@ -179,6 +182,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderManager.Lo
                 preferences.edit()
                         .putString(EMAIL_KEY, loginResponse.getUser().getEmail())
                         .putString(PASSWORD_KEY, passwordEditText.getText().toString())
+                        .putString(SESSION_KEY,loginResponse.getSessionId())
                         .apply();
 
             // Adding user's stock details

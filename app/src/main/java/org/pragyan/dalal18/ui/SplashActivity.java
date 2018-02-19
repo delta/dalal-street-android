@@ -38,6 +38,8 @@ import dalalstreet.api.actions.LoginRequest;
 import dalalstreet.api.actions.LoginResponse;
 import dalalstreet.api.models.Stock;
 import io.grpc.ManagedChannel;
+import io.grpc.Metadata;
+import io.grpc.stub.MetadataUtils;
 
 import static org.pragyan.dalal18.utils.Constants.LOGIN_LOADER_ID;
 
@@ -58,6 +60,7 @@ public class SplashActivity extends AppCompatActivity implements LoaderManager.L
 
     public static final String USERNAME_KEY = "username-key";
     public static final String EMAIL_KEY = "email-key";
+    public static final String SESSION_KEY = "session-key";
     public static final String MARKET_OPEN_KEY = "market-open-key";
     static final String PASSWORD_KEY = "password-key";
 
@@ -151,6 +154,12 @@ public class SplashActivity extends AppCompatActivity implements LoaderManager.L
                     .build();
 
             DalalActionServiceGrpc.DalalActionServiceBlockingStub stub = DalalActionServiceGrpc.newBlockingStub(channel);
+
+            String sessionId = preferences.getString(SESSION_KEY,null);
+            if(sessionId != null){
+                stub = MetadataUtils.attachHeaders(stub, getStubMetadata());
+            }
+
 
         return new LoginLoader(this, loginRequest, stub);
     }
@@ -252,5 +261,12 @@ public class SplashActivity extends AppCompatActivity implements LoaderManager.L
     @Override
     public void onLoaderReset(Loader<LoginResponse> loader) {
         // Do Nothing
+    }
+
+    private Metadata getStubMetadata() {
+        Metadata metadata = new Metadata();
+        Metadata.Key<String> metadataKey = Metadata.Key.of("sessionid", Metadata.ASCII_STRING_MARSHALLER);
+        metadata.put(metadataKey, preferences.getString(SESSION_KEY,null));
+        return metadata;
     }
 }

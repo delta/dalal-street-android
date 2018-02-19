@@ -1,6 +1,7 @@
 package org.pragyan.dalal18.adapter;
 
 import android.content.Context;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.text.Spanned;
@@ -19,8 +20,8 @@ import butterknife.ButterKnife;
 
 public class MarketDepthRecyclerAdapter extends RecyclerView.Adapter<MarketDepthRecyclerAdapter.MyViewHolder> {
 
-    Context context;
-    List<MarketDepth> marketDepthList;
+    private Context context;
+    private List<MarketDepth> marketDepthList;
 
     public MarketDepthRecyclerAdapter(Context context, List<MarketDepth> marketDepthList) {
         this.context = context;
@@ -36,8 +37,14 @@ public class MarketDepthRecyclerAdapter extends RecyclerView.Adapter<MarketDepth
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
-
-        holder.price.setText(fromHtml(String.valueOf(marketDepthList.get(position).getPrice())));
+        int price = marketDepthList.get(position).getPrice();
+        if(price == 0 ||  price == Integer.MAX_VALUE){
+            holder.price.setText("M.O");
+            holder.price.setTextColor(ContextCompat.getColor(context, R.color.neon_blue));
+            holder.volume.setTextColor(ContextCompat.getColor(context, R.color.neon_blue));
+        }else {
+            holder.price.setText(fromHtml(String.valueOf(price)));
+        }
         holder.volume.setText(String.valueOf(marketDepthList.get(position).getVolume()));
     }
 
@@ -47,7 +54,6 @@ public class MarketDepthRecyclerAdapter extends RecyclerView.Adapter<MarketDepth
             return 0;
         }
         return marketDepthList.size();
-
     }
 
     public void swapData(List<MarketDepth> list) {

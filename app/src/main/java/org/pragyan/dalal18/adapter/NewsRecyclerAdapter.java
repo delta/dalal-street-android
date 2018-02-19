@@ -46,6 +46,7 @@ public class NewsRecyclerAdapter extends RecyclerView.Adapter<NewsRecyclerAdapte
         holder.headlinesTextView.setText(currentNewsDetails.getHeadlines());
         holder.createdAtTextView.setText(parseDate(currentNewsDetails.getCreatedAt()));
         holder.contentTextView.setText(currentNewsDetails.getContent());
+
     }
 
     @Override
@@ -79,4 +80,5 @@ public class NewsRecyclerAdapter extends RecyclerView.Adapter<NewsRecyclerAdapte
             onNewsClickListener.onNewsClicked(view, getAdapterPosition());
         }
     }
+
 }
