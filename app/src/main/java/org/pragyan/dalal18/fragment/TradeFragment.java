@@ -137,6 +137,8 @@ public class TradeFragment extends Fragment implements LoaderManager.LoaderCallb
         ArrayAdapter<String> orderSelectAdapter = new ArrayAdapter<>(getActivity(), R.layout.order_spinner_item,getResources().getStringArray(R.array.orderType));
 
         orderSpinner.setAdapter(orderSelectAdapter);
+        orderSpinner.setSelection(1);
+
         companySpinner.setAdapter(companiesAdapter);
 
         stockRadioGroup.setOnCheckedChangeListener((radioGroup, id) -> {

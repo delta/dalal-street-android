@@ -5,6 +5,8 @@ public class Constants {
     public static final String HOST = "dalal.pragyan.org";
     public static final int PORT = 9001;
 
+    public static final String COMPANY_IMAGES_BASE_URL = "https://dalal.pragyan.org/public/src/images/companies/";
+
     public static final int NUMBER_OF_COMPANIES = 30;
 
     public static final int SUBSCRIPTION_LOADER_ID = 100;

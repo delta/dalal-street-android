@@ -197,7 +197,8 @@ public class SplashActivity extends AppCompatActivity implements LoaderManager.L
                             currentStockDetails.getStocksInMarket(),
                             currentStockDetails.getStocksInExchange(),
                             currentStockDetails.getPreviousDayClose(),
-                            currentStockDetails.getUpOrDown() ? 1 : 0));
+                            currentStockDetails.getUpOrDown() ? 1 : 0,
+                            Constants.COMPANY_IMAGES_BASE_URL + currentStockDetails.getShortName().toUpperCase() + ".png"));
                 }
             }
 

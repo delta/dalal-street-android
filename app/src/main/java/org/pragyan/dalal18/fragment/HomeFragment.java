@@ -164,7 +164,7 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
         for (GlobalStockDetails currentStockDetails : MainActivity.globalStockDetails) {
             companyTickerDetailsList.add(new CompanyTickerDetails(
                     currentStockDetails.getFullName(),
-                    null,
+                    currentStockDetails.getImagePath(),
                     currentStockDetails.getPrice(),
                     currentStockDetails.getUp()==1));
         }

@@ -208,7 +208,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderManager.Lo
                             currentStockDetails.getStocksInMarket(),
                             currentStockDetails.getStocksInExchange(),
                             currentStockDetails.getPreviousDayClose(),
-                            currentStockDetails.getUpOrDown() ? 1 : 0));
+                            currentStockDetails.getUpOrDown() ? 1 : 0,
+                            Constants.COMPANY_IMAGES_BASE_URL + currentStockDetails.getShortName().toUpperCase() + ".png"));
                 }
             }
 

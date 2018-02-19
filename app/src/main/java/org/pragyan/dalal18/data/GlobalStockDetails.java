@@ -6,7 +6,7 @@ import android.os.Parcelable;
 /* Modify definition according to needs; Refer Stock.proto for more attributes */
 public class GlobalStockDetails implements Parcelable {
 
-    private String fullName, shortName;
+    private String fullName, shortName, imagePath;
     private int stockId;
     private int price;
     private int quantityInMarket;
@@ -14,7 +14,7 @@ public class GlobalStockDetails implements Parcelable {
     private int previousDayClose;
     private int up; // up isn't boolean because Parcelable cannot readBoolean()
 
-    public GlobalStockDetails(String fullName, String shortName, int stockId, int price, int quantityInMarket, int quantityInExchange, int previousDayClose, int up) {
+    public GlobalStockDetails(String fullName, String shortName, int stockId, int price, int quantityInMarket, int quantityInExchange, int previousDayClose, int up, String imagePath) {
         this.fullName = fullName;
         this.shortName = shortName;
         this.stockId = stockId;
@@ -23,7 +23,7 @@ public class GlobalStockDetails implements Parcelable {
         this.quantityInExchange = quantityInExchange;
         this.previousDayClose = previousDayClose;
         this.up = up;
-
+        this.imagePath = imagePath;
     }
 
     public int getStockId() {
@@ -66,6 +66,10 @@ public class GlobalStockDetails implements Parcelable {
         this.previousDayClose = previousDayClose;
     }
 
+    public String getImagePath() {
+        return imagePath;
+    }
+
     public int getUp() {
         return up;
     }
@@ -99,6 +103,7 @@ public class GlobalStockDetails implements Parcelable {
         this.quantityInExchange = in.readInt();
         this.previousDayClose = in.readInt();
         this.up = in.readInt();
+        this.imagePath = in.readString();
     }
 
     @Override
@@ -116,6 +121,7 @@ public class GlobalStockDetails implements Parcelable {
         dest.writeInt(quantityInExchange);
         dest.writeInt(previousDayClose);
         dest.writeInt(up);
+        dest.writeString(imagePath);
     }
 
     public static final Creator<GlobalStockDetails> CREATOR = new Creator<GlobalStockDetails>() {

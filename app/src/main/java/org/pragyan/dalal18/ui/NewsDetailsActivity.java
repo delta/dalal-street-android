@@ -23,7 +23,7 @@ import static org.pragyan.dalal18.utils.MiscellaneousUtils.parseDate;
 
 public class NewsDetailsActivity extends AppCompatActivity {
 
-    public static final String NEWS_DETAILS_KEY = "news-details=key";
+    public static final String NEWS_DETAILS_KEY = "news-details-key";
 
     @BindView(R.id.news_details_toolbar)
     Toolbar newsDetailsToolbar;
@@ -52,10 +52,9 @@ public class NewsDetailsActivity extends AppCompatActivity {
         NewsDetails newsDetails = i.getParcelableExtra(NEWS_DETAILS_KEY);
 
         View dialogView = LayoutInflater.from(this).inflate(R.layout.progress_dialog, null);
-        ((TextView) dialogView.findViewById(R.id.progressDialog_textView)).setText(R.string.registering);
+        ((TextView) dialogView.findViewById(R.id.progressDialog_textView)).setText(R.string.getting_fresh_news);
         loadingDialog = new AlertDialog.Builder(this).setView(dialogView).setCancelable(false).create();
         loadingDialog.show();
-
 
         setSupportActionBar(newsDetailsToolbar);
         if (getSupportActionBar() != null) {
@@ -67,9 +66,8 @@ public class NewsDetailsActivity extends AppCompatActivity {
         newsDetailsContent.setText(newsDetails.getContent());
         newsDetailsCreatedAt.setText(parseDate(newsDetails.getCreatedAt()));
 
-        StringBuilder builder = new StringBuilder("https://dalal.pragyan.org/public/src/images/news/");
-        builder.append(newsDetails.getImagePath());
-        Picasso.with(this).load(builder.toString()).into(newsDetailsImage);
+        Picasso.with(this).load("https://dalal.pragyan.org/public/src/images/news/" + newsDetails.getImagePath()).
+                into(newsDetailsImage);
 
         loadingDialog.dismiss();
         newsDetailsCreatedAt.setVisibility(View.VISIBLE);

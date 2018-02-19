@@ -19,6 +19,7 @@
         android:layout_height="200dp"
         android:layout_below="@+id/news_details_toolbar"
         android:layout_marginTop="10dp"
+        android:contentDescription="@string/news_details"
         android:scaleType="fitXY"
         android:visibility="invisible" />
 
@@ -29,8 +30,8 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:padding="10dp"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:padding="6dp">
 
             <TextView
                 android:id="@+id/news_details_head"
