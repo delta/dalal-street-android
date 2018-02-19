@@ -2,8 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/Dalal-Street.iml" filepath="$PROJECT_DIR$/Dalal-Street.iml" />
-      <module fileurl="file://F:\Github Projects\Dalal-Street\TheRedStreet.iml" filepath="F:\Github Projects\Dalal-Street\TheRedStreet.iml" />
+      <module fileurl="file://$PROJECT_DIR$/TheRedStreet.iml" filepath="$PROJECT_DIR$/TheRedStreet.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>

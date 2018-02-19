@@ -35,8 +35,6 @@ import dalalstreet.api.actions.LoginRequest;
 import dalalstreet.api.actions.LoginResponse;
 import dalalstreet.api.models.Stock;
 import io.grpc.ManagedChannel;
-import io.grpc.Metadata;
-import io.grpc.stub.MetadataUtils;
 
 import static org.pragyan.dalal18.utils.Constants.LOGIN_LOADER_ID;
 

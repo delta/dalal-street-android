@@ -48,7 +48,7 @@ public class CompanyTickerRecyclerAdapter extends RecyclerView.Adapter<CompanyTi
         holder.previousDayCloseTextView.setText(worthString);
 
         if (currentCompanyTickerDetails.getImageUrl() != null) {
-            Picasso.with(context).load(currentCompanyTickerDetails.getImageUrl()).placeholder(R.drawable.rotate_drawable)
+            Picasso.with(context).load(currentCompanyTickerDetails.getImageUrl()).placeholder(R.drawable.loading_placeholder)
                     .error(R.raw.connection_error).into(holder.companyImageView);
         } else {
             Picasso.with(context).load(R.raw.connection_error).into(holder.companyImageView);

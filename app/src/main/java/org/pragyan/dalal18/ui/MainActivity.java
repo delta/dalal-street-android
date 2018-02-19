@@ -19,8 +19,6 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
@@ -81,17 +79,17 @@ import io.grpc.stub.StreamObserver;
 import static org.pragyan.dalal18.ui.LoginActivity.EMAIL_KEY;
 import static org.pragyan.dalal18.ui.LoginActivity.PASSWORD_KEY;
 
-// TODO : Buy Limit
 /* Subscribes to GetTransactions*/
 public class MainActivity extends AppCompatActivity implements
         NavigationView.OnNavigationItemSelectedListener,
         LoaderManager.LoaderCallbacks<List<Subscription>>,
         ConnectionUtils.OnNetworkDownHandler {
 
-    public static final String SESSION_KEY = "session-key";
+    private static final long DRAWER_DURATION = 450;
+
     private static final String LAST_TRANSACTION_ID = "last_transaction_id";
     private static final String LAST_NOTIFICATION_ID = "last_notification_id";
-    private static final long DRAWER_DURATION = 450;
+
     public static final String CASH_WORTH_KEY = "cash-worth-key";
     public static final String TOTAL_WORTH_KEY = "total-worth-key";
     public static final String STOCKS_OWNED_KEY = "stocks-owned-key";
@@ -190,7 +188,7 @@ public class MainActivity extends AppCompatActivity implements
         if (!getIntent().getBooleanExtra(SplashActivity.MARKET_OPEN_KEY, false)) {
             new AlertDialog.Builder(this)
                     .setTitle("Market Closed")
-                    .setMessage("Market will open at 8 pm. Sorry for the inconvenience.")
+                    .setMessage("Please check notifications for market opening time. Sorry for the inconvenience.")
                     .setCancelable(true)
                     .setPositiveButton("CLOSE", (dI, i) -> dI.dismiss())
                     .show();
@@ -353,7 +351,7 @@ public class MainActivity extends AppCompatActivity implements
                         .edit()
                         .putString(EMAIL_KEY, null)
                         .putString(PASSWORD_KEY, null)
-                        .putString(SESSION_KEY,null)
+                        .putString(LoginActivity.SESSION_KEY,null)
                         .apply();
             } else {
                 Toast.makeText(MainActivity.this, "Connection Error", Toast.LENGTH_SHORT).show();

@@ -124,7 +124,6 @@ public class NewsFragment extends Fragment implements
 
         if (data.size()!=0) {
             newsDetailsList = data;
-            Log.e("SAN",newsDetailsList.size() + "");
             newsRecyclerAdapter.swapData(data);
             noNewsTextView.setVisibility(View.GONE);
             newsRecyclerView.setVisibility(View.VISIBLE);

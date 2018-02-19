@@ -1,7 +1,5 @@
 package org.pragyan.dalal18.ui;
 
-import android.app.Dialog;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -16,6 +14,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
+
 import org.pragyan.dalal18.R;
 import org.pragyan.dalal18.dagger.ContextModule;
 import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent;
@@ -60,7 +59,6 @@ public class SplashActivity extends AppCompatActivity implements LoaderManager.L
 
     public static final String USERNAME_KEY = "username-key";
     public static final String EMAIL_KEY = "email-key";
-    public static final String SESSION_KEY = "session-key";
     public static final String MARKET_OPEN_KEY = "market-open-key";
     static final String PASSWORD_KEY = "password-key";
 
@@ -155,11 +153,10 @@ public class SplashActivity extends AppCompatActivity implements LoaderManager.L
 
             DalalActionServiceGrpc.DalalActionServiceBlockingStub stub = DalalActionServiceGrpc.newBlockingStub(channel);
 
-            String sessionId = preferences.getString(SESSION_KEY,null);
+            String sessionId = preferences.getString(LoginActivity.SESSION_KEY,null);
             if(sessionId != null){
-                stub = MetadataUtils.attachHeaders(stub, getStubMetadata());
+                stub = MetadataUtils.attachHeaders(stub, getStubMetadata(sessionId));
             }
-
 
         return new LoginLoader(this, loginRequest, stub);
     }
@@ -263,10 +260,10 @@ public class SplashActivity extends AppCompatActivity implements LoaderManager.L
         // Do Nothing
     }
 
-    private Metadata getStubMetadata() {
+    private Metadata getStubMetadata(String sessionId) {
         Metadata metadata = new Metadata();
         Metadata.Key<String> metadataKey = Metadata.Key.of("sessionid", Metadata.ASCII_STRING_MARSHALLER);
-        metadata.put(metadataKey, preferences.getString(SESSION_KEY,null));
+        metadata.put(metadataKey, sessionId);
         return metadata;
     }
 }
