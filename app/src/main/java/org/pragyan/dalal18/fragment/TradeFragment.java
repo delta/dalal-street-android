@@ -215,6 +215,7 @@ public class TradeFragment extends Fragment implements LoaderManager.LoaderCallb
             getActivity().getSupportLoaderManager().restartLoader(TRADE_LOADER_ID, null, this);
     }
 
+    @NonNull
     @Override
     public Loader<PlaceOrderResponse> onCreateLoader(int id, Bundle args) {
 
