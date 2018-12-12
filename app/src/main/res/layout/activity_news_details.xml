@@ -6,7 +6,7 @@
     android:background="@color/black_background"
     tools:context="org.pragyan.dalal18.ui.NewsDetailsActivity">
 
-    <android.support.v7.widget.Toolbar
+    <androidx.appcompat.widget.Toolbar
         android:id="@+id/news_details_toolbar"
         android:layout_width="match_parent"
         android:layout_height="@dimen/toolbar_height"

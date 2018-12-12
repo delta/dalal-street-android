@@ -1,8 +1,8 @@
 package org.pragyan.dalal18.adapter;
 
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentPagerAdapter;
 
 import org.pragyan.dalal18.fragment.marketDepth.DepthGraphFragment;
 import org.pragyan.dalal18.fragment.marketDepth.DepthTableFragment;

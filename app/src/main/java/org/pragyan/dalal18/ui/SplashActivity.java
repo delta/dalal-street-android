@@ -4,11 +4,11 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.Loader;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
+import com.google.android.material.snackbar.Snackbar;
+import androidx.loader.app.LoaderManager;
+import androidx.loader.content.Loader;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -102,7 +102,7 @@ public class SplashActivity extends AppCompatActivity implements LoaderManager.L
 
     private void startLoginProcess(String email, String password) {
 
-        splashText.setText(getString(R.string.signing_in));
+        //splashText.setText(getString(R.string.signing_in));
 
         if (ConnectionUtils.getConnectionInfo(this)) {
             if (email != null && !email.equals("")) {

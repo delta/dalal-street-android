@@ -196,7 +196,7 @@
 
         </RadioGroup>
 
-        <android.support.design.widget.TextInputLayout
+        <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_marginBottom="2dp"
@@ -217,7 +217,7 @@
                 android:maxLength="4"
                 android:textColor="@color/neutral_font_color" />
 
-        </android.support.design.widget.TextInputLayout>
+        </com.google.android.material.textfield.TextInputLayout>
 
         <Button
             android:id="@+id/mortgage_button"

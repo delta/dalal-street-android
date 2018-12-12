@@ -4,14 +4,10 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.Loader;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import com.google.android.material.snackbar.Snackbar;
 
 import org.pragyan.dalal18.R;
 import org.pragyan.dalal18.dagger.ContextModule;
@@ -28,8 +24,12 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.loader.app.LoaderManager;
+import androidx.loader.content.Loader;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 import dalalstreet.api.DalalActionServiceGrpc;
 import dalalstreet.api.actions.LoginRequest;
 import dalalstreet.api.actions.LoginResponse;
@@ -82,6 +82,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderManager.Lo
                     .show();
         }
 
+        findViewById(R.id.play_button).setOnClickListener( v -> onLoginButtonClick());
+        findViewById(R.id.clickRegister_textView).setOnClickListener(v -> onRegisterButtonClick());
+
         startLoginProcess(false);
     }
 
@@ -101,7 +104,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderManager.Lo
         }
     }
 
-    @OnClick(R.id.play_button)
     void onLoginButtonClick() {
         if (ConnectionUtils.getConnectionInfo(this)) {
             if (validateEmail() && validatePassword()) {
@@ -117,7 +119,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderManager.Lo
         }
     }
 
-    @OnClick(R.id.clickRegister_textView)
     void onRegisterButtonClick() {
         startActivity(new Intent(this, RegistrationActivity.class));
         finish();

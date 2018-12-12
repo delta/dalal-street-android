@@ -1,7 +1,7 @@
 package org.pragyan.dalal18.loaders;
 
 import android.content.Context;
-import android.support.v4.content.AsyncTaskLoader;
+import androidx.loader.content.AsyncTaskLoader;
 import android.widget.Toast;
 
 import org.pragyan.dalal18.data.NewsDetails;

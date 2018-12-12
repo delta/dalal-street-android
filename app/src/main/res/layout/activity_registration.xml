@@ -6,15 +6,15 @@
     android:orientation="vertical"
     android:paddingBottom="20dp">
 
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/registration_toolbar"
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/registrationToolBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?colorPrimary"
         android:orientation="horizontal"
         android:theme="@style/Base.ThemeOverlay.AppCompat.Dark" />
 
-    <android.support.design.widget.TextInputLayout
+    <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginTop="12dp"
@@ -24,7 +24,7 @@
         android:textColorHint="@color/neutral_font_color">
 
         <EditText
-            android:id="@+id/name_editText"
+            android:id="@+id/nameEditText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:ems="10"
@@ -36,9 +36,9 @@
             android:textColor="@color/neutral_font_color"
             android:textSize="22sp" />
 
-    </android.support.design.widget.TextInputLayout>
+    </com.google.android.material.textfield.TextInputLayout>
 
-    <android.support.design.widget.TextInputLayout
+    <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginTop="12dp"
@@ -48,7 +48,7 @@
         android:textColorHint="@color/neutral_font_color">
 
         <EditText
-            android:id="@+id/email_editText"
+            android:id="@+id/emailEditText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:ems="10"
@@ -60,9 +60,9 @@
             android:textColor="@color/neutral_font_color"
             android:textSize="22sp" />
 
-    </android.support.design.widget.TextInputLayout>
+    </com.google.android.material.textfield.TextInputLayout>
 
-    <android.support.design.widget.TextInputLayout
+    <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginTop="12dp"
@@ -73,7 +73,7 @@
         android:textColorHint="@color/neutral_font_color">
 
         <EditText
-            android:id="@+id/password_editText"
+            android:id="@+id/passwordEditText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:ems="10"
@@ -84,9 +84,9 @@
             android:textColor="@color/neon_orange"
             android:textSize="22sp" />
 
-    </android.support.design.widget.TextInputLayout>
+    </com.google.android.material.textfield.TextInputLayout>
 
-    <android.support.design.widget.TextInputLayout
+    <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginTop="12dp"
@@ -97,7 +97,7 @@
         android:textColorHint="@color/neutral_font_color">
 
         <EditText
-            android:id="@+id/confirmPassword_editText"
+            android:id="@+id/confirmPasswordEditText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:ems="10"
@@ -108,10 +108,10 @@
             android:textColor="@color/neon_orange"
             android:textSize="22sp" />
 
-    </android.support.design.widget.TextInputLayout>
+    </com.google.android.material.textfield.TextInputLayout>
 
     <Spinner
-        android:id="@+id/country_spinner"
+        android:id="@+id/countrySpinner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginEnd="6dp"
@@ -122,7 +122,7 @@
         android:textColorHint="@color/neutral_font_color" />
 
     <Button
-        android:id="@+id/register_button"
+        android:id="@+id/registerButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"

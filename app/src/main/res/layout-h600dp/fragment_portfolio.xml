@@ -76,7 +76,7 @@
             android:layout_margin="4dp"
             android:background="@color/neutral_font_color" />
 
-        <android.support.v7.widget.RecyclerView
+        <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/portfolio_recyclerView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

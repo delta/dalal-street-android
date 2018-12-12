@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:background="@color/black_background">
 
-    <android.support.v7.widget.Toolbar
+    <androidx.appcompat.widget.Toolbar
         android:id="@+id/login_toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -14,7 +14,7 @@
         android:orientation="horizontal"
         android:theme="@style/Base.ThemeOverlay.AppCompat.Dark" />
 
-    <android.support.v7.widget.CardView
+    <androidx.cardview.widget.CardView
         android:id="@+id/login_cardView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -43,7 +43,7 @@
                 android:textColor="@color/neutral_font_color"
                 android:textSize="40sp" />
 
-            <android.support.design.widget.TextInputLayout
+            <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/email_input"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -61,12 +61,13 @@
                     android:ems="10"
                     android:hint="@string/email_hint"
                     android:inputType="textEmailAddress"
+                    android:text="107116035@nitt.edu"
                     android:textColor="@color/neutral_font_color"
                     android:textColorHint="@color/neutral_font_color" />
 
-            </android.support.design.widget.TextInputLayout>
+            </com.google.android.material.textfield.TextInputLayout>
 
-            <android.support.design.widget.TextInputLayout
+            <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/password_input"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -84,10 +85,11 @@
                     android:ems="10"
                     android:hint="@string/password_hint"
                     android:inputType="textPassword"
+                    android:text="abc123"
                     android:textColor="@color/neutral_font_color"
                     android:textColorHint="@color/neutral_font_color" />
 
-            </android.support.design.widget.TextInputLayout>
+            </com.google.android.material.textfield.TextInputLayout>
 
             <Button
                 android:id="@+id/play_button"
@@ -95,10 +97,10 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/password_input"
                 android:layout_centerHorizontal="true"
-                android:layout_marginBottom="15dp"
-                android:layout_marginEnd="12dp"
                 android:layout_marginStart="12dp"
                 android:layout_marginTop="36dp"
+                android:layout_marginEnd="12dp"
+                android:layout_marginBottom="15dp"
                 android:background="@drawable/black_green_rounded_button"
                 android:text="@string/play"
                 android:textColor="@color/neutral_font_color"
@@ -106,16 +108,16 @@
 
         </RelativeLayout>
 
-    </android.support.v7.widget.CardView>
+    </androidx.cardview.widget.CardView>
 
     <TextView
         android:id="@+id/clickRegister_textView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/login_cardView"
+        android:fontFamily="@font/kreon_light"
         android:gravity="center"
         android:text="@string/not_registered_click_here_to_register"
-        android:fontFamily="@font/kreon_light"
         android:textColor="@color/neon_blue"
         android:textSize="18sp"
         android:textStyle="bold" />

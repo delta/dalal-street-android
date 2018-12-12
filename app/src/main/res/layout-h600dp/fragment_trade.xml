@@ -120,7 +120,7 @@
 
     </LinearLayout>
 
-    <android.support.design.widget.TextInputLayout
+    <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/no_of_stocks_input"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -138,9 +138,9 @@
             android:inputType="number"
             android:textColor="@color/neutral_font_color" />
 
-    </android.support.design.widget.TextInputLayout>
+    </com.google.android.material.textfield.TextInputLayout>
 
-    <android.support.design.widget.TextInputLayout
+    <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/order_price_input"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -158,7 +158,7 @@
             android:inputType="number"
             android:textColor="@color/neutral_font_color" />
 
-    </android.support.design.widget.TextInputLayout>
+    </com.google.android.material.textfield.TextInputLayout>
 
     <Button
         android:id="@+id/bidAsk_button"

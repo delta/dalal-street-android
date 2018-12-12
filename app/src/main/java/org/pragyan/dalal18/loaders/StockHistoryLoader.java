@@ -1,8 +1,8 @@
 package org.pragyan.dalal18.loaders;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
-import android.support.v4.content.AsyncTaskLoader;
+import androidx.annotation.NonNull;
+import androidx.loader.content.AsyncTaskLoader;
 
 import org.pragyan.dalal18.utils.ConnectionUtils;
 import org.pragyan.dalal18.utils.Constants;
