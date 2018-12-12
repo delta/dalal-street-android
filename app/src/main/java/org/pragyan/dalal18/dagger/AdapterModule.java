@@ -3,7 +3,6 @@ package org.pragyan.dalal18.dagger;
 import android.content.Context;
 
 import org.pragyan.dalal18.adapter.CompanyTickerRecyclerAdapter;
-import org.pragyan.dalal18.adapter.NewsRecyclerAdapter;
 import org.pragyan.dalal18.adapter.NotificationRecyclerAdapter;
 import org.pragyan.dalal18.adapter.PortfolioRecyclerAdapter;
 

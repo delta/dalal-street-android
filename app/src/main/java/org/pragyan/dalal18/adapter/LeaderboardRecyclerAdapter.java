@@ -8,7 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import org.pragyan.dalal18.data.LeaderboardDetails;
+import org.pragyan.dalal18.data.LeaderBoardDetails;
 import org.pragyan.dalal18.R;
 
 import java.util.ArrayList;
@@ -16,11 +16,11 @@ import java.util.List;
 
 public class LeaderboardRecyclerAdapter extends RecyclerView.Adapter<LeaderboardRecyclerAdapter.MyViewHolder>{
 
-    private List<LeaderboardDetails> leaderboardDetails = new ArrayList<>();
+    private List<LeaderBoardDetails> leaderBoardDetails = new ArrayList<>();
     private Context context;
 
-    public LeaderboardRecyclerAdapter(Context context, ArrayList<LeaderboardDetails> leaderboardDetails) {
-        this.leaderboardDetails = leaderboardDetails;
+    public LeaderboardRecyclerAdapter(Context context, ArrayList<LeaderBoardDetails> leaderBoardDetails) {
+        this.leaderBoardDetails = leaderBoardDetails;
         this.context = context;
     }
 
@@ -33,11 +33,11 @@ public class LeaderboardRecyclerAdapter extends RecyclerView.Adapter<Leaderboard
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
 
-        LeaderboardDetails currentLeaderboardDetails = leaderboardDetails.get(position);
+        LeaderBoardDetails currentLeaderBoardDetails = leaderBoardDetails.get(position);
 
-        holder.rankTextView.setText(String.valueOf(currentLeaderboardDetails.getRank()));
-        holder.nameTextView.setText(currentLeaderboardDetails.getName());
-        holder.wealthTextView.setText(String.valueOf(currentLeaderboardDetails.getWealth()));
+        holder.rankTextView.setText(String.valueOf(currentLeaderBoardDetails.getRank()));
+        holder.nameTextView.setText(currentLeaderBoardDetails.getName());
+        holder.wealthTextView.setText(String.valueOf(currentLeaderBoardDetails.getWealth()));
 
         if (position == 0) {
             holder.nameTextView.setTextColor(ContextCompat.getColor(context, R.color.gold_medal));
@@ -60,12 +60,12 @@ public class LeaderboardRecyclerAdapter extends RecyclerView.Adapter<Leaderboard
 
     @Override
     public int getItemCount() {
-        if (leaderboardDetails == null || leaderboardDetails.size() == 0) return 0;
-        return leaderboardDetails.size();
+        if (leaderBoardDetails == null || leaderBoardDetails.size() == 0) return 0;
+        return leaderBoardDetails.size();
     }
 
-    public void swapData(List<LeaderboardDetails> list) {
-        leaderboardDetails = list;
+    public void swapData(List<LeaderBoardDetails> list) {
+        leaderBoardDetails = list;
         notifyDataSetChanged();
     }
 

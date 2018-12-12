@@ -39,9 +39,8 @@ public class ChannelModule {
     @DalalStreetApplicationScope
     public ManagedChannel getManagedChannel(Context context) {
 
-        ManagedChannel channel = null;
         try {
-            channel = OkHttpChannelBuilder
+            return OkHttpChannelBuilder
                     .forAddress(Constants.HOST, Constants.PORT)
                     .sslSocketFactory(getSocketFactory(context))
                     .connectionSpec(ConnectionSpec.MODERN_TLS)
@@ -52,7 +51,7 @@ public class ChannelModule {
             e.printStackTrace();
         }
 
-        return channel;
+        return null;
     }
 
     private SSLSocketFactory getSocketFactory(Context context) throws KeyStoreException, CertificateException, NoSuchAlgorithmException, IOException, KeyManagementException, UnrecoverableKeyException, GooglePlayServicesNotAvailableException, GooglePlayServicesRepairableException {

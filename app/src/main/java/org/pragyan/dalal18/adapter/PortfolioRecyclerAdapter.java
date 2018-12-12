@@ -1,6 +1,7 @@
 package org.pragyan.dalal18.adapter;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -27,6 +28,7 @@ public class PortfolioRecyclerAdapter extends RecyclerView.Adapter<PortfolioRecy
         this.portfolioList = portfolioList;
     }
 
+    @NonNull
     @Override
     public PortfolioViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View customView = LayoutInflater.from(context).inflate(R.layout.portfolio_list_item, parent, false);
@@ -38,8 +40,8 @@ public class PortfolioRecyclerAdapter extends RecyclerView.Adapter<PortfolioRecy
 
         Portfolio currentPortfolioItem = portfolioList.get(position);
 
-        if (currentPortfolioItem.getCompanyName().length() > 10 && currentPortfolioItem.getShortname() != null)
-            holder.companyNameTextView.setText(currentPortfolioItem.getShortname());
+        if (currentPortfolioItem.getCompanyName().length() > 10 && currentPortfolioItem.getShortName() != null)
+            holder.companyNameTextView.setText(currentPortfolioItem.getShortName());
         else
             holder.companyNameTextView.setText(currentPortfolioItem.getCompanyName());
 

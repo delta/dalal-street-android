@@ -20,7 +20,7 @@ import org.pragyan.dalal18.R;
 import org.pragyan.dalal18.adapter.LeaderboardRecyclerAdapter;
 import org.pragyan.dalal18.dagger.ContextModule;
 import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent;
-import org.pragyan.dalal18.data.LeaderboardDetails;
+import org.pragyan.dalal18.data.LeaderBoardDetails;
 import org.pragyan.dalal18.loaders.LeaderBoardLoader;
 import org.pragyan.dalal18.utils.ConnectionUtils;
 import org.pragyan.dalal18.utils.MiscellaneousUtils;
@@ -55,7 +55,7 @@ public class LeaderboardFragment extends Fragment implements LoaderManager.Loade
     @BindView(R.id.personal_wealth_textView)
     TextView personalWealthTextView;
 
-    private ArrayList<LeaderboardDetails> leaderBoardDetailsList = new ArrayList<>();
+    private ArrayList<LeaderBoardDetails> leaderBoardDetailsList = new ArrayList<>();
 
     ConnectionUtils.OnNetworkDownHandler networkDownHandler;
 
@@ -145,7 +145,7 @@ public class LeaderboardFragment extends Fragment implements LoaderManager.Loade
 
             for (int i = 0; i < data.getRankListCount(); ++i) {
                 LeaderboardRow currentRow = data.getRankList(i);
-                leaderBoardDetailsList.add(new LeaderboardDetails(currentRow.getRank(), currentRow.getUserName(), currentRow.getTotalWorth()));
+                leaderBoardDetailsList.add(new LeaderBoardDetails(currentRow.getRank(), currentRow.getUserName(), currentRow.getTotalWorth()));
             }
 
             leaderboardRecyclerAdapter.swapData(leaderBoardDetailsList);
