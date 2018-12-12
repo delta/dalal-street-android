@@ -96,7 +96,7 @@ public class LeaderboardFragment extends Fragment implements LoaderManager.Loade
         // Inflate the layout for this fragment
         View rootView=inflater.inflate(R.layout.fragment_leaderboard, container, false);
 
-        totalWorthTextView = container.getRootView().findViewById(R.id.totalWorth_textView);
+        totalWorthTextView = container.getRootView().findViewById(R.id.totalWorthTextView);
         ButterKnife.bind(this, rootView);
 
         DaggerDalalStreetApplicationComponent.builder().contextModule(new ContextModule(getContext())).build().inject(this);

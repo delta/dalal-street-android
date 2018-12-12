@@ -86,7 +86,7 @@ public class NewsFragment extends Fragment implements
         if (getActivity() != null) getActivity().setTitle("News");
         DaggerDalalStreetApplicationComponent.builder().contextModule(new ContextModule(getContext())).build().inject(this);
 
-        newsRecyclerView = rootView.findViewById(R.id.news_recyclerView);
+        newsRecyclerView = rootView.findViewById(R.id.newsRecyclerView);
         noNewsTextView = rootView.findViewById(R.id.noNews_textView);
 
         newsRecyclerAdapter = new NewsRecyclerAdapter(getContext(), null, this);
@@ -97,7 +97,7 @@ public class NewsFragment extends Fragment implements
 
         if (getContext() != null) {
             View dialogView = LayoutInflater.from(getContext()).inflate(R.layout.progress_dialog, null);
-            ((TextView) dialogView.findViewById(R.id.progressDialog_textView)).setText(R.string.getting_fresh_news);
+            ((TextView) dialogView.findViewById(R.id.progressDialog_textView)).setText(R.string.getting_latest_news);
             loadingNewsDialog = new AlertDialog.Builder(getContext()).setView(dialogView).setCancelable(false).create();
         }
 

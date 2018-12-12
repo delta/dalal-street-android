@@ -8,7 +8,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@id/username_textView"
+        android:layout_above="@id/usernameTextView"
         android:layout_marginStart="16dp"
         android:text="@string/app_name"
         android:fontFamily="@font/marcellus_sc"
@@ -16,7 +16,7 @@
         android:textColor="@color/neon_green" />
 
     <TextView
-        android:id="@+id/username_textView"
+        android:id="@+id/usernameTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"

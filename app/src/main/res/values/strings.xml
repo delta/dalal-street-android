@@ -4,7 +4,7 @@
     <string name="login_text">LOGIN</string>
     <string name="email_hint">Email</string>
     <string name="password_hint">Password</string>
-    <string name="title_activity_home">Home</string>
+    <string name="home">Home</string>
 
     <string name="open">Open</string>
     <string name="close">Close</string>
@@ -133,7 +133,7 @@
     <string name="news_not_available">No News.</string>
     <string name="notifications_not_available">No Notifications.</string>
     <string name="company_image_description">company_image_view</string>
-    <string name="getting_fresh_news">Getting fresh news…</string>
+    <string name="getting_latest_news">Getting latest news…</string>
     <string name="loading_leaderboard">Getting LeaderBoard…</string>
     <string name="loading_transaction">Getting Transactions…</string>
     <string name="companies">Companies</string>

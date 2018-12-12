@@ -160,7 +160,7 @@ public class MortgageFragment extends Fragment implements LoaderManager.LoaderCa
         });
 
         mortgageRadioGroup.setOnCheckedChangeListener((radioGroup, id) -> {
-            int currentPrice = StockUtils.getPriceFromStockId(MainActivity.globalStockDetails, lastStockId);
+            int currentPrice = StockUtils.getPriceFromStockId(MainActivity.Companion.getGlobalStockDetails(), lastStockId);
 
             if (id == R.id.mortgage_radioButton) {
                 mortgageButton.setText(R.string.mortgage_uppercase);
@@ -314,13 +314,13 @@ public class MortgageFragment extends Fragment implements LoaderManager.LoaderCa
         String mortgageString = " :  " + String.valueOf(stocksMortgaged);
         mortgagedTextView.setText(mortgageString);
 
-        stocksOwned = getQuantityOwnedFromCompanyName(MainActivity.ownedStockDetails, getCompanyNameFromStockId(stockId));
+        stocksOwned = getQuantityOwnedFromCompanyName(MainActivity.Companion.getOwnedStockDetails(), getCompanyNameFromStockId(stockId));
 
         String ownedString = " :  " + String.valueOf(stocksOwned);
         ownedTextView.setText(ownedString);
 
         lastStockId = stockId;
-        int currentPrice = StockUtils.getPriceFromStockId(MainActivity.globalStockDetails, stockId);
+        int currentPrice = StockUtils.getPriceFromStockId(MainActivity.Companion.getGlobalStockDetails(), stockId);
 
         String tempString = " :  " + Constants.RUPEE_SYMBOL + " " + String.valueOf(currentPrice);
         currentPriceTextView.setText(tempString);

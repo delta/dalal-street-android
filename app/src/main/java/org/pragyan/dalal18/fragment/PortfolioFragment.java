@@ -82,11 +82,11 @@ public class PortfolioFragment extends Fragment {
 
         List<Portfolio> portfolioList = new ArrayList<>();
 
-        for (StockDetails currentStockDetails : MainActivity.ownedStockDetails) {
+        for (StockDetails currentStockDetails : MainActivity.Companion.getOwnedStockDetails()) {
 
             int currentPrice = -1;
 
-            for (GlobalStockDetails globalStockDetails : MainActivity.globalStockDetails) {
+            for (GlobalStockDetails globalStockDetails : MainActivity.Companion.getGlobalStockDetails()) {
                 if (currentStockDetails.getStockId() == globalStockDetails.getStockId()) {
                     currentPrice = globalStockDetails.getPrice();
                     break;
@@ -95,11 +95,11 @@ public class PortfolioFragment extends Fragment {
 
             if(currentStockDetails.getQuantity() != 0){
                 portfolioList.add(new Portfolio(
-                        StockUtils.getShortNameForStockId(MainActivity.globalStockDetails, currentStockDetails.getStockId()),
+                        StockUtils.getShortNameForStockId(MainActivity.Companion.getGlobalStockDetails(), currentStockDetails.getStockId()),
                         StockUtils.getCompanyNameFromStockId(currentStockDetails.getStockId()),
                         currentStockDetails.getQuantity(),
                         currentPrice,
-                        StockUtils.getPreviousDayCloseFromStockId(MainActivity.globalStockDetails, currentStockDetails.getStockId())
+                        StockUtils.getPreviousDayCloseFromStockId(MainActivity.Companion.getGlobalStockDetails(), currentStockDetails.getStockId())
                 ));
             }
 

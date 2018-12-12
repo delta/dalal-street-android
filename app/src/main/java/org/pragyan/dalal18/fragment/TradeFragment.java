@@ -83,12 +83,12 @@ public class TradeFragment extends Fragment implements LoaderManager.LoaderCallb
         public void onReceive(Context context, Intent intent) {
             if ( intent.getAction() != null && (intent.getAction().equals(Constants.REFRESH_OWNED_STOCKS_ACTION) ||
                     intent.getAction().equals(Constants.REFRESH_STOCK_PRICES_ACTION))) {
-                int stocksOwned = StockUtils.getQuantityOwnedFromCompanyName(MainActivity.ownedStockDetails, companySpinner.getSelectedItem().toString());
+                int stocksOwned = StockUtils.getQuantityOwnedFromCompanyName(MainActivity.Companion.getOwnedStockDetails(), companySpinner.getSelectedItem().toString());
                 String tempString = " :  " + String.valueOf(stocksOwned);
                 stocksOwnedTextView.setText(tempString);
 
                 tempString = " : " + Constants.RUPEE_SYMBOL + " " + String.valueOf(
-                        StockUtils.getPriceFromStockId(MainActivity.globalStockDetails, StockUtils.getStockIdFromCompanyName(companySpinner.getSelectedItem().toString())));
+                        StockUtils.getPriceFromStockId(MainActivity.Companion.getGlobalStockDetails(), StockUtils.getStockIdFromCompanyName(companySpinner.getSelectedItem().toString())));
                 currentPriceTextView.setText(tempString);
             }
         }
@@ -150,12 +150,12 @@ public class TradeFragment extends Fragment implements LoaderManager.LoaderCallb
         companySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                int stocksOwned = StockUtils.getQuantityOwnedFromCompanyName(MainActivity.ownedStockDetails, companySpinner.getSelectedItem().toString());
+                int stocksOwned = StockUtils.getQuantityOwnedFromCompanyName(MainActivity.Companion.getOwnedStockDetails(), companySpinner.getSelectedItem().toString());
                 String tempString = " :  " + String.valueOf(stocksOwned);
                 stocksOwnedTextView.setText(tempString);
 
                 tempString = " : " + Constants.RUPEE_SYMBOL + " " + String.valueOf(
-                        StockUtils.getPriceFromStockId(MainActivity.globalStockDetails, StockUtils.getStockIdFromCompanyName(companySpinner.getSelectedItem().toString())));
+                        StockUtils.getPriceFromStockId(MainActivity.Companion.getGlobalStockDetails(), StockUtils.getStockIdFromCompanyName(companySpinner.getSelectedItem().toString())));
                 currentPriceTextView.setText(tempString);
             }
 
@@ -196,7 +196,7 @@ public class TradeFragment extends Fragment implements LoaderManager.LoaderCallb
         } else if (orderPriceEditText.getVisibility() == View.VISIBLE && orderPriceEditText.getText().toString().trim().isEmpty()) {
             Toast.makeText(getActivity(), "Enter the order price", Toast.LENGTH_SHORT).show();
         } else if (stockRadioGroup.getCheckedRadioButtonId() == R.id.ask_radioButton) {
-            int validQuantity = getQuantityOwnedFromCompanyName(MainActivity.ownedStockDetails, companySpinner.getSelectedItem().toString());
+            int validQuantity = getQuantityOwnedFromCompanyName(MainActivity.Companion.getOwnedStockDetails(), companySpinner.getSelectedItem().toString());
             int askingQuantity = Integer.parseInt(noOfStocksEditText.getText().toString());
 
             if (askingQuantity > validQuantity) {

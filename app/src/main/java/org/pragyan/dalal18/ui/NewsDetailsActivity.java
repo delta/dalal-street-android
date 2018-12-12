@@ -52,7 +52,7 @@ public class NewsDetailsActivity extends AppCompatActivity {
         NewsDetails newsDetails = i.getParcelableExtra(NEWS_DETAILS_KEY);
 
         View dialogView = LayoutInflater.from(this).inflate(R.layout.progress_dialog, null);
-        ((TextView) dialogView.findViewById(R.id.progressDialog_textView)).setText(R.string.getting_fresh_news);
+        ((TextView) dialogView.findViewById(R.id.progressDialog_textView)).setText(R.string.getting_latest_news);
         loadingDialog = new AlertDialog.Builder(this).setView(dialogView).setCancelable(false).create();
         loadingDialog.show();
 

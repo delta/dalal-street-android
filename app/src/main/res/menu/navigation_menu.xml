@@ -13,9 +13,9 @@
     <group android:id="@+id/information_category">
 
         <item
-            android:id="@+id/nav_home"
+            android:id="@+id/home_dest"
             android:icon="@drawable/home_action"
-            android:title="@string/title_activity_home" />
+            android:title="@string/home" />
 
         <item
             android:id="@+id/nav_companies"

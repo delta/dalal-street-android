@@ -16,9 +16,9 @@ public class StockUtils {
     public static void createCompanyArrayFromGlobalStockDetails() {
         stockIdCompanyNameList = new ArrayList<>();
 
-        for (int i=0 ; i< MainActivity.globalStockDetails.size() ; ++i) {
-            if (MainActivity.globalStockDetails.get(i) != null) {
-                GlobalStockDetails currentStockDetails = MainActivity.globalStockDetails.get(i);
+        for (int i = 0; i< MainActivity.Companion.getGlobalStockDetails().size() ; ++i) {
+            if (MainActivity.Companion.getGlobalStockDetails().get(i) != null) {
+                GlobalStockDetails currentStockDetails = MainActivity.Companion.getGlobalStockDetails().get(i);
 
 
                 stockIdCompanyNameList.add(new StockIdCompanyName(currentStockDetails.getStockId(), currentStockDetails.getFullName()));

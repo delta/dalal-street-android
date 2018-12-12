@@ -1,10 +1,11 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/black_background">
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/companies_recyclerView"
+        android:id="@+id/companiesRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
@@ -14,71 +15,73 @@
         android:padding="2dp" />
 
     <TextView
-        android:id="@+id/breakingNewsText"
+        android:id="@+id/breakingNewsTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@id/companiesRecyclerView"
         android:layout_alignParentStart="true"
-        android:layout_below="@id/companies_recyclerView"
-        android:padding="2dp"
         android:background="#20202C"
         android:ellipsize="marquee"
         android:fadingEdge="horizontal"
         android:marqueeRepeatLimit="marquee_forever"
+        android:padding="2dp"
         android:scrollHorizontally="true"
         android:singleLine="true"
         android:text=""
         android:textAllCaps="true"
         android:textColor="@color/neutral_font_color"
         android:textSize="16sp"
-        android:textStyle="bold|italic" />
+        android:textStyle="bold|italic"
+        app:layout_constraintTop_toBottomOf="@+id/companiesRecyclerView" />
 
     <View
+        android:id="@+id/homeDivider"
         android:layout_width="match_parent"
         android:layout_height="1px"
-        android:layout_below="@+id/breakingNewsText"
-        android:layout_marginStart="2dp"
-        android:layout_marginTop="1dp"
-        android:background="@color/neutral_font_color" />
+        android:layout_marginStart="4dp"
+        android:layout_marginEnd="4dp"
+        android:background="@color/neutral_font_color"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/breakingNewsTextView" />
 
-    <FrameLayout
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/newsRecyclerView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/breakingNewsText"
-        android:background="@color/black_background">
+        android:layout_height="0dp"
+        android:paddingTop="2dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/homeDivider" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/news_recyclerView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:paddingTop="2dp" />
+    <RelativeLayout
+        android:id="@+id/loadingNewsRelativeLayout"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_gravity="center"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/homeDivider">
 
-        <RelativeLayout
-            android:id="@+id/loadingNews_relativeLayout"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="center"
-            android:visibility="gone">
+        <TextView
+            android:id="@+id/loadingNews_textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="@string/getting_latest_news"
+            android:textColor="@color/neutral_font_color"
+            android:textSize="20sp"
+            android:textStyle="italic|bold" />
 
-            <TextView
-                android:id="@+id/loadingNews_textView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:text="@string/getting_fresh_news"
-                android:textColor="@color/neutral_font_color"
-                android:textSize="20sp"
-                android:textStyle="italic|bold" />
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/loadingNews_textView"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="8dp"
+            android:indeterminate="true" />
 
-            <ProgressBar
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_above="@+id/loadingNews_textView"
-                android:layout_centerHorizontal="true"
-                android:layout_marginBottom="8dp"
-                android:indeterminate="true" />
+    </RelativeLayout>
 
-        </RelativeLayout>
-
-    </FrameLayout>
-
-</RelativeLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

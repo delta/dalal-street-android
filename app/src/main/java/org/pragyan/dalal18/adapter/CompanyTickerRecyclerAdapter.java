@@ -1,6 +1,8 @@
 package org.pragyan.dalal18.adapter;
 
 import android.content.Context;
+
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,8 +27,9 @@ public class CompanyTickerRecyclerAdapter extends RecyclerView.Adapter<CompanyTi
         this.companyTickerDetailsList = companyTickerDetailsList;
     }
 
+    @NonNull
     @Override
-    public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(context).inflate(R.layout.company_ticker_list_item, parent, false);
 
         return new MyViewHolder(itemView);
@@ -57,7 +60,7 @@ public class CompanyTickerRecyclerAdapter extends RecyclerView.Adapter<CompanyTi
 
     @Override
     public int getItemCount() {
-        return Integer.MAX_VALUE;
+        return (companyTickerDetailsList == null || companyTickerDetailsList.size() == 0)? 0 : companyTickerDetailsList.size();
     }
 
     public void swapData(List<CompanyTickerDetails> companyTickerDetailsList) {
