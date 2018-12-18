@@ -9,6 +9,7 @@ import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.DefaultItemAnimator
@@ -136,8 +137,10 @@ class HomeFragment : Fragment(), NewsRecyclerAdapter.NewsItemClickListener {
                         newsRecyclerView.visibility = View.VISIBLE
                     }
                 } else {
-                    networkDownHandler.onNetworkDownError()
+                    uiThread { Toast.makeText(context, marketEventsResponse.statusMessage, Toast.LENGTH_SHORT).show() }
                 }
+            } else {
+                uiThread { networkDownHandler.onNetworkDownError() }
             }
         }
     }
