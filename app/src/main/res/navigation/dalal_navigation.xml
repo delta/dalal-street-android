@@ -19,4 +19,11 @@
         tools:layout="@layout/fragment_mortgage">
     </fragment>
 
+    <fragment
+        android:id="@+id/companies_dest"
+        android:name="org.pragyan.dalal18.fragment.CompanyFragment"
+        android:label="@string/companies"
+        tools:layout="@layout/fragment_companies">
+    </fragment>
+
 </navigation>

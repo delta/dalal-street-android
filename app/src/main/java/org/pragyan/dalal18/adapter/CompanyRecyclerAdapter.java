@@ -1,8 +1,6 @@
 package org.pragyan.dalal18.adapter;
 
 import android.content.Context;
-import androidx.core.content.ContextCompat;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,8 +13,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
+import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.RecyclerView;
 
 public class CompanyRecyclerAdapter extends RecyclerView.Adapter<CompanyRecyclerAdapter.PortfolioViewHolder> {
 
@@ -28,8 +27,9 @@ public class CompanyRecyclerAdapter extends RecyclerView.Adapter<CompanyRecycler
         this.context = context;
     }
 
+    @NonNull
     @Override
-    public CompanyRecyclerAdapter.PortfolioViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public CompanyRecyclerAdapter.PortfolioViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View customView = LayoutInflater.from(context).inflate(R.layout.company_list_item, parent, false);
         return new PortfolioViewHolder(customView);
     }
@@ -72,18 +72,13 @@ public class CompanyRecyclerAdapter extends RecyclerView.Adapter<CompanyRecycler
 
     class PortfolioViewHolder extends RecyclerView.ViewHolder {
 
-        @BindView(R.id.companyName_textView)
-        TextView companyNameTextView;
-
-        @BindView(R.id.price_textView)
-        TextView priceTextView;
-
-        @BindView(R.id.difference_textView)
-        TextView differenceTextView;
+        TextView companyNameTextView, priceTextView, differenceTextView;
 
         PortfolioViewHolder(View itemView) {
             super(itemView);
-            ButterKnife.bind(this, itemView);
+            priceTextView = itemView.findViewById(R.id.price_textView);
+            differenceTextView = itemView.findViewById(R.id.difference_textView);
+            companyNameTextView = itemView.findViewById(R.id.companyName_textView);
         }
     }
 }

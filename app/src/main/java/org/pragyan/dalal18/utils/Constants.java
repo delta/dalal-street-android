@@ -5,21 +5,18 @@ public class Constants {
     /* Test host - 139.59.47.250
      *  Test port - 443          */
 
-    public static final String HOST = "192.168.0.182";
+    public static final String HOST = "192.168.43.33";
     public static final int PORT = 8000;
 
     public static final String COMPANY_IMAGES_BASE_URL = "https://dalal.pragyan.org/public/src/images/companies/";
 
     public static final int NUMBER_OF_COMPANIES = 30;
 
-    public static final int SUBSCRIPTION_LOADER_ID = 100;
     public static final int LOGIN_LOADER_ID = 101;
-    public static final int REGISTRATION_LOADER_ID = 102;
 
     public static final int STOCK_HISTORY_LOADER_ID = 201;
     public static final int TRADE_LOADER_ID = 301;
     public static final int ORDERS_LOADER_ID = 401;
-    public static final int MORTGAGE_DETAILS_LOADER_ID = 501;
     public static final int COMPANY_PROFILE_LOADER_ID = 601;
     public static final int NEWS_LOADER_ID = 701;
     public static final int LEADER_BOARD_LOADER_ID = 801;
@@ -33,7 +30,7 @@ public class Constants {
     public static final String REFRESH_OWNED_STOCKS_ACTION = "refresh-owned-stocks-action";
     public static final String REFRESH_MARKET_DEPTH= "refresh_market_depth";
     public static final String REFRESH_WORTH_TEXTVIEW_ACTION = "refresh-cash-worth-textview";
-    public static final String REFRESH_DIVIDEND_ACTION = "refresh-cash-worth-textview";
+    public static final String REFRESH_DIVIDEND_ACTION = "refresh-dividend-worth-textview";
     public static final String UPDATE_WORTH_VIA_STREAM_ACTION = "refresh-worth-via-stream-action";
     public static final String STOP_NOTIFICATION_ACTION = "stop-notification-action";
 

@@ -136,10 +136,8 @@ class HomeFragment : Fragment(), NewsRecyclerAdapter.NewsItemClickListener {
                         loadingNewsRelativeLayout.visibility = View.GONE
                         newsRecyclerView.visibility = View.VISIBLE
                     }
-
                 } else {
                     uiThread { Toast.makeText(context, marketEventsResponse.statusMessage, Toast.LENGTH_SHORT).show() }
-
                 }
             } else {
                 uiThread { networkDownHandler.onNetworkDownError() }

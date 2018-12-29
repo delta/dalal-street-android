@@ -170,7 +170,7 @@
         <RadioButton
             android:id="@+id/mortgage_radioButton"
             android:layout_width="wrap_content"
-            android:layout_height="43dp"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
             android:fontFamily="@font/marcellus_sc"
             android:text="@string/mortgage_stocks"
