@@ -4,11 +4,10 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.loader.app.LoaderManager;
-import androidx.loader.content.Loader;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -18,6 +17,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.pragyan.dalal18.ui.NewsDetailsActivity;
 import org.pragyan.dalal18.utils.ConnectionUtils;
@@ -27,7 +27,6 @@ import org.pragyan.dalal18.adapter.NewsRecyclerAdapter;
 import org.pragyan.dalal18.dagger.ContextModule;
 import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent;
 import org.pragyan.dalal18.data.NewsDetails;
-import org.pragyan.dalal18.loaders.NewsLoader;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,23 +34,24 @@ import java.util.List;
 import javax.inject.Inject;
 
 import dalalstreet.api.DalalActionServiceGrpc;
-
-import static org.pragyan.dalal18.utils.Constants.NEWS_LOADER_ID;
+import dalalstreet.api.actions.GetMarketEventsRequest;
+import dalalstreet.api.actions.GetMarketEventsResponse;
+import dalalstreet.api.models.MarketEvent;
 
 /* Gets latest news from GetMarketEvents action*/
 public class NewsFragment extends Fragment implements
-        LoaderManager.LoaderCallbacks<List<NewsDetails>>,
         NewsRecyclerAdapter.NewsItemClickListener{
 
     @Inject
     DalalActionServiceGrpc.DalalActionServiceBlockingStub actionServiceBlockingStub;
 
-    RecyclerView newsRecyclerView;
-    NewsRecyclerAdapter newsRecyclerAdapter;
+    private RecyclerView newsRecyclerView;
+    private NewsRecyclerAdapter newsRecyclerAdapter;
 
-    TextView noNewsTextView;
-    AlertDialog loadingNewsDialog;
-    List<NewsDetails> newsDetailsList = new ArrayList<>();
+    private TextView noNewsTextView;
+    private AlertDialog loadingNewsDialog;
+    private List<NewsDetails> newsDetailsList = new ArrayList<>();
+    private NewsAsyncTask newsAsyncTast = new NewsAsyncTask();
 
     private ConnectionUtils.OnNetworkDownHandler networkDownHandler;
 
@@ -59,7 +59,7 @@ public class NewsFragment extends Fragment implements
         @Override
         public void onReceive(Context context, Intent intent) {
             if (getActivity() != null && intent.getAction() != null && intent.getAction().equalsIgnoreCase(Constants.REFRESH_NEWS_ACTION)) {
-                getActivity().getSupportLoaderManager().restartLoader(Constants.NEWS_LOADER_ID, null, NewsFragment.this);
+                newsAsyncTast.execute();
             }
         }
     };
@@ -101,42 +101,78 @@ public class NewsFragment extends Fragment implements
             loadingNewsDialog = new AlertDialog.Builder(getContext()).setView(dialogView).setCancelable(false).create();
         }
 
-        getActivity().getSupportLoaderManager().restartLoader(NEWS_LOADER_ID, null, this);
-
+        newsAsyncTast.execute();
         return rootView;
     }
 
-    @Override
-    public Loader<List<NewsDetails>> onCreateLoader(int id, Bundle args) {
-        loadingNewsDialog.show();
-        return new NewsLoader(getContext(), actionServiceBlockingStub);
-    }
 
-    @Override
-    public void onLoadFinished(Loader<List<NewsDetails>> loader, List<NewsDetails> data) {
+    public class NewsAsyncTask extends AsyncTask<Void,Void,List<NewsDetails>>{
 
-        loadingNewsDialog.dismiss();
+        @Override
+        protected List<NewsDetails> doInBackground(Void... voids) {
 
-        if (data == null) {
-            networkDownHandler.onNetworkDownError();
-            return;
+            loadingNewsDialog.show();
+
+            if (ConnectionUtils.getConnectionInfo(getContext()) && ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
+
+                List<NewsDetails> newsList = new ArrayList<>();
+
+                GetMarketEventsResponse marketEventsResponse = actionServiceBlockingStub.getMarketEvents(
+                        GetMarketEventsRequest.newBuilder().setCount(0).setLastEventId(0).build());
+
+                if (marketEventsResponse.getStatusCode().getNumber() == 0) {
+
+                    newsList.clear();
+
+                    for (MarketEvent currentMarketEvent : marketEventsResponse.getMarketEventsList()) {
+                        newsList.add(new NewsDetails(currentMarketEvent.getCreatedAt(), currentMarketEvent.getHeadline(),
+                                currentMarketEvent.getText(), currentMarketEvent.getImagePath()));
+                    }
+
+                    return newsList;
+
+                } else {
+
+                    publishProgress();
+                    return null;
+
+                }
+            } else {
+                return null;
+            }
         }
 
-        if (data.size()!=0) {
-            newsDetailsList = data;
-            newsRecyclerAdapter.swapData(data);
-            noNewsTextView.setVisibility(View.GONE);
-            newsRecyclerView.setVisibility(View.VISIBLE);
-        } else {
-            noNewsTextView.setVisibility(View.VISIBLE);
-            newsRecyclerView.setVisibility(View.GONE);
+        @Override
+        protected void onProgressUpdate(Void... values) {
+            super.onProgressUpdate(values);
+            Toast.makeText(getContext(), "Server Error", Toast.LENGTH_SHORT).show();
+        }
+
+        @Override
+        protected void onPostExecute(List<NewsDetails> newsDetails) {
+            super.onPostExecute(newsDetails);
+
+            loadingNewsDialog.dismiss();
+
+            if (newsDetails == null) {
+                networkDownHandler.onNetworkDownError();
+                return;
+            }
+
+            if (newsDetails.size()!=0) {
+                newsDetailsList = newsDetails;
+                newsRecyclerAdapter.swapData(newsDetailsList);
+                noNewsTextView.setVisibility(View.GONE);
+                newsRecyclerView.setVisibility(View.VISIBLE);
+            } else {
+                noNewsTextView.setVisibility(View.VISIBLE);
+                newsRecyclerView.setVisibility(View.GONE);
+            }
         }
     }
 
-    @Override
-    public void onLoaderReset(Loader<List<NewsDetails>> loader) {
-        // Do nothing
-    }
+
+
 
     @Override
     public void onResume() {

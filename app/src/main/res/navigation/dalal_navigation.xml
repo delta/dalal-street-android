@@ -26,4 +26,11 @@
         tools:layout="@layout/fragment_companies">
     </fragment>
 
+    <fragment
+        android:id="@+id/news_dest"
+        android:name="org.pragyan.dalal18.fragment.NewsFragment"
+        android:label="@string/news"
+        tools:layout="@layout/fragment_news">
+    </fragment>
+
 </navigation>
