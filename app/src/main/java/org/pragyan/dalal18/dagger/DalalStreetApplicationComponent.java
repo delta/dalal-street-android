@@ -3,7 +3,6 @@ package org.pragyan.dalal18.dagger;
 import org.pragyan.dalal18.fragment.HomeFragment;
 import org.pragyan.dalal18.fragment.LeaderboardFragment;
 import org.pragyan.dalal18.fragment.MortgageFragment;
-import org.pragyan.dalal18.fragment.NewsFragment;
 import org.pragyan.dalal18.fragment.OrdersFragment;
 import org.pragyan.dalal18.fragment.PortfolioFragment;
 import org.pragyan.dalal18.fragment.StockExchangeFragment;
