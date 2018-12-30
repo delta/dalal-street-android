@@ -109,9 +109,13 @@ public class NewsFragment extends Fragment implements
     public class NewsAsyncTask extends AsyncTask<Void,Void,List<NewsDetails>>{
 
         @Override
-        protected List<NewsDetails> doInBackground(Void... voids) {
-
+        protected void onPreExecute() {
+            super.onPreExecute();
             loadingNewsDialog.show();
+        }
+
+        @Override
+        protected List<NewsDetails> doInBackground(Void... voids) {
 
             if (ConnectionUtils.getConnectionInfo(getContext()) && ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
 

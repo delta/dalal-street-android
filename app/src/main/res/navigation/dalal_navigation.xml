@@ -27,7 +27,7 @@
     </fragment>
 
     <fragment
-        android:id="@+id/news_dest"
+        android:id="@+id/nav_news"
         android:name="org.pragyan.dalal18.fragment.NewsFragment"
         android:label="@string/news"
         tools:layout="@layout/fragment_news">
