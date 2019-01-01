@@ -28,8 +28,6 @@ data class Order(val orderId: Int, val isBid: Boolean, var isClosed: Boolean, va
 
 data class Portfolio(val shortName: String, var companyName: String?, var quantityOwned: Int, var price: Int, var previousDayClose: Int)
 
-data class RegistrationDetails(val fullName: String, val password: String, val username: String, val country: String, val email: String)
-
 @Parcelize
 data class StockDetails(var stockId: Int, var quantity: Int) : Parcelable
 
@@ -37,13 +35,3 @@ data class StockHistory(var stockDate: Date?, var stockClose: Int)
 
 data class Transaction(var type: String?, var stockId: Int, val noOfStocks: Int, val stockPrice: Float,
                        var time: String?, val totalMoney: Float)
-
-data class Subscription(val type: SubscriptionType, val subscriptionId: SubscriptionId) {
-
-    enum class SubscriptionType {
-        TRANSACTIONS,
-        STOCK_PRICES,
-        MARKET_EVENTS,
-        STOCK_EXCHANGE
-    }
-}
