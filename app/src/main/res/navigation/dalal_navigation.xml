@@ -33,4 +33,12 @@
         tools:layout="@layout/fragment_news">
     </fragment>
 
+    <fragment
+        android:id="@+id/nav_transactions"
+        android:name="org.pragyan.dalal18.fragment.TransactionsFragment"
+        android:label="@string/transactions"
+        tools:layout="@layout/fragment_transactions">
+    </fragment>
+
+
 </navigation>
