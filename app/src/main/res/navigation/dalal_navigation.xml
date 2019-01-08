@@ -47,4 +47,11 @@
         tools:layout="@layout/fragment_stock_exchange">
     </fragment>
 
+    <fragment
+        android:id="@+id/nav_portfolio"
+        android:name="org.pragyan.dalal18.fragment.PortfolioFragment"
+        android:label="@string/portfolio"
+        tools:layout="@layout/fragment_portfolio">
+    </fragment>
+
 </navigation>
