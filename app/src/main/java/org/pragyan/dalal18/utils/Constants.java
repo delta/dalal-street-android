@@ -5,7 +5,8 @@ public class Constants {
     /* Test host - 139.59.47.250
      *  Test port - 443          */
 
-    public static final String HOST = "192.168.43.33";
+    //public static final String HOST = "192.168.43.33";
+    public static final String HOST = "10.2.75.254";
     public static final int PORT = 8000;
 
     public static final String COMPANY_IMAGES_BASE_URL = "https://dalal.pragyan.org/public/src/images/companies/";
