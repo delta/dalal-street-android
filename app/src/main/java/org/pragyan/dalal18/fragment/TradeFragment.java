@@ -54,7 +54,7 @@ public class TradeFragment extends Fragment implements LoaderManager.LoaderCallb
     @Inject
     DalalActionServiceGrpc.DalalActionServiceBlockingStub actionServiceBlockingStub;
 
-    @BindView(R.id.company_spinner)
+    @BindView(R.id.companySpinner)
     Spinner companySpinner;
 
     @BindView(R.id.order_select_spinner)
@@ -63,7 +63,7 @@ public class TradeFragment extends Fragment implements LoaderManager.LoaderCallb
     @BindView(R.id.radioGroupStock)
     RadioGroup stockRadioGroup;
 
-    @BindView(R.id.noOfStocks_editText)
+    @BindView(R.id.noOfStocksEditText)
     EditText noOfStocksEditText;
 
     @BindView(R.id.orderPrice_editText)

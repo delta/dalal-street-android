@@ -69,7 +69,7 @@ public class DepthTableFragment extends Fragment implements LoaderManager.Loader
     @Inject
     DalalStreamServiceGrpc.DalalStreamServiceStub streamServiceStub;
 
-    @BindView(R.id.company_spinner)
+    @BindView(R.id.companySpinner)
     MaterialBetterSpinner companiesSpinner;
 
     @BindView(R.id.bid_depth_layout)

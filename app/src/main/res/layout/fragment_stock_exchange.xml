@@ -11,7 +11,7 @@
         android:layout_height="wrap_content">
 
         <Spinner
-            android:id="@+id/company_spinner"
+            android:id="@+id/companySpinner"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
@@ -23,7 +23,7 @@
             android:id="@+id/currentStockPrice_linearLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/company_spinner"
+            android:layout_below="@+id/companySpinner"
             android:layout_marginTop="8dp"
             android:orientation="horizontal">
 
@@ -173,7 +173,7 @@
             android:textColorHint="@color/neutral_font_color">
 
             <EditText
-                android:id="@+id/noOfStocks_editText"
+                android:id="@+id/noOfStocksEditText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:ems="10"
@@ -186,7 +186,7 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <Button
-            android:id="@+id/buyExchange_button"
+            android:id="@+id/buyExchangeButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/stocks_exchange_input"

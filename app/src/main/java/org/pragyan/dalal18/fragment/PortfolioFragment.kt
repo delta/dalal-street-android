@@ -37,8 +37,7 @@ class PortfolioFragment : Fragment() {
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
         val rootView = inflater.inflate(R.layout.fragment_portfolio, container, false)
         DaggerDalalStreetApplicationComponent.builder().contextModule(ContextModule(context!!)).build().inject(this)
@@ -49,7 +48,7 @@ class PortfolioFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        with(portfolio_recyclerView) {
+        with(portfolioRecyclerView) {
             layoutManager = LinearLayoutManager(context)
             adapter = portfolioRecyclerAdapter
             setHasFixedSize(false)
@@ -63,15 +62,12 @@ class PortfolioFragment : Fragment() {
         val intentFilter = IntentFilter(Constants.REFRESH_OWNED_STOCKS_ACTION)
         intentFilter.addAction(Constants.REFRESH_STOCK_PRICES_ACTION)
         intentFilter.addAction(Constants.REFRESH_STOCKS_EXCHANGE_ACTION)
-        LocalBroadcastManager.getInstance(context!!)
-                .registerReceiver(refreshPortfolioDetails, intentFilter)
+        LocalBroadcastManager.getInstance(context!!).registerReceiver(refreshPortfolioDetails, intentFilter)
     }
 
     override fun onPause() {
         super.onPause()
-
-        LocalBroadcastManager.getInstance(context!!)
-                .unregisterReceiver(refreshPortfolioDetails)
+        LocalBroadcastManager.getInstance(context!!).unregisterReceiver(refreshPortfolioDetails)
     }
 
     private fun updatePortfolioTable() {
@@ -97,16 +93,15 @@ class PortfolioFragment : Fragment() {
                         StockUtils.getPreviousDayCloseFromStockId(MainActivity.globalStockDetails, stockId)
                 ))
             }
-
         }
 
         if (portfolioList.size > 0) {
             portfolioRecyclerAdapter.swapData(portfolioList)
-            portfolio_recyclerView.setVisibility(View.VISIBLE)
-            emptyPortfolio_relativeLayout.setVisibility(View.GONE)
+            portfolioRecyclerView.visibility = View.VISIBLE
+            emptyPortfolioRelativeLayout.visibility = View.GONE
         } else {
-            portfolio_recyclerView.setVisibility(View.GONE)
-            emptyPortfolio_relativeLayout.setVisibility(View.VISIBLE)
+            portfolioRecyclerView.visibility = View.GONE
+            emptyPortfolioRelativeLayout.visibility = View.VISIBLE
         }
     }
 }

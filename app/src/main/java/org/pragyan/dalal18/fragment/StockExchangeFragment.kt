@@ -15,6 +15,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import dalalstreet.api.DalalActionServiceGrpc
 import dalalstreet.api.actions.BuyStocksFromExchangeRequest
+import dalalstreet.api.actions.BuyStocksFromExchangeResponse
 import dalalstreet.api.actions.GetCompanyProfileRequest
 import dalalstreet.api.models.Stock
 import kotlinx.android.synthetic.main.fragment_stock_exchange.*
@@ -61,8 +62,7 @@ class StockExchangeFragment : Fragment() {
 
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val rootView = inflater.inflate(R.layout.fragment_stock_exchange, container, false)
         DaggerDalalStreetApplicationComponent.builder().contextModule(ContextModule(context!!)).build().inject(this)
         return rootView
@@ -81,7 +81,7 @@ class StockExchangeFragment : Fragment() {
 
         companiesArray = StockUtils.getCompanyNamesArray()
         val arrayAdapter = ArrayAdapter<String>(activity!!, R.layout.company_spinner_item, companiesArray)
-        with(company_spinner) {
+        with(companySpinner) {
             adapter = arrayAdapter
             onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
                 override fun onNothingSelected(parent: AdapterView<*>?) {
@@ -96,13 +96,12 @@ class StockExchangeFragment : Fragment() {
             }
         }
 
-
-        buyExchange_button.setOnClickListener { buyStocksFromExchange() }
+        buyExchangeButton.setOnClickListener { buyStocksFromExchange() }
     }
 
     private fun buyStocksFromExchange() {
 
-        if (noOfStocks_editText.text.toString().trim { it <= ' ' }.isEmpty()) {
+        if (noOfStocksEditText.text.toString().trim { it <= ' ' }.isEmpty()) {
             Toast.makeText(activity, "Enter the number of Stocks", Toast.LENGTH_SHORT).show()
         } else {
 
@@ -111,25 +110,23 @@ class StockExchangeFragment : Fragment() {
                 return
             }
 
-            if (Integer.parseInt(noOfStocks_editText.text.toString().trim { it <= ' ' }) <= currentStock.stocksInExchange) {
+            if (Integer.parseInt(noOfStocksEditText.text.toString().trim { it <= ' ' }) <= currentStock.stocksInExchange) {
 
                 val response = actionServiceBlockingStub.buyStocksFromExchange(
                         BuyStocksFromExchangeRequest
                                 .newBuilder()
                                 .setStockId(lastSelectedStockId)
-                                .setStockQuantity(Integer.parseInt(noOfStocks_editText.text.toString()))
+                                .setStockQuantity(Integer.parseInt(noOfStocksEditText.text.toString()))
                                 .build()
                 )
 
-                when (response.statusCode.number) {
+                when (response.statusCode) {
 
-                    0 -> {
+                    BuyStocksFromExchangeResponse.StatusCode.OK -> {
                         Toast.makeText(context, "Stocks bought", Toast.LENGTH_SHORT).show()
-                        noOfStocks_editText.setText("")
+                        noOfStocksEditText.setText("")
 
-                        if (activity != null) {
-                            getCompanyProfileAsynchronously(lastSelectedStockId)
-                        }
+                        getCompanyProfileAsynchronously(lastSelectedStockId)
                     }
 
                     else -> Toast.makeText(context, response.statusMessage, Toast.LENGTH_SHORT).show()
@@ -162,36 +159,31 @@ class StockExchangeFragment : Fragment() {
 
                     currentStock = companyProfileResponse.stockDetails
 
-                    var temporaryTextViewString: String = ": ₹" + currentStock.getCurrentPrice().toString()
+                    var temporaryTextViewString: String = ": ₹" + currentStock.currentPrice.toString()
 
                     currentStockPrice_textView.text = temporaryTextViewString
 
-                    temporaryTextViewString = ": ₹" + currentStock.getDayHigh().toString()
+                    temporaryTextViewString = ": ₹" + currentStock.dayHigh.toString()
                     dailyHigh_textView.text = temporaryTextViewString
 
-                    temporaryTextViewString = ": ₹" + currentStock.getDayLow().toString()
+                    temporaryTextViewString = ": ₹" + currentStock.dayLow.toString()
                     dailyLow_textView.text = temporaryTextViewString
 
-                    temporaryTextViewString = ": " + currentStock.getStocksInMarket().toString()
+                    temporaryTextViewString = ": " + currentStock.stocksInMarket.toString()
                     stocksInMarket_textView.text = temporaryTextViewString
 
-                    temporaryTextViewString = ": " + currentStock.getStocksInExchange().toString()
+                    temporaryTextViewString = ": " + currentStock.stocksInExchange.toString()
                     stocksInExchange_textView.text = temporaryTextViewString
                 }
             } else {
                 uiThread { networkDownHandler.onNetworkDownError() }
             }
-
         }
     }
 
     override fun onResume() {
         super.onResume()
-
-        LocalBroadcastManager.getInstance(context!!).registerReceiver(
-                refreshStockPricesReceiver, IntentFilter(Constants.REFRESH_STOCK_PRICES_ACTION)
-        )
-
+        LocalBroadcastManager.getInstance(context!!).registerReceiver(refreshStockPricesReceiver, IntentFilter(Constants.REFRESH_STOCK_PRICES_ACTION))
     }
 
     override fun onPause() {

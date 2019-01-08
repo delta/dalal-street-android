@@ -62,7 +62,7 @@
         android:background="@color/neon_blue" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/portfolio_recyclerView"
+        android:id="@+id/portfolioRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/headings_tab_linearLayout"

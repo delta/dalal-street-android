@@ -5,12 +5,12 @@
     android:background="@color/black_background">
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/transactions_recyclerView"
+        android:id="@+id/transactionsRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
     <RelativeLayout
-        android:id="@+id/noTransactions_relativeLayout"
+        android:id="@+id/noTransactionsRelativeLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="gone">

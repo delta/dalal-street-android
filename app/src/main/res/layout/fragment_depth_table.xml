@@ -16,7 +16,7 @@
             android:orientation="vertical">
 
             <com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner
-                android:id="@+id/company_spinner"
+                android:id="@+id/companySpinner"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/kreon_light"

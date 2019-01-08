@@ -5,8 +5,7 @@ public class Constants {
     /* Test host - 139.59.47.250
      *  Test port - 443          */
 
-    //public static final String HOST = "192.168.43.33";
-    public static final String HOST = "10.2.75.254";
+    public static final String HOST = "192.168.0.22";
     public static final int PORT = 8000;
 
     public static final String COMPANY_IMAGES_BASE_URL = "https://dalal.pragyan.org/public/src/images/companies/";
@@ -19,9 +18,7 @@ public class Constants {
     public static final int TRADE_LOADER_ID = 301;
     public static final int ORDERS_LOADER_ID = 401;
     public static final int COMPANY_PROFILE_LOADER_ID = 601;
-    public static final int NEWS_LOADER_ID = 701;
     public static final int LEADER_BOARD_LOADER_ID = 801;
-    public static final int TRANSACTION_LOADER_ID = 901;
     public static final int NOTIFICATION_LOADER_ID = 1001;
 
     public static final String REFRESH_NEWS_ACTION = "refresh-news-action";

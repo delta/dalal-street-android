@@ -42,9 +42,9 @@ class CompanyFragment : Fragment() {
         adapter = CompanyRecyclerAdapter(context, null)
 
         updateValues()
-        portfolio_recyclerView.setHasFixedSize(false)
-        portfolio_recyclerView.adapter = adapter
-        portfolio_recyclerView.layoutManager = LinearLayoutManager(context)
+        portfolioRecyclerView.setHasFixedSize(false)
+        portfolioRecyclerView.adapter = adapter
+        portfolioRecyclerView.layoutManager = LinearLayoutManager(context)
     }
 
     fun updateValues() {

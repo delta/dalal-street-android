@@ -27,7 +27,6 @@ import org.pragyan.dalal18.utils.Constants
 import java.util.ArrayList
 import javax.inject.Inject
 
-@Suppress("DEPRECATION")
 class TransactionsFragment : Fragment() {
 
     private val LAST_TRANSACTION_ID = "last_transaction_id"
@@ -63,8 +62,7 @@ class TransactionsFragment : Fragment() {
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val rootView = inflater.inflate(R.layout.fragment_transactions, container, false)
         DaggerDalalStreetApplicationComponent.builder().contextModule(ContextModule(context!!)).build().inject(this)
         return rootView
@@ -75,7 +73,7 @@ class TransactionsFragment : Fragment() {
 
         transactionsAdapter = TransactionRecyclerAdapter(context, null)
 
-        with(transactions_recyclerView) {
+        with(transactionsRecyclerView) {
             adapter = transactionsAdapter
             setHasFixedSize(false)
             layoutManager = LinearLayoutManager(context)
@@ -90,15 +88,6 @@ class TransactionsFragment : Fragment() {
                 .create()
 
         getTransactionsAsynchronously()
-    }
-
-
-    override fun onDestroy() {
-        super.onDestroy()
-        preferences
-                .edit()
-                .remove(LAST_TRANSACTION_ID)
-                .apply()
     }
 
     private fun getTransactionsAsynchronously() {
@@ -138,12 +127,12 @@ class TransactionsFragment : Fragment() {
                     }
 
                     if (transactionList.size == 0) {
-                        transactions_recyclerView.visibility = View.GONE
-                        noTransactions_relativeLayout.visibility = View.VISIBLE
+                        transactionsRecyclerView.visibility = View.GONE
+                        noTransactionsRelativeLayout.visibility = View.VISIBLE
                     } else {
                         transactionsAdapter?.swapData(transactionList)
-                        transactions_recyclerView.visibility = View.VISIBLE
-                        noTransactions_relativeLayout.visibility = View.GONE
+                        transactionsRecyclerView.visibility = View.VISIBLE
+                        noTransactionsRelativeLayout.visibility = View.GONE
                     }
                 }
             } else {

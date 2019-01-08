@@ -77,7 +77,7 @@
             android:background="@color/neutral_font_color" />
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/portfolio_recyclerView"
+            android:id="@+id/portfolioRecyclerView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_alignParentStart="true"
@@ -87,7 +87,7 @@
     </RelativeLayout>
 
     <RelativeLayout
-        android:id="@+id/emptyPortfolio_relativeLayout"
+        android:id="@+id/emptyPortfolioRelativeLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="gone">
