@@ -15,7 +15,6 @@ import androidx.appcompat.app.AlertDialog
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import dalalstreet.api.DalalActionServiceGrpc
 import dalalstreet.api.actions.BuyStocksFromExchangeRequest
-import dalalstreet.api.actions.BuyStocksFromExchangeResponse
 import dalalstreet.api.actions.GetCompanyProfileRequest
 import dalalstreet.api.models.Stock
 import kotlinx.android.synthetic.main.fragment_stock_exchange.*
@@ -112,13 +111,13 @@ class StockExchangeFragment : Fragment() {
                     }
                 }else{
 
-                    if (Integer.parseInt(noOfStocks_editText.text.toString().trim { it <= ' ' }) <= currentStock.stocksInExchange) {
+                    if (Integer.parseInt(noOfStocksEditText.text.toString().trim { it <= ' ' }) <= currentStock.stocksInExchange) {
 
                         val response = actionServiceBlockingStub.buyStocksFromExchange(
                                 BuyStocksFromExchangeRequest
                                         .newBuilder()
                                         .setStockId(lastSelectedStockId)
-                                        .setStockQuantity(Integer.parseInt(noOfStocks_editText.text.toString()))
+                                        .setStockQuantity(Integer.parseInt(noOfStocksEditText.text.toString()))
                                         .build()
                         )
                         uiThread {
@@ -126,7 +125,7 @@ class StockExchangeFragment : Fragment() {
 
                                 0 -> {
                                     Toast.makeText(context, "Stocks bought", Toast.LENGTH_SHORT).show()
-                                    noOfStocks_editText.setText("")
+                                    noOfStocksEditText.setText("")
 
                                     if (activity != null) {
                                         getCompanyProfileAsynchronously(lastSelectedStockId)

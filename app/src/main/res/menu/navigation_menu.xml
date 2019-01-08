@@ -42,7 +42,7 @@
             android:title="@string/market_depth" />
 
         <item
-            android:id="@+id/nav_buy_sell"
+            android:id="@+id/nav_trade"
             android:icon="@drawable/trade_icon"
             android:title="@string/trade" />
 
