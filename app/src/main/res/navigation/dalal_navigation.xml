@@ -54,4 +54,11 @@
         tools:layout="@layout/fragment_portfolio">
     </fragment>
 
+    <fragment
+        android:id="@+id/nav_trade"
+        android:name="org.pragyan.dalal18.fragment.TradeFragment"
+        android:label="@string/trade"
+        tools:layout="@layout/fragment_trade">
+    </fragment>
+
 </navigation>
