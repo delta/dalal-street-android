@@ -97,6 +97,7 @@
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:text="@string/you_don_t_own_any_stocks"
+            android:fontFamily="@font/kreon_light"
             android:textColor="@color/neutral_font_color"
             android:textSize="22sp" />
 
