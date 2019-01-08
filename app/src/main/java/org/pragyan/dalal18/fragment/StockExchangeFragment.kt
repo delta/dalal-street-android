@@ -105,35 +105,41 @@ class StockExchangeFragment : Fragment() {
             Toast.makeText(activity, "Enter the number of Stocks", Toast.LENGTH_SHORT).show()
         } else {
 
-            if (!ConnectionUtils.getConnectionInfo(context!!)) {
-                networkDownHandler.onNetworkDownError()
-                return
-            }
-
-            if (Integer.parseInt(noOfStocksEditText.text.toString().trim { it <= ' ' }) <= currentStock.stocksInExchange) {
-
-                val response = actionServiceBlockingStub.buyStocksFromExchange(
-                        BuyStocksFromExchangeRequest
-                                .newBuilder()
-                                .setStockId(lastSelectedStockId)
-                                .setStockQuantity(Integer.parseInt(noOfStocksEditText.text.toString()))
-                                .build()
-                )
-
-                when (response.statusCode) {
-
-                    BuyStocksFromExchangeResponse.StatusCode.OK -> {
-                        Toast.makeText(context, "Stocks bought", Toast.LENGTH_SHORT).show()
-                        noOfStocksEditText.setText("")
-
-                        getCompanyProfileAsynchronously(lastSelectedStockId)
+            doAsync {
+                if (!ConnectionUtils.getConnectionInfo(context!!)) {
+                    uiThread {
+                        networkDownHandler.onNetworkDownError()
                     }
+                }else{
 
-                    else -> Toast.makeText(context, response.statusMessage, Toast.LENGTH_SHORT).show()
+                    if (Integer.parseInt(noOfStocks_editText.text.toString().trim { it <= ' ' }) <= currentStock.stocksInExchange) {
+
+                        val response = actionServiceBlockingStub.buyStocksFromExchange(
+                                BuyStocksFromExchangeRequest
+                                        .newBuilder()
+                                        .setStockId(lastSelectedStockId)
+                                        .setStockQuantity(Integer.parseInt(noOfStocks_editText.text.toString()))
+                                        .build()
+                        )
+                        uiThread {
+                            when (response.statusCode.number) {
+
+                                0 -> {
+                                    Toast.makeText(context, "Stocks bought", Toast.LENGTH_SHORT).show()
+                                    noOfStocks_editText.setText("")
+
+                                    if (activity != null) {
+                                        getCompanyProfileAsynchronously(lastSelectedStockId)
+                                    }
+                                }
+
+                                else -> Toast.makeText(context, response.statusMessage, Toast.LENGTH_SHORT).show()
+                            }
+                        }
+                    } else {
+                        uiThread { Toast.makeText(activity, "Insufficient stocks in exchange", Toast.LENGTH_SHORT).show() }
+                    }
                 }
-
-            } else {
-                Toast.makeText(activity, "Insufficient stocks in exchange", Toast.LENGTH_SHORT).show()
             }
         }
     }
