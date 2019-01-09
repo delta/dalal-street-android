@@ -44,6 +44,7 @@ public class Constants {
     public static final String  SESSION_KEY = "session-key";
     public static final String  MARKET_OPEN_KEY = "market-open-key";
     public static final String  PASSWORD_KEY = "password-key";
+    public static final String COMPANY_NAME_KEY = "company-name-key";
 }
 
 /*  Login response : Constants
