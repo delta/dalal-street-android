@@ -28,8 +28,6 @@ import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent
 import org.pragyan.dalal18.data.GlobalStockDetails
 import org.pragyan.dalal18.data.StockDetails
 import org.pragyan.dalal18.notifications.NotificationService
-import org.pragyan.dalal18.ui.LoginActivity.EMAIL_KEY
-import org.pragyan.dalal18.ui.LoginActivity.PASSWORD_KEY
 import org.pragyan.dalal18.utils.*
 import java.text.DecimalFormat
 import java.util.*
@@ -125,7 +123,7 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
         navigationViewLeft.setupWithNavController(host.navController)
 
         //usernameTextView.text = intent.getStringExtra(LoginActivity.USERNAME_KEY)
-        MiscellaneousUtils.username = intent.getStringExtra(LoginActivity.USERNAME_KEY)
+        MiscellaneousUtils.username = intent.getStringExtra(Constants.USERNAME_KEY)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -189,7 +187,7 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
                         val stopNotificationIntent = Intent(Constants.STOP_NOTIFICATION_ACTION)
                         LocalBroadcastManager.getInstance(this@MainActivity).sendBroadcast(stopNotificationIntent)
 
-                        preferences.edit().putString(EMAIL_KEY, null).putString(PASSWORD_KEY, null).putString(LoginActivity.SESSION_KEY, null).apply()
+                        preferences.edit().putString(Constants.EMAIL_KEY, null).putString(Constants.PASSWORD_KEY, null).putString(Constants.SESSION_KEY, null).apply()
                     }
 
                     startActivity(Intent(this@MainActivity, LoginActivity::class.java))
