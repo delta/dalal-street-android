@@ -14,6 +14,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
+import com.google.android.material.navigation.NavigationView
 import dalalstreet.api.DalalActionServiceGrpc
 import dalalstreet.api.DalalStreamServiceGrpc
 import dalalstreet.api.actions.LogoutRequest
@@ -23,6 +24,7 @@ import dalalstreet.api.models.TransactionType
 import io.grpc.stub.StreamObserver
 import kotlinx.android.synthetic.main.activity_main.*
 import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.find
 import org.jetbrains.anko.uiThread
 import org.pragyan.dalal18.R
 import org.pragyan.dalal18.dagger.ContextModule
@@ -131,6 +133,8 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
 
         //usernameTextView.text = intent.getStringExtra(LoginActivity.USERNAME_KEY)
         MiscellaneousUtils.username = intent.getStringExtra(Constants.USERNAME_KEY)
+        val header = navigationViewLeft.getHeaderView(0)
+        header.find<TextView>(R.id.usernameTextView).text = MiscellaneousUtils.username
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

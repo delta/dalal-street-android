@@ -10,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
@@ -31,7 +32,6 @@ import org.pragyan.dalal18.data.CompanyTickerDetails
 import org.pragyan.dalal18.data.DalalViewModel
 import org.pragyan.dalal18.data.NewsDetails
 import org.pragyan.dalal18.ui.MainActivity
-import org.pragyan.dalal18.ui.NewsDetailsActivity
 import org.pragyan.dalal18.utils.ConnectionUtils
 import org.pragyan.dalal18.utils.Constants
 import javax.inject.Inject
@@ -88,7 +88,7 @@ class HomeFragment : Fragment(), NewsRecyclerAdapter.NewsItemClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         breakingNewsTextView.isSelected = true
-
+        (activity as AppCompatActivity).supportActionBar?.title = resources.getString(R.string.dalal)
         linearLayoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
 
         companiesRecyclerView.layoutManager = linearLayoutManager
@@ -187,9 +187,9 @@ class HomeFragment : Fragment(), NewsRecyclerAdapter.NewsItemClickListener {
     }
 
     override fun onNewsClicked(view: View, position: Int) {
-        val intent = Intent(context, NewsDetailsActivity::class.java)
+        /*val intent = Intent(context, NewsDetailsActivity::class.java)
         intent.putExtra(NewsDetailsActivity.NEWS_DETAILS_KEY, newsList[position])
-        startActivity(intent)
+        startActivity(intent)*/
     }
 
     override fun onResume() {

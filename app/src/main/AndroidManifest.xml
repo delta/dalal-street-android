@@ -47,7 +47,6 @@
             </intent-filter>
         </receiver>
 
-        <activity android:name=".ui.NewsDetailsActivity"></activity>
     </application>
 
 </manifest>

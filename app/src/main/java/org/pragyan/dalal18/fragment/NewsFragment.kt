@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -25,7 +26,6 @@ import org.pragyan.dalal18.adapter.NewsRecyclerAdapter
 import org.pragyan.dalal18.dagger.ContextModule
 import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent
 import org.pragyan.dalal18.data.NewsDetails
-import org.pragyan.dalal18.ui.NewsDetailsActivity
 import org.pragyan.dalal18.utils.ConnectionUtils
 import org.pragyan.dalal18.utils.Constants
 import javax.inject.Inject
@@ -112,7 +112,7 @@ class NewsFragment : Fragment(), NewsRecyclerAdapter.NewsItemClickListener, Swip
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        (activity as AppCompatActivity).supportActionBar?.title = resources.getString(R.string.news)
         newsRecyclerAdapter = NewsRecyclerAdapter(context, null, this)
 
         with(newsRecyclerView) {
@@ -143,8 +143,9 @@ class NewsFragment : Fragment(), NewsRecyclerAdapter.NewsItemClickListener, Swip
     override fun onRefresh() = getNewsAsynchronously()
 
     override fun onNewsClicked(view: View?, position: Int) {
-        val intent = Intent(context, NewsDetailsActivity::class.java)
+        /*val intent = Intent(context, NewsDetailsActivity::class.java)
         intent.putExtra(NewsDetailsActivity.NEWS_DETAILS_KEY, newsDetailsList[position])
-        startActivity(intent)
+        startActivity(intent)*/
+
     }
 }

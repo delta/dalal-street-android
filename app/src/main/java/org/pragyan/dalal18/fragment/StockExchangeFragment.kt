@@ -11,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import dalalstreet.api.DalalActionServiceGrpc
 import dalalstreet.api.actions.BuyStocksFromExchangeRequest
@@ -68,7 +69,7 @@ class StockExchangeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        (activity as AppCompatActivity).supportActionBar?.title = resources.getString(R.string.stock_exchange)
         val tempString = "Getting stocks details..."
         val dialogView = LayoutInflater.from(context).inflate(R.layout.progress_dialog, null)
         (dialogView.findViewById<View>(R.id.progressDialog_textView) as TextView).text = tempString

@@ -9,7 +9,9 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+
 import androidx.lifecycle.ViewModelProviders
+import androidx.appcompat.app.AppCompatActivity
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.fragment_portfolio.*
@@ -52,7 +54,7 @@ class PortfolioFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        (activity as AppCompatActivity).supportActionBar?.title = resources.getString(R.string.portfolio)
         with(portfolioRecyclerView) {
             layoutManager = LinearLayoutManager(context)
             adapter = portfolioRecyclerAdapter
