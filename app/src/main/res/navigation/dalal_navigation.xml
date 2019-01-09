@@ -61,4 +61,11 @@
         tools:layout="@layout/fragment_trade">
     </fragment>
 
+    <fragment
+        android:id="@+id/nav_market_depth"
+        android:name="org.pragyan.dalal18.fragment.marketDepth.MarketDepthFragment"
+        android:label="@string/market_depth"
+        tools:layout="@layout/fragment_market_depth">
+    </fragment>
+
 </navigation>
