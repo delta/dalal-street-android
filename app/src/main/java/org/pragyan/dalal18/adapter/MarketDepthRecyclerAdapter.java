@@ -5,6 +5,7 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 import android.text.Html;
 import android.text.Spanned;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,9 +15,6 @@ import org.pragyan.dalal18.R;
 import org.pragyan.dalal18.data.MarketDepth;
 
 import java.util.List;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
 
 public class MarketDepthRecyclerAdapter extends RecyclerView.Adapter<MarketDepthRecyclerAdapter.MyViewHolder> {
 
@@ -63,15 +61,13 @@ public class MarketDepthRecyclerAdapter extends RecyclerView.Adapter<MarketDepth
 
     public class MyViewHolder extends RecyclerView.ViewHolder{
 
-        @BindView(R.id.market_depth_volume)
-        TextView volume;
-
-        @BindView(R.id.market_depth_price)
-        TextView price;
+        TextView price, volume;
 
         MyViewHolder(View view) {
             super(view);
-            ButterKnife.bind(this,view);
+            price = view.findViewById(R.id.market_depth_price);
+            volume = view.findViewById(R.id.market_depth_volume);
+
         }
     }
 

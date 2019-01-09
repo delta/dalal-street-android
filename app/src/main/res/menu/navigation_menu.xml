@@ -37,7 +37,7 @@
             android:title="@string/stock_exchange" />
 
         <item
-            android:id="@+id/nav_company_profile"
+            android:id="@+id/nav_market_depth"
             android:icon="@drawable/market_depth_icon"
             android:title="@string/market_depth" />
 
