@@ -53,7 +53,7 @@
                 android:textColorHint="@color/neutral_font_color">
 
                 <EditText
-                    android:id="@+id/email_editText"
+                    android:id="@+id/emailEditText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
@@ -77,7 +77,7 @@
                 android:textColorHint="@color/neutral_font_color">
 
                 <EditText
-                    android:id="@+id/password_editText"
+                    android:id="@+id/passwordEditText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
@@ -110,7 +110,7 @@
     </androidx.cardview.widget.CardView>
 
     <TextView
-        android:id="@+id/clickRegister_textView"
+        android:id="@+id/clickRegisterTextView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/login_cardView"

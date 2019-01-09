@@ -66,8 +66,8 @@ class TradeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val companiesAdapter = ArrayAdapter(activity!!, R.layout.order_spinner_item, StockUtils.getCompanyNamesArray())
-        val orderSelectAdapter = ArrayAdapter(activity!!, R.layout.order_spinner_item, resources.getStringArray(R.array.orderType))
+        val companiesAdapter = ArrayAdapter(context!!, R.layout.order_spinner_item, StockUtils.getCompanyNamesArray())
+        val orderSelectAdapter = ArrayAdapter(context!!, R.layout.order_spinner_item, resources.getStringArray(R.array.orderType))
 
         with(order_select_spinner){
             adapter = orderSelectAdapter
@@ -78,10 +78,10 @@ class TradeFragment : Fragment() {
                 }
 
                 override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                    if (parent!!.getItemAtPosition(position).toString() == "Market Order") {
-                        orderPrice_editText.visibility = View.GONE
+                    if (parent?.getItemAtPosition(position).toString() == "Market Order") {
+                        orderPriceEditText.visibility = View.GONE
                     } else {
-                        orderPrice_editText.visibility = View.VISIBLE
+                        orderPriceEditText.visibility = View.VISIBLE
                     }
                 }
             }
@@ -90,8 +90,8 @@ class TradeFragment : Fragment() {
         with(companySpinner){
             adapter = companiesAdapter
             onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
-                override fun onNothingSelected(parent: AdapterView<*>?) {
 
+                override fun onNothingSelected(parent: AdapterView<*>?) {
                 }
 
                 override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
@@ -106,7 +106,7 @@ class TradeFragment : Fragment() {
         }
 
         radioGroupStock.setOnCheckedChangeListener { _, id ->
-            bidAsk_button.text = if (id == R.id.bid_radioButton) "BID" else "ASK"
+            bidAskButton.text = if (id == R.id.bidRadioButton) "BID" else "ASK"
         }
 
         val dialogView = LayoutInflater.from(context).inflate(R.layout.progress_dialog, null)
@@ -117,8 +117,7 @@ class TradeFragment : Fragment() {
                 .setCancelable(false)
                 .create()
 
-
-        bidAsk_button.setOnClickListener { onBidAskButtonClick() }
+        bidAskButton.setOnClickListener { onBidAskButtonClick() }
     }
 
     private fun onBidAskButtonClick() {
@@ -128,9 +127,9 @@ class TradeFragment : Fragment() {
             Toast.makeText(activity, "Enter valid number of stocks", Toast.LENGTH_SHORT).show()
         } else if (radioGroupStock.checkedRadioButtonId == -1) {
             Toast.makeText(activity, "Select order type", Toast.LENGTH_SHORT).show()
-        } else if (orderPrice_editText.visibility == View.VISIBLE && orderPrice_editText.text.toString().trim { it <= ' ' }.isEmpty()) {
+        } else if (orderPriceEditText.visibility == View.VISIBLE && orderPriceEditText.text.toString().trim { it <= ' ' }.isEmpty()) {
             Toast.makeText(activity, "Enter the order price", Toast.LENGTH_SHORT).show()
-        } else if (radioGroupStock.checkedRadioButtonId == R.id.ask_radioButton) {
+        } else if (radioGroupStock.checkedRadioButtonId == R.id.askRadioButton) {
             val validQuantity = getQuantityOwnedFromCompanyName(MainActivity.ownedStockDetails, companySpinner.selectedItem.toString())
             val askingQuantity = Integer.parseInt(noOfStocksEditText.text.toString())
             if (askingQuantity > validQuantity) {
@@ -147,10 +146,10 @@ class TradeFragment : Fragment() {
 
         loadingDialog?.show()
 
-        val price = if (orderPrice_editText.visibility == View.GONE) 0 else Integer.parseInt(orderPrice_editText.text.toString())
+        val price = if (orderPriceEditText.visibility == View.GONE) 0 else Integer.parseInt(orderPriceEditText.text.toString())
         val orderRequest = PlaceOrderRequest
                 .newBuilder()
-                .setIsAsk(radioGroupStock.checkedRadioButtonId == R.id.ask_radioButton)
+                .setIsAsk(radioGroupStock.checkedRadioButtonId == R.id.askRadioButton)
                 .setStockId(getStockIdFromCompanyName(companySpinner.selectedItem.toString()))
                 .setOrderType(getOrderTypeFromName(order_select_spinner.selectedItem.toString()))
                 .setPrice(price)
@@ -166,7 +165,7 @@ class TradeFragment : Fragment() {
                     if (orderResponse.statusCodeValue == 0) {
                         Toast.makeText(context, "Order Placed", Toast.LENGTH_SHORT).show()
                         noOfStocksEditText.setText("")
-                        orderPrice_editText.setText("")
+                        orderPriceEditText.setText("")
                     } else {
                         Toast.makeText(context, orderResponse.statusMessage, Toast.LENGTH_SHORT).show()
                     }
@@ -181,8 +180,7 @@ class TradeFragment : Fragment() {
         super.onResume()
         val intentFilter = IntentFilter(Constants.REFRESH_OWNED_STOCKS_ACTION)
         intentFilter.addAction(Constants.REFRESH_STOCK_PRICES_ACTION)
-        LocalBroadcastManager.getInstance(context!!)
-                .registerReceiver(refreshOwnedStockDetails, intentFilter)
+        LocalBroadcastManager.getInstance(context!!).registerReceiver(refreshOwnedStockDetails, intentFilter)
     }
 
     override fun onPause() {

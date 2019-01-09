@@ -23,7 +23,7 @@
             android:title="@string/companies" />
 
         <item
-            android:id="@+id/nav_portfolio"
+            android:id="@+id/portfolio_dest"
             android:icon="@drawable/portfolio_icon"
             android:title="@string/portfolio"/>
 
@@ -32,7 +32,7 @@
     <group android:id="@+id/stock_category">
 
         <item
-            android:id="@+id/nav_exchange"
+            android:id="@+id/exchange_dest"
             android:icon="@drawable/stock_exchange_icon"
             android:title="@string/stock_exchange" />
 
@@ -42,7 +42,7 @@
             android:title="@string/market_depth" />
 
         <item
-            android:id="@+id/nav_trade"
+            android:id="@+id/trade_dest"
             android:icon="@drawable/trade_icon"
             android:title="@string/trade" />
 
@@ -56,7 +56,7 @@
     <group android:id="@+id/view_category">
 
         <item
-            android:id="@+id/nav_news"
+            android:id="@+id/news_dest"
             android:icon="@drawable/news_icon"
             android:title="@string/news" />
         
@@ -71,7 +71,7 @@
             android:title="@string/my_orders" />
 
         <item
-            android:id="@+id/nav_transactions"
+            android:id="@+id/transactions_dest"
             android:icon="@drawable/transactions_icon"
             android:title="@string/transactions" />
 

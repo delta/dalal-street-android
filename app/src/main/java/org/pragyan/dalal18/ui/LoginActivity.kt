@@ -57,7 +57,7 @@ class LoginActivity : AppCompatActivity() {
                     .show()
         }
 
-        clickRegister_textView.setOnClickListener { onRegisterButtonClick() }
+        clickRegisterTextView.setOnClickListener { onRegisterButtonClick() }
         play_button.setOnClickListener { onLoginButtonClick() }
 
         startLoginProcess(false)
@@ -83,9 +83,7 @@ class LoginActivity : AppCompatActivity() {
                                 .show()
                     }, 500)
                 }
-
             }
-
         }
     }
 
@@ -94,8 +92,8 @@ class LoginActivity : AppCompatActivity() {
             if (ConnectionUtils.getConnectionInfo(this@LoginActivity)) {
                 uiThread {
                     if (validateEmail() && validatePassword()) {
-                        val email = email_editText.text.toString()
-                        val password = password_editText.text.toString()
+                        val email = emailEditText.text.toString()
+                        val password = passwordEditText.text.toString()
                         signingInAlertDialog?.show()
                         loginAsynchronously(email, password)
                     }
@@ -106,7 +104,6 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
-
     private fun onRegisterButtonClick() {
         startActivity(Intent(this, RegistrationActivity::class.java))
         finish()
@@ -114,22 +111,22 @@ class LoginActivity : AppCompatActivity() {
 
     private fun validateEmail(): Boolean {
 
-        if (email_editText.text.toString().trim { it <= ' ' }.isEmpty()) {
-            email_editText.error = "Email is required"
-            email_editText.requestFocus()
+        if (emailEditText.text.toString().trim { it <= ' ' }.isEmpty()) {
+            emailEditText.error = "Email is required"
+            emailEditText.requestFocus()
             return false
-        } else if (!email_editText.text.toString().contains("@")) {
-            email_editText.error = "Enter a valid email"
-            email_editText.requestFocus()
+        } else if (!emailEditText.text.toString().contains("@")) {
+            emailEditText.error = "Enter a valid email"
+            emailEditText.requestFocus()
             return false
         }
         return true
     }
 
     private fun validatePassword(): Boolean {
-        if (password_editText.text.toString().trim { it <= ' ' }.isEmpty()) {
-            password_editText.error = "Enter password"
-            password_editText.requestFocus()
+        if (passwordEditText.text.toString().trim { it <= ' ' }.isEmpty()) {
+            passwordEditText.error = "Enter password"
+            passwordEditText.requestFocus()
             return false
         }
         return true
@@ -159,10 +156,10 @@ class LoginActivity : AppCompatActivity() {
 
                         MiscellaneousUtils.sessionId = loginResponse.sessionId
 
-                        if (password_editText.text.toString() != "" || !password_editText.text.toString().isEmpty())
+                        if (passwordEditText.text.toString() != "" || !passwordEditText.text.toString().isEmpty())
                             preferences.edit()
                                     .putString(Constants.EMAIL_KEY, loginResponse.user.email)
-                                    .putString(Constants.PASSWORD_KEY, password_editText.text.toString())
+                                    .putString(Constants.PASSWORD_KEY, passwordEditText.text.toString())
                                     .putString(Constants.SESSION_KEY, loginResponse.sessionId)
                                     .apply()
 
@@ -223,17 +220,15 @@ class LoginActivity : AppCompatActivity() {
                         finish()
                     } else {
                         Toast.makeText(this@LoginActivity, "Invalid Credentials", Toast.LENGTH_SHORT).show()
-                        password_editText.setText("")
+                        passwordEditText.setText("")
                     }
                 }
             } else {
                 uiThread {
                     Snackbar.make(findViewById(android.R.id.content), "Server Down", Snackbar.LENGTH_INDEFINITE)
-                            .setAction("RETRY") { startLoginProcess(true) }
-                            .show()
+                            .setAction("RETRY") { startLoginProcess(true) }.show()
                 }
             }
         }
-
     }
 }

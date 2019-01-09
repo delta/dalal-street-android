@@ -1,6 +1,5 @@
 package org.pragyan.dalal18.fragment
 
-
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -15,6 +14,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import dalalstreet.api.DalalActionServiceGrpc
 import dalalstreet.api.actions.BuyStocksFromExchangeRequest
+import dalalstreet.api.actions.BuyStocksFromExchangeResponse
 import dalalstreet.api.actions.GetCompanyProfileRequest
 import dalalstreet.api.models.Stock
 import kotlinx.android.synthetic.main.fragment_stock_exchange.*
@@ -27,7 +27,6 @@ import org.pragyan.dalal18.utils.ConnectionUtils
 import org.pragyan.dalal18.utils.Constants
 import org.pragyan.dalal18.utils.StockUtils
 import javax.inject.Inject
-
 
 class StockExchangeFragment : Fragment() {
 
@@ -109,31 +108,22 @@ class StockExchangeFragment : Fragment() {
                     uiThread {
                         networkDownHandler.onNetworkDownError()
                     }
-                }else{
-
+                } else {
                     if (Integer.parseInt(noOfStocksEditText.text.toString().trim { it <= ' ' }) <= currentStock.stocksInExchange) {
 
                         val response = actionServiceBlockingStub.buyStocksFromExchange(
-                                BuyStocksFromExchangeRequest
-                                        .newBuilder()
-                                        .setStockId(lastSelectedStockId)
-                                        .setStockQuantity(Integer.parseInt(noOfStocksEditText.text.toString()))
-                                        .build()
+                                BuyStocksFromExchangeRequest.newBuilder().setStockId(lastSelectedStockId)
+                                        .setStockQuantity(Integer.parseInt(noOfStocksEditText.text.toString())).build()
                         )
+
                         uiThread {
-                            when (response.statusCode.number) {
-
-                                0 -> {
-                                    Toast.makeText(context, "Stocks bought", Toast.LENGTH_SHORT).show()
-                                    noOfStocksEditText.setText("")
-
-                                    if (activity != null) {
-                                        getCompanyProfileAsynchronously(lastSelectedStockId)
-                                    }
-                                }
-
-                                else -> Toast.makeText(context, response.statusMessage, Toast.LENGTH_SHORT).show()
+                            if (response.statusCode == BuyStocksFromExchangeResponse.StatusCode.OK) {
+                                Toast.makeText(context, "Stocks bought", Toast.LENGTH_SHORT).show()
+                                noOfStocksEditText.setText("")
+                                getCompanyProfileAsynchronously(lastSelectedStockId)
                             }
+                            else
+                                Toast.makeText(context, response.statusMessage, Toast.LENGTH_SHORT).show()
                         }
                     } else {
                         uiThread { Toast.makeText(activity, "Insufficient stocks in exchange", Toast.LENGTH_SHORT).show() }

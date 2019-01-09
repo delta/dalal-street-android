@@ -17,7 +17,7 @@
         android:textColorHint="@color/neutral_font_color" />
 
     <LinearLayout
-        android:id="@+id/currentStockPrice_linearLayout"
+        android:id="@+id/currentStockPriceLinearLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/companySpinner"
@@ -49,7 +49,7 @@
         android:id="@+id/dailyHigh_linearLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/currentStockPrice_linearLayout"
+        android:layout_below="@+id/currentStockPriceLinearLayout"
         android:layout_marginTop="15dp"
         android:orientation="horizontal">
 

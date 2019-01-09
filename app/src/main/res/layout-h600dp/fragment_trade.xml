@@ -40,7 +40,7 @@
         android:orientation="horizontal">
 
         <RadioButton
-            android:id="@+id/bid_radioButton"
+            android:id="@+id/bidRadioButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -51,7 +51,7 @@
             android:textStyle="bold" />
 
         <RadioButton
-            android:id="@+id/ask_radioButton"
+            android:id="@+id/askRadioButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -64,7 +64,7 @@
     </RadioGroup>
 
     <LinearLayout
-        android:id="@+id/stocksOwned_linearLayout"
+        android:id="@+id/stocksOwnedLinearLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/radioGroupStock"
@@ -93,10 +93,10 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/currentStockPrice_linearLayout"
+        android:id="@+id/currentStockPriceLinearLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/stocksOwned_linearLayout"
+        android:layout_below="@+id/stocksOwnedLinearLayout"
         android:layout_marginTop="8dp">
 
         <TextView
@@ -124,7 +124,7 @@
         android:id="@+id/no_of_stocks_input"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/currentStockPrice_linearLayout"
+        android:layout_below="@+id/currentStockPriceLinearLayout"
         android:layout_marginTop="20dp"
         android:textColorHint="@color/neutral_font_color">
 
@@ -150,7 +150,7 @@
         android:textColorHint="@color/neutral_font_color">
 
         <EditText
-            android:id="@+id/orderPrice_editText"
+            android:id="@+id/orderPriceEditText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:ems="10"
@@ -161,7 +161,7 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <Button
-        android:id="@+id/bidAsk_button"
+        android:id="@+id/bidAskButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"

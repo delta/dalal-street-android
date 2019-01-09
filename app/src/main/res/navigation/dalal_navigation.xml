@@ -27,35 +27,35 @@
     </fragment>
 
     <fragment
-        android:id="@+id/nav_news"
+        android:id="@+id/news_dest"
         android:name="org.pragyan.dalal18.fragment.NewsFragment"
         android:label="@string/news"
         tools:layout="@layout/fragment_news">
     </fragment>
 
     <fragment
-        android:id="@+id/nav_transactions"
+        android:id="@+id/transactions_dest"
         android:name="org.pragyan.dalal18.fragment.TransactionsFragment"
         android:label="@string/transactions"
         tools:layout="@layout/fragment_transactions">
     </fragment>
 
     <fragment
-        android:id="@+id/nav_exchange"
+        android:id="@+id/exchange_dest"
         android:name="org.pragyan.dalal18.fragment.StockExchangeFragment"
         android:label="@string/stock_exchange"
         tools:layout="@layout/fragment_stock_exchange">
     </fragment>
 
     <fragment
-        android:id="@+id/nav_portfolio"
+        android:id="@+id/portfolio_dest"
         android:name="org.pragyan.dalal18.fragment.PortfolioFragment"
         android:label="@string/portfolio"
         tools:layout="@layout/fragment_portfolio">
     </fragment>
 
     <fragment
-        android:id="@+id/nav_trade"
+        android:id="@+id/trade_dest"
         android:name="org.pragyan.dalal18.fragment.TradeFragment"
         android:label="@string/trade"
         tools:layout="@layout/fragment_trade">
