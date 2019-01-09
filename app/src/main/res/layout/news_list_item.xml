@@ -26,6 +26,10 @@
         android:layout_below="@+id/news_head"
         android:layout_marginStart="6dp"
         android:layout_marginTop="6dp"
+
+        android:maxLines="2"
+        android:ellipsize="end"
+        android:scrollHorizontally="true"
         android:fontFamily="@font/kreon_light"
         android:textColor="@color/neutral_font_color"
         android:textSize="16sp" />
@@ -41,12 +45,12 @@
         android:textColor="@color/neutral_font_color"
         android:textSize="12sp" />
 
-    <View
+    <!--<View
         android:layout_width="match_parent"
         android:layout_height="0.75dp"
         android:layout_below="@+id/news_content"
         android:layout_marginStart="4dp"
         android:layout_marginTop="8dp"
-        android:background="@color/divider_line_gray" />
+        android:background="@color/divider_line_gray" />-->
 
 </RelativeLayout>

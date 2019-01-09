@@ -11,7 +11,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
+
 import androidx.lifecycle.ViewModelProviders
+import androidx.appcompat.app.AppCompatActivity
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import dalalstreet.api.DalalActionServiceGrpc
 import dalalstreet.api.actions.PlaceOrderRequest
@@ -70,7 +72,7 @@ class TradeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        (activity as AppCompatActivity).supportActionBar?.title = resources.getString(R.string.trade)
         val companiesAdapter = ArrayAdapter(context!!, R.layout.order_spinner_item, StockUtils.getCompanyNamesArray())
         val orderSelectAdapter = ArrayAdapter(context!!, R.layout.order_spinner_item, resources.getStringArray(R.array.orderType))
 

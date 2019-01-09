@@ -18,6 +18,7 @@ import org.pragyan.dalal18.utils.StockUtils;
 import java.util.Collections;
 import java.util.List;
 
+import dalalstreet.api.datastreams.MyOrderUpdate;
 import dalalstreet.api.models.OrderType;
 
 public class OrdersRecyclerAdapter extends RecyclerView.Adapter<OrdersRecyclerAdapter.MyViewHolder> {
@@ -98,6 +99,17 @@ public class OrdersRecyclerAdapter extends RecyclerView.Adapter<OrdersRecyclerAd
         });
 
         notifyDataSetChanged();
+    }
+    public void swapSingleItem(int id,MyOrderUpdate order)
+    {
+        for(Order o : orderList)
+        {
+            //The logic of updating the order is pending as I did not understood how to do it.
+            if(o.getOrderId() == id)
+            {
+
+            }
+        }
     }
 
     public void orderUpdate(int orderId, int quantityFilled, boolean closed) {

@@ -48,6 +48,29 @@
     </fragment>
 
     <fragment
+
+        android:name="org.pragyan.dalal18.fragment.OrdersFragment"
+        android:id = "@+id/nav_my_orders"
+        android:label = "@string/orders_frag_label"
+        tools:layout = "@layout/fragment_my_orders">
+
+    </fragment>
+
+    <fragment
+        android:name="org.pragyan.dalal18.fragment.LeaderboardFragment"
+        android:id = "@+id/nav_leaderboard"
+        android:label = "@string/leaderboard_frag_label"
+        tools:layout = "@layout/fragment_leaderboard">
+
+    </fragment>
+
+    <fragment android:name="org.pragyan.dalal18.fragment.NewsDetailsFragment"
+        android:id = "@+id/nav_news_details"
+        android:label = "@string/news_details_frag_label"
+        tools:layout = "@layout/activity_news_details">
+
+    </fragment>
+    <fragment
         android:id="@+id/portfolio_dest"
         android:name="org.pragyan.dalal18.fragment.PortfolioFragment"
         android:label="@string/portfolio"

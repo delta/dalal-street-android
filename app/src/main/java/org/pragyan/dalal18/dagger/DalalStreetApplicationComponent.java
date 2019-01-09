@@ -16,7 +16,6 @@ import org.pragyan.dalal18.notifications.NotificationFragment;
 import org.pragyan.dalal18.notifications.NotificationService;
 import org.pragyan.dalal18.ui.LoginActivity;
 import org.pragyan.dalal18.ui.MainActivity;
-import org.pragyan.dalal18.ui.NewsDetailsActivity;
 import org.pragyan.dalal18.ui.RegistrationActivity;
 import org.pragyan.dalal18.ui.SplashActivity;
 
@@ -31,7 +30,6 @@ public interface DalalStreetApplicationComponent {
     void inject(MainActivity mainActivity);
     void inject(SplashActivity splashActivity);
     void inject(RegistrationActivity registrationActivity);
-    void inject(NewsDetailsActivity newsDetailsActivity);
 
     void inject(DepthTableFragment depthTableFragment);
     void inject(DepthGraphFragment depthGraphFragment);
