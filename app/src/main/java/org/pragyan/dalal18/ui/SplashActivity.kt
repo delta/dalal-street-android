@@ -88,7 +88,7 @@ class SplashActivity : AppCompatActivity() {
         doAsync {
             if (ConnectionUtils.getConnectionInfo(this@SplashActivity)) {
                 
-                val sessionId = preferences.getString(LoginActivity.SESSION_KEY, null)
+                val sessionId = preferences.getString(Constants.SESSION_KEY, null)
                 
                 if(sessionId != null) {
                     

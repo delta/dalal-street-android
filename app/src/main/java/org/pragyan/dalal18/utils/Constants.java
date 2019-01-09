@@ -41,6 +41,12 @@ public class Constants {
 
     public static final String NOTIFICATION_SHARED_PREF = "notification_pref";
     public static final String NOTIFICATION_NEWS_SHARED_PREF = "notification_news_pref";
+
+    public static final String USERNAME_KEY = "username-key";
+    public static final String  EMAIL_KEY = "email-key";
+    public static final String  SESSION_KEY = "session-key";
+    public static final String  MARKET_OPEN_KEY = "market-open-key";
+    public static final String  PASSWORD_KEY = "password-key";
 }
 
 /*  Login response : Constants
