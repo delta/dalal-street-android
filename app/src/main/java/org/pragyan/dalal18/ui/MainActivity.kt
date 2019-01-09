@@ -55,7 +55,7 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
 
     private var notifIntent: Intent? = null
 
-    private var shouldUnsubscribe = true
+    private var shouldUnsubscribeAsNetworkDown = true
 
     private val refreshCashStockReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
@@ -96,8 +96,6 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
 
         updateValues()
 
-        subscribeToStreamsAsynchronously()
-
         startMakingButtonsTransparent()
         updateStockWorthViaStreamUpdates()
 
@@ -111,9 +109,6 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
         }
 
         drawerEdgeButton.setOnClickListener { mainDrawerLayout.openDrawer(GravityCompat.START, true) }
-
-        notifIntent = Intent(this, NotificationService::class.java)
-        startService(notifIntent)
     }
 
     // Adding and setting up Navigation drawer
@@ -171,14 +166,10 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
 
     fun logout() {
 
+        unsubscribeFromAllStreams()
+
         doAsync {
             if (ConnectionUtils.getConnectionInfo(this@MainActivity) && ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
-                if (shouldUnsubscribe) {
-                    for (subscriptionId in subscriptionIds) {
-                        streamServiceBlockingStub.unsubscribe(UnsubscribeRequest.newBuilder().setSubscriptionId(subscriptionId).build())
-                    }
-                }
-
                 val logoutResponse = actionServiceBlockingStub.logout(LogoutRequest.newBuilder().build())
 
                 uiThread {
@@ -295,7 +286,7 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
                     override fun onNext(value: StockPricesUpdate) {
                         for (i in 1..Constants.NUMBER_OF_COMPANIES) {
                             if (value.pricesMap.containsKey(i)) {
-                                globalStockDetails[i - 1].price = value.pricesMap[i]?:0
+                                globalStockDetails[i - 1].price = value.pricesMap[i] ?: 0
                                 LocalBroadcastManager.getInstance(this@MainActivity).sendBroadcast(Intent(Constants.REFRESH_PRICE_TICKER_ACTION))
                                 LocalBroadcastManager.getInstance(this@MainActivity).sendBroadcast(Intent(Constants.REFRESH_STOCK_PRICES_ACTION))
                                 LocalBroadcastManager.getInstance(this@MainActivity).sendBroadcast(Intent(Constants.UPDATE_WORTH_VIA_STREAM_ACTION))
@@ -377,6 +368,19 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
         }
     }
 
+    // Unsubscribes from all streams
+    private fun unsubscribeFromAllStreams() {
+        doAsync {
+            if (shouldUnsubscribeAsNetworkDown) {
+                for (subscriptionId in subscriptionIds) {
+                    streamServiceBlockingStub.unsubscribe(UnsubscribeRequest.newBuilder().setSubscriptionId(subscriptionId).build())
+                }
+
+                subscriptionIds.clear()
+            }
+        }
+    }
+
     // Method is called when stock price update is received
     private fun updateStockWorthViaStreamUpdates() {
         var netStockWorth = 0
@@ -436,18 +440,30 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
 
     public override fun onResume() {
         super.onResume()
+
+        subscribeToStreamsAsynchronously()
+
         val intentFilter = IntentFilter(Constants.REFRESH_DIVIDEND_ACTION)
         intentFilter.addAction(Constants.REFRESH_WORTH_TEXTVIEW_ACTION)
         intentFilter.addAction(Constants.UPDATE_WORTH_VIA_STREAM_ACTION)
         LocalBroadcastManager.getInstance(this).registerReceiver(refreshCashStockReceiver, IntentFilter(intentFilter))
+
+        notifIntent = Intent(this, NotificationService::class.java)
+        startService(notifIntent)
     }
 
     public override fun onPause() {
         super.onPause()
+
+        unsubscribeFromAllStreams()
+
         preferences.edit().remove(LAST_TRANSACTION_ID).remove(LAST_NOTIFICATION_ID).apply()
         LocalBroadcastManager.getInstance(this).unregisterReceiver(refreshCashStockReceiver)
         helpDialog?.dismiss()
         logoutDialog?.dismiss()
+
+        stopService(notifIntent)
+        preferences.edit().remove(LAST_TRANSACTION_ID).remove(LAST_NOTIFICATION_ID).apply()
     }
 
     private fun subscribeToStreamsAsynchronously() {
@@ -485,16 +501,9 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
     }
 
     override fun onNetworkDownError() {
-        shouldUnsubscribe = false
+        shouldUnsubscribeAsNetworkDown = false
         startActivity(Intent(this, SplashActivity::class.java))
         finish()
-    }
-
-    // Unsubscribes from all the streams subscribed in this activity.
-    override fun onDestroy() {
-        stopService(notifIntent)
-        preferences.edit().remove(LAST_TRANSACTION_ID).remove(LAST_NOTIFICATION_ID).apply()
-        super.onDestroy()
     }
 
     companion object {
