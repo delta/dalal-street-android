@@ -10,12 +10,13 @@ import android.widget.ArrayAdapter
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
+import com.github.mikephil.charting.components.Legend
+import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
-import com.github.mikephil.charting.utils.Legend
-import com.github.mikephil.charting.utils.XLabels
-import com.github.mikephil.charting.utils.YLabels
+import com.github.mikephil.charting.formatter.IAxisValueFormatter
+import com.github.mikephil.charting.interfaces.datasets.ILineDataSet
 import dalalstreet.api.DalalActionServiceGrpc
 import dalalstreet.api.actions.GetStockHistoryRequest
 import dalalstreet.api.actions.StockHistoryResolution
@@ -37,6 +38,7 @@ import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
+import kotlin.collections.ArrayList
 
 class DepthGraphFragment : Fragment() {
 
@@ -78,23 +80,21 @@ class DepthGraphFragment : Fragment() {
                 .setCancelable(false)
                 .create()
 
-        with(market_depth_chart){
-            backgroundColor = ContextCompat.getColor(this@DepthGraphFragment.context!!,R.color.black_background)
+        with(market_depth_chart) {
+            backgroundColor = ContextCompat.getColor(this@DepthGraphFragment.context!!, R.color.black_background)
             setDrawGridBackground(false)
-            setGridColor(ContextCompat.getColor(this@DepthGraphFragment.context!!,R.color.neutral_font_color))
-            setBorderColor(ContextCompat.getColor(this@DepthGraphFragment.context!!,R.color.neutral_font_color))
+            setBorderColor(ContextCompat.getColor(this@DepthGraphFragment.context!!, R.color.neutral_font_color))
             setTouchEnabled(false)
-            setDescription("")
-            setValueTextSize(MiscellaneousUtils.convertDpToPixel(context!!, 4f))
-            setValueTextColor(ContextCompat.getColor(this@DepthGraphFragment.context!!,R.color.neon_blue))
             setNoDataText("Select a company to view depth chart")
+            description.isEnabled = false
+            setGridBackgroundColor(ContextCompat.getColor(this@DepthGraphFragment.context!!, R.color.neutral_font_color))
         }
 
         val arrayAdapter = ArrayAdapter(activity!!, R.layout.company_spinner_item, StockUtils.getCompanyNamesArray())
-        with(graph_company_spinner){
+        with(graph_company_spinner) {
             setAdapter(arrayAdapter)
             isSelected = false
-            setOnItemClickListener { _,_,_,_ ->
+            setOnItemClickListener { _, _, _, _ ->
                 val currentCompany = graph_company_spinner.text.toString()
                 stockHistoryList.clear()
                 trimmedStockHistoryList.clear()
@@ -128,7 +128,7 @@ class DepthGraphFragment : Fragment() {
                         val tempStockHistory = StockHistory(convertToDate(map.key), map.value.close)
                         stockHistoryList.add(tempStockHistory)
                     }
-                    stockHistoryList.sortWith(kotlin.Comparator { (date1) , (date2) -> date1!!.compareTo(date2)})
+                    stockHistoryList.sortWith(kotlin.Comparator { (date1), (date2) -> date1!!.compareTo(date2) })
                     stockHistoryList.reverse()
 
                     if (stockHistoryList.size >= 10) {
@@ -139,42 +139,70 @@ class DepthGraphFragment : Fragment() {
                         trimmedStockHistoryList.addAll(stockHistoryList)
                     }
 
+                    var highestClose = 0f
                     trimmedStockHistoryList.reverse()
                     for (i in trimmedStockHistoryList.indices) {
                         xVals.add(parseDate(convertToString(trimmedStockHistoryList[i].stockDate)))
-                        yVals.add(Entry(trimmedStockHistoryList[i].stockClose.toFloat(), i))
+                        yVals.add(Entry(i.toFloat(), trimmedStockHistoryList[i].stockClose.toFloat()))
+                        if (highestClose <= trimmedStockHistoryList[i].stockClose.toFloat()) {
+                            highestClose = trimmedStockHistoryList[i].stockClose.toFloat()
+                        }
                     }
+
+                    val xValsArray: Array<String?> = arrayOfNulls(xVals.size)
+                    for (i in 0 until xVals.size) {
+                        xValsArray[i] = xVals[i]
+                    }
+
+                    val formatter = IAxisValueFormatter { value, _ -> xValsArray[value.toInt()] }
+                    val xAxis = market_depth_chart.xAxis
+                    xAxis.position = XAxis.XAxisPosition.BOTTOM
+                    xAxis.valueFormatter = formatter
+                    xAxis.granularity = 1f
+                    xAxis.textSize = 9f
+                    xAxis.textColor = ContextCompat.getColor(context!!, android.R.color.white)
+                    xAxis.enableGridDashedLine(15f, 10f, 0f)
+
+                    var yAxis = market_depth_chart.axisRight
+                    yAxis.isEnabled = false
+                    yAxis = market_depth_chart.axisLeft
+                    yAxis.granularity = 1f
+                    yAxis.enableGridDashedLine(15f, 10f, 0f)
+                    yAxis.axisMaximum = (highestClose + (0.2 * highestClose)).toFloat()
+                    yAxis.axisMinimum = 0f
+                    yAxis.textSize = 9f
+                    yAxis.textColor = ContextCompat.getColor(context!!, android.R.color.white)
+
 
                     if (activity != null && isAdded) {
                         lineDataSet = LineDataSet(yVals, "Stock Price")
                         lineDataSet.lineWidth = 4f
                         lineDataSet.color = ContextCompat.getColor(context!!, R.color.neon_green)
-                        lineDataSet.setCircleColor(ContextCompat.getColor(context!!,R.color.redTint))
-                        lineDataSet.circleSize = MiscellaneousUtils.convertDpToPixel(context!!, 1f)
-                        lineDataSet.highLightColor = ContextCompat.getColor(context!!,R.color.neon_green)
+                        lineDataSet.setCircleColor(ContextCompat.getColor(context!!, R.color.redTint))
+                        lineDataSet.circleRadius = MiscellaneousUtils.convertDpToPixel(context!!, 1f)
+                        lineDataSet.highLightColor = ContextCompat.getColor(context!!, R.color.neon_green)
                         lineDataSet.setDrawFilled(false)
+                        lineDataSet.valueTextColor = ContextCompat.getColor(context!!, R.color.neon_blue)
+                        lineDataSet.valueTextSize = MiscellaneousUtils.convertDpToPixel(context!!, 4f)
 
-                        val lineData = LineData(xVals, lineDataSet)
+                        val datasets = ArrayList<ILineDataSet>()
+                        datasets.add(lineDataSet)
+                        val lineData = LineData(datasets)
+
                         market_depth_chart.data = lineData
                         market_depth_chart.invalidate()
                         loadingDialog?.dismiss()
 
                         val legend = market_depth_chart.legend
-                        legend.textColor = ContextCompat.getColor(context!!,android.R.color.white)
-                        legend.textSize = MiscellaneousUtils.convertDpToPixel(context!!, 2f)
-                        legend.position = Legend.LegendPosition.BELOW_CHART_RIGHT
+                        legend.textColor = ContextCompat.getColor(context!!, android.R.color.white)
+                        legend.textSize = MiscellaneousUtils.convertDpToPixel(context!!, 3f)
+                        legend.orientation = Legend.LegendOrientation.HORIZONTAL
+                        legend.verticalAlignment = Legend.LegendVerticalAlignment.BOTTOM
+                        legend.horizontalAlignment = Legend.LegendHorizontalAlignment.LEFT
                         legend.form = Legend.LegendForm.LINE
-                        val xAxis = market_depth_chart.xLabels
-                        xAxis.textColor = ContextCompat.getColor(context!!,android.R.color.white)
-                        xAxis.position = XLabels.XLabelPosition.BOTTOM
-                        xAxis.textSize = 9f
-                        xAxis.spaceBetweenLabels = MiscellaneousUtils.convertDpToPixel(context!!, 1f).toInt()
-                        val yAxis1 = market_depth_chart.yLabels
-                        yAxis1.textColor = ContextCompat.getColor(context!!,android.R.color.white)
-                        yAxis1.position = YLabels.YLabelPosition.LEFT
                     }
                 }
-            } else{
+            } else {
                 uiThread { networkDownHandler.onNetworkDownError() }
             }
         }

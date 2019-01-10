@@ -99,7 +99,7 @@ dependencies {
 
     // Material libraries
     implementation 'com.weiwangcn.betterspinner:library-material:1.1.0'
-    implementation 'org.quanqi:mpandroidchart:1.7.5'
+    implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0-alpha'
     implementation 'com.squareup.picasso:picasso:2.5.2'
 
     // gRPC
