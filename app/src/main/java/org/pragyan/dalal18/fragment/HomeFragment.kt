@@ -11,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProviders
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -27,6 +28,7 @@ import org.pragyan.dalal18.adapter.NewsRecyclerAdapter
 import org.pragyan.dalal18.dagger.ContextModule
 import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent
 import org.pragyan.dalal18.data.CompanyTickerDetails
+import org.pragyan.dalal18.data.DalalViewModel
 import org.pragyan.dalal18.data.NewsDetails
 import org.pragyan.dalal18.ui.MainActivity
 import org.pragyan.dalal18.ui.NewsDetailsActivity
@@ -51,6 +53,7 @@ class HomeFragment : Fragment(), NewsRecyclerAdapter.NewsItemClickListener {
     private lateinit var tickerRunnable: Runnable
     lateinit var networkDownHandler: ConnectionUtils.OnNetworkDownHandler
 
+    private lateinit var model: DalalViewModel
     private var handler = Handler()
 
     private val refreshNewsListReceiver = object : BroadcastReceiver() {
@@ -62,8 +65,8 @@ class HomeFragment : Fragment(), NewsRecyclerAdapter.NewsItemClickListener {
             } else if (intent.action.equals(Constants.REFRESH_PRICE_TICKER_ACTION, ignoreCase = true)) {
 
                 val builder = StringBuilder("")
-                if (MainActivity.globalStockDetails.isNotEmpty()) {
-                    for ((_, shortName, _, price, _, _, _, up) in MainActivity.globalStockDetails) {
+                if (model.globalStockDetails.isNotEmpty()) {
+                    for ((_, shortName, _, price, _, _, _, up) in model.globalStockDetails) {
                         builder.append(shortName).append(" : ").append(price)
                         builder.append(if (up == 1) "\u2191" else "\u2193").append("     ")
                     }
@@ -77,6 +80,7 @@ class HomeFragment : Fragment(), NewsRecyclerAdapter.NewsItemClickListener {
 
         val rootView = inflater.inflate(R.layout.fragment_home, container, false)
 
+        model = activity?.run { ViewModelProviders.of(this).get(DalalViewModel::class.java) } ?: throw Exception("Invalid activity")
         DaggerDalalStreetApplicationComponent.builder().contextModule(ContextModule(context!!)).build().inject(this)
 
         return rootView
@@ -161,7 +165,7 @@ class HomeFragment : Fragment(), NewsRecyclerAdapter.NewsItemClickListener {
 
         companyTickerDetailsList.clear()
 
-        for ((fullName, _, _, price, _, _, _, up, imagePath) in MainActivity.globalStockDetails) {
+        for ((fullName, _, _, price, _, _, _, up, imagePath) in model.globalStockDetails) {
             companyTickerDetailsList.add(CompanyTickerDetails(fullName!!, imagePath, price, up == 1))
         }
 
@@ -171,7 +175,7 @@ class HomeFragment : Fragment(), NewsRecyclerAdapter.NewsItemClickListener {
 
 
         val builder = StringBuilder("")
-        for ((_, shortName, _, price, _, _, _, up) in MainActivity.globalStockDetails) {
+        for ((_, shortName, _, price, _, _, _, up) in model.globalStockDetails) {
 
             builder.append(shortName).append(" : ").append(price)
             if (activity != null) {

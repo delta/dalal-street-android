@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.ViewModelProviders
 import com.github.mikephil.charting.components.Legend
 import kotlinx.android.synthetic.main.fragment_worth.*
 
@@ -22,14 +23,20 @@ import com.github.mikephil.charting.data.PieEntry
 import com.github.mikephil.charting.formatter.PercentFormatter
 import com.github.mikephil.charting.data.PieData
 import com.github.mikephil.charting.utils.ColorTemplate
+import org.pragyan.dalal18.data.DalalViewModel
 import org.pragyan.dalal18.utils.StockUtils.getCompanyNameFromStockId
 
 
 class WorthFragment : Fragment() {
 
+    private lateinit var model: DalalViewModel
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val rootView = inflater.inflate(R.layout.fragment_worth, container, false)
+
+        model = activity?.run { ViewModelProviders.of(this).get(DalalViewModel::class.java) } ?: throw Exception("Invalid activity")
         DaggerDalalStreetApplicationComponent.builder().contextModule(ContextModule(context!!)).build().inject(this)
+
         return rootView
     }
 
@@ -69,11 +76,11 @@ class WorthFragment : Fragment() {
 
         val entries = ArrayList<PieEntry>()
 
-        for (currentStockDetails in MainActivity.ownedStockDetails) {
+        for (currentStockDetails in model.ownedStockDetails) {
 
             var currentPrice = -1
 
-            for (globalStockDetails in MainActivity.globalStockDetails) {
+            for (globalStockDetails in model.globalStockDetails) {
                 if (currentStockDetails.stockId == globalStockDetails.stockId) {
                     currentPrice = globalStockDetails.price
                     break

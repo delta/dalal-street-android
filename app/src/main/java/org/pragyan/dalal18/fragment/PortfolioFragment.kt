@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.ViewModelProviders
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.fragment_portfolio.*
@@ -16,6 +17,7 @@ import org.pragyan.dalal18.R
 import org.pragyan.dalal18.adapter.PortfolioRecyclerAdapter
 import org.pragyan.dalal18.dagger.ContextModule
 import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent
+import org.pragyan.dalal18.data.DalalViewModel
 import org.pragyan.dalal18.data.Portfolio
 import org.pragyan.dalal18.ui.MainActivity
 import org.pragyan.dalal18.utils.Constants
@@ -29,6 +31,8 @@ class PortfolioFragment : Fragment() {
     @Inject
     lateinit var portfolioRecyclerAdapter: PortfolioRecyclerAdapter
 
+    private lateinit var model: DalalViewModel
+
     private val refreshPortfolioDetails = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             if (intent.action != null && (intent.action == Constants.REFRESH_STOCK_PRICES_ACTION || intent.action == Constants.REFRESH_OWNED_STOCKS_ACTION)) {
@@ -40,6 +44,7 @@ class PortfolioFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
         val rootView = inflater.inflate(R.layout.fragment_portfolio, container, false)
+        model = activity?.run { ViewModelProviders.of(this).get(DalalViewModel::class.java) } ?: throw Exception("Invalid activity")
         DaggerDalalStreetApplicationComponent.builder().contextModule(ContextModule(context!!)).build().inject(this)
         return rootView
 
@@ -73,11 +78,11 @@ class PortfolioFragment : Fragment() {
     private fun updatePortfolioTable() {
 
         val portfolioList = ArrayList<Portfolio>()
-        for ((stockId, quantity) in MainActivity.ownedStockDetails) {
+        for ((stockId, quantity) in model.ownedStockDetails) {
 
             var currentPrice = -1
 
-            for (globalStockDetails in MainActivity.globalStockDetails) {
+            for (globalStockDetails in model.globalStockDetails) {
                 if (stockId == globalStockDetails.stockId) {
                     currentPrice = globalStockDetails.price
                     break
@@ -86,11 +91,11 @@ class PortfolioFragment : Fragment() {
 
             if (quantity != 0) {
                 portfolioList.add(Portfolio(
-                        StockUtils.getShortNameForStockId(MainActivity.globalStockDetails, stockId)!!,
+                        StockUtils.getShortNameForStockId(model.globalStockDetails, stockId)!!,
                         StockUtils.getCompanyNameFromStockId(stockId),
                         quantity,
                         currentPrice,
-                        StockUtils.getPreviousDayCloseFromStockId(MainActivity.globalStockDetails, stockId)
+                        StockUtils.getPreviousDayCloseFromStockId(model.globalStockDetails, stockId)
                 ))
             }
         }

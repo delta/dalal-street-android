@@ -10,13 +10,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProviders
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.fragment_companies.*
 import org.pragyan.dalal18.R
 import org.pragyan.dalal18.adapter.CompanyRecyclerAdapter
 import org.pragyan.dalal18.data.CompanyDetails
-import org.pragyan.dalal18.ui.MainActivity
+import org.pragyan.dalal18.data.DalalViewModel
 import org.pragyan.dalal18.utils.Constants
 import java.util.*
 
@@ -24,6 +25,7 @@ class CompanyFragment : Fragment() {
 
     private val portfolioList = ArrayList<CompanyDetails>()
     private lateinit var adapter: CompanyRecyclerAdapter
+    private lateinit var model: DalalViewModel
 
     private val refreshStockPricesReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
@@ -41,6 +43,8 @@ class CompanyFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         adapter = CompanyRecyclerAdapter(context, null)
 
+        model = activity?.run { ViewModelProviders.of(this).get(DalalViewModel::class.java) } ?: throw Exception("Invalid activity")
+
         updateValues()
         portfolioRecyclerView.setHasFixedSize(false)
         portfolioRecyclerView.adapter = adapter
@@ -51,7 +55,7 @@ class CompanyFragment : Fragment() {
 
         portfolioList.clear()
 
-        for ((fullName, shortName, _, price, _, _, previousDayClose) in MainActivity.globalStockDetails) {
+        for ((fullName, shortName, _, price, _, _, previousDayClose) in model.globalStockDetails) {
             portfolioList.add(CompanyDetails(fullName, shortName, price, previousDayClose))
         }
 

@@ -9,6 +9,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
+import androidx.lifecycle.ViewModelProviders
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
@@ -26,7 +27,7 @@ import org.jetbrains.anko.uiThread
 import org.pragyan.dalal18.R
 import org.pragyan.dalal18.dagger.ContextModule
 import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent
-import org.pragyan.dalal18.data.GlobalStockDetails
+import org.pragyan.dalal18.data.DalalViewModel
 import org.pragyan.dalal18.data.StockDetails
 import org.pragyan.dalal18.notifications.NotificationService
 import org.pragyan.dalal18.utils.*
@@ -34,7 +35,7 @@ import java.text.DecimalFormat
 import java.util.*
 import javax.inject.Inject
 
-/* Subscribes to GetTransactions*/
+/* Subscribes to Transactions, Exchange, StockPrices and MarketEvents stream*/
 class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
 
     @Inject
@@ -48,6 +49,8 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
 
     @Inject
     lateinit var preferences: SharedPreferences
+
+    lateinit var model: DalalViewModel
 
     private val subscriptionIds = ArrayList<SubscriptionId>()
 
@@ -81,6 +84,8 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        model = ViewModelProviders.of(this).get(DalalViewModel::class.java)
+
         val tinyDB = TinyDB(this)
         tinyDB.remove(Constants.NOTIFICATION_SHARED_PREF)
         tinyDB.remove(Constants.NOTIFICATION_NEWS_SHARED_PREF)
@@ -92,9 +97,9 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
 
         setupNavigationDrawer()
 
-        ownedStockDetails = intent.getParcelableArrayListExtra(STOCKS_OWNED_KEY)
-        globalStockDetails = intent.getParcelableArrayListExtra(GLOBAL_STOCKS_KEY)
-        StockUtils.createCompanyArrayFromGlobalStockDetails()
+        model.ownedStockDetails = intent.getParcelableArrayListExtra(STOCKS_OWNED_KEY)
+        model.globalStockDetails =  intent.getParcelableArrayListExtra(GLOBAL_STOCKS_KEY)
+        model.createCompanyArrayFromGlobalStockDetails()
 
         updateValues()
 
@@ -245,9 +250,9 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
                                 LocalBroadcastManager.getInstance(this@MainActivity).sendBroadcast(intent)
 
                             }
-                            else -> {
+                            else -> /* Meant for MORTGAGE TRANSACTION type; While retrieving stockQuantity is positive */ {
 
-                                updateOwnedStockIdAndQuantity(transaction.stockId, transaction.stockQuantity, transaction.stockQuantity > 0)
+                                updateOwnedStockIdAndQuantity(transaction.stockId, transaction.stockQuantity, true)
 
                                 val intent = Intent(Constants.REFRESH_WORTH_TEXTVIEW_ACTION)
                                 intent.putExtra(TOTAL_WORTH_KEY, transaction.total)
@@ -293,7 +298,7 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
                     override fun onNext(value: StockPricesUpdate) {
                         for (i in 1..Constants.NUMBER_OF_COMPANIES) {
                             if (value.pricesMap.containsKey(i)) {
-                                globalStockDetails[i - 1].price = value.pricesMap[i] ?: 0
+                                model.updateGlobalStockPrice(i,value.pricesMap[i] ?: 0)
                                 LocalBroadcastManager.getInstance(this@MainActivity).sendBroadcast(Intent(Constants.REFRESH_PRICE_TICKER_ACTION))
                                 LocalBroadcastManager.getInstance(this@MainActivity).sendBroadcast(Intent(Constants.REFRESH_STOCK_PRICES_ACTION))
                                 LocalBroadcastManager.getInstance(this@MainActivity).sendBroadcast(Intent(Constants.UPDATE_WORTH_VIA_STREAM_ACTION))
@@ -318,21 +323,21 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
                 object : StreamObserver<StockExchangeUpdate> {
                     override fun onNext(value: StockExchangeUpdate) {
                         val stockExchangeDataPointMap = value.stocksInExchangeMap
+                        val tempGlobalStocks = model.globalStockDetails
 
                         for (x in 1..Constants.NUMBER_OF_COMPANIES) {
                             if (stockExchangeDataPointMap.containsKey(x)) {
                                 val currentDataPoint = value.stocksInExchangeMap[x]
 
                                 var position = -1
-                                for (i in globalStockDetails.indices) {
-                                    if (x == globalStockDetails[i].stockId) {
+                                for (i in tempGlobalStocks.indices) {
+                                    if (x == tempGlobalStocks[i].stockId) {
                                         position = i
                                         break
                                     }
                                 }
-                                MainActivity.globalStockDetails[position].price = currentDataPoint!!.price
-                                MainActivity.globalStockDetails[position].quantityInMarket = currentDataPoint.stocksInMarket
-                                MainActivity.globalStockDetails[position].quantityInExchange = currentDataPoint.stocksInExchange
+
+                                model.updateGlobalStock(position, currentDataPoint!!.price, currentDataPoint.stocksInMarket, currentDataPoint.stocksInExchange)
                                 LocalBroadcastManager.getInstance(this@MainActivity).sendBroadcast(Intent(Constants.REFRESH_STOCKS_EXCHANGE_ACTION))
                                 LocalBroadcastManager.getInstance(this@MainActivity).sendBroadcast(Intent(Constants.UPDATE_WORTH_VIA_STREAM_ACTION))
                             }
@@ -354,24 +359,22 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
 
         var isPresentInList = false
 
-        for (currentOwnedStockDetails in ownedStockDetails) {
+        for (currentOwnedStockDetails in model.ownedStockDetails) {
             if (currentOwnedStockDetails.stockId == stockId) {
-                val newQuantity: Int
 
                 if (increase)
-                    newQuantity = currentOwnedStockDetails.quantity + stockQuantity
+                    currentOwnedStockDetails.quantity += stockQuantity
                 else
-                    newQuantity = currentOwnedStockDetails.quantity - stockQuantity
+                    currentOwnedStockDetails.quantity -= stockQuantity
 
                 isPresentInList = true
 
-                currentOwnedStockDetails.quantity = newQuantity
                 break
             }
         }
 
         if (!isPresentInList && increase) {
-            ownedStockDetails.add(StockDetails(stockId, stockQuantity))
+            model.addNewOwnedStock(StockDetails(stockId, stockQuantity))
         }
     }
 
@@ -392,8 +395,8 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
     private fun updateStockWorthViaStreamUpdates() {
         var netStockWorth = 0
         var rate = 0
-        for ((stockId, quantity) in ownedStockDetails) {
-            for ((_, _, stockId1, price) in globalStockDetails) {
+        for ((stockId, quantity) in model.ownedStockDetails) {
+            for ((_, _, stockId1, price) in model.globalStockDetails) {
                 if (stockId1 == stockId) {
                     rate = price
                     break
@@ -522,8 +525,5 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
         const val TOTAL_WORTH_KEY = "total-worth-key"
         const val STOCKS_OWNED_KEY = "stocks-owned-key"
         const val GLOBAL_STOCKS_KEY = "global-stocks-key"
-
-        var ownedStockDetails: MutableList<StockDetails> = ArrayList()
-        var globalStockDetails: List<GlobalStockDetails> = ArrayList()
     }
 }

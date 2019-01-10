@@ -11,20 +11,7 @@ import dalalstreet.api.models.OrderType;
 
 public class StockUtils {
 
-    private static List<StockIdCompanyName> stockIdCompanyNameList;
-
-    public static void createCompanyArrayFromGlobalStockDetails() {
-        stockIdCompanyNameList = new ArrayList<>();
-
-        for (int i = 0; i< MainActivity.Companion.getGlobalStockDetails().size() ; ++i) {
-            if (MainActivity.Companion.getGlobalStockDetails().get(i) != null) {
-                GlobalStockDetails currentStockDetails = MainActivity.Companion.getGlobalStockDetails().get(i);
-
-
-                stockIdCompanyNameList.add(new StockIdCompanyName(currentStockDetails.getStockId(), currentStockDetails.getFullName()));
-            }
-        }
-    }
+    public static List<StockIdCompanyName> stockIdCompanyNameList;
 
     public static int getStockIdFromCompanyName(String incomingCompanyName) {
 
@@ -81,12 +68,12 @@ public class StockUtils {
         return null;
     }
 
-    private static class StockIdCompanyName {
+    public static class StockIdCompanyName {
 
         private int stockId;
         private String companyName;
 
-        StockIdCompanyName(int stockId, String companyName) {
+        public StockIdCompanyName(int stockId, String companyName) {
             this.stockId = stockId;
             this.companyName = companyName;
         }

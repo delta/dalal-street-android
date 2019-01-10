@@ -165,7 +165,7 @@ class LoginActivity : AppCompatActivity() {
 
                         // Adding user's stock details
                         val stocksOwnedList = ArrayList<StockDetails>(30)
-                        val stocksOwnedMap = loginResponse.stocksOwnedMap
+                        val stocksOwnedMap = loginResponse.stocksOwnedMap.orEmpty()
 
                         for (i in 1..Constants.NUMBER_OF_COMPANIES) {
                             if (stocksOwnedMap.containsKey(i)) {

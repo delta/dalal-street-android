@@ -15,6 +15,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProviders
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import dalalstreet.api.DalalActionServiceGrpc
 import dalalstreet.api.actions.*
@@ -24,7 +25,7 @@ import org.jetbrains.anko.uiThread
 import org.pragyan.dalal18.R
 import org.pragyan.dalal18.dagger.ContextModule
 import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent
-import org.pragyan.dalal18.ui.MainActivity
+import org.pragyan.dalal18.data.DalalViewModel
 import org.pragyan.dalal18.utils.ConnectionUtils
 import org.pragyan.dalal18.utils.Constants
 import org.pragyan.dalal18.utils.StockUtils
@@ -32,7 +33,7 @@ import org.pragyan.dalal18.utils.StockUtils.getCompanyNameFromStockId
 import org.pragyan.dalal18.utils.StockUtils.getQuantityOwnedFromCompanyName
 import javax.inject.Inject
 
-/* Uses GetMortgageDetails() for setting stocksMortgaged (int data member)
+/*  Uses GetMortgageDetails() for setting stocksMortgaged (int data member)
  *  Uses MortgageStocks() to mortgage stocks
  *  Uses RetrieveStocksFromMortgage() to get back mortgaged stocks */
 
@@ -46,6 +47,8 @@ class MortgageFragment : Fragment() {
     private var stocksTransaction = 0
     private var lastStockId = 1
     private var companiesArray = StockUtils.getCompanyNamesArray()
+
+    private lateinit var model: DalalViewModel
 
     lateinit var networkDownHandler: ConnectionUtils.OnNetworkDownHandler
     private var loadingDialog: AlertDialog? = null
@@ -80,7 +83,10 @@ class MortgageFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
         val rootView = inflater.inflate(R.layout.fragment_mortgage, container, false)
+
+        model = activity?.run { ViewModelProviders.of(this).get(DalalViewModel::class.java) } ?: throw Exception("Invalid activity")
         DaggerDalalStreetApplicationComponent.builder().contextModule(ContextModule(context!!)).build().inject(this)
+
         return rootView
     }
 
@@ -102,7 +108,7 @@ class MortgageFragment : Fragment() {
         }
 
         mortgageRadioGroup.setOnCheckedChangeListener { _, id ->
-            val currentPrice = StockUtils.getPriceFromStockId(MainActivity.globalStockDetails, lastStockId)
+            val currentPrice = StockUtils.getPriceFromStockId(model.globalStockDetails, lastStockId)
 
             if (id == R.id.mortgage_radioButton) {
                 mortgage_button.setText(R.string.mortgage_uppercase)
@@ -166,6 +172,7 @@ class MortgageFragment : Fragment() {
                     if (mortgageStocksResponse.statusCode == MortgageStocksResponse.StatusCode.OK) {
                         Toast.makeText(context, "Transaction successful", Toast.LENGTH_SHORT).show()
 
+                        // Not using ViewModel data because stream update might be slow; anyway it is in sync with logic
                         stocksOwned -= stocksTransaction
                         stocksMortgaged += stocksTransaction
 
@@ -240,12 +247,12 @@ class MortgageFragment : Fragment() {
                         val mortgageString = " :  " + stocksMortgaged.toString()
                         stocksMortgaged_textView.text = mortgageString
 
-                        stocksOwned = getQuantityOwnedFromCompanyName(MainActivity.ownedStockDetails, getCompanyNameFromStockId(lastStockId))
+                        stocksOwned = getQuantityOwnedFromCompanyName(model.ownedStockDetails, getCompanyNameFromStockId(lastStockId))
 
                         val ownedString = " :  " + stocksOwned.toString()
                         stocksOwned_textView.text = ownedString
 
-                        val currentPrice = StockUtils.getPriceFromStockId(MainActivity.globalStockDetails, lastStockId)
+                        val currentPrice = StockUtils.getPriceFromStockId(model.globalStockDetails, lastStockId)
 
                         val tempString = " :  " + Constants.RUPEE_SYMBOL + " " + currentPrice.toString()
                         currentPrice_textView.text = tempString
