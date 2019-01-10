@@ -10,6 +10,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import androidx.navigation.Navigation
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import dalalstreet.api.DalalActionServiceGrpc
@@ -61,6 +63,7 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
         override fun onReceive(context: Context, intent: Intent) {
             when (intent.action) {
                 Constants.REFRESH_WORTH_TEXTVIEW_ACTION -> {
+
                     changeTextViewValue(stockWorthTextView, intent.getIntExtra(TOTAL_WORTH_KEY, 0), false)
                     changeTextViewValue(cashWorthTextView, intent.getIntExtra(TOTAL_WORTH_KEY, 0), true)
                 }
@@ -109,6 +112,12 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
         }
 
         drawerEdgeButton.setOnClickListener { mainDrawerLayout.openDrawer(GravityCompat.START, true) }
+
+        val navController = findNavController(R.id.main_host_fragment)
+        Navigation.setViewNavController(button_bar, navController)
+        button_bar.setOnClickListener {
+            navController.navigate(R.id.worth_fragment)
+        }
     }
 
     // Adding and setting up Navigation drawer
