@@ -2,19 +2,14 @@ package org.pragyan.dalal18.utils;
 
 public class Constants {
 
-    /* Test host - 139.59.47.250
-     *  Test port - 443          */
-
-    public static final String HOST = "10.2.75.254";
+    public static final String HOST = "10.2.64.81";
     public static final int PORT = 8000;
 
     public static final String COMPANY_IMAGES_BASE_URL = "https://dalal.pragyan.org/public/src/images/companies/";
 
     public static final int NUMBER_OF_COMPANIES = 30;
 
-    public static final int STOCK_HISTORY_LOADER_ID = 201;
     public static final int ORDERS_LOADER_ID = 401;
-    public static final int COMPANY_PROFILE_LOADER_ID = 601;
     public static final int LEADER_BOARD_LOADER_ID = 801;
     public static final int NOTIFICATION_LOADER_ID = 1001;
 
@@ -44,7 +39,6 @@ public class Constants {
     public static final String  SESSION_KEY = "session-key";
     public static final String  MARKET_OPEN_KEY = "market-open-key";
     public static final String  PASSWORD_KEY = "password-key";
-    public static final String COMPANY_NAME_KEY = "company-name-key";
 }
 
 /*  Login response : Constants

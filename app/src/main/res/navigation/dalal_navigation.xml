@@ -69,9 +69,10 @@
     </fragment>
 
     <fragment
-        android:id="@+id/worth_fragment"
+        android:id="@+id/worth_dest"
         android:name="org.pragyan.dalal18.fragment.WorthFragment"
         android:label="@string/portfolio"
         tools:layout="@layout/fragment_worth">
     </fragment>
+
 </navigation>

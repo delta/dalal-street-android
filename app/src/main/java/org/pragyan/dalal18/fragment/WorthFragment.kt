@@ -27,8 +27,7 @@ import org.pragyan.dalal18.utils.StockUtils.getCompanyNameFromStockId
 
 class WorthFragment : Fragment() {
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val rootView = inflater.inflate(R.layout.fragment_worth, container, false)
         DaggerDalalStreetApplicationComponent.builder().contextModule(ContextModule(context!!)).build().inject(this)
         return rootView
@@ -37,7 +36,7 @@ class WorthFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        with(piechart){
+        with(worthPiechart){
             setUsePercentValues(true)
             description.isEnabled = false
             setExtraOffsets(10f, 10f, 10f, 10f)
@@ -51,7 +50,7 @@ class WorthFragment : Fragment() {
             setDrawCenterText(true)
         }
 
-        val legend = piechart.legend
+        val legend = worthPiechart.legend
         with(legend){
             verticalAlignment = Legend.LegendVerticalAlignment.TOP
             horizontalAlignment = Legend.LegendHorizontalAlignment.RIGHT
@@ -105,8 +104,8 @@ class WorthFragment : Fragment() {
         data.setValueFormatter(PercentFormatter())
         data.setValueTextSize(11f)
         data.setValueTextColor(R.color.neutral_font_color)
-        piechart.data = data
-        piechart.highlightValues(null)
-        piechart.invalidate()
+        worthPiechart.data = data
+        worthPiechart.highlightValues(null)
+        worthPiechart.invalidate()
     }
 }
