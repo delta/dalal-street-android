@@ -68,4 +68,10 @@
         tools:layout="@layout/fragment_market_depth">
     </fragment>
 
+    <fragment
+        android:id="@+id/worth_fragment"
+        android:name="org.pragyan.dalal18.fragment.WorthFragment"
+        android:label="@string/portfolio"
+        tools:layout="@layout/fragment_worth">
+    </fragment>
 </navigation>
