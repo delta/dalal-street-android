@@ -71,6 +71,7 @@ class TransactionsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         (activity as AppCompatActivity).supportActionBar?.title = resources.getString(R.string.transactions)
         transactionsAdapter = TransactionRecyclerAdapter(context, null)
 

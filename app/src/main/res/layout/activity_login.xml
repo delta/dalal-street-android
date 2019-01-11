@@ -61,7 +61,6 @@
                     android:ems="10"
                     android:hint="@string/email_hint"
                     android:inputType="textEmailAddress"
-                    android:text="107116035@nitt.edu"
                     android:textColor="@color/neutral_font_color"
                     android:textColorHint="@color/neutral_font_color" />
 

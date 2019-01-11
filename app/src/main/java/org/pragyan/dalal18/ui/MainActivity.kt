@@ -236,7 +236,7 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
 
                             }
                             TransactionType.ORDER_FILL_TRANSACTION -> {
-
+// TODO: Condition when shorting the stocks
                                 updateOwnedStockIdAndQuantity(transaction.stockId, Math.abs(transaction.stockQuantity), transaction.stockQuantity > 0)
 
                                 val intent = Intent(Constants.REFRESH_WORTH_TEXTVIEW_ACTION)
