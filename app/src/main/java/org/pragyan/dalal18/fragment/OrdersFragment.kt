@@ -4,53 +4,35 @@ package org.pragyan.dalal18.fragment
 import android.content.Context
 import android.os.Bundle
 import android.os.Handler
-import androidx.fragment.app.Fragment
-import androidx.loader.app.LoaderManager
-import androidx.loader.content.Loader
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import androidx.appcompat.app.AlertDialog
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.RelativeLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-
+import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import dalalstreet.api.DalalActionServiceGrpc
+import dalalstreet.api.DalalStreamServiceGrpc
+import dalalstreet.api.actions.CancelOrderRequest
+import dalalstreet.api.actions.GetMyOpenOrdersRequest
+import dalalstreet.api.actions.GetMyOpenOrdersResponse
+import dalalstreet.api.datastreams.*
+import io.grpc.stub.StreamObserver
+import kotlinx.android.synthetic.main.fragment_my_orders.*
+import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.uiThread
 import org.pragyan.dalal18.R
 import org.pragyan.dalal18.adapter.OrdersRecyclerAdapter
 import org.pragyan.dalal18.dagger.ContextModule
 import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent
 import org.pragyan.dalal18.data.Order
-import org.pragyan.dalal18.loaders.OpenOrdersLoader
 import org.pragyan.dalal18.utils.ConnectionUtils
 import org.pragyan.dalal18.utils.Constants
-
-import java.util.ArrayList
-
+import java.util.*
 import javax.inject.Inject
-
-import dalalstreet.api.DalalActionServiceGrpc
-import dalalstreet.api.DalalStreamServiceGrpc
-import dalalstreet.api.actions.CancelOrderRequest
-import dalalstreet.api.actions.CancelOrderResponse
-import dalalstreet.api.actions.GetMyOpenOrdersRequest
-import dalalstreet.api.actions.GetMyOpenOrdersResponse
-import dalalstreet.api.datastreams.DataStreamType
-import dalalstreet.api.datastreams.MyOrderUpdate
-import dalalstreet.api.datastreams.SubscribeRequest
-import dalalstreet.api.datastreams.SubscribeResponse
-import dalalstreet.api.datastreams.SubscriptionId
-import dalalstreet.api.datastreams.UnsubscribeRequest
-import dalalstreet.api.datastreams.UnsubscribeResponse
-import dalalstreet.api.models.Ask
-import dalalstreet.api.models.Bid
-import io.grpc.stub.StreamObserver
-import kotlinx.android.synthetic.main.fragment_my_orders.*
-import org.jetbrains.anko.doAsync
-import org.jetbrains.anko.uiThread
 
 class OrdersFragment : Fragment(), OrdersRecyclerAdapter.OnOrderClickListener, SwipeRefreshLayout.OnRefreshListener {
 
@@ -64,7 +46,7 @@ class OrdersFragment : Fragment(), OrdersRecyclerAdapter.OnOrderClickListener, S
     private var orderSubscriptionId: SubscriptionId? = null
 
     private var networkDownHandler: ConnectionUtils.OnNetworkDownHandler? = null
-    lateinit var loadingOrdersDialog: AlertDialog
+    private lateinit var loadingOrdersDialog: AlertDialog
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -120,6 +102,7 @@ class OrdersFragment : Fragment(), OrdersRecyclerAdapter.OnOrderClickListener, S
                         override fun onError(t: Throwable) {
 
                         }
+
                         override fun onCompleted() {
 
                         }
@@ -132,7 +115,7 @@ class OrdersFragment : Fragment(), OrdersRecyclerAdapter.OnOrderClickListener, S
             override fun onNext(orderUpdate: MyOrderUpdate) {
                 if (activity != null) {
                     val id = orderUpdate.id
-                    ordersRecyclerAdapter?.swapSingleItem(id,orderUpdate)
+                    ordersRecyclerAdapter?.swapSingleItem(id, orderUpdate)
                 }
             }
 
@@ -146,15 +129,12 @@ class OrdersFragment : Fragment(), OrdersRecyclerAdapter.OnOrderClickListener, S
         })
     }
 
-    private fun getOpenOrdersAsynchronously()
-    {
+    private fun getOpenOrdersAsynchronously() {
         loadingOrdersDialog.show()
         doAsync {
-            if (ConnectionUtils.getConnectionInfo(getContext()) && ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT))
-            {
+            if (ConnectionUtils.getConnectionInfo(context) && ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
                 val openOrdersResponse = actionServiceBlockingStub.getMyOpenOrders(GetMyOpenOrdersRequest.newBuilder().build())
-                if(openOrdersResponse?.statusCode == GetMyOpenOrdersResponse.StatusCode.OK)
-                {
+                if (openOrdersResponse?.statusCode == GetMyOpenOrdersResponse.StatusCode.OK) {
                     ordersRecycler_swipeRefreshLayout.isRefreshing = false
 
                     val ordersList = ArrayList<Order>()
@@ -201,20 +181,16 @@ class OrdersFragment : Fragment(), OrdersRecyclerAdapter.OnOrderClickListener, S
                         } else {
                             ordersRecycler_swipeRefreshLayout.visibility = View.GONE
                             emptyOrders_relativeLayout.visibility = View.VISIBLE
-                        } }
+                        }
+                    }
+                } else {
+                    Toast.makeText(activity, openOrdersResponse?.statusMessage, Toast.LENGTH_LONG).show()
                 }
-                else
-                {
-                    Toast.makeText(activity,openOrdersResponse?.statusMessage,Toast.LENGTH_LONG).show()
-                }
-            }
-            else
-            {
+            } else {
                 networkDownHandler?.onNetworkDownError()
             }
         }
     }
-
 
     override fun onOrderClick(orderId: Int, bid: Boolean) {
 
@@ -223,7 +199,7 @@ class OrdersFragment : Fragment(), OrdersRecyclerAdapter.OnOrderClickListener, S
                     .setTitle("Cancel Confirm")
                     .setCancelable(true)
                     .setMessage("Do you want to cancel this order ?")
-                    .setPositiveButton("Yes") { dialogInterface, i ->
+                    .setPositiveButton("Yes") { _, _ ->
                         Handler().post {
                             val response = actionServiceBlockingStub.cancelOrder(
                                     CancelOrderRequest.newBuilder().setOrderId(orderId).setIsAsk(!bid).build())
@@ -237,17 +213,14 @@ class OrdersFragment : Fragment(), OrdersRecyclerAdapter.OnOrderClickListener, S
                             }
                         }
                     }
-                    .setNegativeButton("No") { dialogInterface, i -> dialogInterface.dismiss() }
+                    .setNegativeButton("No") { dialogInterface, _ -> dialogInterface.dismiss() }
             builder.show()
         }
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        if(loadingOrdersDialog != null)
-        {
-            loadingOrdersDialog.dismiss()
-        }
+        loadingOrdersDialog.dismiss()
         Handler().post {
             if (orderSubscriptionId != null) {
                 streamServiceStub.unsubscribe(UnsubscribeRequest.newBuilder().setSubscriptionId(orderSubscriptionId).build(),

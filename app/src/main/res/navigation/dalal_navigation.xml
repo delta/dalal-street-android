@@ -9,93 +9,79 @@
         android:id="@+id/home_dest"
         android:name="org.pragyan.dalal18.fragment.HomeFragment"
         android:label="@string/home"
-        tools:layout="@layout/fragment_home">
-    </fragment>
+        tools:layout="@layout/fragment_home" />
 
     <fragment
         android:id="@+id/mortgage_dest"
         android:name="org.pragyan.dalal18.fragment.MortgageFragment"
         android:label="@string/mortgage"
-        tools:layout="@layout/fragment_mortgage">
-    </fragment>
+        tools:layout="@layout/fragment_mortgage" />
 
     <fragment
         android:id="@+id/companies_dest"
         android:name="org.pragyan.dalal18.fragment.CompanyFragment"
         android:label="@string/companies"
-        tools:layout="@layout/fragment_companies">
-    </fragment>
+        tools:layout="@layout/fragment_companies" />
 
     <fragment
         android:id="@+id/news_dest"
         android:name="org.pragyan.dalal18.fragment.NewsFragment"
         android:label="@string/news"
-        tools:layout="@layout/fragment_news">
-    </fragment>
+        tools:layout="@layout/fragment_news" />
 
     <fragment
         android:id="@+id/transactions_dest"
         android:name="org.pragyan.dalal18.fragment.TransactionsFragment"
         android:label="@string/transactions"
-        tools:layout="@layout/fragment_transactions">
-    </fragment>
+        tools:layout="@layout/fragment_transactions" />
 
     <fragment
         android:id="@+id/exchange_dest"
         android:name="org.pragyan.dalal18.fragment.StockExchangeFragment"
         android:label="@string/stock_exchange"
-        tools:layout="@layout/fragment_stock_exchange">
-    </fragment>
+        tools:layout="@layout/fragment_stock_exchange" />
 
     <fragment
-
+        android:id="@+id/nav_my_orders"
         android:name="org.pragyan.dalal18.fragment.OrdersFragment"
-        android:id = "@+id/nav_my_orders"
-        android:label = "@string/orders_frag_label"
-        tools:layout = "@layout/fragment_my_orders">
-
+        android:label="@string/orders_frag_label"
+        tools:layout="@layout/fragment_my_orders">
     </fragment>
 
     <fragment
+        android:id="@+id/nav_leaderboard"
         android:name="org.pragyan.dalal18.fragment.LeaderboardFragment"
-        android:id = "@+id/nav_leaderboard"
-        android:label = "@string/leaderboard_frag_label"
-        tools:layout = "@layout/fragment_leaderboard">
+        android:label="@string/leaderboard_frag_label"
+        tools:layout="@layout/fragment_leaderboard" />
 
-    </fragment>
+    <fragment
+        android:id="@+id/nav_news_details"
+        android:name="org.pragyan.dalal18.fragment.NewsDetailsFragment"
+        android:label="@string/news_details_frag_label"
+        tools:layout="@layout/activity_news_details" />
 
-    <fragment android:name="org.pragyan.dalal18.fragment.NewsDetailsFragment"
-        android:id = "@+id/nav_news_details"
-        android:label = "@string/news_details_frag_label"
-        tools:layout = "@layout/activity_news_details">
-
-    </fragment>
     <fragment
         android:id="@+id/portfolio_dest"
         android:name="org.pragyan.dalal18.fragment.PortfolioFragment"
         android:label="@string/portfolio"
-        tools:layout="@layout/fragment_portfolio">
-    </fragment>
+        tools:layout="@layout/fragment_portfolio" />
 
     <fragment
         android:id="@+id/trade_dest"
         android:name="org.pragyan.dalal18.fragment.TradeFragment"
         android:label="@string/trade"
-        tools:layout="@layout/fragment_trade">
-    </fragment>
+        tools:layout="@layout/fragment_trade" />
 
     <fragment
         android:id="@+id/nav_market_depth"
         android:name="org.pragyan.dalal18.fragment.marketDepth.MarketDepthFragment"
         android:label="@string/market_depth"
-        tools:layout="@layout/fragment_market_depth">
-    </fragment>
+        tools:layout="@layout/fragment_market_depth" />
 
     <fragment
         android:id="@+id/worth_dest"
         android:name="org.pragyan.dalal18.fragment.WorthFragment"
         android:label="@string/portfolio"
-        tools:layout="@layout/fragment_worth">
-    </fragment>
+        tools:layout="@layout/fragment_worth" />
 
 </navigation>
