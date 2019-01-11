@@ -13,10 +13,14 @@
     <color name="neon_green">#39FF14</color>
     <color name="neon_orange">#FF6939</color>
     <color name="neon_blue">#00ddff</color>
+    <color name="neon_pink">#FF12FF</color>
+    <color name="neon_yellow">#FFFF00</color>
+    <color name="neon_purple">#9D00FF</color>
 
     <color name="gold_medal">#FFD700</color>
     <color name="silver_medal">#C0C0C0</color>
     <color name="bronze_medal">#CD7F32</color>
     <color name="divider_line_gray">#989898</color>
 
+    <color name="black">#000000</color>
 </resources>
