@@ -1,6 +1,8 @@
 package org.pragyan.dalal18.fragment.marketDepth
 
 import android.content.Context
+import android.graphics.Color
+import android.graphics.Paint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -10,13 +12,9 @@ import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import com.github.mikephil.charting.components.Legend
 import com.github.mikephil.charting.components.XAxis
-import com.github.mikephil.charting.data.Entry
-import com.github.mikephil.charting.data.LineData
-import com.github.mikephil.charting.data.LineDataSet
+import com.github.mikephil.charting.data.*
 import com.github.mikephil.charting.formatter.IAxisValueFormatter
-import com.github.mikephil.charting.interfaces.datasets.ILineDataSet
 import dalalstreet.api.DalalActionServiceGrpc
 import dalalstreet.api.actions.GetStockHistoryRequest
 import dalalstreet.api.actions.StockHistoryResolution
@@ -30,7 +28,6 @@ import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent
 import org.pragyan.dalal18.data.StockHistory
 import org.pragyan.dalal18.utils.ConnectionUtils
 import org.pragyan.dalal18.utils.Constants
-import org.pragyan.dalal18.utils.MiscellaneousUtils
 import org.pragyan.dalal18.utils.MiscellaneousUtils.parseDate
 import org.pragyan.dalal18.utils.StockUtils
 import org.pragyan.dalal18.utils.StockUtils.getStockIdFromCompanyName
@@ -46,10 +43,8 @@ class DepthGraphFragment : Fragment() {
     lateinit var actionServiceBlockingStub: DalalActionServiceGrpc.DalalActionServiceBlockingStub
 
     private var xVals = ArrayList<String>()
-    private var yVals = ArrayList<Entry>()
+    private var yVals = ArrayList<CandleEntry>()
     private var stockHistoryList = ArrayList<StockHistory>()
-    private var trimmedStockHistoryList = ArrayList<StockHistory>()
-    private lateinit var lineDataSet: LineDataSet
 
     private var loadingDialog: AlertDialog? = null
     lateinit var networkDownHandler: ConnectionUtils.OnNetworkDownHandler
@@ -61,7 +56,6 @@ class DepthGraphFragment : Fragment() {
         } catch (classCastException: ClassCastException) {
             throw ClassCastException(context.toString() + " must implement network down handler.")
         }
-
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -81,12 +75,15 @@ class DepthGraphFragment : Fragment() {
 
         with(market_depth_chart) {
             backgroundColor = ContextCompat.getColor(this@DepthGraphFragment.context!!, R.color.black_background)
-            setDrawGridBackground(false)
-            setBorderColor(ContextCompat.getColor(this@DepthGraphFragment.context!!, R.color.neutral_font_color))
             setTouchEnabled(false)
             setNoDataText("Select a company to view depth chart")
-            description.isEnabled = false
-            setGridBackgroundColor(ContextCompat.getColor(this@DepthGraphFragment.context!!, R.color.neutral_font_color))
+            description.isEnabled = true
+            description.text = "(60 min)"
+
+            description.textColor = ContextCompat.getColor(this@DepthGraphFragment.context!!, R.color.neutral_font_color)
+            setPinchZoom(true)
+            setDrawGridBackground(false)
+            legend.isEnabled = false
         }
 
         val arrayAdapter = ArrayAdapter(activity!!, R.layout.company_spinner_item, StockUtils.getCompanyNamesArray())
@@ -96,7 +93,6 @@ class DepthGraphFragment : Fragment() {
             setOnItemClickListener { _, _, _, _ ->
                 val currentCompany = graph_company_spinner.text.toString()
                 stockHistoryList.clear()
-                trimmedStockHistoryList.clear()
                 xVals.clear()
                 yVals.clear()
                 if (!market_depth_chart.isEmpty) {
@@ -123,28 +119,20 @@ class DepthGraphFragment : Fragment() {
                         .build())
 
                 uiThread {
+
                     for (map in stockHistoryResponse.stockHistoryMapMap.entries) {
-                        val tempStockHistory = StockHistory(convertToDate(map.key), map.value.close)
+                        val tempStockHistory = StockHistory(convertToDate(map.key),map.value.high, map.value.low,map.value.open, map.value.close)
                         stockHistoryList.add(tempStockHistory)
                     }
                     stockHistoryList.sortWith(kotlin.Comparator { (date1), (date2) -> date1!!.compareTo(date2) })
-                    stockHistoryList.reverse()
-
-                    if (stockHistoryList.size >= 10) {
-                        for (i in 0..9) {
-                            trimmedStockHistoryList.add(stockHistoryList[i])
-                        }
-                    } else {
-                        trimmedStockHistoryList.addAll(stockHistoryList)
-                    }
 
                     var highestClose = 0f
-                    trimmedStockHistoryList.reverse()
-                    for (i in trimmedStockHistoryList.indices) {
-                        xVals.add(parseDate(convertToString(trimmedStockHistoryList[i].stockDate)))
-                        yVals.add(Entry(i.toFloat(), trimmedStockHistoryList[i].stockClose.toFloat()))
-                        if (highestClose <= trimmedStockHistoryList[i].stockClose.toFloat()) {
-                            highestClose = trimmedStockHistoryList[i].stockClose.toFloat()
+                    for (i in stockHistoryList.indices) {
+                        xVals.add(parseDate(convertToString(stockHistoryList[i].stockDate)))
+                        yVals.add(CandleEntry(i.toFloat(), stockHistoryList[i].stockHigh.toFloat(),stockHistoryList[i].stockLow.toFloat(),
+                                stockHistoryList[i].stockOpen.toFloat(),stockHistoryList[i].stockClose.toFloat()))
+                        if (highestClose <= stockHistoryList[i].stockClose.toFloat()) {
+                            highestClose = stockHistoryList[i].stockClose.toFloat()
                         }
                     }
 
@@ -152,54 +140,52 @@ class DepthGraphFragment : Fragment() {
                     for (i in 0 until xVals.size) {
                         xValsArray[i] = xVals[i]
                     }
-
                     val formatter = IAxisValueFormatter { value, _ -> xValsArray[value.toInt()] }
                     val xAxis = market_depth_chart.xAxis
-                    xAxis.position = XAxis.XAxisPosition.BOTTOM
-                    xAxis.valueFormatter = formatter
-                    xAxis.granularity = 1f
-                    xAxis.textSize = 9f
-                    xAxis.textColor = ContextCompat.getColor(context!!, android.R.color.white)
-                    xAxis.enableGridDashedLine(15f, 10f, 0f)
-
-                    var yAxis = market_depth_chart.axisRight
-                    yAxis.isEnabled = false
-                    yAxis = market_depth_chart.axisLeft
-                    yAxis.granularity = 1f
-                    yAxis.enableGridDashedLine(15f, 10f, 0f)
-                    yAxis.axisMaximum = (highestClose + (0.2 * highestClose)).toFloat()
-                    yAxis.axisMinimum = 0f
-                    yAxis.textSize = 9f
-                    yAxis.textColor = ContextCompat.getColor(context!!, android.R.color.white)
-
-
-                    if (activity != null && isAdded) {
-                        lineDataSet = LineDataSet(yVals, "Stock Price")
-                        lineDataSet.lineWidth = 4f
-                        lineDataSet.color = ContextCompat.getColor(context!!, R.color.neon_green)
-                        lineDataSet.setCircleColor(ContextCompat.getColor(context!!, R.color.redTint))
-                        lineDataSet.circleRadius = MiscellaneousUtils.convertDpToPixel(context!!, 1f)
-                        lineDataSet.highLightColor = ContextCompat.getColor(context!!, R.color.neon_green)
-                        lineDataSet.setDrawFilled(false)
-                        lineDataSet.valueTextColor = ContextCompat.getColor(context!!, R.color.neon_blue)
-                        lineDataSet.valueTextSize = MiscellaneousUtils.convertDpToPixel(context!!, 4f)
-
-                        val datasets = ArrayList<ILineDataSet>()
-                        datasets.add(lineDataSet)
-                        val lineData = LineData(datasets)
-
-                        market_depth_chart.data = lineData
-                        market_depth_chart.invalidate()
-                        loadingDialog?.dismiss()
-
-                        val legend = market_depth_chart.legend
-                        legend.textColor = ContextCompat.getColor(context!!, android.R.color.white)
-                        legend.textSize = MiscellaneousUtils.convertDpToPixel(context!!, 3f)
-                        legend.orientation = Legend.LegendOrientation.HORIZONTAL
-                        legend.verticalAlignment = Legend.LegendVerticalAlignment.BOTTOM
-                        legend.horizontalAlignment = Legend.LegendHorizontalAlignment.LEFT
-                        legend.form = Legend.LegendForm.LINE
+                    with(xAxis){
+                        position = XAxis.XAxisPosition.BOTTOM
+                        setDrawGridLines(false)
+                        valueFormatter = formatter
+                        textSize = 9f
+                        textColor = ContextCompat.getColor(this@DepthGraphFragment.context!!, android.R.color.white)
+                        setDrawGridLines(true)
+                        granularity = 0f
+                        labelCount = 4
+                        setAvoidFirstLastClipping(true)
                     }
+
+                    val leftAxis = market_depth_chart.axisLeft
+                    leftAxis.isEnabled = false
+                    val yAxis = market_depth_chart.axisRight
+                    with(yAxis){
+                        setLabelCount(7, false)
+                        setDrawGridLines(false)
+                        setDrawAxisLine(true)
+                        textSize = 9f
+                        textColor = ContextCompat.getColor(this@DepthGraphFragment.context!!, android.R.color.white)
+                        setDrawGridLines(true)
+                        axisMaximum = (highestClose + (0.2 * highestClose)).toFloat()
+                        axisMinimum = 0f
+                    }
+
+                    val set1 = CandleDataSet(yVals, "Stock Price")
+                    with(set1){
+                        color = Color.rgb(80, 80, 80)
+                        shadowColor = ContextCompat.getColor(context!!, android.R.color.white)
+                        shadowWidth = 0.5f
+                        decreasingColor = ContextCompat.getColor(context!!, R.color.redTint)
+                        decreasingPaintStyle = Paint.Style.FILL
+                        increasingColor = ContextCompat.getColor(context!!, R.color.neon_green)
+                        increasingPaintStyle = Paint.Style.FILL
+                        neutralColor = ContextCompat.getColor(context!!,  R.color.neon_yellow)
+                        setDrawValues(false)
+                    }
+
+                    val data = CandleData(set1)
+                    market_depth_chart.data = data
+                    market_depth_chart.invalidate()
+
+                    loadingDialog?.dismiss()
                 }
             } else {
                 uiThread { networkDownHandler.onNetworkDownError() }
@@ -215,7 +201,6 @@ class DepthGraphFragment : Fragment() {
         } catch (e: ParseException) {
             e.printStackTrace()
         }
-
         return date
     }
 
@@ -227,7 +212,6 @@ class DepthGraphFragment : Fragment() {
     override fun onPause() {
         super.onPause()
         stockHistoryList.clear()
-        trimmedStockHistoryList.clear()
         xVals.clear()
         yVals.clear()
     }

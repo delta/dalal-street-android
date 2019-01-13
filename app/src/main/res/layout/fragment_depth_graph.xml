@@ -22,10 +22,11 @@
         app:met_underlineColor="@color/neon_orange" />
 
 
-    <com.github.mikephil.charting.charts.LineChart
+    <com.github.mikephil.charting.charts.CandleStickChart
         android:id="@+id/market_depth_chart"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginBottom="10dp"
         android:background="@color/black_background" />
 
 </LinearLayout>
