@@ -435,5 +435,6 @@
     <string name="deposit_rate_per_stock">Deposit Rate/Stock</string>
     <string name="register">REGISTER</string>
     <string name="news_details">News Details</string>
+    <string name="news_headline_transition">news_headline_transition</string>
 
 </resources>

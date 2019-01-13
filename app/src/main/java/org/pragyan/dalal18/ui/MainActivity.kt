@@ -14,7 +14,6 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
-import com.google.android.material.navigation.NavigationView
 import dalalstreet.api.DalalActionServiceGrpc
 import dalalstreet.api.DalalStreamServiceGrpc
 import dalalstreet.api.actions.LogoutRequest
@@ -32,7 +31,10 @@ import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent
 import org.pragyan.dalal18.data.DalalViewModel
 import org.pragyan.dalal18.data.StockDetails
 import org.pragyan.dalal18.notifications.NotificationService
-import org.pragyan.dalal18.utils.*
+import org.pragyan.dalal18.utils.ConnectionUtils
+import org.pragyan.dalal18.utils.Constants
+import org.pragyan.dalal18.utils.MiscellaneousUtils
+import org.pragyan.dalal18.utils.TinyDB
 import java.text.DecimalFormat
 import java.util.*
 import javax.inject.Inject
@@ -236,7 +238,7 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
 
                             }
                             TransactionType.ORDER_FILL_TRANSACTION -> {
-// TODO: Condition when shorting the stocks
+                                // TODO: Condition when shorting the stocks
                                 updateOwnedStockIdAndQuantity(transaction.stockId, Math.abs(transaction.stockQuantity), transaction.stockQuantity > 0)
 
                                 val intent = Intent(Constants.REFRESH_WORTH_TEXTVIEW_ACTION)

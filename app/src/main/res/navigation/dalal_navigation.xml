@@ -9,7 +9,13 @@
         android:id="@+id/home_dest"
         android:name="org.pragyan.dalal18.fragment.HomeFragment"
         android:label="@string/home"
-        tools:layout="@layout/fragment_home" />
+        tools:layout="@layout/fragment_home">
+
+        <action
+            android:id="@+id/action_news_list_to_details"
+            app:destination="@+id/nav_news_details"/>
+
+    </fragment>
 
     <fragment
         android:id="@+id/mortgage_dest"
@@ -28,8 +34,11 @@
         android:name="org.pragyan.dalal18.fragment.NewsFragment"
         android:label="@string/news"
         tools:layout="@layout/fragment_news">
-        <action android:id="@+id/action_news_to_news_details"
+
+        <action
+            android:id="@+id/action_news_list_to_details"
             app:destination="@+id/nav_news_details"/>
+
     </fragment>
 
     <fragment
@@ -61,7 +70,7 @@
         android:id="@+id/nav_news_details"
         android:name="org.pragyan.dalal18.fragment.NewsDetailsFragment"
         android:label="@string/news_details_frag_label"
-        tools:layout="@layout/activity_news_details" />
+        tools:layout="@layout/fragment_news_details" />
 
     <fragment
         android:id="@+id/portfolio_dest"

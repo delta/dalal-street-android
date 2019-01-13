@@ -22,7 +22,6 @@ import org.pragyan.dalal18.adapter.NotificationRecyclerAdapter;
 import org.pragyan.dalal18.dagger.ContextModule;
 import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent;
 import org.pragyan.dalal18.data.Notification;
-import org.pragyan.dalal18.loaders.NotificationLoader;
 import org.pragyan.dalal18.utils.ConnectionUtils;
 import org.pragyan.dalal18.utils.Constants;
 

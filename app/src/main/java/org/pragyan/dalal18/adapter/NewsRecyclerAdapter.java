@@ -1,6 +1,8 @@
 package org.pragyan.dalal18.adapter;
 
 import android.content.Context;
+
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,7 +21,7 @@ import static org.pragyan.dalal18.utils.MiscellaneousUtils.parseDate;
 public class NewsRecyclerAdapter extends RecyclerView.Adapter<NewsRecyclerAdapter.MyViewHolder>{
 
     private Context context;
-    private List<NewsDetails> newsList = new ArrayList<>();
+    private List<NewsDetails> newsList;
     private NewsItemClickListener onNewsClickListener;
 
     public interface NewsItemClickListener{
@@ -32,14 +34,15 @@ public class NewsRecyclerAdapter extends RecyclerView.Adapter<NewsRecyclerAdapte
         this.onNewsClickListener = listener;
     }
 
+    @NonNull
     @Override
-    public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(context).inflate(R.layout.news_list_item, parent, false);
         return new MyViewHolder(itemView);
     }
 
     @Override
-    public void onBindViewHolder(MyViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
 
         NewsDetails currentNewsDetails = newsList.get(position);
 
@@ -47,6 +50,7 @@ public class NewsRecyclerAdapter extends RecyclerView.Adapter<NewsRecyclerAdapte
         holder.createdAtTextView.setText(parseDate(currentNewsDetails.getCreatedAt()));
         holder.contentTextView.setText(currentNewsDetails.getContent());
 
+        holder.headlinesTextView.setTransitionName(context.getString(R.string.news_headline_transition) + position);
     }
 
     @Override
@@ -80,5 +84,4 @@ public class NewsRecyclerAdapter extends RecyclerView.Adapter<NewsRecyclerAdapte
             onNewsClickListener.onNewsClicked(view, getAdapterPosition());
         }
     }
-
 }

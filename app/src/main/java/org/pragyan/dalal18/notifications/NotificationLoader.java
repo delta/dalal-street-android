@@ -1,4 +1,4 @@
-package org.pragyan.dalal18.loaders;
+package org.pragyan.dalal18.notifications;
 
 import android.content.Context;
 import androidx.annotation.NonNull;

@@ -149,7 +149,6 @@ class NewsFragment : Fragment(), NewsRecyclerAdapter.NewsItemClickListener, Swip
         bundle.putString("content",newsDetailsList[position].content)
         bundle.putString("title",newsDetailsList[position].headlines)
         bundle.putString("image-path",newsDetailsList[position].imagePath)
-        view.findNavController().navigate(R.id.action_news_to_news_details,bundle)
-
+        view.findNavController().navigate(R.id.action_news_list_to_details,bundle)
     }
 }

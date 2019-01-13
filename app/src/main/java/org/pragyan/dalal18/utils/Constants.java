@@ -2,16 +2,13 @@ package org.pragyan.dalal18.utils;
 
 public class Constants {
 
-    public static final String HOST = "10.2.75.254";
-
+    public static final String HOST = "10.2.64.81";
     public static final int PORT = 8000;
 
     public static final String COMPANY_IMAGES_BASE_URL = "https://dalal.pragyan.org/public/src/images/companies/";
 
     public static final int NUMBER_OF_COMPANIES = 30;
 
-    public static final int ORDERS_LOADER_ID = 401;
-    public static final int LEADER_BOARD_LOADER_ID = 801;
     public static final int NOTIFICATION_LOADER_ID = 1001;
 
     public static final String REFRESH_NEWS_ACTION = "refresh-news-action";

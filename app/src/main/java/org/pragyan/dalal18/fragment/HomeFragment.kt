@@ -9,12 +9,14 @@ import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.PagerSnapHelper
@@ -170,6 +172,10 @@ class HomeFragment : Fragment(), NewsRecyclerAdapter.NewsItemClickListener {
         }
 
         if (companyTickerDetailsList.size != 0) {
+
+            for (x in 1..3)
+                companyTickerDetailsList.addAll(companyTickerDetailsList)
+
             companyTickerRecyclerAdapter.swapData(companyTickerDetailsList)
         }
 
@@ -187,22 +193,26 @@ class HomeFragment : Fragment(), NewsRecyclerAdapter.NewsItemClickListener {
     }
 
     override fun onNewsClicked(view: View, position: Int) {
+        val transitionName = getString(R.string.news_headline_transition) + position
+
         val bundle = Bundle()
-        bundle.putString("created-at",newsList[position].createdAt)
-        bundle.putString("content",newsList[position].content)
-        bundle.putString("title",newsList[position].headlines)
-        bundle.putString("image-path",newsList[position].imagePath)
-        view.findNavController().navigate(R.id.nav_news_details,bundle)
+        bundle.putString("created-at", newsList[position].createdAt)
+        bundle.putString("content", newsList[position].content)
+        bundle.putString("title", newsList[position].headlines)
+        bundle.putString("image-path", newsList[position].imagePath)
+        bundle.putString("transition-name", transitionName)
+
+        val extras = FragmentNavigatorExtras(view.findViewById<TextView>(R.id.news_head) to transitionName)
+        view.findNavController().navigate(R.id.action_news_list_to_details, bundle, null, extras)
     }
 
     override fun onResume() {
         super.onResume()
-        if (context != null) {
-            val intentFilter = IntentFilter()
-            intentFilter.addAction(Constants.REFRESH_NEWS_ACTION)
-            intentFilter.addAction(Constants.REFRESH_PRICE_TICKER_ACTION)
-            LocalBroadcastManager.getInstance(context!!).registerReceiver(refreshNewsListReceiver, intentFilter)
-        }
+
+        val intentFilter = IntentFilter()
+        intentFilter.addAction(Constants.REFRESH_NEWS_ACTION)
+        intentFilter.addAction(Constants.REFRESH_PRICE_TICKER_ACTION)
+        LocalBroadcastManager.getInstance(context!!).registerReceiver(refreshNewsListReceiver, intentFilter)
     }
 
     override fun onPause() {
