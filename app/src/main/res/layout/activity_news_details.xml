@@ -3,8 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/black_background"
-    tools:context="org.pragyan.dalal18.ui.NewsDetailsActivity">
+    android:background="@color/black_background">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/news_details_toolbar"

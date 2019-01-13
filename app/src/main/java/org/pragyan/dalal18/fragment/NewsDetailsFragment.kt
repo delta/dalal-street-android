@@ -22,7 +22,7 @@ class NewsDetailsFragment: Fragment() {
     lateinit var loadingDialog:AlertDialog
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val rootView = inflater.inflate(R.layout.activity_news_details,container,false);
+        val rootView = inflater.inflate(R.layout.activity_news_details,container,false)
 
         return rootView
     }
@@ -30,12 +30,13 @@ class NewsDetailsFragment: Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         (activity as AppCompatActivity).supportActionBar?.title = resources.getString(R.string.news_details)
-        val newsDetails = arguments?.getParcelable<NewsDetails>("news-details-key")
-        news_details_head.text = newsDetails?.headlines
-        news_details_content.text = newsDetails?.content
-        news_details_created_at.text = parseDate(newsDetails?.createdAt)
+//        val newsDetails = arguments?.getParcelable<NewsDetails>("news-details-key")
 
-        Picasso.with(activity).load("https://dalal.pragyan.org/public/src/images/news/" + newsDetails?.imagePath!!).into(news_details_image)
+        news_details_head.text = arguments?.getString("title")
+        news_details_content.text = arguments?.getString("content")
+        news_details_created_at.text = parseDate(arguments?.getString("created-at"))
+
+        Picasso.with(activity).load("https://dalal.pragyan.org/public/src/images/news/" + arguments?.getString("image-path")!!).into(news_details_image)
         //The toolbar code has not been converted
         activity?.title = getString(R.string.news_details)
         loadingDialog.dismiss()

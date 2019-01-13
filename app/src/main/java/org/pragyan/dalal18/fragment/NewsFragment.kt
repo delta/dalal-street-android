@@ -14,6 +14,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import dalalstreet.api.DalalActionServiceGrpc
@@ -43,6 +44,12 @@ class NewsFragment : Fragment(), NewsRecyclerAdapter.NewsItemClickListener, Swip
     private var newsDetailsList = mutableListOf<NewsDetails>()
 
     lateinit var networkDownHandler: ConnectionUtils.OnNetworkDownHandler
+
+
+    companion object {
+        @JvmStatic
+        var NEWS_DETAILS_KEY = "news-detail-key"
+    }
 
     private val refreshNewsListListener = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
@@ -143,9 +150,12 @@ class NewsFragment : Fragment(), NewsRecyclerAdapter.NewsItemClickListener, Swip
     override fun onRefresh() = getNewsAsynchronously()
 
     override fun onNewsClicked(view: View?, position: Int) {
-        /*val intent = Intent(context, NewsDetailsActivity::class.java)
-        intent.putExtra(NewsDetailsActivity.NEWS_DETAILS_KEY, newsDetailsList[position])
-        startActivity(intent)*/
+        val bundle = Bundle()
+        bundle.putString("created-at",newsDetailsList[position].createdAt)
+        bundle.putString("content",newsDetailsList[position].content)
+        bundle.putString("title",newsDetailsList[position].headlines)
+        bundle.putString("image-path",newsDetailsList[position].imagePath)
+        view?.findNavController()?.navigate(R.id.action_news_to_news_details,bundle)
 
     }
 }
