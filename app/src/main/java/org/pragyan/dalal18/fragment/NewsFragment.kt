@@ -45,12 +45,6 @@ class NewsFragment : Fragment(), NewsRecyclerAdapter.NewsItemClickListener, Swip
 
     lateinit var networkDownHandler: ConnectionUtils.OnNetworkDownHandler
 
-
-    companion object {
-        @JvmStatic
-        var NEWS_DETAILS_KEY = "news-detail-key"
-    }
-
     private val refreshNewsListListener = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             if (intent.action != null && intent.action.equals(Constants.REFRESH_NEWS_ACTION, ignoreCase = true))
@@ -149,13 +143,13 @@ class NewsFragment : Fragment(), NewsRecyclerAdapter.NewsItemClickListener, Swip
 
     override fun onRefresh() = getNewsAsynchronously()
 
-    override fun onNewsClicked(view: View?, position: Int) {
+    override fun onNewsClicked(view: View, position: Int) {
         val bundle = Bundle()
         bundle.putString("created-at",newsDetailsList[position].createdAt)
         bundle.putString("content",newsDetailsList[position].content)
         bundle.putString("title",newsDetailsList[position].headlines)
         bundle.putString("image-path",newsDetailsList[position].imagePath)
-        view?.findNavController()?.navigate(R.id.action_news_to_news_details,bundle)
+        view.findNavController().navigate(R.id.action_news_to_news_details,bundle)
 
     }
 }

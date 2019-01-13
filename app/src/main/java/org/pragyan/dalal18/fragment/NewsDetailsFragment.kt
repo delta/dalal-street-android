@@ -1,12 +1,8 @@
 package org.pragyan.dalal18.fragment
 
 import android.app.AlertDialog
-import android.content.Context
-import android.content.Intent
-import android.content.Intent.getIntent
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
@@ -15,22 +11,18 @@ import androidx.fragment.app.Fragment
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_news_details.*
 import org.pragyan.dalal18.R
-import org.pragyan.dalal18.data.NewsDetails
 import org.pragyan.dalal18.utils.MiscellaneousUtils.parseDate
 
 class NewsDetailsFragment: Fragment() {
-    lateinit var loadingDialog:AlertDialog
+    private lateinit var loadingDialog:AlertDialog
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val rootView = inflater.inflate(R.layout.activity_news_details,container,false)
-
-        return rootView
+        return inflater.inflate(R.layout.activity_news_details,container,false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         (activity as AppCompatActivity).supportActionBar?.title = resources.getString(R.string.news_details)
-//        val newsDetails = arguments?.getParcelable<NewsDetails>("news-details-key")
 
         news_details_head.text = arguments?.getString("title")
         news_details_content.text = arguments?.getString("content")
