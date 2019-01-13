@@ -14,6 +14,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import androidx.navigation.Navigation
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.PagerSnapHelper
@@ -187,9 +189,12 @@ class HomeFragment : Fragment(), NewsRecyclerAdapter.NewsItemClickListener {
     }
 
     override fun onNewsClicked(view: View, position: Int) {
-        /*val intent = Intent(context, NewsDetailsActivity::class.java)
-        intent.putExtra(NewsDetailsActivity.NEWS_DETAILS_KEY, newsList[position])
-        startActivity(intent)*/
+        val bundle = Bundle()
+        bundle.putString("created-at",newsList[position].createdAt)
+        bundle.putString("content",newsList[position].content)
+        bundle.putString("title",newsList[position].headlines)
+        bundle.putString("image-path",newsList[position].imagePath)
+        view.findNavController().navigate(R.id.nav_news_details,bundle)
     }
 
     override fun onResume() {
