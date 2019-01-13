@@ -31,7 +31,7 @@ data class Portfolio(val shortName: String, var companyName: String?, var quanti
 @Parcelize
 data class StockDetails(var stockId: Int, var quantity: Int) : Parcelable
 
-data class StockHistory(var stockDate: Date?, var stockClose: Int)
+data class StockHistory(var stockDate: Date?, var stockHigh: Int,var stockLow: Int,var stockOpen: Int,var stockClose: Int)
 
 data class Transaction(var type: String?, var stockId: Int, val noOfStocks: Int, val stockPrice: Float,
                        var time: String?, val totalMoney: Float)
