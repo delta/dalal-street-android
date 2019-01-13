@@ -9,14 +9,14 @@ import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.navigation.findNavController
-import androidx.navigation.fragment.FragmentNavigatorExtras
+import androidx.navigation.fragment.FragmentNavigator
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.PagerSnapHelper
@@ -192,17 +192,25 @@ class HomeFragment : Fragment(), NewsRecyclerAdapter.NewsItemClickListener {
         breakingNewsTextView.text = builder.toString()
     }
 
-    override fun onNewsClicked(view: View, position: Int) {
-        val transitionName = getString(R.string.news_headline_transition) + position
+    override fun onNewsClicked(view: View, position: Int, view1 : View, view2 : View, view3 : View) {
+        val headTransition = "head$position"
+        val contentTransition = "content$position"
+        val createdAtTransition = "created$position"
 
         val bundle = Bundle()
-        bundle.putString("created-at", newsList[position].createdAt)
-        bundle.putString("content", newsList[position].content)
-        bundle.putString("title", newsList[position].headlines)
-        bundle.putString("image-path", newsList[position].imagePath)
-        bundle.putString("transition-name", transitionName)
+        bundle.putString(Constants.NEWS_CREATED_AT_KEY, newsList[position].createdAt)
+        bundle.putString(Constants.NEWS_CONTENT_KEY, newsList[position].content)
+        bundle.putString(Constants.NEWS_HEAD_KEY, newsList[position].headlines)
+        bundle.putString(Constants.NEWS_IMAGE_PATH_KEY, newsList[position].imagePath)
+        bundle.putString(Constants.HEAD_TRANSITION_KEY, headTransition)
+        bundle.putString(Constants.CONTENT_TRANSITION_KEY, contentTransition)
+        bundle.putString(Constants.CREATED_AT_TRANSITION_KEY, createdAtTransition)
 
-        val extras = FragmentNavigatorExtras(view.findViewById<TextView>(R.id.news_head) to transitionName)
+        val extras = FragmentNavigator.Extras.Builder()
+                .addSharedElement(view1, ViewCompat.getTransitionName(view1)!!)
+                .addSharedElement(view2, ViewCompat.getTransitionName(view2)!!)
+                .addSharedElement(view3, ViewCompat.getTransitionName(view3)!!)
+                .build()
         view.findNavController().navigate(R.id.action_news_list_to_details, bundle, null, extras)
     }
 

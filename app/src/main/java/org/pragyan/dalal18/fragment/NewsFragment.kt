@@ -12,9 +12,11 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
 import androidx.fragment.app.Fragment
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.FragmentNavigator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import dalalstreet.api.DalalActionServiceGrpc
@@ -143,12 +145,25 @@ class NewsFragment : Fragment(), NewsRecyclerAdapter.NewsItemClickListener, Swip
 
     override fun onRefresh() = getNewsAsynchronously()
 
-    override fun onNewsClicked(view: View, position: Int) {
+    override fun onNewsClicked(view: View, position: Int, view1 : View, view2 : View,view3 : View) {
+        val headTransition = "head$position"
+        val contentTransition = "content$position"
+        val createdAtTransition = "created$position"
+
         val bundle = Bundle()
-        bundle.putString("created-at",newsDetailsList[position].createdAt)
-        bundle.putString("content",newsDetailsList[position].content)
-        bundle.putString("title",newsDetailsList[position].headlines)
-        bundle.putString("image-path",newsDetailsList[position].imagePath)
-        view.findNavController().navigate(R.id.action_news_list_to_details,bundle)
+        bundle.putString(Constants.NEWS_CREATED_AT_KEY,newsDetailsList[position].createdAt)
+        bundle.putString(Constants.NEWS_CONTENT_KEY,newsDetailsList[position].content)
+        bundle.putString(Constants.NEWS_HEAD_KEY,newsDetailsList[position].headlines)
+        bundle.putString(Constants.NEWS_IMAGE_PATH_KEY,newsDetailsList[position].imagePath)
+        bundle.putString(Constants.HEAD_TRANSITION_KEY, headTransition)
+        bundle.putString(Constants.CONTENT_TRANSITION_KEY, contentTransition)
+        bundle.putString(Constants.CREATED_AT_TRANSITION_KEY, createdAtTransition)
+
+        val extras = FragmentNavigator.Extras.Builder()
+                .addSharedElement(view1, ViewCompat.getTransitionName(view1)!!)
+                .addSharedElement(view2, ViewCompat.getTransitionName(view2)!!)
+                .addSharedElement(view3, ViewCompat.getTransitionName(view3)!!)
+                .build()
+        view.findNavController().navigate(R.id.action_news_list_to_details, bundle, null, extras)
     }
 }
