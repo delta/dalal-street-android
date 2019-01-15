@@ -84,17 +84,12 @@ sourceSets {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
-    // Butterknife
-    implementation 'com.jakewharton:butterknife:8.8.1'
-    annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
-
     // Support Libraries
     implementation 'androidx.appcompat:appcompat:1.1.0-alpha01'
-    implementation 'com.google.android.material:material:1.1.0-alpha01'
-    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    implementation 'com.google.android.material:material:1.1.0-alpha02'
     implementation 'androidx.browser:browser:1.0.0'
-    implementation 'androidx.preference:preference:1.1.0-alpha01'
-    implementation 'androidx.constraintlayout:constraintlayout:2.0.0-alpha2'
+    implementation 'androidx.preference:preference:1.1.0-alpha02'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.0-alpha3'
     implementation 'com.google.android.gms:play-services-auth:16.0.1'
 
     // Material libraries
@@ -122,8 +117,8 @@ dependencies {
     implementation "org.jetbrains.anko:anko:0.10.5"
 
     // Navigation
-    implementation 'android.arch.navigation:navigation-fragment-ktx:1.0.0-alpha06'
-    implementation 'android.arch.navigation:navigation-ui-ktx:1.0.0-alpha06'
+    implementation 'android.arch.navigation:navigation-fragment-ktx:1.0.0-alpha09'
+    implementation 'android.arch.navigation:navigation-ui-ktx:1.0.0-alpha09'
 
     // Lifecycle
     implementation "androidx.lifecycle:lifecycle-extensions:2.0.0"

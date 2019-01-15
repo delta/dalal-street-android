@@ -93,7 +93,7 @@ class PortfolioFragment : Fragment() {
 
             if (quantity != 0) {
                 portfolioList.add(Portfolio(
-                        StockUtils.getShortNameForStockId(model.globalStockDetails, stockId)!!,
+                        StockUtils.getShortNameForStockId(stockId)!!,
                         StockUtils.getCompanyNameFromStockId(stockId),
                         quantity,
                         currentPrice,

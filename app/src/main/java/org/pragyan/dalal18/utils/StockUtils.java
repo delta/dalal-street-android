@@ -2,9 +2,7 @@ package org.pragyan.dalal18.utils;
 
 import org.pragyan.dalal18.data.GlobalStockDetails;
 import org.pragyan.dalal18.data.StockDetails;
-import org.pragyan.dalal18.ui.MainActivity;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import dalalstreet.api.models.OrderType;
@@ -60,8 +58,8 @@ public class StockUtils {
         }
     }
 
-    public static String getShortNameForStockId(List<GlobalStockDetails> globalStockDetails, int stockId) {
-        for (GlobalStockDetails currentDetails : globalStockDetails) {
+    public static String getShortNameForStockId(int stockId) {
+        for (StockIdCompanyName currentDetails : stockIdCompanyNameList) {
             if (currentDetails.getStockId() == stockId)
                 return currentDetails.getShortName();
         }
@@ -71,11 +69,12 @@ public class StockUtils {
     public static class StockIdCompanyName {
 
         private int stockId;
-        private String companyName;
+        private String companyName, shortName;
 
-        public StockIdCompanyName(int stockId, String companyName) {
+        public StockIdCompanyName(int stockId, String companyName, String shortName) {
             this.stockId = stockId;
             this.companyName = companyName;
+            this.shortName = shortName;
         }
 
         int getStockId() {
@@ -85,10 +84,23 @@ public class StockUtils {
         String getCompanyName() {
             return companyName;
         }
+
+        public String getShortName() {
+            return shortName;
+        }
     }
 
     public static int getQuantityOwnedFromCompanyName(List<StockDetails> list, String companyName) {
         int stockId = getStockIdFromCompanyName(companyName);
+
+        for (StockDetails stockDetails : list) {
+            if (stockDetails.getStockId() == stockId)
+                return stockDetails.getQuantity();
+        }
+        return 0;
+    }
+
+    public static int getQuantityOwnedFromStockId(List<StockDetails> list, int stockId) {
 
         for (StockDetails stockDetails : list) {
             if (stockDetails.getStockId() == stockId)

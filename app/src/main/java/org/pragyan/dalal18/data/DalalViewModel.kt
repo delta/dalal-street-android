@@ -28,7 +28,7 @@ class DalalViewModel : ViewModel() {
         stockIdCompanyNameList = ArrayList<StockIdCompanyName>()
 
         for (currentStockDetails in globalStockDetails) {
-            stockIdCompanyNameList.add(StockIdCompanyName(currentStockDetails.stockId, currentStockDetails.fullName))
+            stockIdCompanyNameList.add(StockIdCompanyName(currentStockDetails.stockId, currentStockDetails.fullName, currentStockDetails.shortName))
         }
     }
 }

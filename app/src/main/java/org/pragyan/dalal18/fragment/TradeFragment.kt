@@ -24,7 +24,6 @@ import org.pragyan.dalal18.R
 import org.pragyan.dalal18.dagger.ContextModule
 import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent
 import org.pragyan.dalal18.data.DalalViewModel
-import org.pragyan.dalal18.ui.MainActivity
 import org.pragyan.dalal18.utils.ConnectionUtils
 import org.pragyan.dalal18.utils.Constants
 import org.pragyan.dalal18.utils.StockUtils
@@ -46,7 +45,7 @@ class TradeFragment : Fragment() {
             if (intent.action != null && (intent.action == Constants.REFRESH_OWNED_STOCKS_ACTION || intent.action == Constants.REFRESH_STOCK_PRICES_ACTION)) {
                 val stocksOwned = StockUtils.getQuantityOwnedFromCompanyName(model.ownedStockDetails, companySpinner.selectedItem.toString())
                 var tempString = " :  " + stocksOwned.toString()
-                stocksOwned_textView.text = tempString
+                stocksOwnedTextView.text = tempString
 
                 tempString = " : " + Constants.RUPEE_SYMBOL + " " + StockUtils.getPriceFromStockId(model.globalStockDetails, StockUtils.getStockIdFromCompanyName(companySpinner.selectedItem.toString())).toString()
                 currentStockPrice_textView.text = tempString
@@ -104,7 +103,7 @@ class TradeFragment : Fragment() {
                 override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                     val stocksOwned = StockUtils.getQuantityOwnedFromCompanyName(model.ownedStockDetails, companySpinner.selectedItem.toString())
                     var tempString = " :  " + stocksOwned.toString()
-                    stocksOwned_textView.text = tempString
+                    stocksOwnedTextView.text = tempString
 
                     tempString = " : " + Constants.RUPEE_SYMBOL + " " + StockUtils.getPriceFromStockId(model.globalStockDetails, StockUtils.getStockIdFromCompanyName(companySpinner.selectedItem.toString())).toString()
                     currentStockPrice_textView.text = tempString

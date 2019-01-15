@@ -17,7 +17,7 @@ data class LeaderBoardDetails(var rank: Int, var name: String?, var wealth: Int)
 
 data class MarketDepth(var price: Int, var volume: Int)
 
-data class MortgageDetails(var mortgageId: Int, var stockId: Int, var stockQuantity: Int, var mortgagePrice: Int)
+data class MortgageDetails(var stockId: Int, var stockQuantity: Int, var mortgagePrice: Int)
 
 @Parcelize
 data class NewsDetails(var createdAt: String?, var headlines: String?, var content: String?, var imagePath: String?) : Parcelable

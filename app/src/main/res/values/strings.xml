@@ -436,5 +436,7 @@
     <string name="register">REGISTER</string>
     <string name="news_details">News Details</string>
     <string name="news_headline_transition">news_headline_transition</string>
+    <string name="retrieve">Retrieve</string>
+    <string name="hash">#</string>
 
 </resources>

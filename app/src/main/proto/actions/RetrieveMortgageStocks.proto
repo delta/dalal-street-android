@@ -8,7 +8,7 @@ import "models/Transaction.proto";
 message RetrieveMortgageStocksRequest {
     uint32 stock_id = 1;
     uint32 stock_quantity = 2;
-    uint32 mortgage_id = 3;
+    uint32 retrieve_price = 3;
 }
 
 message RetrieveMortgageStocksResponse {
@@ -17,8 +17,9 @@ message RetrieveMortgageStocksResponse {
         InternalServerError = 1;
         MarketClosedError = 2;
         InvalidStockIdError = 3;
-        NotEnoughStocksError = 4;
-        NotEnoughCashError = 5;
+        InvalidRetrievePriceError = 4;
+        NotEnoughStocksError = 5;
+        NotEnoughCashError = 6;
     }
     StatusCode status_code = 1;
     string     status_message = 2;

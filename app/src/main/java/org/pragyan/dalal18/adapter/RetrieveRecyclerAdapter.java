@@ -8,6 +8,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import org.jetbrains.anko.ToastsKt;
 import org.pragyan.dalal18.R;
 import org.pragyan.dalal18.data.MortgageDetails;
 import org.pragyan.dalal18.utils.StockUtils;
@@ -44,9 +45,10 @@ public class RetrieveRecyclerAdapter extends RecyclerView.Adapter<RetrieveRecycl
 
         MortgageDetails currentDetails = mortgageDetailsList.get(position);
 
-        holder.companyNameTextView.setText(StockUtils.getCompanyNameFromStockId(currentDetails.getStockId()));
+        holder.companyNameTextView.setText(StockUtils.getShortNameForStockId(currentDetails.getStockId()));
         holder.mortgagePriceTextView.setText(String.valueOf(currentDetails.getMortgagePrice()));
         holder.stockQuantityTextView.setText(String.valueOf(currentDetails.getStockQuantity()));
+        holder.retrieveQuantityEditText.setText("");
     }
 
     public void swapData(List<MortgageDetails> newList) {
@@ -54,9 +56,24 @@ public class RetrieveRecyclerAdapter extends RecyclerView.Adapter<RetrieveRecycl
         notifyDataSetChanged();
     }
 
+    public void changeSingleItem(List<MortgageDetails> newList, int position) {
+        mortgageDetailsList = newList;
+        notifyItemChanged(position);
+    }
+
+    public void addSingleItem(List<MortgageDetails> newList, int position) {
+        mortgageDetailsList = newList;
+        notifyItemInserted(position);
+    }
+
+    public void removeSingleItem(List<MortgageDetails> newList, int position) {
+        mortgageDetailsList = newList;
+        notifyItemRemoved(position);
+    }
+
     @Override
     public int getItemCount() {
-        if(mortgageDetailsList == null || mortgageDetailsList.size() == 0) return 0;
+        if (mortgageDetailsList == null || mortgageDetailsList.size() == 0) return 0;
         return mortgageDetailsList.size();
     }
 
@@ -64,7 +81,7 @@ public class RetrieveRecyclerAdapter extends RecyclerView.Adapter<RetrieveRecycl
 
         TextView stockQuantityTextView, companyNameTextView, mortgagePriceTextView;
         Button retrieveButton;
-        EditText retrieveQuantityTextView;
+        EditText retrieveQuantityEditText;
 
         RetrieveViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -72,14 +89,17 @@ public class RetrieveRecyclerAdapter extends RecyclerView.Adapter<RetrieveRecycl
             companyNameTextView = itemView.findViewById(R.id.companyNameTextView);
             mortgagePriceTextView = itemView.findViewById(R.id.mortgagePriceTextView);
             retrieveButton = itemView.findViewById(R.id.retrieveButton);
-            retrieveQuantityTextView = itemView.findViewById(R.id.retrieveQuantityTextView);
+            retrieveQuantityEditText = itemView.findViewById(R.id.retrieveQuantityEditText);
 
             retrieveButton.setOnClickListener(this);
         }
 
         @Override
         public void onClick(View view) {
-            listener.onRetrieveButtonClick(getAdapterPosition(), Integer.parseInt(retrieveQuantityTextView.getText().toString()));
+            if (!retrieveQuantityEditText.getText().toString().isEmpty() && !retrieveQuantityEditText.getText().toString().equals(""))
+                listener.onRetrieveButtonClick(getAdapterPosition(), Integer.parseInt(retrieveQuantityEditText.getText().toString()));
+            else
+                ToastsKt.toast(context, "Enter stocks to retrieve");
         }
     }
 }

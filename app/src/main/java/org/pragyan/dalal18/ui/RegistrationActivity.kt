@@ -3,15 +3,12 @@ package org.pragyan.dalal18.ui
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.Menu
-import android.view.MenuItem
 import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import butterknife.OnClick
 import dalalstreet.api.DalalActionServiceGrpc
 import dalalstreet.api.actions.Register
 import dalalstreet.api.actions.Register.RegisterResponse

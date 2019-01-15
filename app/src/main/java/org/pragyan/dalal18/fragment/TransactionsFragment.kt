@@ -1,16 +1,15 @@
 package org.pragyan.dalal18.fragment
 
-import android.content.*
-import android.net.ConnectivityManager
+import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import dalalstreet.api.DalalActionServiceGrpc
@@ -25,7 +24,7 @@ import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent
 import org.pragyan.dalal18.data.Transaction
 import org.pragyan.dalal18.utils.ConnectionUtils
 import org.pragyan.dalal18.utils.Constants
-import java.util.ArrayList
+import java.util.*
 import javax.inject.Inject
 
 class TransactionsFragment : Fragment() {
@@ -45,14 +44,6 @@ class TransactionsFragment : Fragment() {
     lateinit var networkDownHandler: ConnectionUtils.OnNetworkDownHandler
 
     internal var paginate = true
-
-    private val connectionChangeReceiver = object : BroadcastReceiver() {
-        override fun onReceive(context: Context, intent: Intent) {
-            if (intent.action != null && intent.action == ConnectivityManager.CONNECTIVITY_ACTION) {
-                networkDownHandler.onNetworkDownError()
-            }
-        }
-    }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -161,14 +152,8 @@ class TransactionsFragment : Fragment() {
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-        LocalBroadcastManager.getInstance(context!!).registerReceiver(connectionChangeReceiver, IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION))
-    }
-
     override fun onPause() {
         super.onPause()
         preferences.edit().remove(LAST_TRANSACTION_ID).apply()
-        LocalBroadcastManager.getInstance(context!!).unregisterReceiver(connectionChangeReceiver)
     }
 }

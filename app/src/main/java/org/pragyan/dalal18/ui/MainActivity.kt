@@ -30,6 +30,7 @@ import org.pragyan.dalal18.dagger.ContextModule
 import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent
 import org.pragyan.dalal18.data.DalalViewModel
 import org.pragyan.dalal18.data.StockDetails
+import org.pragyan.dalal18.fragment.MortgageFragment
 import org.pragyan.dalal18.notifications.NotificationService
 import org.pragyan.dalal18.utils.ConnectionUtils
 import org.pragyan.dalal18.utils.Constants
@@ -133,7 +134,6 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
         val host = supportFragmentManager.findFragmentById(R.id.main_host_fragment) as NavHostFragment
         navigationViewLeft.setupWithNavController(host.navController)
 
-        //usernameTextView.text = intent.getStringExtra(LoginActivity.USERNAME_KEY)
         MiscellaneousUtils.username = intent.getStringExtra(Constants.USERNAME_KEY)
         val header = navigationViewLeft.getHeaderView(0)
         header.find<TextView>(R.id.usernameTextView).text = MiscellaneousUtils.username
@@ -260,8 +260,14 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
 
                                 updateOwnedStockIdAndQuantity(transaction.stockId, transaction.stockQuantity, true)
 
-                                val intent = Intent(Constants.REFRESH_WORTH_TEXTVIEW_ACTION)
+                                var intent = Intent(Constants.REFRESH_WORTH_TEXTVIEW_ACTION)
                                 intent.putExtra(TOTAL_WORTH_KEY, transaction.total)
+                                LocalBroadcastManager.getInstance(this@MainActivity).sendBroadcast(intent)
+
+                                intent = Intent(Constants.REFRESH_MORTGAGE_UPDATE_ACTION)
+                                intent.putExtra(MortgageFragment.STOCKS_ID_KEY, transaction.stockId)
+                                intent.putExtra(MortgageFragment.STOCKS_PRICE_KEY, transaction.price)
+                                intent.putExtra(MortgageFragment.STOCKS_QUANTITY_KEY, transaction.stockQuantity)
                                 LocalBroadcastManager.getInstance(this@MainActivity).sendBroadcast(intent)
                             }
                         }

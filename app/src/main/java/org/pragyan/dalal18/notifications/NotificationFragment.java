@@ -4,14 +4,6 @@ package org.pragyan.dalal18.notifications;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.loader.app.LoaderManager;
-import androidx.loader.content.Loader;
-import androidx.appcompat.app.AlertDialog;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,8 +21,14 @@ import java.util.ArrayList;
 
 import javax.inject.Inject;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.fragment.app.Fragment;
+import androidx.loader.app.LoaderManager;
+import androidx.loader.content.Loader;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import dalalstreet.api.DalalActionServiceGrpc;
 import dalalstreet.api.actions.GetNotificationsResponse;
 
@@ -47,10 +45,8 @@ public class NotificationFragment extends Fragment implements LoaderManager.Load
     @Inject
     SharedPreferences preferences;
 
-    @BindView(R.id.notifications_recyclerView)
     RecyclerView notificationsRecyclerView;
 
-    @BindView(R.id.noNotification_textView)
     TextView noNotificationTextView;
 
     private ConnectionUtils.OnNetworkDownHandler networkDownHandler;
@@ -92,7 +88,6 @@ public class NotificationFragment extends Fragment implements LoaderManager.Load
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.fragment_notification, container, false);
-        ButterKnife.bind(this, rootView);
 
         if (getActivity() != null) getActivity().setTitle(getString(R.string.notifications));
         DaggerDalalStreetApplicationComponent.builder().contextModule(new ContextModule(getContext())).build().inject(this);

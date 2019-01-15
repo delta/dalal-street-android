@@ -9,17 +9,17 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:paddingBottom="8dp"
-        android:paddingEnd="2dp"
         android:paddingStart="2dp"
-        android:paddingTop="8dp">
+        android:paddingTop="8dp"
+        android:paddingEnd="2dp"
+        android:paddingBottom="8dp">
 
         <Spinner
             android:id="@+id/mortgage_companies_spinner"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_marginEnd="12dp"
             android:layout_marginStart="12dp"
+            android:layout_marginEnd="12dp"
             android:layout_weight="1"
             android:backgroundTint="@color/neutral_font_color"
             android:textColorHint="@color/neutral_font_color" />
@@ -42,12 +42,12 @@
                 android:textSize="20sp" />
 
             <TextView
-                android:id="@+id/stocksOwned_textView"
+                android:id="@+id/stocksOwnedTextView"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="2"
                 android:fontFamily="@font/kreon_light"
-                android:text=""
+                android:text="@string/n_a"
                 android:textColor="@color/neutral_font_color"
                 android:textSize="20sp" />
 
@@ -70,12 +70,12 @@
                 android:textSize="20sp" />
 
             <TextView
-                android:id="@+id/stocksMortgaged_textView"
+                android:id="@+id/stocksMortgagedTextView"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="2"
                 android:fontFamily="@font/kreon_light"
-                android:text=""
+                android:text="@string/n_a"
                 android:textColor="@color/neutral_font_color"
                 android:textSize="20sp" />
 
@@ -109,104 +109,17 @@
 
         </LinearLayout>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_marginStart="12dp"
-            android:layout_weight="0.667"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/mortgageRateText_textView"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="4"
-                android:fontFamily="@font/marcellus_sc"
-                android:textColor="@color/neutral_font_color"
-                android:textSize="18sp" />
-
-            <TextView
-                android:id="@+id/mortgageRate_textView"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="2"
-                android:fontFamily="@font/kreon_light"
-                android:text=""
-                android:textColor="@color/neutral_font_color"
-                android:textSize="20sp" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_marginStart="12dp"
-            android:layout_weight="0.667"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/depositPriceText_textView"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="4"
-                android:fontFamily="@font/marcellus_sc"
-                android:textColor="@color/neutral_font_color"
-                android:textSize="18sp" />
-
-            <TextView
-                android:id="@+id/depositPrice_textView"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="2"
-                android:fontFamily="@font/kreon_light"
-                android:text=""
-                android:textColor="@color/neutral_font_color"
-                android:textSize="20sp" />
-
-        </LinearLayout>
-
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/retrieveRecyclerView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
-        <RadioGroup
-            android:id="@+id/mortgageRadioGroup"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_marginStart="12dp"
-            android:layout_weight="1">
-
-            <RadioButton
-                android:id="@+id/mortgage_radioButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:fontFamily="@font/marcellus_sc"
-                android:text="@string/mortgage_stocks"
-                android:textColor="@color/neon_orange"
-                android:textSize="20sp"
-                android:textStyle="bold" />
-
-            <RadioButton
-                android:id="@+id/retrieve_radioButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:fontFamily="@font/marcellus_sc"
-                android:text="@string/retrieve_stocks"
-                android:textColor="@color/neon_green"
-                android:textSize="20sp"
-                android:textStyle="bold" />
-
-        </RadioGroup>
-
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_marginBottom="2dp"
-            android:layout_marginEnd="48dp"
             android:layout_marginStart="12dp"
+            android:layout_marginEnd="48dp"
+            android:layout_marginBottom="2dp"
             android:layout_weight="1.5"
             android:gravity="bottom"
             android:paddingTop="12dp"
