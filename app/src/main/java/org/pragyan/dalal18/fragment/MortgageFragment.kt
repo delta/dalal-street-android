@@ -18,15 +18,18 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import dalalstreet.api.DalalActionServiceGrpc
 import dalalstreet.api.actions.*
 import kotlinx.android.synthetic.main.fragment_mortgage.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
 import org.pragyan.dalal18.R
+import org.pragyan.dalal18.adapter.RetrieveRecyclerAdapter
 import org.pragyan.dalal18.dagger.ContextModule
 import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent
 import org.pragyan.dalal18.data.DalalViewModel
+import org.pragyan.dalal18.data.MortgageDetails
 import org.pragyan.dalal18.utils.ConnectionUtils
 import org.pragyan.dalal18.utils.Constants
 import org.pragyan.dalal18.utils.StockUtils
@@ -38,7 +41,7 @@ import javax.inject.Inject
  *  Uses MortgageStocks() to mortgage stocks
  *  Uses RetrieveStocksFromMortgage() to get back mortgaged stocks */
 
-class MortgageFragment : Fragment() {
+class MortgageFragment : Fragment(), RetrieveRecyclerAdapter.OnRetrieveButtonClickListener {
 
     @Inject
     lateinit var actionServiceBlockingStub: DalalActionServiceGrpc.DalalActionServiceBlockingStub
@@ -53,6 +56,9 @@ class MortgageFragment : Fragment() {
 
     lateinit var networkDownHandler: ConnectionUtils.OnNetworkDownHandler
     private var loadingDialog: AlertDialog? = null
+
+    private val mortgageDetails = mutableListOf<MortgageDetails>()
+    private lateinit var retrieveAdapter: RetrieveRecyclerAdapter
 
     private val refreshStockPricesReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
@@ -87,6 +93,7 @@ class MortgageFragment : Fragment() {
 
         model = activity?.run { ViewModelProviders.of(this).get(DalalViewModel::class.java) } ?: throw Exception("Invalid activity")
         DaggerDalalStreetApplicationComponent.builder().contextModule(ContextModule(context!!)).build().inject(this)
+        retrieveAdapter = RetrieveRecyclerAdapter(context, null, this)
 
         return rootView
     }
@@ -194,33 +201,7 @@ class MortgageFragment : Fragment() {
             }
 
             R.id.retrieve_radioButton -> {
-                if (stocksTransaction <= stocksMortgaged && stocksMortgaged >= 0) {
-                    val retrieveStocksResponse = actionServiceBlockingStub.retrieveMortgageStocks(
-                            RetrieveMortgageStocksRequest.newBuilder().setStockId(mortgage_companies_spinner.selectedItemPosition + 1)
-                                    .setStockQuantity(Integer.parseInt(stocks_editText.text.toString())).build()
-                    )
 
-                    if (retrieveStocksResponse.statusCode == RetrieveMortgageStocksResponse.StatusCode.OK) {
-                        Toast.makeText(context, "Transaction successful", Toast.LENGTH_SHORT).show()
-
-                        stocksOwned += stocksTransaction
-                        stocksMortgaged -= stocksTransaction
-
-                        val ownedString = " :  " + stocksOwned.toString()
-                        stocksOwned_textView.text = ownedString
-
-                        val mortgageString = " :  " + stocksMortgaged.toString()
-                        stocksMortgaged_textView.text = mortgageString
-
-                        stocks_editText.setText("")
-
-                    } else {
-                        Toast.makeText(context, retrieveStocksResponse.statusMessage, Toast.LENGTH_SHORT).show()
-                    }
-
-                } else {
-                    Toast.makeText(activity, "You don't have sufficient stocks mortgaged", Toast.LENGTH_SHORT).show()
-                }
             }
 
             else -> Toast.makeText(context, "Select mortgage or retrieve", Toast.LENGTH_SHORT).show()
@@ -243,9 +224,18 @@ class MortgageFragment : Fragment() {
                     if (response.statusCode == GetMortgageDetailsResponse.StatusCode.OK) {
                         lastStockId = StockUtils.getStockIdFromCompanyName(companiesArray[mortgage_companies_spinner.selectedItemPosition])
 
-                        stocksMortgaged = if (response.mortgageMapMap.containsKey(lastStockId)) response.mortgageMapMap[lastStockId]!! else 0
+                        retrieveRecyclerView.layoutManager = LinearLayoutManager(context)
+                        retrieveRecyclerView.adapter = retrieveAdapter
+                        retrieveRecyclerView.setHasFixedSize(false)
 
-                        val mortgageString = " :  " + stocksMortgaged.toString()
+                        mortgageDetails.clear()
+                        for(currentDetails in response.mortgageDetailsList) {
+                            mortgageDetails.add(MortgageDetails(currentDetails.id, currentDetails.stockId, currentDetails.stocksInBank, currentDetails.mortgagePrice))
+                        }
+
+                        retrieveAdapter.swapData(mortgageDetails)
+
+                        val mortgageString = " :  " + "NaN"
                         stocksMortgaged_textView.text = mortgageString
 
                         stocksOwned = getQuantityOwnedFromCompanyName(model.ownedStockDetails, getCompanyNameFromStockId(lastStockId))
@@ -289,6 +279,37 @@ class MortgageFragment : Fragment() {
             } else {
                 uiThread { networkDownHandler.onNetworkDownError() }
             }
+        }
+    }
+
+    override fun onRetrieveButtonClick(position: Int, quantity: Int) {
+
+        if (stocksTransaction <= stocksMortgaged && stocksMortgaged >= 0) {
+            val retrieveStocksResponse = actionServiceBlockingStub.retrieveMortgageStocks(
+                    RetrieveMortgageStocksRequest.newBuilder().setStockId(mortgage_companies_spinner.selectedItemPosition + 1)
+                            .setStockQuantity(quantity).setMortgageId(mortgageDetails[position].mortgageId).build()
+            )
+
+            if (retrieveStocksResponse.statusCode == RetrieveMortgageStocksResponse.StatusCode.OK) {
+                Toast.makeText(context, "Transaction successful", Toast.LENGTH_SHORT).show()
+
+                stocksOwned += stocksTransaction
+                stocksMortgaged -= stocksTransaction
+
+                val ownedString = " :  " + stocksOwned.toString()
+                stocksOwned_textView.text = ownedString
+
+                val mortgageString = " :  " + stocksMortgaged.toString()
+                stocksMortgaged_textView.text = mortgageString
+
+                stocks_editText.setText("")
+
+            } else {
+                Toast.makeText(context, retrieveStocksResponse.statusMessage, Toast.LENGTH_SHORT).show()
+            }
+
+        } else {
+            Toast.makeText(activity, "You don't have sufficient stocks mortgaged", Toast.LENGTH_SHORT).show()
         }
     }
 

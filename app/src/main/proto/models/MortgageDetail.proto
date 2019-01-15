@@ -9,4 +9,5 @@ message MortgageDetail {
     uint32 user_id = 2;
     uint32 stock_id = 3;
     uint32 stocks_in_bank = 4;
+    uint32 mortgage_price = 5;
 }

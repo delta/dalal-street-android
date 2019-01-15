@@ -1,9 +1,8 @@
 package org.pragyan.dalal18.data
 
 import android.os.Parcelable
-import dalalstreet.api.datastreams.SubscriptionId
 import kotlinx.android.parcel.Parcelize
-import java.util.Date
+import java.util.*
 
 data class CompanyDetails(var company: String?, var shortName: String?, var value: Int, var previousDayClose: Int)
 
@@ -17,6 +16,8 @@ data class GlobalStockDetails(var fullName: String?, var shortName: String?, var
 data class LeaderBoardDetails(var rank: Int, var name: String?, var wealth: Int)
 
 data class MarketDepth(var price: Int, var volume: Int)
+
+data class MortgageDetails(var mortgageId: Int, var stockId: Int, var stockQuantity: Int, var mortgagePrice: Int)
 
 @Parcelize
 data class NewsDetails(var createdAt: String?, var headlines: String?, var content: String?, var imagePath: String?) : Parcelable
