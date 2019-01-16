@@ -11,6 +11,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.lifecycle.ViewModelProviders
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import androidx.navigation.NavOptions
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
@@ -124,7 +125,7 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
 
         val navController = findNavController(R.id.main_host_fragment)
         button_bar.setOnClickListener {
-            navController.navigate(R.id.worth_dest)
+            navController.navigate(R.id.worth_dest,null,NavOptions.Builder().setPopUpTo(R.id.home_dest,false).build())
         }
     }
 
@@ -151,7 +152,7 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
         when (id) {
             R.id.action_notifications -> {
                 val navController = findNavController(R.id.main_host_fragment)
-                navController.navigate(R.id.notifications_dest)
+                navController.navigate(R.id.notifications_dest,null,NavOptions.Builder().setPopUpTo(R.id.home_dest,false).build())
                 return true
             }
 
