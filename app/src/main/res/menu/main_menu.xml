@@ -3,15 +3,23 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
+        android:id="@+id/action_notifications"
+        android:icon="@drawable/notifications_icon"
+        android:orderInCategory="1"
+        android:title="@string/notifications"
+        app:showAsAction="ifRoom" />
+
+    <item
         android:id="@+id/action_help"
         android:icon="@drawable/help_action"
-        android:orderInCategory="1"
+        android:orderInCategory="2"
         android:title="@string/help"
         app:showAsAction="ifRoom" />
+
     <item
         android:id="@+id/action_logout"
         android:icon="@drawable/logout_action"
-        android:orderInCategory="2"
+        android:orderInCategory="3"
         android:title="@string/logout"
         app:showAsAction="ifRoom" />
 </menu>
