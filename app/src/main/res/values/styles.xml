@@ -29,4 +29,13 @@
         <item name="android:fontFamily">@font/kreon_light</item>
     </style>
 
+    <style name="AlertDialogButtonStyle" parent="Widget.AppCompat.Button.ButtonBar.AlertDialog">
+        <item name="android:textColor">@color/neon_blue</item>
+    </style>
+
+    <style name="AlertDialogTheme" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <item name="buttonBarNegativeButtonStyle">@style/AlertDialogButtonStyle</item>
+        <item name="buttonBarPositiveButtonStyle">@style/AlertDialogButtonStyle</item>
+        <item name="android:background">#20202C</item>
+    </style>
 </resources>
