@@ -12,7 +12,6 @@ import org.pragyan.dalal18.fragment.TransactionsFragment;
 import org.pragyan.dalal18.fragment.WorthFragment;
 import org.pragyan.dalal18.fragment.marketDepth.DepthGraphFragment;
 import org.pragyan.dalal18.fragment.marketDepth.DepthTableFragment;
-import org.pragyan.dalal18.notifications.NotificationFragment;
 import org.pragyan.dalal18.notifications.NotificationService;
 import org.pragyan.dalal18.ui.LoginActivity;
 import org.pragyan.dalal18.ui.MainActivity;

@@ -95,4 +95,10 @@
         android:label="@string/portfolio"
         tools:layout="@layout/fragment_worth" />
 
+    <fragment
+        android:id="@+id/notifications_dest"
+        android:name="org.pragyan.dalal18.notifications.NotificationFragment"
+        android:label="@string/notifications"
+        tools:layout="@layout/fragment_notification" />
+
 </navigation>

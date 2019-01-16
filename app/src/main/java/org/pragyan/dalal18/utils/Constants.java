@@ -2,7 +2,7 @@ package org.pragyan.dalal18.utils;
 
 public class Constants {
 
-    public static final String HOST = "10.2.64.81";
+    public static final String HOST = "10.2.75.254";
     public static final int PORT = 8000;
 
     public static final String COMPANY_IMAGES_BASE_URL = "https://dalal.pragyan.org/public/src/images/companies/";
@@ -47,7 +47,8 @@ public class Constants {
     public static final String  CONTENT_TRANSITION_KEY = "content-transition";
     public static final String  CREATED_AT_TRANSITION_KEY = "created-at-transition";
 
-
+    public static final String LAST_NOTIFICATION_ID = "last_notification_id";
+    public static final String LAST_TRANSACTION_ID = "last_transaction_id";
 }
 
 /*  Login response : Constants
