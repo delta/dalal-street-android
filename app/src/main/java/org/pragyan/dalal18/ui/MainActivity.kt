@@ -149,6 +149,12 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
         val id = item.itemId
 
         when (id) {
+            R.id.action_notifications -> {
+                val navController = findNavController(R.id.main_host_fragment)
+                navController.navigate(R.id.notifications_dest)
+                return true
+            }
+
             R.id.action_help -> {
                 val builder = AlertDialog.Builder(this)
                 builder
