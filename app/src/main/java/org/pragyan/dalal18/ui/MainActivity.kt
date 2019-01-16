@@ -1,7 +1,11 @@
 package org.pragyan.dalal18.ui
 
 import android.content.*
+import android.graphics.Color
 import android.os.Bundle
+import android.text.SpannableStringBuilder
+import android.text.Spanned
+import android.text.style.ForegroundColorSpan
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.TextView
@@ -161,12 +165,26 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
             }
 
             R.id.action_logout -> {
-                val logOutBuilder = AlertDialog.Builder(this)
+                val logOutBuilder = AlertDialog.Builder(this,R.style.AlertDialogTheme)
+                val titleText = "Confirm Logout";
+                val messageText = "Do you want to logout ?"
+                val logoutText = "LOGOUT"
+                val cancelText = "CANCEL"
+                val foregroundColorSpan =  ForegroundColorSpan(Color.WHITE)
+
+                val ssBuilder = SpannableStringBuilder(titleText)
+                val ssMessageBuilder = SpannableStringBuilder(messageText)
+                val logoutTextBuilder = SpannableStringBuilder(logoutText)
+                val cancelTextBuilder = SpannableStringBuilder(cancelText)
+                ssBuilder.setSpan(foregroundColorSpan, 0, titleText.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+                ssMessageBuilder.setSpan(foregroundColorSpan,0,messageText.length,Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+                logoutTextBuilder.setSpan(foregroundColorSpan,0,logoutText.length,Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+                cancelTextBuilder.setSpan(foregroundColorSpan,0,cancelText.length,Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
                 logOutBuilder
-                        .setMessage("Do you want to logout ?")
-                        .setPositiveButton("Logout") { _, _ -> logout() }
-                        .setNegativeButton(getString(R.string.cancel)) { dialogInterface, _ -> dialogInterface.dismiss() }
-                        .setTitle("Confirm Logout")
+                        .setMessage(ssMessageBuilder)
+                        .setPositiveButton(logoutTextBuilder) { _, _ -> logout() }
+                        .setNegativeButton(cancelTextBuilder) { dialogInterface, _ -> dialogInterface.dismiss() }
+                        .setTitle(ssBuilder)
                         .setCancelable(true)
                         .show()
                 logoutDialog = logOutBuilder.create()
