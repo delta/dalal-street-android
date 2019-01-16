@@ -1,0 +1,154 @@
+package org.pragyan.dalal18.notifications
+
+import android.content.Context
+import android.content.SharedPreferences
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import dalalstreet.api.DalalActionServiceGrpc
+import dalalstreet.api.actions.GetNotificationsRequest
+import kotlinx.android.synthetic.main.fragment_notification.*
+import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.uiThread
+import org.pragyan.dalal18.R
+import org.pragyan.dalal18.adapter.NotificationRecyclerAdapter
+import org.pragyan.dalal18.dagger.ContextModule
+import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent
+import org.pragyan.dalal18.data.Notification
+import org.pragyan.dalal18.utils.ConnectionUtils
+import org.pragyan.dalal18.utils.Constants
+import java.util.*
+import javax.inject.Inject
+
+class NotificationFragment : Fragment() {
+
+    @Inject
+    lateinit var actionServiceBlockingStub: DalalActionServiceGrpc.DalalActionServiceBlockingStub
+
+    @Inject
+    lateinit var notificationRecyclerAdapter: NotificationRecyclerAdapter
+
+    @Inject
+    lateinit var preferences: SharedPreferences
+
+    lateinit var networkDownHandler: ConnectionUtils.OnNetworkDownHandler
+    private var loadingDialog: AlertDialog? = null
+    private var paginate = true
+    private var customNotificationList = ArrayList<Notification>()
+
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        try {
+            networkDownHandler = context as ConnectionUtils.OnNetworkDownHandler
+        } catch (classCastException: ClassCastException) {
+            throw ClassCastException(context.toString() + " must implement network down handler.")
+        }
+
+    }
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
+                              savedInstanceState: Bundle?): View? {
+        val rootView = inflater.inflate(R.layout.fragment_notification, container, false)
+        DaggerDalalStreetApplicationComponent.builder().contextModule(ContextModule(context!!)).build().inject(this)
+        return rootView
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        (activity as AppCompatActivity).supportActionBar?.title = resources.getString(R.string.notifications)
+
+        val dialogView = LayoutInflater.from(context).inflate(R.layout.progress_dialog, null)
+        val tempString = "Getting notifications..."
+        (dialogView.findViewById<View>(R.id.progressDialog_textView) as TextView).text = tempString
+        loadingDialog = AlertDialog.Builder(context!!)
+                .setView(dialogView)
+                .setCancelable(false)
+                .create()
+
+        notificationRecyclerAdapter = NotificationRecyclerAdapter(context, null)
+        with(notifications_recyclerView) {
+            adapter = notificationRecyclerAdapter
+            setHasFixedSize(false)
+            addOnScrollListener(CustomScrollListener())
+            layoutManager = LinearLayoutManager(this@NotificationFragment.context)
+        }
+
+        getNotificationsAsynchronously()
+    }
+
+    private fun getNotificationsAsynchronously() {
+
+        loadingDialog?.show()
+        val lastId = preferences.getInt(Constants.LAST_NOTIFICATION_ID, 0)
+
+        doAsync {
+            if (ConnectionUtils.getConnectionInfo(context) && ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
+                val notificationsResponse = actionServiceBlockingStub.getNotifications(
+                        GetNotificationsRequest.newBuilder().setLastNotificationId(lastId).setCount(10).build())
+
+                uiThread {
+                    paginate = notificationsResponse.notificationsCount == 10
+
+                    if (notificationsResponse.notificationsList.size > 0) {
+
+                        for (currentNotification in notificationsResponse.notificationsList) {
+                            customNotificationList.add(Notification(currentNotification.text, currentNotification.createdAt))
+                            preferences.edit()
+                                    .putInt(Constants.LAST_NOTIFICATION_ID, currentNotification.id)
+                                    .apply()
+                        }
+
+                        notificationRecyclerAdapter.swapData(customNotificationList)
+                        noNotification_textView.visibility = View.GONE
+                        notifications_recyclerView.visibility = View.VISIBLE
+
+                    } else {
+                        noNotification_textView.visibility = View.VISIBLE
+                        notifications_recyclerView.visibility = View.GONE
+                    }
+                    loadingDialog?.dismiss()
+
+                }
+            } else {
+                uiThread { networkDownHandler.onNetworkDownError() }
+            }
+        }
+    }
+
+    inner class CustomScrollListener internal constructor() : RecyclerView.OnScrollListener() {
+
+        override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+            val visibleItemCount = recyclerView.layoutManager!!.childCount
+            val totalItemCount = recyclerView.layoutManager!!.itemCount
+            val pastVisibleItems = (recyclerView.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
+            if (pastVisibleItems + visibleItemCount >= totalItemCount) {
+
+                if (paginate) {
+                    if (activity != null) {
+                        getNotificationsAsynchronously()
+                        paginate = false
+                    }
+                }
+            }
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        preferences.edit().remove(Constants.LAST_NOTIFICATION_ID).apply()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        preferences.edit().remove(Constants.LAST_NOTIFICATION_ID).apply()
+    }
+}

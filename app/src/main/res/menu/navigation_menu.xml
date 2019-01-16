@@ -4,7 +4,7 @@
     <group android:id="@+id/latest_category">
 
         <item
-            android:id="@+id/notifications_action"
+            android:id="@+id/notifications_dest"
             android:icon="@drawable/notification_icon"
             android:title="@string/notifications" />
 

@@ -29,8 +29,6 @@ import javax.inject.Inject
 
 class TransactionsFragment : Fragment() {
 
-    private val LAST_TRANSACTION_ID = "last_transaction_id"
-
     @Inject
     lateinit var actionServiceBlockingStub: DalalActionServiceGrpc.DalalActionServiceBlockingStub
 
@@ -89,7 +87,7 @@ class TransactionsFragment : Fragment() {
 
         doAsync {
 
-            val lastId = preferences.getInt(LAST_TRANSACTION_ID, 0)
+            val lastId = preferences.getInt(Constants.LAST_TRANSACTION_ID, 0)
 
             if (ConnectionUtils.getConnectionInfo(context) && ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
 
@@ -115,7 +113,7 @@ class TransactionsFragment : Fragment() {
                                 currentTransaction.total.toFloat()
                         ))
                         preferences.edit()
-                                .putInt(LAST_TRANSACTION_ID, currentTransaction.id)
+                                .putInt(Constants.LAST_TRANSACTION_ID, currentTransaction.id)
                                 .apply()
                     }
 
@@ -154,6 +152,6 @@ class TransactionsFragment : Fragment() {
 
     override fun onPause() {
         super.onPause()
-        preferences.edit().remove(LAST_TRANSACTION_ID).apply()
+        preferences.edit().remove(Constants.LAST_TRANSACTION_ID).apply()
     }
 }
