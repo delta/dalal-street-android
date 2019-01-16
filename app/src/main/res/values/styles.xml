@@ -34,8 +34,12 @@
     </style>
 
     <style name="AlertDialogTheme" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <item name="android:textColor">@color/neutral_font_color</item>
+        <item name="android:textColorPrimary">@color/neutral_font_color</item>
         <item name="buttonBarNegativeButtonStyle">@style/AlertDialogButtonStyle</item>
         <item name="buttonBarPositiveButtonStyle">@style/AlertDialogButtonStyle</item>
+        <item name="android:colorAccent">@color/neon_blue</item>
         <item name="android:background">#20202C</item>
     </style>
+
 </resources>
