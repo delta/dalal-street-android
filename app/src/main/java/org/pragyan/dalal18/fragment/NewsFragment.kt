@@ -145,7 +145,7 @@ class NewsFragment : Fragment(), NewsRecyclerAdapter.NewsItemClickListener, Swip
 
     override fun onRefresh() = getNewsAsynchronously()
 
-    override fun onNewsClicked(view: View, position: Int, view1 : View, view2 : View,view3 : View) {
+    override fun onNewsClicked(layout: View, position: Int, headlinesTextView : View, contentTextView : View, createdAtTextView : View) {
         val headTransition = "head$position"
         val contentTransition = "content$position"
         val createdAtTransition = "created$position"
@@ -160,10 +160,10 @@ class NewsFragment : Fragment(), NewsRecyclerAdapter.NewsItemClickListener, Swip
         bundle.putString(Constants.CREATED_AT_TRANSITION_KEY, createdAtTransition)
 
         val extras = FragmentNavigator.Extras.Builder()
-                .addSharedElement(view1, ViewCompat.getTransitionName(view1)!!)
-                .addSharedElement(view2, ViewCompat.getTransitionName(view2)!!)
-                .addSharedElement(view3, ViewCompat.getTransitionName(view3)!!)
+                .addSharedElement(headlinesTextView, ViewCompat.getTransitionName(headlinesTextView)!!)
+                .addSharedElement(contentTextView, ViewCompat.getTransitionName(contentTextView)!!)
+                .addSharedElement(createdAtTextView, ViewCompat.getTransitionName(createdAtTextView)!!)
                 .build()
-        view.findNavController().navigate(R.id.action_news_list_to_details, bundle, null, extras)
+        layout.findNavController().navigate(R.id.action_news_list_to_details, bundle, null, extras)
     }
 }

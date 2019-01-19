@@ -28,9 +28,7 @@ class NewsDetailsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         (activity as AppCompatActivity).supportActionBar?.title = resources.getString(R.string.news_details)
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            sharedElementEnterTransition = TransitionInflater.from(context).inflateTransition(android.R.transition.move)
-        }
+        sharedElementEnterTransition = TransitionInflater.from(context).inflateTransition(android.R.transition.move)
 
         news_details_head.text = arguments?.getString(Constants.NEWS_HEAD_KEY)
         news_details_content.text = arguments?.getString(Constants.NEWS_CONTENT_KEY)

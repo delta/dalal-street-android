@@ -25,7 +25,7 @@ public class NewsRecyclerAdapter extends RecyclerView.Adapter<NewsRecyclerAdapte
     private NewsItemClickListener onNewsClickListener;
 
     public interface NewsItemClickListener{
-        void onNewsClicked(View view, int position, View view1, View view2, View view3);
+        void onNewsClicked(View layout, int position, View headlinesTextView, View contentTextView, View createdAtTextView);
     }
 
     public NewsRecyclerAdapter(Context context, List<NewsDetails> newsList,NewsItemClickListener newsItemClickListener) {
