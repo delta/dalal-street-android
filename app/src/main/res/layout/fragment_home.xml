@@ -45,15 +45,22 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/breakingNewsTextView" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/newsRecyclerView"
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/newsSwipeRefreshLayout"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:paddingTop="2dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/homeDivider" />
+        app:layout_constraintTop_toBottomOf="@+id/homeDivider">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/newsRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     <RelativeLayout
         android:id="@+id/loadingNewsRelativeLayout"

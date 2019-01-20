@@ -20,6 +20,7 @@ import androidx.navigation.fragment.FragmentNavigator
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.PagerSnapHelper
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import dalalstreet.api.DalalActionServiceGrpc
 import dalalstreet.api.actions.GetMarketEventsRequest
 import dalalstreet.api.actions.GetMarketEventsResponse
@@ -38,7 +39,7 @@ import org.pragyan.dalal18.utils.ConnectionUtils
 import org.pragyan.dalal18.utils.Constants
 import javax.inject.Inject
 
-class HomeFragment : Fragment(), NewsRecyclerAdapter.NewsItemClickListener {
+class HomeFragment : Fragment(), NewsRecyclerAdapter.NewsItemClickListener, SwipeRefreshLayout.OnRefreshListener {
 
     @Inject
     lateinit var actionServiceBlockingStub: DalalActionServiceGrpc.DalalActionServiceBlockingStub
@@ -107,6 +108,7 @@ class HomeFragment : Fragment(), NewsRecyclerAdapter.NewsItemClickListener {
         newsRecyclerView.adapter = newsRecyclerAdapter
 
         setTickerAndNewsValues()
+        newsSwipeRefreshLayout.setOnRefreshListener(this)
 
         tickerRunnable = object : Runnable {
             override fun run() {
@@ -127,23 +129,24 @@ class HomeFragment : Fragment(), NewsRecyclerAdapter.NewsItemClickListener {
 
                 val marketEventsResponse = actionServiceBlockingStub.getMarketEvents(GetMarketEventsRequest.newBuilder().setCount(0).setLastEventId(0).build())
 
-                if (marketEventsResponse.statusCode == GetMarketEventsResponse.StatusCode.OK) {
+                uiThread {
+                    newsSwipeRefreshLayout.isRefreshing = false
+                    if (marketEventsResponse.statusCode == GetMarketEventsResponse.StatusCode.OK) {
 
-                    newsList.clear()
+                        newsList.clear()
 
-                    for (currentMarketEvent in marketEventsResponse.marketEventsList) {
-                        newsList.add(NewsDetails(currentMarketEvent.createdAt, currentMarketEvent.headline, currentMarketEvent.text, currentMarketEvent.imagePath))
-                    }
+                        for (currentMarketEvent in marketEventsResponse.marketEventsList) {
+                            newsList.add(NewsDetails(currentMarketEvent.createdAt, currentMarketEvent.headline, currentMarketEvent.text, currentMarketEvent.imagePath))
+                        }
 
-                    uiThread {
                         if (newsList.isNotEmpty()) {
                             newsRecyclerAdapter?.swapData(newsList)
                         }
-                        loadingNewsRelativeLayout?.visibility = View.GONE
-                        newsRecyclerView?.visibility = View.VISIBLE
+                        loadingNewsRelativeLayout.visibility = View.GONE
+                        newsRecyclerView.visibility = View.VISIBLE
+                    } else {
+                        Toast.makeText(context, marketEventsResponse.statusMessage, Toast.LENGTH_SHORT).show()
                     }
-                } else {
-                    uiThread { Toast.makeText(context, marketEventsResponse.statusMessage, Toast.LENGTH_SHORT).show() }
                 }
             } else {
                 uiThread { networkDownHandler.onNetworkDownError() }
@@ -192,7 +195,7 @@ class HomeFragment : Fragment(), NewsRecyclerAdapter.NewsItemClickListener {
         breakingNewsTextView.text = builder.toString()
     }
 
-    override fun onNewsClicked(layout : View, position : Int, headlinesTextView : View, contentTextView : View, createdAtTextView : View) {
+    override fun onNewsClicked(layout: View, position: Int, headlinesTextView: View, contentTextView: View, createdAtTextView: View) {
         val headTransition = "head$position"
         val contentTransition = "content$position"
         val createdAtTransition = "created$position"
@@ -212,6 +215,10 @@ class HomeFragment : Fragment(), NewsRecyclerAdapter.NewsItemClickListener {
                 .addSharedElement(createdAtTextView, ViewCompat.getTransitionName(createdAtTextView)!!)
                 .build()
         layout.findNavController().navigate(R.id.action_news_list_to_details, bundle, null, extras)
+    }
+
+    override fun onRefresh() {
+        getLatestNewsAsynchronously()
     }
 
     override fun onResume() {
