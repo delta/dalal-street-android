@@ -3,6 +3,7 @@ package org.pragyan.dalal18.adapter;
 import android.content.Context;
 
 import androidx.annotation.NonNull;
+import androidx.core.view.ViewCompat;
 import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,7 +14,6 @@ import android.widget.TextView;
 import org.pragyan.dalal18.R;
 import org.pragyan.dalal18.data.NewsDetails;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.pragyan.dalal18.utils.MiscellaneousUtils.parseDate;
@@ -25,13 +25,13 @@ public class NewsRecyclerAdapter extends RecyclerView.Adapter<NewsRecyclerAdapte
     private NewsItemClickListener onNewsClickListener;
 
     public interface NewsItemClickListener{
-        void onNewsClicked(View view, int position);
+        void onNewsClicked(View layout, int position, View headlinesTextView, View contentTextView, View createdAtTextView);
     }
 
-    public NewsRecyclerAdapter(Context context, List<NewsDetails> newsList, NewsItemClickListener listener) {
+    public NewsRecyclerAdapter(Context context, List<NewsDetails> newsList,NewsItemClickListener newsItemClickListener) {
         this.newsList = newsList;
         this.context = context;
-        this.onNewsClickListener = listener;
+        this.onNewsClickListener = newsItemClickListener;
     }
 
     @NonNull
@@ -50,7 +50,13 @@ public class NewsRecyclerAdapter extends RecyclerView.Adapter<NewsRecyclerAdapte
         holder.createdAtTextView.setText(parseDate(currentNewsDetails.getCreatedAt()));
         holder.contentTextView.setText(currentNewsDetails.getContent());
 
-        holder.headlinesTextView.setTransitionName(context.getString(R.string.news_headline_transition) + position);
+        ViewCompat.setTransitionName(holder.headlinesTextView, "head" + String.valueOf(position));
+        ViewCompat.setTransitionName(holder.contentTextView, "content" + String.valueOf(position));
+        ViewCompat.setTransitionName(holder.createdAtTextView, "created" + String.valueOf(position));
+
+        holder.newsLayout.setOnClickListener(v -> {
+            onNewsClickListener.onNewsClicked(v,position,holder.headlinesTextView, holder.contentTextView, holder.createdAtTextView);
+        });
     }
 
     @Override
@@ -64,7 +70,7 @@ public class NewsRecyclerAdapter extends RecyclerView.Adapter<NewsRecyclerAdapte
         notifyDataSetChanged();
     }
 
-    class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    class MyViewHolder extends RecyclerView.ViewHolder {
 
         TextView headlinesTextView, contentTextView, createdAtTextView;
         RelativeLayout newsLayout;
@@ -75,13 +81,6 @@ public class NewsRecyclerAdapter extends RecyclerView.Adapter<NewsRecyclerAdapte
             contentTextView = view.findViewById(R.id.news_content);
             createdAtTextView = view.findViewById(R.id.createdAt_textView);
             newsLayout = view.findViewById(R.id.news_layout);
-
-            view.setOnClickListener(this);
-        }
-
-        @Override
-        public void onClick(View view) {
-            onNewsClickListener.onNewsClicked(view, getAdapterPosition());
         }
     }
 }
