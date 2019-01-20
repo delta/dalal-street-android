@@ -13,7 +13,7 @@
 
         <action
             android:id="@+id/action_news_list_to_details"
-            app:destination="@+id/nav_news_details"/>
+            app:destination="@+id/nav_news_details" />
 
     </fragment>
 
@@ -37,7 +37,7 @@
 
         <action
             android:id="@+id/action_news_list_to_details"
-            app:destination="@+id/nav_news_details"/>
+            app:destination="@+id/nav_news_details" />
 
     </fragment>
 
@@ -57,8 +57,7 @@
         android:id="@+id/nav_my_orders"
         android:name="org.pragyan.dalal18.fragment.OrdersFragment"
         android:label="@string/orders_frag_label"
-        tools:layout="@layout/fragment_my_orders">
-    </fragment>
+        tools:layout="@layout/fragment_my_orders" />
 
     <fragment
         android:id="@+id/nav_leaderboard"
