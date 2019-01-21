@@ -139,8 +139,8 @@ class HomeFragment : Fragment(), NewsRecyclerAdapter.NewsItemClickListener {
                         if (newsList.isNotEmpty()) {
                             newsRecyclerAdapter?.swapData(newsList)
                         }
-                        loadingNewsRelativeLayout.visibility = View.GONE
-                        newsRecyclerView.visibility = View.VISIBLE
+                        loadingNewsRelativeLayout?.visibility = View.GONE
+                        newsRecyclerView?.visibility = View.VISIBLE
                     }
                 } else {
                     uiThread { Toast.makeText(context, marketEventsResponse.statusMessage, Toast.LENGTH_SHORT).show() }
