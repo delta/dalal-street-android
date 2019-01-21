@@ -212,7 +212,5 @@ class DepthGraphFragment : Fragment() {
     override fun onPause() {
         super.onPause()
         stockHistoryList.clear()
-        xVals.clear()
-        yVals.clear()
     }
 }
