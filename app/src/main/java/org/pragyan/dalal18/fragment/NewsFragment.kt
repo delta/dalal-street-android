@@ -51,12 +51,11 @@ class NewsFragment : Fragment(), NewsRecyclerAdapter.NewsItemClickListener, Swip
         override fun onReceive(context: Context, intent: Intent) {
             if (intent.action != null && intent.action.equals(Constants.REFRESH_NEWS_ACTION, ignoreCase = true))
                 getNewsAsynchronously()
+                loadingNewsDialog?.show()
         }
     }
 
     private fun getNewsAsynchronously() {
-
-        loadingNewsDialog?.show()
 
         doAsync {
 
@@ -67,7 +66,7 @@ class NewsFragment : Fragment(), NewsRecyclerAdapter.NewsItemClickListener, Swip
 
                 uiThread {
                     loadingNewsDialog?.dismiss()
-                    newsSwipeRefreshLayout.isRefreshing = false
+                    newsSwipeRefreshLayout?.isRefreshing = false
 
                     if (marketEventsResponse.statusCode.number == 0) {
 
@@ -80,8 +79,8 @@ class NewsFragment : Fragment(), NewsRecyclerAdapter.NewsItemClickListener, Swip
 
                         if (newsDetailsList.size != 0) {
                             newsRecyclerAdapter?.swapData(newsDetailsList)
-                            noNewsTextView.visibility = View.GONE
-                            newsRecyclerView.visibility = View.VISIBLE
+                            noNewsTextView?.visibility = View.GONE
+                            newsRecyclerView?.visibility = View.VISIBLE
                         } else {
                             noNewsTextView.visibility = View.VISIBLE
                             newsRecyclerView.visibility = View.GONE
@@ -131,6 +130,7 @@ class NewsFragment : Fragment(), NewsRecyclerAdapter.NewsItemClickListener, Swip
         loadingNewsDialog = AlertDialog.Builder(context!!).setView(dialogView).setCancelable(false).create()
 
         getNewsAsynchronously()
+        loadingNewsDialog?.show()
     }
 
     override fun onResume() {
