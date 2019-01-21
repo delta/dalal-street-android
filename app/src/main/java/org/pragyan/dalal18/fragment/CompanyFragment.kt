@@ -13,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.fragment_companies.*
 import org.pragyan.dalal18.R
@@ -20,11 +21,12 @@ import org.pragyan.dalal18.adapter.CompanyRecyclerAdapter
 import org.pragyan.dalal18.data.CompanyDetails
 import org.pragyan.dalal18.data.DalalViewModel
 import org.pragyan.dalal18.utils.Constants
+import org.pragyan.dalal18.utils.StockUtils
 import java.util.*
 
-class CompanyFragment : Fragment() {
+class CompanyFragment : Fragment(), CompanyRecyclerAdapter.OnCompanyClickListener {
 
-    private val portfolioList = ArrayList<CompanyDetails>()
+    private val companiesList = ArrayList<CompanyDetails>()
     private lateinit var adapter: CompanyRecyclerAdapter
     private lateinit var model: DalalViewModel
 
@@ -44,7 +46,7 @@ class CompanyFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         (activity as AppCompatActivity).supportActionBar?.title = resources.getString(R.string.companies)
 
-        adapter = CompanyRecyclerAdapter(context, null)
+        adapter = CompanyRecyclerAdapter(context, null, this)
 
         model = activity?.run { ViewModelProviders.of(this).get(DalalViewModel::class.java) } ?: throw Exception("Invalid activity")
 
@@ -56,14 +58,19 @@ class CompanyFragment : Fragment() {
 
     fun updateValues() {
 
-        portfolioList.clear()
+        companiesList.clear()
 
-        for ((fullName, shortName, _, price, _, _, previousDayClose) in model.globalStockDetails) {
-            portfolioList.add(CompanyDetails(fullName, shortName, price, previousDayClose))
+        for ((fullName, shortName, _, _, price, _, _, previousDayClose) in model.globalStockDetails) {
+            companiesList.add(CompanyDetails(fullName, shortName, price, previousDayClose))
         }
 
-        portfolioList.sortWith(compareBy { it.value })
-        adapter.swapData(portfolioList)
+        adapter.swapData(companiesList)
+    }
+
+    override fun onCompanyClick(view: View, position: Int) {
+        val bundle = Bundle()
+        bundle.putString(CompanyDescriptionFragment.COMPANY_NAME_KEY, StockUtils.getCompanyNameFromShortName(companiesList[position].shortName))
+        view.findNavController().navigate(R.id.action_company_ticker_to_details, bundle)
     }
 
     override fun onResume() {

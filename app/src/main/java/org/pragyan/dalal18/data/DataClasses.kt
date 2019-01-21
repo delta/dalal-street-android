@@ -10,8 +10,9 @@ data class CompanyTickerDetails(val fullName: String, val imageUrl: String?, val
 
 @Parcelize
 /* Modify definition according to needs; Refer Stock.proto for more attributes */
-data class GlobalStockDetails(var fullName: String?, var shortName: String?, var stockId: Int, var price: Int, var quantityInMarket: Int,
-                              var quantityInExchange: Int, var previousDayClose: Int, var up: Int, val imagePath: String) : Parcelable
+data class GlobalStockDetails(var fullName: String?, var shortName: String?, var stockId: Int, var description:String, var price: Int,
+                              var quantityInMarket: Int, var quantityInExchange: Int, var previousDayClose: Int,
+                              var up: Int, val imagePath: String) : Parcelable
 
 data class LeaderBoardDetails(var rank: Int, var name: String?, var wealth: Int)
 

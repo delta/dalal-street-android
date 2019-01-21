@@ -21,10 +21,16 @@ public class CompanyRecyclerAdapter extends RecyclerView.Adapter<CompanyRecycler
 
     private Context context;
     private List<CompanyDetails> list;
+    private OnCompanyClickListener listener;
 
-    public CompanyRecyclerAdapter(Context context, ArrayList<CompanyDetails> portfolioValues) {
+    public interface OnCompanyClickListener {
+        void onCompanyClick(View view, int position);
+    }
+
+    public CompanyRecyclerAdapter(Context context, ArrayList<CompanyDetails> portfolioValues, OnCompanyClickListener listener) {
         this.list = portfolioValues;
         this.context = context;
+        this.listener = listener;
     }
 
     @NonNull
@@ -35,11 +41,11 @@ public class CompanyRecyclerAdapter extends RecyclerView.Adapter<CompanyRecycler
     }
 
     @Override
-    public void onBindViewHolder(CompanyRecyclerAdapter.PortfolioViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull CompanyRecyclerAdapter.PortfolioViewHolder holder, int position) {
 
         CompanyDetails currentCompanyDetails = list.get(position);
 
-        if (currentCompanyDetails.getCompany().length() > 14) {
+        if (currentCompanyDetails.getCompany() != null && currentCompanyDetails.getCompany().length() > 14) {
             holder.companyNameTextView.setText(currentCompanyDetails.getShortName());
         } else {
             holder.companyNameTextView.setText(currentCompanyDetails.getCompany());
@@ -70,7 +76,7 @@ public class CompanyRecyclerAdapter extends RecyclerView.Adapter<CompanyRecycler
         notifyDataSetChanged();
     }
 
-    class PortfolioViewHolder extends RecyclerView.ViewHolder {
+    class PortfolioViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         TextView companyNameTextView, priceTextView, differenceTextView;
 
@@ -79,6 +85,13 @@ public class CompanyRecyclerAdapter extends RecyclerView.Adapter<CompanyRecycler
             priceTextView = itemView.findViewById(R.id.price_textView);
             differenceTextView = itemView.findViewById(R.id.difference_textView);
             companyNameTextView = itemView.findViewById(R.id.companyName_textView);
+
+            itemView.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View view) {
+            listener.onCompanyClick(view, getAdapterPosition());
         }
     }
 }

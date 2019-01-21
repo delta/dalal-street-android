@@ -438,5 +438,6 @@
     <string name="news_headline_transition">news_headline_transition</string>
     <string name="retrieve">Retrieve</string>
     <string name="hash">#</string>
+    <string name="company_description">Company Description</string>
 
 </resources>

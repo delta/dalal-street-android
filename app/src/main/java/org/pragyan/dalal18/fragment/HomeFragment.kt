@@ -39,16 +39,16 @@ import org.pragyan.dalal18.utils.ConnectionUtils
 import org.pragyan.dalal18.utils.Constants
 import javax.inject.Inject
 
-class HomeFragment : Fragment(), NewsRecyclerAdapter.NewsItemClickListener, SwipeRefreshLayout.OnRefreshListener {
+class HomeFragment : Fragment(), NewsRecyclerAdapter.NewsItemClickListener, SwipeRefreshLayout.OnRefreshListener,
+        CompanyTickerRecyclerAdapter.OnCompanyTickerClickListener {
 
     @Inject
     lateinit var actionServiceBlockingStub: DalalActionServiceGrpc.DalalActionServiceBlockingStub
 
-    @Inject
-    lateinit var companyTickerRecyclerAdapter: CompanyTickerRecyclerAdapter
-
     private var linearLayoutManager: LinearLayoutManager? = null
-    private var newsRecyclerAdapter: NewsRecyclerAdapter? = null
+
+    private lateinit var newsRecyclerAdapter: NewsRecyclerAdapter
+    private lateinit var companyTickerRecyclerAdapter: CompanyTickerRecyclerAdapter
 
     private var companyTickerDetailsList = mutableListOf<CompanyTickerDetails>()
     private var newsList = mutableListOf<NewsDetails>()
@@ -69,7 +69,7 @@ class HomeFragment : Fragment(), NewsRecyclerAdapter.NewsItemClickListener, Swip
 
                 val builder = StringBuilder("")
                 if (model.globalStockDetails.isNotEmpty()) {
-                    for ((_, shortName, _, price, _, _, _, up) in model.globalStockDetails) {
+                    for ((_, shortName, _, _, price, _, _, _, up) in model.globalStockDetails) {
                         builder.append(shortName).append(" : ").append(price)
                         builder.append(if (up == 1) "\u2191" else "\u2193").append("     ")
                     }
@@ -94,6 +94,7 @@ class HomeFragment : Fragment(), NewsRecyclerAdapter.NewsItemClickListener, Swip
         (activity as AppCompatActivity).supportActionBar?.title = resources.getString(R.string.dalal)
         linearLayoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
 
+        companyTickerRecyclerAdapter = CompanyTickerRecyclerAdapter(context, null, this)
         companiesRecyclerView.layoutManager = linearLayoutManager
         companiesRecyclerView.itemAnimator = DefaultItemAnimator()
         companiesRecyclerView.adapter = companyTickerRecyclerAdapter
@@ -140,7 +141,7 @@ class HomeFragment : Fragment(), NewsRecyclerAdapter.NewsItemClickListener, Swip
                         }
 
                         if (newsList.isNotEmpty()) {
-                            newsRecyclerAdapter?.swapData(newsList)
+                            newsRecyclerAdapter.swapData(newsList)
                         }
                         loadingNewsRelativeLayout.visibility = View.GONE
                         newsRecyclerView.visibility = View.VISIBLE
@@ -170,7 +171,7 @@ class HomeFragment : Fragment(), NewsRecyclerAdapter.NewsItemClickListener, Swip
 
         companyTickerDetailsList.clear()
 
-        for ((fullName, _, _, price, _, _, _, up, imagePath) in model.globalStockDetails) {
+        for ((fullName, _, _, _, price, _, _, _, up, imagePath) in model.globalStockDetails) {
             companyTickerDetailsList.add(CompanyTickerDetails(fullName!!, imagePath, price, up == 1))
         }
 
@@ -184,7 +185,7 @@ class HomeFragment : Fragment(), NewsRecyclerAdapter.NewsItemClickListener, Swip
 
 
         val builder = StringBuilder("")
-        for ((_, shortName, _, price, _, _, _, up) in model.globalStockDetails) {
+        for ((_, shortName, _, _, price, _, _, _, up) in model.globalStockDetails) {
 
             builder.append(shortName).append(" : ").append(price)
             if (activity != null) {
@@ -217,9 +218,13 @@ class HomeFragment : Fragment(), NewsRecyclerAdapter.NewsItemClickListener, Swip
         layout.findNavController().navigate(R.id.action_news_list_to_details, bundle, null, extras)
     }
 
-    override fun onRefresh() {
-        getLatestNewsAsynchronously()
+    override fun onCompanyTickerClick(view: View, position: Int) {
+        val bundle = Bundle()
+        bundle.putString(CompanyDescriptionFragment.COMPANY_NAME_KEY, companyTickerDetailsList[position].fullName)
+        view.findNavController().navigate(R.id.action_company_ticker_to_details, bundle)
     }
+
+    override fun onRefresh() = getLatestNewsAsynchronously()
 
     override fun onResume() {
         super.onResume()

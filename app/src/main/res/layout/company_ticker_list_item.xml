@@ -12,7 +12,7 @@
         android:layout_height="160dp"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:contentDescription="@string/company_image_description"
-        android:scaleType="centerCrop" />
+        android:scaleType="center" />
 
     <RelativeLayout
         android:layout_width="match_parent"

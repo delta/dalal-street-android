@@ -186,12 +186,14 @@ class LoginActivity : AppCompatActivity() {
                                         currentStockDetails.fullName,
                                         currentStockDetails.shortName,
                                         q,
+                                        currentStockDetails.description,
                                         currentStockDetails.currentPrice,
                                         currentStockDetails.stocksInMarket,
                                         currentStockDetails.stocksInExchange,
                                         currentStockDetails.previousDayClose,
                                         if (currentStockDetails.upOrDown) 1 else 0,
-                                        Constants.COMPANY_IMAGES_BASE_URL + currentStockDetails.shortName.toUpperCase() + ".png"))
+                                        "https://logo-core.clearbit.com/airbnb.com"))
+                                        //Constants.COMPANY_IMAGES_BASE_URL + currentStockDetails.shortName.toUpperCase() + ".png"))
                             }
                         }
 

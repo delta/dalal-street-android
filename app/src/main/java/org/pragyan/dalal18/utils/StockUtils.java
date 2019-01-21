@@ -29,6 +29,15 @@ public class StockUtils {
         return "";
     }
 
+    public static String getCompanyNameFromShortName(String shortName) {
+
+        for (StockIdCompanyName stockIdCompanyName : stockIdCompanyNameList) {
+            if (stockIdCompanyName.getShortName().equals(shortName))
+                return stockIdCompanyName.getCompanyName();
+        }
+        return "";
+    }
+
     public static String[] getCompanyNamesArray() {
         String[] companyNames = new String[stockIdCompanyNameList.size()];
         for (int i=0 ; i<stockIdCompanyNameList.size() ; ++i) {
@@ -85,7 +94,7 @@ public class StockUtils {
             return companyName;
         }
 
-        public String getShortName() {
+        String getShortName() {
             return shortName;
         }
     }
@@ -107,6 +116,28 @@ public class StockUtils {
                 return stockDetails.getQuantity();
         }
         return 0;
+    }
+
+    public static String getDescriptionFromCompanyName(List<GlobalStockDetails> list, String companyName) {
+        int stockId = getStockIdFromCompanyName(companyName);
+
+        for(GlobalStockDetails globalStockDetails : list) {
+            if(globalStockDetails.getStockId() == stockId)
+                return globalStockDetails.getDescription();
+        }
+
+        return "";
+    }
+
+    public static String getImageUrlFromCompanyName(List<GlobalStockDetails> list, String companyName) {
+        int stockId = getStockIdFromCompanyName(companyName);
+
+        for(GlobalStockDetails globalStockDetails : list) {
+            if(globalStockDetails.getStockId() == stockId)
+                return globalStockDetails.getImagePath();
+        }
+
+        return "";
     }
 
     public static int getPriceFromStockId(List<GlobalStockDetails> list, int stockId) {

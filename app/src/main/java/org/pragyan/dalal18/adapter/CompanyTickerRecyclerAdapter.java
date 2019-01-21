@@ -21,22 +21,27 @@ public class CompanyTickerRecyclerAdapter extends RecyclerView.Adapter<CompanyTi
 
     private Context context;
     private List<CompanyTickerDetails> companyTickerDetailsList;
+    private OnCompanyTickerClickListener listener;
 
-    public CompanyTickerRecyclerAdapter(Context context, List<CompanyTickerDetails> companyTickerDetailsList) {
+    public interface OnCompanyTickerClickListener {
+        void onCompanyTickerClick(View view, int position);
+    }
+
+    public CompanyTickerRecyclerAdapter(Context context, List<CompanyTickerDetails> companyTickerDetailsList, OnCompanyTickerClickListener listener) {
         this.context = context;
         this.companyTickerDetailsList = companyTickerDetailsList;
+        this.listener = listener;
     }
 
     @NonNull
     @Override
     public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(context).inflate(R.layout.company_ticker_list_item, parent, false);
-
         return new MyViewHolder(itemView);
     }
 
     @Override
-    public void onBindViewHolder(MyViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         position = position % companyTickerDetailsList.size();
 
         CompanyTickerDetails currentCompanyTickerDetails = companyTickerDetailsList.get(position);
@@ -68,7 +73,7 @@ public class CompanyTickerRecyclerAdapter extends RecyclerView.Adapter<CompanyTi
         notifyDataSetChanged();
     }
 
-    class MyViewHolder extends RecyclerView.ViewHolder {
+    class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         TextView nameTextView, previousDayCloseTextView;
         ImageView companyImageView, arrowImageView;
@@ -79,6 +84,13 @@ public class CompanyTickerRecyclerAdapter extends RecyclerView.Adapter<CompanyTi
             previousDayCloseTextView = view.findViewById(R.id.lastDayClose_textView);
             companyImageView = view.findViewById(R.id.company_imageView);
             arrowImageView = view.findViewById(R.id.arrow_imageView);
+
+            view.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View view) {
+            listener.onCompanyTickerClick(view, getAdapterPosition());
         }
     }
 }

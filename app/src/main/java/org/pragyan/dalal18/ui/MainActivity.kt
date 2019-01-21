@@ -416,7 +416,7 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
         var netStockWorth = 0
         var rate = 0
         for ((stockId, quantity) in model.ownedStockDetails) {
-            for ((_, _, stockId1, price) in model.globalStockDetails) {
+            for ((_, _, stockId1, _, price) in model.globalStockDetails) {
                 if (stockId1 == stockId) {
                     rate = price
                     break

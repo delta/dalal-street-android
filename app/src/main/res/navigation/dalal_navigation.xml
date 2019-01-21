@@ -15,6 +15,10 @@
             android:id="@+id/action_news_list_to_details"
             app:destination="@+id/nav_news_details" />
 
+        <action
+            android:id="@+id/action_company_ticker_to_details"
+            app:destination="@+id/company_description_dest" />
+
     </fragment>
 
     <fragment
@@ -27,7 +31,13 @@
         android:id="@+id/companies_dest"
         android:name="org.pragyan.dalal18.fragment.CompanyFragment"
         android:label="@string/companies"
-        tools:layout="@layout/fragment_companies" />
+        tools:layout="@layout/fragment_companies">
+
+        <action
+            android:id="@+id/action_company_ticker_to_details"
+            app:destination="@+id/company_description_dest" />
+
+    </fragment>
 
     <fragment
         android:id="@+id/news_dest"
@@ -100,5 +110,11 @@
         android:name="org.pragyan.dalal18.notifications.NotificationFragment"
         android:label="@string/notifications"
         tools:layout="@layout/fragment_notification" />
+
+    <fragment
+        android:id="@+id/company_description_dest"
+        android:name="org.pragyan.dalal18.fragment.CompanyDescriptionFragment"
+        android:label="@string/company_description"
+        tools:layout="@layout/fragment_company_description" />
 
 </navigation>
