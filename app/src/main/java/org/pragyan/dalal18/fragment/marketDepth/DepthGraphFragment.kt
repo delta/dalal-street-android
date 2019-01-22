@@ -44,10 +44,13 @@ class DepthGraphFragment : Fragment() {
 
     private var xVals = ArrayList<String>()
     private var yVals = ArrayList<CandleEntry>()
-    private var stockHistoryList = ArrayList<StockHistory>()
+    private lateinit var stockHistoryList : ArrayList<StockHistory>
 
     private var loadingDialog: AlertDialog? = null
     lateinit var networkDownHandler: ConnectionUtils.OnNetworkDownHandler
+
+    private var currentCompany: String? =  null
+    private var currentInterval : String? = null
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -73,12 +76,12 @@ class DepthGraphFragment : Fragment() {
                 .setCancelable(false)
                 .create()
 
+        stockHistoryList = ArrayList()
         with(market_depth_chart) {
             backgroundColor = ContextCompat.getColor(this@DepthGraphFragment.context!!, R.color.black_background)
             setTouchEnabled(false)
             setNoDataText("Select a company to view depth chart")
             description.isEnabled = true
-            description.text = "(60 min)"
 
             description.textColor = ContextCompat.getColor(this@DepthGraphFragment.context!!, R.color.neutral_font_color)
             setPinchZoom(true)
@@ -91,7 +94,7 @@ class DepthGraphFragment : Fragment() {
             setAdapter(arrayAdapter)
             isSelected = false
             setOnItemClickListener { _, _, _, _ ->
-                val currentCompany = graph_company_spinner.text.toString()
+                currentCompany = graph_company_spinner.text.toString()
                 stockHistoryList.clear()
                 xVals.clear()
                 yVals.clear()
@@ -101,21 +104,72 @@ class DepthGraphFragment : Fragment() {
                 }
                 market_depth_chart.clearFocus()
                 if (activity != null && isAdded) {
-                    loadingDialog?.show()
-                    loadStockHistoryAsynchronously(currentCompany)
+                    loadStockHistoryAsynchronously()
+                }
+            }
+        }
+
+        val intervalAdapter = ArrayAdapter(activity!!, R.layout.interval_spinner_item, resources.getStringArray(R.array.intervalType))
+        with(graph_time_spinner){
+            setAdapter(intervalAdapter)
+            isSelected = false
+            setOnItemClickListener { _, _, _, _ ->
+                currentInterval = graph_time_spinner.text.toString()
+                stockHistoryList.clear()
+                xVals.clear()
+                yVals.clear()
+                if (!market_depth_chart.isEmpty) {
+                    market_depth_chart.invalidate()
+                    market_depth_chart.clear()
+                }
+                market_depth_chart.clearFocus()
+                if (activity != null && isAdded) {
+                    loadStockHistoryAsynchronously()
                 }
             }
         }
     }
 
-    private fun loadStockHistoryAsynchronously(currentCompany: String) {
+    private fun loadStockHistoryAsynchronously() {
 
+        if(currentCompany == null || currentInterval == null){
+            return
+        }
+
+        lateinit var resolution : StockHistoryResolution
+        when(currentInterval) {
+
+            "1 min" -> {
+                resolution = StockHistoryResolution.OneMinute
+            }
+
+            "5 mins" -> {
+                resolution = StockHistoryResolution.FiveMinutes
+            }
+
+            "15 mins" -> {
+                resolution = StockHistoryResolution.FifteenMinutes
+            }
+
+            "30 mins" -> {
+                resolution = StockHistoryResolution.ThirtyMinutes
+            }
+
+            "60 mins" -> {
+                resolution = StockHistoryResolution.SixtyMinutes
+            }
+
+            else -> {
+                resolution = StockHistoryResolution.OneMinute
+            }
+        }
+        loadingDialog?.show()
         doAsync {
             if (ConnectionUtils.getConnectionInfo(context) && ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
                 val stockHistoryResponse = actionServiceBlockingStub.getStockHistory(GetStockHistoryRequest
                         .newBuilder()
                         .setStockId(getStockIdFromCompanyName(currentCompany))
-                        .setResolution(StockHistoryResolution.SixtyMinutes)
+                        .setResolution(resolution)
                         .build())
 
                 uiThread {
@@ -184,6 +238,7 @@ class DepthGraphFragment : Fragment() {
                     val data = CandleData(set1)
                     market_depth_chart.data = data
                     market_depth_chart.invalidate()
+                    market_depth_chart.description.text = "($currentInterval)"
 
                     loadingDialog?.dismiss()
                 }
@@ -207,10 +262,5 @@ class DepthGraphFragment : Fragment() {
     private fun convertToString(date: Date?): String {
         val df = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.ENGLISH)
         return df.format(date)
-    }
-
-    override fun onPause() {
-        super.onPause()
-        stockHistoryList.clear()
     }
 }
