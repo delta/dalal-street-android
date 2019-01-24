@@ -5,7 +5,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.Bundle
-import android.os.Handler
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -188,8 +187,8 @@ class DepthTableFragment : Fragment() {
                             if (map.key >= 0) {
                                 var price = map.key
                                 val volume = map.value
-                                if (price == 0) {
-                                    price = Integer.MAX_VALUE
+                                if (price == 0L) {
+                                    price = Long.MAX_VALUE
                                 }
                                 val temp = MarketDepth(price, volume)
                                 bidArrayList.add(temp)
@@ -206,8 +205,8 @@ class DepthTableFragment : Fragment() {
                         for (map in value.bidDepthDiffMap.entries) {
                             var price = map.key
                             val volume = map.value
-                            if (price == 0) {
-                                price = Integer.MAX_VALUE
+                            if (price == 0L) {
+                                price = Long.MAX_VALUE
                             }
                             if (!containsBid(price, volume) && price > 0) {
                                 bidArrayList.add(MarketDepth(price, volume))
@@ -301,7 +300,7 @@ class DepthTableFragment : Fragment() {
     }
 
 
-    private fun containsBid(price: Int, newVolume: Int): Boolean {
+    private fun containsBid(price: Long, newVolume: Long): Boolean {
         for (i in bidArrayList.indices) {
             if (bidArrayList[i].price == price) {
                 val tempVol = bidArrayList[i].volume + newVolume
@@ -312,7 +311,7 @@ class DepthTableFragment : Fragment() {
         return false
     }
 
-    private fun containsAsk(price: Int, newVolume: Int): Boolean {
+    private fun containsAsk(price: Long, newVolume: Long): Boolean {
         for (i in askArrayList.indices) {
             if (askArrayList[i].price == price) {
                 val tempVol = askArrayList[i].volume + newVolume

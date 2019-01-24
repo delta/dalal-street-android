@@ -72,13 +72,13 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
             when (intent.action) {
                 Constants.REFRESH_WORTH_TEXTVIEW_ACTION -> {
 
-                    changeTextViewValue(stockWorthTextView, intent.getIntExtra(TOTAL_WORTH_KEY, 0), false)
-                    changeTextViewValue(cashWorthTextView, intent.getIntExtra(TOTAL_WORTH_KEY, 0), true)
+                    changeTextViewValue(stockWorthTextView, intent.getLongExtra(TOTAL_WORTH_KEY, 0), false)
+                    changeTextViewValue(cashWorthTextView, intent.getLongExtra(TOTAL_WORTH_KEY, 0), true)
                 }
 
                 Constants.REFRESH_DIVIDEND_ACTION -> {
-                    changeTextViewValue(totalWorthTextView, intent.getIntExtra(TOTAL_WORTH_KEY, 0), true)
-                    changeTextViewValue(cashWorthTextView, intent.getIntExtra(TOTAL_WORTH_KEY, 0), true)
+                    changeTextViewValue(totalWorthTextView, intent.getLongExtra(TOTAL_WORTH_KEY, 0), true)
+                    changeTextViewValue(cashWorthTextView, intent.getLongExtra(TOTAL_WORTH_KEY, 0), true)
                 }
 
                 Constants.UPDATE_WORTH_VIA_STREAM_ACTION -> updateStockWorthViaStreamUpdates()
@@ -218,8 +218,8 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
 
     private fun updateValues() {
 
-        val cashWorth = intent.getIntExtra(CASH_WORTH_KEY, -1)
-        val totalWorth = intent.getIntExtra(TOTAL_WORTH_KEY, -1)
+        val cashWorth = intent.getLongExtra(CASH_WORTH_KEY, -1)
+        val totalWorth = intent.getLongExtra(TOTAL_WORTH_KEY, -1)
         val stockWorth = totalWorth - cashWorth
 
         val formatter = DecimalFormat("##,##,###")
@@ -375,7 +375,7 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
     }
 
     // Method called when user's stock quantity changes (called from Transactions stream update)
-    private fun updateOwnedStockIdAndQuantity(stockId: Int, stockQuantity: Int, increase: Boolean) {
+    private fun updateOwnedStockIdAndQuantity(stockId: Int, stockQuantity: Long, increase: Boolean) {
 
         var isPresentInList = false
 
@@ -413,8 +413,8 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
 
     // Method is called when stock price update is received
     private fun updateStockWorthViaStreamUpdates() {
-        var netStockWorth = 0
-        var rate = 0
+        var netStockWorth = 0L
+        var rate = 0L
         for ((stockId, quantity) in model.ownedStockDetails) {
             for ((_, _, stockId1, _, price) in model.globalStockDetails) {
                 if (stockId1 == stockId) {
@@ -426,18 +426,18 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
         }
 
         val formatter = DecimalFormat("##,##,###")
-        stockWorthTextView.text = formatter.format(netStockWorth.toLong())
+        stockWorthTextView.text = formatter.format(netStockWorth)
 
         var temp = cashWorthTextView.text.toString()
         temp = temp.replace(",", "")
-        totalWorthTextView.text = formatter.format((netStockWorth + Integer.parseInt(temp)).toLong())
+        totalWorthTextView.text = formatter.format(netStockWorth + temp.toLong())
     }
 
-    private fun changeTextViewValue(textView: TextView, value: Int, increase: Boolean) {
+    private fun changeTextViewValue(textView: TextView, value: Long, increase: Boolean) {
         var temp = textView.text.toString()
         temp = temp.replace(",", "")
-        val previousValue = Integer.parseInt(temp)
-        textView.text = DecimalFormat("##,##,###").format((previousValue + if (increase) value else -1 * value).toLong())
+        val previousValue = temp.toLong()
+        textView.text = DecimalFormat("##,##,###").format(previousValue + if (increase) value else -1 * value)
     }
 
     // Starts making drawer button translucent

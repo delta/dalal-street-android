@@ -25,7 +25,7 @@ public class RetrieveRecyclerAdapter extends RecyclerView.Adapter<RetrieveRecycl
     private OnRetrieveButtonClickListener listener;
 
     public interface OnRetrieveButtonClickListener {
-        void onRetrieveButtonClick(int position, int quantity);
+        void onRetrieveButtonClick(int position, long quantity);
     }
 
     public RetrieveRecyclerAdapter(Context context, List<MortgageDetails> mortgageDetailsList, OnRetrieveButtonClickListener listener) {
@@ -97,7 +97,7 @@ public class RetrieveRecyclerAdapter extends RecyclerView.Adapter<RetrieveRecycl
         @Override
         public void onClick(View view) {
             if (!retrieveQuantityEditText.getText().toString().isEmpty() && !retrieveQuantityEditText.getText().toString().equals(""))
-                listener.onRetrieveButtonClick(getAdapterPosition(), Integer.parseInt(retrieveQuantityEditText.getText().toString()));
+                listener.onRetrieveButtonClick(getAdapterPosition(), Long.parseLong(retrieveQuantityEditText.getText().toString()));
             else
                 ToastsKt.toast(context, "Enter stocks to retrieve");
         }

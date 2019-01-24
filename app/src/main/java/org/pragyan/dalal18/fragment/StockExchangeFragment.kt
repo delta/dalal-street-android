@@ -110,11 +110,11 @@ class StockExchangeFragment : Fragment() {
                         networkDownHandler.onNetworkDownError()
                     }
                 } else {
-                    if (Integer.parseInt(noOfStocksEditText.text.toString().trim { it <= ' ' }) <= currentStock.stocksInExchange) {
+                    if ((noOfStocksEditText.text.toString().trim { it <= ' ' }).toLong() <= currentStock.stocksInExchange) {
 
                         val response = actionServiceBlockingStub.buyStocksFromExchange(
                                 BuyStocksFromExchangeRequest.newBuilder().setStockId(lastSelectedStockId)
-                                        .setStockQuantity(Integer.parseInt(noOfStocksEditText.text.toString())).build()
+                                        .setStockQuantity(noOfStocksEditText.text.toString().toLong()).build()
                         )
 
                         uiThread {

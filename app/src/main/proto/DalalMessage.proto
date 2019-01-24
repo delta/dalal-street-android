@@ -10,6 +10,8 @@ import "actions/MortgageStocks.proto";
 import "actions/PlaceOrder.proto";
 import "actions/RetrieveMortgageStocks.proto";
 
+import "actions/GetPortfolio.proto";
+import "actions/CreateBot.proto";
 import "actions/GetCompanyProfile.proto";
 import "actions/GetMarketEvents.proto";
 import "actions/GetMyOrders.proto";
@@ -29,6 +31,84 @@ import "datastreams/StockExchange.proto";
 import "datastreams/MarketEvents.proto";
 import "datastreams/MyOrders.proto";
 import "datastreams/StockHistory.proto";
+/*
+message RequestWrapper {
+    string request_id = 1;
+    string session_id = 2;
+
+    oneof request {
+		actions.BuyStocksFromExchangeRequest buy_stocks_from_exchange_request = 3;
+		actions.CancelOrderRequest cancel_order_request = 4;
+		actions.LoginRequest login_request = 6;
+		actions.LogoutRequest logout_request = 7;
+		actions.MortgageStocksRequest mortgage_stocks_request = 8;
+		actions.PlaceOrderRequest place_order_request = 9;
+		actions.RetrieveMortgageStocksRequest retrieve_mortgage_stocks_request = 11;
+		datastreams.SubscribeRequest subscribe_request = 12;
+		datastreams.UnsubscribeRequest unsubscribe_request = 13;
+
+		actions.GetCompanyProfileRequest get_company_profile_request = 14;
+		actions.GetMarketEventsRequest get_market_events_request = 15;
+		actions.GetMyOpenOrdersRequest get_my_open_orders_request = 16;
+		actions.GetMyClosedAsksRequest get_my_closed_asks_request = 17;
+		actions.GetMyClosedBidsRequest get_my_closed_bids_request = 18;
+		actions.GetNotificationsRequest get_notifications_request = 19;
+		actions.GetTransactionsRequest get_transactions_request = 20;
+		actions.GetMortgageDetailsRequest get_mortgage_details_request = 21;
+		actions.GetLeaderboardRequest get_leaderboard_request = 22;
+    }
+}
+
+message ResponseWrapper {
+    string request_id = 1;
+
+    oneof response {
+		actions.BuyStocksFromExchangeResponse buy_stocks_from_exchange_response = 3;
+		actions.CancelOrderResponse cancel_order_response = 4;
+		actions.LoginResponse login_response = 6;
+		actions.LogoutResponse logout_response = 7;
+		actions.MortgageStocksResponse mortgage_stocks_response = 8;
+		actions.PlaceOrderResponse place_order_response = 9;
+		actions.RetrieveMortgageStocksResponse retrieve_mortgage_stocks_response = 11;
+		datastreams.SubscribeResponse subscribe_response = 12;
+		datastreams.UnsubscribeResponse unsubscribe_response = 13;
+
+		actions.GetCompanyProfileResponse get_company_profile_response = 14;
+		actions.GetMarketEventsResponse get_market_events_response = 15;
+		actions.GetMyOpenOrdersResponse get_my_open_orders_response = 16;
+		actions.GetMyClosedAsksResponse get_my_closed_asks_response = 17;
+		actions.GetMyClosedBidsResponse get_my_closed_bids_response = 18;
+		actions.GetNotificationsResponse get_notifications_response = 19;
+		actions.GetTransactionsResponse get_transactions_response = 20;
+		actions.GetMortgageDetailsResponse get_mortgage_details_response = 21;
+		actions.GetLeaderboardResponse get_leaderboard_response = 22;
+		actions.RegisterResponse register_response = 23;
+	}
+}
+
+message DataStreamUpdateWrapper {
+    datastreams.DataStreamType data_stream_type = 1;
+    string data_stream_id = 2;
+
+    oneof update {
+        datastreams.MarketDepthUpdate market_depth_update = 3;
+        datastreams.TransactionUpdate transaction_update = 4;
+        datastreams.NotificationUpdate notification_update = 5;
+        datastreams.StockPricesUpdate stock_prices_update = 6;
+        datastreams.MarketEventUpdate market_events_update = 7;
+        datastreams.StockExchangeUpdate stock_exchange_update = 8;
+        datastreams.MyOrderUpdate my_order_update = 9;
+    }
+}
+
+message DalalMessage {
+    oneof message_type {
+        RequestWrapper request_wrapper = 1;
+        ResponseWrapper response_wrapper = 2;
+        DataStreamUpdateWrapper data_stream_update_wrapper = 3;
+    }
+}
+*/
 
 service DalalActionService {
 	// Stock trading related functions
@@ -56,6 +136,10 @@ service DalalActionService {
 	rpc Login(actions.LoginRequest) 									returns (actions.LoginResponse);
 	rpc Logout(actions.LogoutRequest) 									returns (actions.LogoutResponse);
 	rpc Register(actions.RegisterRequest)								returns (actions.RegisterResponse);
+
+	//Bots
+	rpc GetPortfolio(actions.GetPortfolioRequest)						returns (actions.GetPortfolioResponse);
+	rpc CreateBot(actions.CreateBotRequest)							returns (actions.CreateBotResponse);
 
 }
 

@@ -21,7 +21,6 @@ import org.pragyan.dalal18.dagger.ContextModule
 import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent
 import org.pragyan.dalal18.data.DalalViewModel
 import org.pragyan.dalal18.data.Portfolio
-import org.pragyan.dalal18.ui.MainActivity
 import org.pragyan.dalal18.utils.Constants
 import org.pragyan.dalal18.utils.StockUtils
 import java.util.ArrayList
@@ -82,7 +81,7 @@ class PortfolioFragment : Fragment() {
         val portfolioList = ArrayList<Portfolio>()
         for ((stockId, quantity) in model.ownedStockDetails) {
 
-            var currentPrice = -1
+            var currentPrice = -1L
 
             for (globalStockDetails in model.globalStockDetails) {
                 if (stockId == globalStockDetails.stockId) {
@@ -91,7 +90,7 @@ class PortfolioFragment : Fragment() {
                 }
             }
 
-            if (quantity != 0) {
+            if (quantity != 0L) {
                 portfolioList.add(Portfolio(
                         StockUtils.getShortNameForStockId(stockId)!!,
                         StockUtils.getCompanyNameFromStockId(stockId),

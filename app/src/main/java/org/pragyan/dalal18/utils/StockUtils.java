@@ -99,7 +99,7 @@ public class StockUtils {
         }
     }
 
-    public static int getQuantityOwnedFromCompanyName(List<StockDetails> list, String companyName) {
+    public static long getQuantityOwnedFromCompanyName(List<StockDetails> list, String companyName) {
         int stockId = getStockIdFromCompanyName(companyName);
 
         for (StockDetails stockDetails : list) {
@@ -109,7 +109,7 @@ public class StockUtils {
         return 0;
     }
 
-    public static int getQuantityOwnedFromStockId(List<StockDetails> list, int stockId) {
+    public static long getQuantityOwnedFromStockId(List<StockDetails> list, int stockId) {
 
         for (StockDetails stockDetails : list) {
             if (stockDetails.getStockId() == stockId)
@@ -140,7 +140,7 @@ public class StockUtils {
         return "";
     }
 
-    public static int getPriceFromStockId(List<GlobalStockDetails> list, int stockId) {
+    public static long getPriceFromStockId(List<GlobalStockDetails> list, int stockId) {
 
         for (GlobalStockDetails stockDetails : list) {
             if (stockDetails.getStockId() == stockId)
@@ -149,7 +149,7 @@ public class StockUtils {
         return 0;
     }
 
-    public static int getPreviousDayCloseFromStockId(List<GlobalStockDetails> list, int stockId) {
+    public static long getPreviousDayCloseFromStockId(List<GlobalStockDetails> list, int stockId) {
 
         for (GlobalStockDetails stockDetails : list) {
             if (stockDetails.getStockId() == stockId)

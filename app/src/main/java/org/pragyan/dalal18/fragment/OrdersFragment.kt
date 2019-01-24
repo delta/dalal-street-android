@@ -172,8 +172,6 @@ class OrdersFragment : Fragment(), OrdersRecyclerAdapter.OnOrderClickListener, S
                         }
                     }
                     uiThread {
-                        loadingOrdersDialog.dismiss()
-
                         if (ordersList.size > 0) {
                             ordersRecyclerAdapter!!.swapData(ordersList)
                             ordersRecycler_swipeRefreshLayout.visibility = View.VISIBLE
@@ -184,8 +182,9 @@ class OrdersFragment : Fragment(), OrdersRecyclerAdapter.OnOrderClickListener, S
                         }
                     }
                 } else {
-                    Toast.makeText(activity, openOrdersResponse?.statusMessage, Toast.LENGTH_LONG).show()
+                    uiThread { Toast.makeText(activity, openOrdersResponse?.statusMessage, Toast.LENGTH_LONG).show() }
                 }
+                uiThread { loadingOrdersDialog.dismiss() }
             } else {
                 networkDownHandler?.onNetworkDownError()
             }

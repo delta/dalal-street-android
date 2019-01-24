@@ -9,6 +9,7 @@ enum TransactionType {
     ORDER_FILL_TRANSACTION = 1;
     MORTGAGE_TRANSACTION = 2;
     DIVIDEND_TRANSACTION = 3;
+    ORDER_FEE_TRANSACTION = 4;
 }
 
 message Transaction {
@@ -16,8 +17,8 @@ message Transaction {
   uint32 user_id = 2;
   uint32 stock_id = 3;
   TransactionType type = 4;
-  int32 stock_quantity = 5;
-  uint32 price = 6;
-  int32 total = 7;
+  int64 stock_quantity = 5;
+  uint64 price = 6;
+  int64 total = 7;
   string created_at = 8;
 }
