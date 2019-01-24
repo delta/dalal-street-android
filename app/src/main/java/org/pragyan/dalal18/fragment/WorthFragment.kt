@@ -36,16 +36,16 @@ class WorthFragment : Fragment() {
 
     private lateinit var kreonLightTypeFace : Typeface
 
-    private var totalStockWorth : Int = 0
-    private var cashWorth :Int = 0
-    private var totalWorth : Int = 0
+    private var totalStockWorth : Long = 0L
+    private var cashWorth :Long = 0
+    private var totalWorth : Long = 0
     private var stocks : ArrayList<StockDetails> = ArrayList()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         val rootView = inflater.inflate(R.layout.fragment_worth, container, false)
         model = activity?.run { ViewModelProviders.of(this).get(DalalViewModel::class.java) } ?: throw Exception("Invalid activity")
-        cashWorth = container?.rootView?.findViewById<TextView>(R.id.cashWorthTextView)?.text.toString().replace("," , "").toInt()
+        cashWorth = container?.rootView?.findViewById<TextView>(R.id.cashWorthTextView)?.text.toString().replace("," , "").toLong()
         DaggerDalalStreetApplicationComponent.builder().contextModule(ContextModule(context!!)).build().inject(this)
         return rootView
     }
@@ -96,8 +96,8 @@ class WorthFragment : Fragment() {
     private fun setUpWorthPieChart() {
 
         val entries = ArrayList<PieEntry>()
-        var currentPrice = -1
-        val currentPriceList = ArrayList<Int>()
+        var currentPrice = -1L
+        val currentPriceList = ArrayList<Long>()
 
         for (currentStockDetails in model.ownedStockDetails) {
             for (globalStockDetails in model.globalStockDetails) {
@@ -107,7 +107,7 @@ class WorthFragment : Fragment() {
                 }
             }
 
-            if(currentStockDetails.quantity != 0){
+            if(currentStockDetails.quantity != 0L){
                 //Log.e("SAN", currentStockDetails.quantity * current)
                 currentPriceList.add(currentPrice)
                 totalStockWorth += currentPrice * currentStockDetails.quantity
@@ -118,7 +118,7 @@ class WorthFragment : Fragment() {
 
         totalWorth = cashWorth + totalStockWorth
 
-        var others = 0
+        var others = 0L
         for(i in 0 until stocks.size){
             if((stocks[i].quantity * currentPriceList[i]) > (.02 * totalWorth)) {
                 entries.add(PieEntry((stocks[i].quantity * currentPriceList[i]).toFloat(), getCompanyNameFromStockId(stocks[i].stockId)))

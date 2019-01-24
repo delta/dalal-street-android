@@ -6,7 +6,7 @@ option java_multiple_files=true;
 import "models/MortgageDetail.proto";
 
 message GetMortgageDetailsRequest {
-    //    Yeah. Empty. No parameters required here.
+//    Yeah. Empty. No parameters required here.
 }
 
 message GetMortgageDetailsResponse {
@@ -16,7 +16,5 @@ message GetMortgageDetailsResponse {
     }
     StatusCode status_code = 1;
     string     status_message = 2;
-
-    // This will be updated when interest-based mortgage is implemented.
-    repeated models.MortgageDetail mortgage_details = 3; // key: stockid, value: number of stocks in mortgage
+    repeated models.MortgageDetail mortgage_details = 3;
 }

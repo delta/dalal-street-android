@@ -73,8 +73,8 @@ public class OrdersRecyclerAdapter extends RecyclerView.Adapter<OrdersRecyclerAd
             holder.priceTextView.setText(tempString);
         }
 
-        holder.quantitySeekbar.setMax(order.getStockQuantity());
-        holder.quantitySeekbar.setProgress(order.getStockQuantityFulfilled());
+        holder.quantitySeekbar.setMax((int)order.getStockQuantity());
+        holder.quantitySeekbar.setProgress((int)order.getStockQuantityFulfilled());
 
         holder.quantitySeekbar.setOnTouchListener((view, motionEvent) -> true);
     }

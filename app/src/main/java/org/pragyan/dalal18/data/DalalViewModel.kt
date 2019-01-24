@@ -10,13 +10,13 @@ class DalalViewModel : ViewModel() {
     lateinit var ownedStockDetails: MutableList<StockDetails>
     lateinit var globalStockDetails: MutableList<GlobalStockDetails>
 
-    fun updateGlobalStock(position: Int, price: Int, quantityInMarket: Int, quantityInExchange: Int) {
+    fun updateGlobalStock(position: Int, price: Long, quantityInMarket: Long, quantityInExchange: Long) {
         globalStockDetails[position].price = price
         globalStockDetails[position].quantityInMarket = quantityInMarket
         globalStockDetails[position].quantityInExchange = quantityInExchange
     }
 
-    fun updateGlobalStockPrice(pos: Int, price: Int) {
+    fun updateGlobalStockPrice(pos: Int, price: Long) {
         globalStockDetails[pos-1].price = price
     }
 

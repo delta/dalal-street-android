@@ -107,11 +107,11 @@ class LeaderboardFragment : Fragment() {
                             leaderBoardDetailsList.add(LeaderBoardDetails(currentRow.rank, currentRow.userName, currentRow.totalWorth))
                         }
                         leaderBoardRecyclerAdapter.swapData(leaderBoardDetailsList)
-                        loadingDialog.dismiss()
                         leaderboard_recyclerView.visibility = View.VISIBLE
                     } else {
                         Toast.makeText(activity, rankListResponse?.statusMessage + "Internal server error", Toast.LENGTH_LONG).show()
                     }
+                    loadingDialog.dismiss()
                 }
             } else {
                 uiThread { networkDownHandler.onNetworkDownError() }

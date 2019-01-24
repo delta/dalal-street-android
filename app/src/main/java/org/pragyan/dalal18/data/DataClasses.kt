@@ -4,36 +4,36 @@ import android.os.Parcelable
 import kotlinx.android.parcel.Parcelize
 import java.util.*
 
-data class CompanyDetails(var company: String?, var shortName: String?, var value: Int, var previousDayClose: Int)
+data class CompanyDetails(var company: String?, var shortName: String?, var value: Long, var previousDayClose: Long)
 
-data class CompanyTickerDetails(val fullName: String, val imageUrl: String?, val previousDayClose: Int, val isUp: Boolean)
+data class CompanyTickerDetails(val fullName: String, val imageUrl: String?, val previousDayClose: Long, val isUp: Boolean)
 
 @Parcelize
 /* Modify definition according to needs; Refer Stock.proto for more attributes */
-data class GlobalStockDetails(var fullName: String?, var shortName: String?, var stockId: Int, var description:String, var price: Int,
-                              var quantityInMarket: Int, var quantityInExchange: Int, var previousDayClose: Int,
+data class GlobalStockDetails(var fullName: String?, var shortName: String?, var stockId: Int, var description:String, var price: Long,
+                              var quantityInMarket: Long, var quantityInExchange: Long, var previousDayClose: Long,
                               var up: Int, val imagePath: String) : Parcelable
 
-data class LeaderBoardDetails(var rank: Int, var name: String?, var wealth: Int)
+data class LeaderBoardDetails(var rank: Int, var name: String?, var wealth: Long)
 
-data class MarketDepth(var price: Int, var volume: Int)
+data class MarketDepth(var price: Long, var volume: Long)
 
-data class MortgageDetails(var stockId: Int, var stockQuantity: Int, var mortgagePrice: Int)
+data class MortgageDetails(var stockId: Int, var stockQuantity: Long, var mortgagePrice: Long)
 
 @Parcelize
 data class NewsDetails(var createdAt: String?, var headlines: String?, var content: String?, var imagePath: String?) : Parcelable
 
 data class Notification(val text: String, val createdAt: String)
 
-data class Order(val orderId: Int, val isBid: Boolean, var isClosed: Boolean, val price: Int, val stockId: Int, val orderType: Int,
-                 val stockQuantity: Int, var stockQuantityFulfilled: Int)
+data class Order(val orderId: Int, val isBid: Boolean, var isClosed: Boolean, val price: Long, val stockId: Int, val orderType: Int,
+                 val stockQuantity: Long, var stockQuantityFulfilled: Long)
 
-data class Portfolio(val shortName: String, var companyName: String?, var quantityOwned: Int, var price: Int, var previousDayClose: Int)
+data class Portfolio(val shortName: String, var companyName: String?, var quantityOwned: Long, var price: Long, var previousDayClose: Long)
 
 @Parcelize
-data class StockDetails(var stockId: Int, var quantity: Int) : Parcelable
+data class StockDetails(var stockId: Int, var quantity: Long) : Parcelable
 
-data class StockHistory(var stockDate: Date?, var stockHigh: Int,var stockLow: Int,var stockOpen: Int,var stockClose: Int)
+data class StockHistory(var stockDate: Date?, var stockHigh: Long,var stockLow: Long,var stockOpen: Long,var stockClose: Long)
 
-data class Transaction(var type: String?, var stockId: Int, val noOfStocks: Int, val stockPrice: Float,
-                       var time: String?, val totalMoney: Float)
+data class Transaction(var type: String?, var stockId: Int, val noOfStocks: Long, val stockPrice: Long,
+                       var time: String?, val totalMoney: Long)

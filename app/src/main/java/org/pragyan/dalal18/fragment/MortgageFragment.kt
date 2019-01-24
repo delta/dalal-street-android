@@ -64,9 +64,9 @@ class MortgageFragment : Fragment(), RetrieveRecyclerAdapter.OnRetrieveButtonCli
             if (intent.action != null && intent.action.equals(Constants.REFRESH_MORTGAGE_UPDATE_ACTION, ignoreCase = true) &&
                     intent.getIntExtra(STOCKS_ID_KEY, 0) > 0) {
 
-                val quantity = intent.getIntExtra(STOCKS_QUANTITY_KEY, 0)
+                val quantity = intent.getLongExtra(STOCKS_QUANTITY_KEY, 0)
                 val stockId = intent.getIntExtra(STOCKS_ID_KEY, 0)
-                val price = intent.getIntExtra(STOCKS_PRICE_KEY, 0)
+                val price = intent.getLongExtra(STOCKS_PRICE_KEY, 0)
 
                 val ownedString = " :  " + getQuantityOwnedFromStockId(model.ownedStockDetails, stockId).toString()
                 stocksOwnedTextView.text = ownedString
@@ -180,7 +180,7 @@ class MortgageFragment : Fragment(), RetrieveRecyclerAdapter.OnRetrieveButtonCli
             }
         }
 
-        val stocksTransaction = Integer.parseInt(stocks_editText.text.toString().trim { it <= ' ' })
+        val stocksTransaction = (stocks_editText.text.toString().trim { it <= ' ' }).toLong()
 
         if (stocksTransaction <= getQuantityOwnedFromCompanyName(model.ownedStockDetails, getCompanyNameFromStockId(lastStockId))) {
             val mortgageStocksResponse = actionServiceBlockingStub.mortgageStocks(
@@ -237,7 +237,7 @@ class MortgageFragment : Fragment(), RetrieveRecyclerAdapter.OnRetrieveButtonCli
         }
     }
 
-    override fun onRetrieveButtonClick(position: Int, quantity: Int) {
+    override fun onRetrieveButtonClick(position: Int, quantity: Long) {
 
         val retrieveStocksResponse = actionServiceBlockingStub.retrieveMortgageStocks(
                 RetrieveMortgageStocksRequest.newBuilder().setStockId(mortgageDetailsList[position].stockId)

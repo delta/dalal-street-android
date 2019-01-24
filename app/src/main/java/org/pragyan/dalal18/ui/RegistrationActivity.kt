@@ -10,8 +10,8 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import dalalstreet.api.DalalActionServiceGrpc
-import dalalstreet.api.actions.Register
-import dalalstreet.api.actions.Register.RegisterResponse
+import dalalstreet.api.actions.RegisterRequest
+import dalalstreet.api.actions.RegisterResponse
 import io.grpc.ManagedChannel
 import kotlinx.android.synthetic.main.activity_registration.*
 import org.jetbrains.anko.doAsync
@@ -76,7 +76,7 @@ class RegistrationActivity : AppCompatActivity() {
             if (ConnectionUtils.getConnectionInfo(this@RegistrationActivity) && ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
                 val stub = DalalActionServiceGrpc.newBlockingStub(channel)
 
-                val response = stub.register(Register.RegisterRequest.newBuilder()
+                val response = stub.register(RegisterRequest.newBuilder()
                         .setCountry(countrySpinner.selectedItem.toString())
                         .setEmail(emailEditText.text.toString())
                         .setFullName(nameEditText.text.toString())

@@ -7,7 +7,7 @@ import "models/Transaction.proto";
 
 message BuyStocksFromExchangeRequest {
     uint32 stock_id = 1;
-    uint32 stock_quantity = 2;
+    uint64 stock_quantity = 2;
 }
 message BuyStocksFromExchangeResponse {
     enum StatusCode {

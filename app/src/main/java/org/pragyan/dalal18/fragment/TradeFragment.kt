@@ -129,7 +129,7 @@ class TradeFragment : Fragment() {
     private fun onBidAskButtonClick() {
         if (noOfStocksEditText.text.toString().trim { it <= ' ' }.isEmpty()) {
             Toast.makeText(activity, "Enter the number of stocks", Toast.LENGTH_SHORT).show()
-        } else if (Integer.parseInt(noOfStocksEditText.text.toString()) == 0) {
+        } else if ((noOfStocksEditText.text.toString()).toLong() == 0L) {
             Toast.makeText(activity, "Enter valid number of stocks", Toast.LENGTH_SHORT).show()
         } else if (radioGroupStock.checkedRadioButtonId == -1) {
             Toast.makeText(activity, "Select order type", Toast.LENGTH_SHORT).show()
@@ -137,7 +137,7 @@ class TradeFragment : Fragment() {
             Toast.makeText(activity, "Enter the order price", Toast.LENGTH_SHORT).show()
         } else if (radioGroupStock.checkedRadioButtonId == R.id.askRadioButton) {
             val validQuantity = getQuantityOwnedFromCompanyName(model.ownedStockDetails, companySpinner.selectedItem.toString())
-            val askingQuantity = Integer.parseInt(noOfStocksEditText.text.toString())
+            val askingQuantity = (noOfStocksEditText.text.toString()).toLong()
             if (askingQuantity > validQuantity) {
                 Toast.makeText(context, "You don't have sufficient stocks", Toast.LENGTH_SHORT).show()
             } else {
@@ -152,14 +152,14 @@ class TradeFragment : Fragment() {
 
         loadingDialog?.show()
 
-        val price = if (orderPriceEditText.visibility == View.GONE) 0 else Integer.parseInt(orderPriceEditText.text.toString())
+        val price = if (orderPriceEditText.visibility == View.GONE) 0 else (orderPriceEditText.text.toString()).toLong()
         val orderRequest = PlaceOrderRequest
                 .newBuilder()
                 .setIsAsk(radioGroupStock.checkedRadioButtonId == R.id.askRadioButton)
                 .setStockId(getStockIdFromCompanyName(companySpinner.selectedItem.toString()))
                 .setOrderType(getOrderTypeFromName(order_select_spinner.selectedItem.toString()))
                 .setPrice(price)
-                .setStockQuantity(Integer.parseInt(noOfStocksEditText.text.toString()))
+                .setStockQuantity((noOfStocksEditText.text.toString()).toLong())
                 .build()
 
         doAsync {

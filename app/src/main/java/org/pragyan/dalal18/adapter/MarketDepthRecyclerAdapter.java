@@ -35,8 +35,8 @@ public class MarketDepthRecyclerAdapter extends RecyclerView.Adapter<MarketDepth
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
-        int price = marketDepthList.get(position).getPrice();
-        if(price == 0 ||  price == Integer.MAX_VALUE){
+        long price = marketDepthList.get(position).getPrice();
+        if(price == 0L ||  price == Long.MAX_VALUE){
             holder.price.setText("M.O");
             holder.price.setTextColor(ContextCompat.getColor(context, R.color.neon_blue));
             holder.volume.setTextColor(ContextCompat.getColor(context, R.color.neon_blue));

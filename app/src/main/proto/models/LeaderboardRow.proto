@@ -9,8 +9,8 @@ message LeaderboardRow {
     uint32 user_id = 2;
     string user_name = 3;
     uint32 rank = 4;
-    uint32 cash = 5;
-    uint32 debt = 6;
-    int32  stock_worth = 7;
-    int32  total_worth = 8;
+    uint64 cash = 5;
+    uint64 debt = 6;
+    int64  stock_worth = 7;
+    int64  total_worth = 8;
 }
