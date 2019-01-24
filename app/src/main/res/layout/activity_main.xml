@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mainDrawerLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -16,7 +17,10 @@
             android:layout_height="@dimen/toolbar_height"
             android:background="?colorPrimary"
             android:orientation="horizontal"
-            android:theme="@style/Base.ThemeOverlay.AppCompat.Dark" />
+            android:theme="@style/Base.ThemeOverlay.AppCompat.Dark"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <LinearLayout
             android:id="@+id/button_bar"
@@ -52,6 +56,7 @@
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/kreon_light"
                     android:gravity="center"
+                    android:text="@string/zero"
                     android:textColor="@color/neon_green"
                     android:textSize="22sp"
                     android:textStyle="bold" />
@@ -81,6 +86,7 @@
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/kreon_light"
                     android:gravity="center"
+                    android:text="@string/zero"
                     android:textColor="@color/neon_blue"
                     android:textSize="22sp"
                     android:textStyle="bold" />
@@ -110,7 +116,7 @@
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/kreon_light"
                     android:gravity="center"
-                    android:text=""
+                    android:text="@string/zero"
                     android:textColor="@color/neon_orange"
                     android:textSize="22sp"
                     android:textStyle="bold" />
@@ -127,7 +133,9 @@
             android:layout_alignParentStart="true"
             android:layout_marginTop="44dp"
             android:background="@drawable/drawer_edge_button"
-            app:layout_constraintTop_toBottomOf="@+id/button_bar" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/button_bar"
+            tools:layout_editor_absoluteX="-14dp" />
 
         <fragment
             android:id="@+id/main_host_fragment"
