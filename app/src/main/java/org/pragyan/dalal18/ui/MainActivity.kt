@@ -1,5 +1,6 @@
 package org.pragyan.dalal18.ui
 
+import android.animation.ValueAnimator
 import android.content.*
 import android.os.Bundle
 import android.view.Menu
@@ -33,10 +34,7 @@ import org.pragyan.dalal18.data.DalalViewModel
 import org.pragyan.dalal18.data.StockDetails
 import org.pragyan.dalal18.fragment.MortgageFragment
 import org.pragyan.dalal18.notifications.NotificationService
-import org.pragyan.dalal18.utils.ConnectionUtils
-import org.pragyan.dalal18.utils.Constants
-import org.pragyan.dalal18.utils.MiscellaneousUtils
-import org.pragyan.dalal18.utils.TinyDB
+import org.pragyan.dalal18.utils.*
 import java.text.DecimalFormat
 import java.util.*
 import javax.inject.Inject
@@ -81,7 +79,8 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
                     changeTextViewValue(cashWorthTextView, intent.getLongExtra(TOTAL_WORTH_KEY, 0), true)
                 }
 
-                Constants.UPDATE_WORTH_VIA_STREAM_ACTION -> updateStockWorthViaStreamUpdates()
+                Constants.UPDATE_WORTH_VIA_STREAM_ACTION ->
+                    updateStockWorthViaStreamUpdates(cashWorthTextView.text.toString().replace(",","").toLong())
             }
         }
     }
@@ -107,10 +106,10 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
         model.globalStockDetails = intent.getParcelableArrayListExtra(GLOBAL_STOCKS_KEY)
         model.createCompanyArrayFromGlobalStockDetails()
 
-        updateValues()
+        updateWorthTextViews()
 
         startMakingButtonsTransparent()
-        updateStockWorthViaStreamUpdates()
+        updateStockWorthViaStreamUpdates(intent.getLongExtra(CASH_WORTH_KEY, 0).toLong())
 
         if (!intent.getBooleanExtra(SplashActivity.MARKET_OPEN_KEY, false)) {
             AlertDialog.Builder(this)
@@ -125,7 +124,7 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
 
         val navController = findNavController(R.id.main_host_fragment)
         button_bar.setOnClickListener {
-            navController.navigate(R.id.worth_dest,null,NavOptions.Builder().setPopUpTo(R.id.home_dest,false).build())
+            navController.navigate(R.id.worth_dest, null, NavOptions.Builder().setPopUpTo(R.id.home_dest, false).build())
         }
     }
 
@@ -152,7 +151,7 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
         when (id) {
             R.id.action_notifications -> {
                 val navController = findNavController(R.id.main_host_fragment)
-                navController.navigate(R.id.notifications_dest,null,NavOptions.Builder().setPopUpTo(R.id.home_dest,false).build())
+                navController.navigate(R.id.notifications_dest, null, NavOptions.Builder().setPopUpTo(R.id.home_dest, false).build())
                 return true
             }
 
@@ -216,16 +215,20 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
         }
     }
 
-    private fun updateValues() {
+    private fun updateWorthTextViews() {
 
         val cashWorth = intent.getLongExtra(CASH_WORTH_KEY, -1)
         val totalWorth = intent.getLongExtra(TOTAL_WORTH_KEY, -1)
         val stockWorth = totalWorth - cashWorth
 
-        val formatter = DecimalFormat("##,##,###")
-        cashWorthTextView.text = formatter.format(cashWorth.toLong())
-        stockWorthTextView.text = formatter.format(stockWorth.toLong())
-        totalWorthTextView.text = formatter.format(totalWorth.toLong())
+        var oldValue = cashWorthTextView.text.toString().replace(",", "").toLong()
+        animateWorthChange(oldValue, cashWorth, cashWorthTextView)
+
+        oldValue = stockWorthTextView.text.toString().replace(",", "").toLong()
+        animateWorthChange(oldValue, stockWorth, stockWorthTextView)
+
+        oldValue = totalWorthTextView.text.toString().replace(",", "").toLong()
+        animateWorthChange(oldValue, totalWorth, totalWorthTextView)
     }
 
     // Subscribes to transaction stream and gets updates (TESTED)
@@ -412,7 +415,7 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
     }
 
     // Method is called when stock price update is received
-    private fun updateStockWorthViaStreamUpdates() {
+    private fun updateStockWorthViaStreamUpdates(oldCash: Long) {
         var netStockWorth = 0L
         var rate = 0L
         for ((stockId, quantity) in model.ownedStockDetails) {
@@ -425,19 +428,17 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
             netStockWorth += quantity * rate
         }
 
-        val formatter = DecimalFormat("##,##,###")
-        stockWorthTextView.text = formatter.format(netStockWorth)
+        var oldValue = stockWorthTextView.text.toString().replace(",", "").toLong()
+        animateWorthChange(oldValue, netStockWorth, stockWorthTextView)
 
-        var temp = cashWorthTextView.text.toString()
-        temp = temp.replace(",", "")
-        totalWorthTextView.text = formatter.format(netStockWorth + temp.toLong())
+        oldValue = totalWorthTextView.text.toString().replace(",", "").toLong()
+        animateWorthChange(oldValue, netStockWorth + oldCash, totalWorthTextView)
     }
 
     private fun changeTextViewValue(textView: TextView, value: Long, increase: Boolean) {
-        var temp = textView.text.toString()
-        temp = temp.replace(",", "")
-        val previousValue = temp.toLong()
-        textView.text = DecimalFormat("##,##,###").format(previousValue + if (increase) value else -1 * value)
+        val oldValue = textView.text.toString().replace(",", "").toLong()
+        val newValue = oldValue + if (increase) value else -1 * value
+        animateWorthChange(oldValue, newValue, textView)
     }
 
     // Starts making drawer button translucent
@@ -458,6 +459,16 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
 
             }
         }.start()
+    }
+
+    private fun animateWorthChange(oldValue: Long, newValue: Long, textView: TextView) {
+        val formatter = DecimalFormat("##,##,###")
+        val valueAnimator = ValueAnimator.ofObject(LongEvaluator(), oldValue, newValue)
+        valueAnimator.duration = 1000
+        valueAnimator.addUpdateListener {
+            textView.text = formatter.format(it.animatedValue)
+        }
+        valueAnimator.start()
     }
 
     override fun onBackPressed() {
