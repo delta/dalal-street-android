@@ -182,6 +182,7 @@
 
     <string name="up_arrow">&#8593;</string>
     <string name="down_arrow">&#8595;</string>
+    <string name="main_mortgage">Main Mortgage</string>
 
     <string-array name="countries_array">
         <item>Afghanistan</item>

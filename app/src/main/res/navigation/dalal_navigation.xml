@@ -23,9 +23,9 @@
 
     <fragment
         android:id="@+id/mortgage_dest"
-        android:name="org.pragyan.dalal18.fragment.MortgageFragment"
+        android:name="org.pragyan.dalal18.fragment.MainMortgageFragment"
         android:label="@string/mortgage"
-        tools:layout="@layout/fragment_mortgage" />
+        tools:layout="@layout/fragment_main_mortgage" />
 
     <fragment
         android:id="@+id/companies_dest"

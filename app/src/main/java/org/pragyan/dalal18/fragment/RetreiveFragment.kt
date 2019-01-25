@@ -1,6 +1,5 @@
 package org.pragyan.dalal18.fragment
 
-
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -9,8 +8,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
@@ -18,9 +15,14 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import dalalstreet.api.DalalActionServiceGrpc
-import dalalstreet.api.actions.*
+import dalalstreet.api.actions.GetMortgageDetailsRequest
+import dalalstreet.api.actions.GetMortgageDetailsResponse
+import dalalstreet.api.actions.RetrieveMortgageStocksRequest
+import dalalstreet.api.actions.RetrieveMortgageStocksResponse
 import kotlinx.android.synthetic.main.fragment_mortgage.*
+import kotlinx.android.synthetic.main.fragment_retrieve.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
 import org.pragyan.dalal18.R
@@ -32,20 +34,11 @@ import org.pragyan.dalal18.data.MortgageDetails
 import org.pragyan.dalal18.utils.ConnectionUtils
 import org.pragyan.dalal18.utils.Constants
 import org.pragyan.dalal18.utils.StockUtils
-import org.pragyan.dalal18.utils.StockUtils.*
 import javax.inject.Inject
 
-/*  Uses GetMortgageDetails() for setting stocksMortgaged (int data member)
- *  Uses MortgageStocks() to mortgage stocks
- *  Uses RetrieveStocksFromMortgage() to get back mortgaged stocks */
-
-class MortgageFragment : Fragment(){
-
+class RetreiveFragment:Fragment(),RetrieveRecyclerAdapter.OnRetrieveButtonClickListener {
     @Inject
     lateinit var actionServiceBlockingStub: DalalActionServiceGrpc.DalalActionServiceBlockingStub
-
-    private var lastStockId = 1
-    private var companiesArray = StockUtils.getCompanyNamesArray()
 
     private lateinit var model: DalalViewModel
 
@@ -53,53 +46,63 @@ class MortgageFragment : Fragment(){
     private var loadingDialog: AlertDialog? = null
 
     private val mortgageDetailsList = mutableListOf<MortgageDetails>()
+    private lateinit var retrieveAdapter: RetrieveRecyclerAdapter
 
     private val refreshStockPricesReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
+            if (intent.action != null && intent.action.equals(Constants.REFRESH_MORTGAGE_UPDATE_ACTION, ignoreCase = true)){
+                val quantity = intent.getLongExtra(MortgageFragment.STOCKS_QUANTITY_KEY, 0)
+                val stockId = intent.getIntExtra(MortgageFragment.STOCKS_ID_KEY, 0)
+                val price = intent.getLongExtra(MortgageFragment.STOCKS_PRICE_KEY, 0)
 
-            //here implement both listener
-            if (intent.action != null && intent.action.equals(Constants.REFRESH_STOCK_PRICES_ACTION, ignoreCase = true)) {
-                // TODO : currentPrice_textView.text = model.globalStockDetails
-                currentPrice_textView.text = model.globalStockDetails[mortgage_companies_spinner.selectedItemPosition+1].price.toString()
+                /*val ownedString = " :  " + StockUtils.getQuantityOwnedFromStockId(model.ownedStockDetails, stockId).toString()
+                stocksOwnedTextView.text = ownedString*/
 
 
-            }
-            if(intent.action != null && intent.action.equals(Constants.REFRESH_MORTGAGE_UPDATE_ACTION,ignoreCase = true))
-            {
-                val quantity = intent.getLongExtra(STOCKS_QUANTITY_KEY, 0)
-
-                val stockId = intent.getIntExtra(STOCKS_ID_KEY, 0)
-                val price = intent.getLongExtra(STOCKS_PRICE_KEY, 0)
-
-                val ownedString = " :  " + getQuantityOwnedFromStockId(model.ownedStockDetails, stockId).toString()
-                stocksOwnedTextView.text = ownedString
-
-                //todo -> ask doubt that if the quantity is negative i.e that stock has been mortgaged than stock should be subtracted but below a negative quantity has been subtracted so it results in increasing the quantity
                 if (quantity < 0) /* Mortgage Action */ {
 
                     mortgageDetailsList.forEachIndexed { index, mortgageDetails ->
                         if (mortgageDetails.stockId == stockId && mortgageDetails.mortgagePrice == price) {
                             mortgageDetails.stockQuantity -= quantity
+                            retrieveAdapter.changeSingleItem(mortgageDetailsList, index)
                             return
                         }
                     }
 
                     mortgageDetailsList.add(MortgageDetails(stockId, -quantity, price))
+                    retrieveAdapter.addSingleItem(mortgageDetailsList, mortgageDetailsList.size - 1)
 
                 } else /* Retrieve Action */ {
                     mortgageDetailsList.forEachIndexed { index, mortgageDetails ->
                         if (mortgageDetails.stockId == stockId && mortgageDetails.mortgagePrice == price) {
                             if (mortgageDetails.stockQuantity == quantity) {
                                 mortgageDetailsList.remove(mortgageDetails)
+                                retrieveAdapter.removeSingleItem(mortgageDetailsList, index)
                                 return
                             } else {
                                 mortgageDetails.stockQuantity -= quantity
+                                retrieveAdapter.changeSingleItem(mortgageDetailsList, index)
                                 return
                             }
                         }
                     }
                 }
             }
+
+        }
+    }
+
+
+    override fun onRetrieveButtonClick(position: Int, quantity: Long) {
+        //To change body of created functions use File | Settings | File Templates.
+        val retrieveStocksResponse = actionServiceBlockingStub.retrieveMortgageStocks(
+                RetrieveMortgageStocksRequest.newBuilder().setStockId(mortgageDetailsList[position].stockId)
+                        .setStockQuantity(quantity).setRetrievePrice(mortgageDetailsList[position].mortgagePrice).build())
+
+        if (retrieveStocksResponse.statusCode == RetrieveMortgageStocksResponse.StatusCode.OK) {
+            Toast.makeText(context, "Transaction successful", Toast.LENGTH_SHORT).show()
+        } else {
+            Toast.makeText(context, retrieveStocksResponse.statusMessage, Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -117,20 +120,18 @@ class MortgageFragment : Fragment(){
 
         if (context != null) {
             val dialogView = LayoutInflater.from(context).inflate(R.layout.progress_dialog, null)
-            val tempString = "Getting mortgage details..."
+            val tempString = "Getting Retrieve details..."
             (dialogView.findViewById<View>(R.id.progressDialog_textView) as TextView).text = tempString
             loadingDialog = AlertDialog.Builder(context!!).setView(dialogView).setCancelable(false).create()
-
-//            retrieveAdapter = RetrieveRecyclerAdapter(context, null, this)
         }
     }
-    //todo -> ask why are we not setting the price in the current price text box of the layout
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
-        val rootView = inflater.inflate(R.layout.fragment_mortgage, container, false)
+        val rootView = inflater.inflate(R.layout.fragment_retrieve, container, false)
 
         model = activity?.run { ViewModelProviders.of(this).get(DalalViewModel::class.java) } ?: throw Exception("Invalid activity")
         DaggerDalalStreetApplicationComponent.builder().contextModule(ContextModule(context!!)).build().inject(this)
+        retrieveAdapter = RetrieveRecyclerAdapter(context, null, this)
 
         return rootView
     }
@@ -141,58 +142,44 @@ class MortgageFragment : Fragment(){
         (activity as AppCompatActivity).supportActionBar?.title = resources.getString(R.string.mortgage)
 
 
-        with(mortgage_companies_spinner) {
-            adapter = ArrayAdapter(context!!, R.layout.company_spinner_item, companiesArray)
+        retrieveRecyclerView.layoutManager = LinearLayoutManager(context)
+        retrieveRecyclerView.adapter = retrieveAdapter
+        retrieveRecyclerView.setHasFixedSize(false)
 
-            onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-                override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
-                    val ownedString = " :  " + getQuantityOwnedFromStockId(model.ownedStockDetails, mortgage_companies_spinner.selectedItemPosition + 1).toString()
-                    stocksOwnedTextView.text = ownedString
-                }
-
-                override fun onNothingSelected(parent: AdapterView<*>) {
-
-                }
-            }
-        }
-
-        mortgage_button.setOnClickListener { onMortgageButtonClick() }
-
+        getMortgageDetailsAsynchronously()
     }
 
-    private fun onMortgageButtonClick() {
+    private fun getMortgageDetailsAsynchronously() {
+        loadingDialog?.show()
 
-        with(stocks_editText) {
-            if (text.toString().trim { it <= ' ' }.isEmpty()) {
-                error = "Stocks quantity missing"
-                requestFocus()
-                return
+        doAsync {
+            if (ConnectionUtils.getConnectionInfo(context) && ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
+
+                val response = actionServiceBlockingStub.getMortgageDetails(GetMortgageDetailsRequest.newBuilder().build())
+
+                uiThread {
+                    loadingDialog?.dismiss()
+
+                    if (response.statusCode == GetMortgageDetailsResponse.StatusCode.OK) {
+
+                        mortgageDetailsList.clear()
+                        for (currentDetails in response.mortgageDetailsList) {
+                            mortgageDetailsList.add(MortgageDetails(currentDetails.stockId, currentDetails.stocksInBank, currentDetails.mortgagePrice))
+                        }
+
+                        retrieveAdapter.swapData(mortgageDetailsList)
+
+
+                    } else {
+                        Toast.makeText(context, response.statusMessage, Toast.LENGTH_SHORT).show()
+                    }
+                }
             } else {
-                error = null
-                clearFocus()
+                uiThread { networkDownHandler.onNetworkDownError() }
             }
         }
 
-        val stocksTransaction = (stocks_editText.text.toString().trim { it <= ' ' }).toLong()
-
-        if (stocksTransaction <= getQuantityOwnedFromCompanyName(model.ownedStockDetails, getCompanyNameFromStockId(lastStockId))) {
-            val mortgageStocksResponse = actionServiceBlockingStub.mortgageStocks(
-                    MortgageStocksRequest.newBuilder().setStockId(mortgage_companies_spinner.selectedItemPosition + 1)
-                            .setStockQuantity(stocksTransaction).build())
-
-            if (mortgageStocksResponse.statusCode == MortgageStocksResponse.StatusCode.OK) {
-                Toast.makeText(context, "Transaction successful", Toast.LENGTH_SHORT).show()
-                stocks_editText.setText("")
-            } else
-                Toast.makeText(context, mortgageStocksResponse.statusMessage, Toast.LENGTH_SHORT).show()
-
-        } else {
-            Toast.makeText(activity, "Insufficient Stocks", Toast.LENGTH_SHORT).show()
-        }
     }
-
-
-
     override fun onResume() {
         super.onResume()
         val intentFilter = IntentFilter(Constants.REFRESH_STOCK_PRICES_ACTION)
@@ -203,11 +190,5 @@ class MortgageFragment : Fragment(){
     override fun onPause() {
         super.onPause()
         LocalBroadcastManager.getInstance(context!!).unregisterReceiver(refreshStockPricesReceiver)
-    }
-
-    companion object {
-        const val STOCKS_ID_KEY = "stocks-id-key"
-        const val STOCKS_QUANTITY_KEY = "stocks-quantity-key"
-        const val STOCKS_PRICE_KEY = "stocks-price-key"
     }
 }

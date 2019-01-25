@@ -6,6 +6,7 @@ import org.pragyan.dalal18.fragment.MortgageFragment;
 import org.pragyan.dalal18.fragment.NewsFragment;
 import org.pragyan.dalal18.fragment.OrdersFragment;
 import org.pragyan.dalal18.fragment.PortfolioFragment;
+import org.pragyan.dalal18.fragment.RetreiveFragment;
 import org.pragyan.dalal18.fragment.StockExchangeFragment;
 import org.pragyan.dalal18.fragment.TradeFragment;
 import org.pragyan.dalal18.fragment.TransactionsFragment;
@@ -44,6 +45,7 @@ public interface DalalStreetApplicationComponent {
     void inject(PortfolioFragment portfolioFragment);
     void inject(NotificationFragment notificationFragment);
     void inject(WorthFragment worthFragment);
+    void inject(RetreiveFragment retreiveFragment);
 
     void inject(NotificationService notificationService);
 }
