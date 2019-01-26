@@ -2,10 +2,12 @@
 <TextView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="48dp"
+    android:layout_marginStart="4dp"
+    android:layout_marginEnd="4dp"
     android:background="#20202B"
     android:fontFamily="@font/marcellus_sc"
-    android:padding="4dp"
     android:gravity="center_vertical"
+    android:padding="4dp"
     android:text=""
     android:textColor="@color/neutral_font_color"
     android:textSize="22sp" />

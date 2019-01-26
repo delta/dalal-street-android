@@ -448,4 +448,19 @@
         <item>30 mins</item>
         <item>60 mins</item>
     </string-array>
+
+    <string-array name="image_links">
+        <item>https://i.ibb.co/b76bspr/NZMA.png</item>
+        <item>https://i.ibb.co/BNnbZJ3/MKSF.png</item>
+        <item>https://i.ibb.co/CvzVBMB/DC.png</item>
+        <item>https://i.ibb.co/2MDdY4B/LEC.png</item>
+        <item>https://i.ibb.co/64tjjS2/JRL.png</item>
+        <item>https://i.ibb.co/4NgtDXY/GGT.png</item>
+        <item>https://i.ibb.co/BTTQtFw/DO.png</item>
+        <item>https://i.ibb.co/YQMnQqg/ST.png</item>
+        <item>https://i.ibb.co/Qp3RqQR/GDG.png</item>
+        <item>https://i.ibb.co/JHtBTkS/AA.png</item>
+        <item>https://i.ibb.co/WsXxf45/RLI.png</item>
+        <item>https://i.ibb.co/xHmCtCq/JJ.png</item>
+    </string-array>
 </resources>
