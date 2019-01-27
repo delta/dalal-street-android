@@ -18,12 +18,6 @@ class MainMortgageFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val customView = inflater.inflate(R.layout.fragment_main_mortgage, container, false)
-        return customView
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        (activity as AppCompatActivity).supportActionBar?.title = resources.getString(R.string.mortgage_stocks)
 
         mortgageViewPager.adapter = MortgagePagerAdapter(childFragmentManager)
         mainMortgageTabLayout.setupWithViewPager(mortgageViewPager)
@@ -31,5 +25,11 @@ class MainMortgageFragment : Fragment() {
         mainMortgageTabLayout.setTabTextColors(ContextCompat.getColor(context!!, R.color.neutral_font_color), ContextCompat.getColor(context!!, R.color.neon_blue))
         mainMortgageTabLayout.setBackgroundColor(Color.parseColor("#20202C"))
 
+        return customView
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        (activity as AppCompatActivity).supportActionBar?.title = resources.getString(R.string.mortgage_stocks)
     }
 }

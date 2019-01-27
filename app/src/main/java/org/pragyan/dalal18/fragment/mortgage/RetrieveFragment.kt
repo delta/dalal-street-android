@@ -20,7 +20,6 @@ import dalalstreet.api.actions.GetMortgageDetailsRequest
 import dalalstreet.api.actions.GetMortgageDetailsResponse
 import dalalstreet.api.actions.RetrieveMortgageStocksRequest
 import dalalstreet.api.actions.RetrieveMortgageStocksResponse
-import kotlinx.android.synthetic.main.fragment_retrieve.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
 import org.pragyan.dalal18.R
@@ -43,7 +42,7 @@ class RetrieveFragment : Fragment(), RetrieveRecyclerAdapter.OnRetrieveButtonCli
     private val mortgageDetailsList = mutableListOf<MortgageDetails>()
     private lateinit var retrieveAdapter: RetrieveRecyclerAdapter
 
-    private val refreshMortgageListReceiver = object : BroadcastReceiver() {
+    private val refreshStockPricesReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             if (intent.action != null && intent.action.equals(Constants.REFRESH_MORTGAGE_UPDATE_ACTION, ignoreCase = true)) {
 
@@ -170,12 +169,13 @@ class RetrieveFragment : Fragment(), RetrieveRecyclerAdapter.OnRetrieveButtonCli
 
     override fun onResume() {
         super.onResume()
-        val intentFilter = IntentFilter(Constants.REFRESH_MORTGAGE_UPDATE_ACTION)
-        LocalBroadcastManager.getInstance(context!!).registerReceiver(refreshMortgageListReceiver, intentFilter)
+        val intentFilter = IntentFilter(Constants.REFRESH_STOCK_PRICES_ACTION)
+        intentFilter.addAction(Constants.REFRESH_MORTGAGE_UPDATE_ACTION)
+        LocalBroadcastManager.getInstance(context!!).registerReceiver(refreshStockPricesReceiver, intentFilter)
     }
 
     override fun onPause() {
         super.onPause()
-        LocalBroadcastManager.getInstance(context!!).unregisterReceiver(refreshMortgageListReceiver)
+        LocalBroadcastManager.getInstance(context!!).unregisterReceiver(refreshStockPricesReceiver)
     }
 }
