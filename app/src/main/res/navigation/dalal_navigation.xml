@@ -22,10 +22,10 @@
     </fragment>
 
     <fragment
-        android:id="@+id/mortgage_dest"
-        android:name="org.pragyan.dalal18.fragment.MortgageFragment"
+        android:id="@+id/main_mortgage_dest"
+        android:name="org.pragyan.dalal18.fragment.mortgage.MainMortgageFragment"
         android:label="@string/mortgage"
-        tools:layout="@layout/fragment_mortgage" />
+        tools:layout="@layout/fragment_main_mortgage" />
 
     <fragment
         android:id="@+id/companies_dest"

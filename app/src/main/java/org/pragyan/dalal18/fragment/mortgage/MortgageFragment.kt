@@ -1,4 +1,4 @@
-package org.pragyan.dalal18.fragment
+package org.pragyan.dalal18.fragment.mortgage
 
 
 import android.content.BroadcastReceiver
@@ -18,14 +18,12 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import androidx.recyclerview.widget.LinearLayoutManager
 import dalalstreet.api.DalalActionServiceGrpc
 import dalalstreet.api.actions.*
 import kotlinx.android.synthetic.main.fragment_mortgage.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
 import org.pragyan.dalal18.R
-import org.pragyan.dalal18.adapter.RetrieveRecyclerAdapter
 import org.pragyan.dalal18.dagger.ContextModule
 import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent
 import org.pragyan.dalal18.data.DalalViewModel
@@ -40,7 +38,7 @@ import javax.inject.Inject
  *  Uses MortgageStocks() to mortgage stocks
  *  Uses RetrieveStocksFromMortgage() to get back mortgaged stocks */
 
-class MortgageFragment : Fragment(), RetrieveRecyclerAdapter.OnRetrieveButtonClickListener {
+class MortgageFragment : Fragment() {
 
     @Inject
     lateinit var actionServiceBlockingStub: DalalActionServiceGrpc.DalalActionServiceBlockingStub
@@ -54,15 +52,16 @@ class MortgageFragment : Fragment(), RetrieveRecyclerAdapter.OnRetrieveButtonCli
     private var loadingDialog: AlertDialog? = null
 
     private val mortgageDetailsList = mutableListOf<MortgageDetails>()
-    private lateinit var retrieveAdapter: RetrieveRecyclerAdapter
 
     private val refreshStockPricesReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
-            if (intent.action != null && intent.action.equals(Constants.REFRESH_STOCK_PRICES_ACTION, ignoreCase = true))
-                getMortgageDetailsAsynchronously()
 
-            if (intent.action != null && intent.action.equals(Constants.REFRESH_MORTGAGE_UPDATE_ACTION, ignoreCase = true) &&
-                    intent.getIntExtra(STOCKS_ID_KEY, 0) > 0) {
+            if (intent.action.equals(Constants.REFRESH_STOCK_PRICES_ACTION, ignoreCase = true)) {
+                val currentPriceText = " :  " + Constants.RUPEE_SYMBOL +
+                        getPriceFromStockId(model.globalStockDetails, mortgage_companies_spinner.selectedItemPosition + 1).toString()
+                currentPriceTextView.text = currentPriceText
+
+            } else if (intent.action.equals(Constants.REFRESH_MORTGAGE_UPDATE_ACTION, ignoreCase = true)) {
 
                 val quantity = intent.getLongExtra(STOCKS_QUANTITY_KEY, 0)
                 val stockId = intent.getIntExtra(STOCKS_ID_KEY, 0)
@@ -71,37 +70,35 @@ class MortgageFragment : Fragment(), RetrieveRecyclerAdapter.OnRetrieveButtonCli
                 val ownedString = " :  " + getQuantityOwnedFromStockId(model.ownedStockDetails, stockId).toString()
                 stocksOwnedTextView.text = ownedString
 
-//                val mortgagedStocks = " :  " + (Integer.parseInt(stocksMortgagedTextView.text.toString()) - quantity).toString()
-//                stocksMortgagedTextView.text = mortgagedStocks
-
                 if (quantity < 0) /* Mortgage Action */ {
+                    var newStockMortgaged = true
 
-                    mortgageDetailsList.forEachIndexed { index, mortgageDetails ->
+                    for(mortgageDetails in mortgageDetailsList) {
                         if (mortgageDetails.stockId == stockId && mortgageDetails.mortgagePrice == price) {
                             mortgageDetails.stockQuantity -= quantity
-                            retrieveAdapter.changeSingleItem(mortgageDetailsList, index)
-                            return
+                            newStockMortgaged = false
+                            break
                         }
                     }
 
-                    mortgageDetailsList.add(MortgageDetails(stockId, -quantity, price))
-                    retrieveAdapter.addSingleItem(mortgageDetailsList, mortgageDetailsList.size - 1)
+                    if(newStockMortgaged) mortgageDetailsList.add(MortgageDetails(stockId, -quantity, price))
 
                 } else /* Retrieve Action */ {
-                    mortgageDetailsList.forEachIndexed { index, mortgageDetails ->
+                    for(mortgageDetails in mortgageDetailsList) {
                         if (mortgageDetails.stockId == stockId && mortgageDetails.mortgagePrice == price) {
                             if (mortgageDetails.stockQuantity == quantity) {
                                 mortgageDetailsList.remove(mortgageDetails)
-                                retrieveAdapter.removeSingleItem(mortgageDetailsList, index)
-                                return
+                                break
                             } else {
                                 mortgageDetails.stockQuantity -= quantity
-                                retrieveAdapter.changeSingleItem(mortgageDetailsList, index)
-                                return
+                                break
                             }
                         }
                     }
                 }
+
+                val mortgagedString = " :  " + getStocksMortgagedFromStockId(mortgage_companies_spinner.selectedItemPosition+1)
+                stocksMortgagedTextView.text = mortgagedString
             }
         }
     }
@@ -118,12 +115,10 @@ class MortgageFragment : Fragment(), RetrieveRecyclerAdapter.OnRetrieveButtonCli
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        if (context != null) {
-            val dialogView = LayoutInflater.from(context).inflate(R.layout.progress_dialog, null)
-            val tempString = "Getting mortgage details..."
-            (dialogView.findViewById<View>(R.id.progressDialog_textView) as TextView).text = tempString
-            loadingDialog = AlertDialog.Builder(context!!).setView(dialogView).setCancelable(false).create()
-        }
+        val dialogView = LayoutInflater.from(context).inflate(R.layout.progress_dialog, null)
+        val tempString = "Getting mortgage details..."
+        (dialogView.findViewById<View>(R.id.progressDialog_textView) as TextView).text = tempString
+        loadingDialog = AlertDialog.Builder(context!!).setView(dialogView).setCancelable(false).create()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -132,7 +127,6 @@ class MortgageFragment : Fragment(), RetrieveRecyclerAdapter.OnRetrieveButtonCli
 
         model = activity?.run { ViewModelProviders.of(this).get(DalalViewModel::class.java) } ?: throw Exception("Invalid activity")
         DaggerDalalStreetApplicationComponent.builder().contextModule(ContextModule(context!!)).build().inject(this)
-        retrieveAdapter = RetrieveRecyclerAdapter(context, null, this)
 
         return rootView
     }
@@ -142,10 +136,7 @@ class MortgageFragment : Fragment(), RetrieveRecyclerAdapter.OnRetrieveButtonCli
 
         (activity as AppCompatActivity).supportActionBar?.title = resources.getString(R.string.mortgage)
 
-
-        retrieveRecyclerView.layoutManager = LinearLayoutManager(context)
-        retrieveRecyclerView.adapter = retrieveAdapter
-        retrieveRecyclerView.setHasFixedSize(false)
+        getMortgageDetailsAsynchronously()
 
         with(mortgage_companies_spinner) {
             adapter = ArrayAdapter(context!!, R.layout.company_spinner_item, companiesArray)
@@ -154,6 +145,15 @@ class MortgageFragment : Fragment(), RetrieveRecyclerAdapter.OnRetrieveButtonCli
                 override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
                     val ownedString = " :  " + getQuantityOwnedFromStockId(model.ownedStockDetails, mortgage_companies_spinner.selectedItemPosition + 1).toString()
                     stocksOwnedTextView.text = ownedString
+
+                    if(mortgageDetailsList.size > 0) {
+                        val mortgageString = " :  " + getStocksMortgagedFromStockId(mortgage_companies_spinner.selectedItemPosition+1)
+                        stocksMortgagedTextView.text = mortgageString
+                    }
+
+                    val currentPriceText = " :  " + Constants.RUPEE_SYMBOL +
+                            getPriceFromStockId(model.globalStockDetails, mortgage_companies_spinner.selectedItemPosition + 1).toString()
+                    currentPriceTextView.text = currentPriceText
                 }
 
                 override fun onNothingSelected(parent: AdapterView<*>) {
@@ -163,8 +163,6 @@ class MortgageFragment : Fragment(), RetrieveRecyclerAdapter.OnRetrieveButtonCli
         }
 
         mortgage_button.setOnClickListener { onMortgageButtonClick() }
-
-        getMortgageDetailsAsynchronously()
     }
 
     private fun onMortgageButtonClick() {
@@ -183,16 +181,7 @@ class MortgageFragment : Fragment(), RetrieveRecyclerAdapter.OnRetrieveButtonCli
         val stocksTransaction = (stocks_editText.text.toString().trim { it <= ' ' }).toLong()
 
         if (stocksTransaction <= getQuantityOwnedFromCompanyName(model.ownedStockDetails, getCompanyNameFromStockId(lastStockId))) {
-            val mortgageStocksResponse = actionServiceBlockingStub.mortgageStocks(
-                    MortgageStocksRequest.newBuilder().setStockId(mortgage_companies_spinner.selectedItemPosition + 1)
-                            .setStockQuantity(stocksTransaction).build())
-
-            if (mortgageStocksResponse.statusCode == MortgageStocksResponse.StatusCode.OK) {
-                Toast.makeText(context, "Transaction successful", Toast.LENGTH_SHORT).show()
-                stocks_editText.setText("")
-            } else
-                Toast.makeText(context, mortgageStocksResponse.statusMessage, Toast.LENGTH_SHORT).show()
-
+            mortgageStocksAsynchronously(stocksTransaction)
         } else {
             Toast.makeText(activity, "Insufficient Stocks", Toast.LENGTH_SHORT).show()
         }
@@ -219,13 +208,14 @@ class MortgageFragment : Fragment(), RetrieveRecyclerAdapter.OnRetrieveButtonCli
                             mortgageDetailsList.add(MortgageDetails(currentDetails.stockId, currentDetails.stocksInBank, currentDetails.mortgagePrice))
                         }
 
-                        retrieveAdapter.swapData(mortgageDetailsList)
-
                         val ownedString = " :  " + getQuantityOwnedFromCompanyName(model.ownedStockDetails, getCompanyNameFromStockId(lastStockId)).toString()
                         stocksOwnedTextView.text = ownedString
 
                         val tempString = " :  " + Constants.RUPEE_SYMBOL + " " + StockUtils.getPriceFromStockId(model.globalStockDetails, lastStockId).toString()
-                        currentPrice_textView.text = tempString
+                        currentPriceTextView.text = tempString
+
+                        val mortgagedString = " :  " + getStocksMortgagedFromStockId(mortgage_companies_spinner.selectedItemPosition+1)
+                        stocksMortgagedTextView.text = mortgagedString
 
                     } else {
                         Toast.makeText(context, response.statusMessage, Toast.LENGTH_SHORT).show()
@@ -237,17 +227,30 @@ class MortgageFragment : Fragment(), RetrieveRecyclerAdapter.OnRetrieveButtonCli
         }
     }
 
-    override fun onRetrieveButtonClick(position: Int, quantity: Long) {
+    private fun mortgageStocksAsynchronously(stocksTransaction: Long) {
+        doAsync {
+            val mortgageStocksResponse = actionServiceBlockingStub.mortgageStocks(
+                    MortgageStocksRequest.newBuilder().setStockId(mortgage_companies_spinner.selectedItemPosition + 1)
+                            .setStockQuantity(stocksTransaction).build())
 
-        val retrieveStocksResponse = actionServiceBlockingStub.retrieveMortgageStocks(
-                RetrieveMortgageStocksRequest.newBuilder().setStockId(mortgageDetailsList[position].stockId)
-                        .setStockQuantity(quantity).setRetrievePrice(mortgageDetailsList[position].mortgagePrice).build())
-
-        if (retrieveStocksResponse.statusCode == RetrieveMortgageStocksResponse.StatusCode.OK) {
-            Toast.makeText(context, "Transaction successful", Toast.LENGTH_SHORT).show()
-        } else {
-            Toast.makeText(context, retrieveStocksResponse.statusMessage, Toast.LENGTH_SHORT).show()
+            if (mortgageStocksResponse.statusCode == MortgageStocksResponse.StatusCode.OK) {
+                Toast.makeText(context, "Transaction successful", Toast.LENGTH_SHORT).show()
+                stocks_editText.setText("")
+            } else
+                Toast.makeText(context, mortgageStocksResponse.statusMessage, Toast.LENGTH_SHORT).show()
         }
+    }
+
+    private fun getStocksMortgagedFromStockId(stockId: Int): Long {
+
+        var totalCount = 0L
+
+        for(mortgageDetail in mortgageDetailsList) {
+            if(mortgageDetail.stockId == stockId)
+                totalCount += mortgageDetail.stockQuantity
+        }
+
+        return totalCount
     }
 
     override fun onResume() {

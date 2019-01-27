@@ -38,7 +38,7 @@
             android:title="@string/trade" />
 
         <item
-            android:id="@+id/mortgage_dest"
+            android:id="@+id/main_mortgage_dest"
             android:icon="@drawable/mortgage_icon"
             android:title="@string/mortgage" />
 

@@ -441,6 +441,7 @@
     <string name="company_description">Company Description</string>
     <string name="interval">Interval</string>
     <string name="zero">0</string>
+    <string name="no_stocks_mortgaged">No stocks mortgaged</string>
     <string-array name="intervalType">
         <item>1 min</item>
         <item>5 mins</item>
