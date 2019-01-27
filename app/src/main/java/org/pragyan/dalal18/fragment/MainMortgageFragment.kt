@@ -11,19 +11,17 @@ import androidx.fragment.app.Fragment
 import androidx.viewpager.widget.ViewPager
 import com.google.android.material.tabs.TabLayout
 import org.pragyan.dalal18.R
-import org.pragyan.dalal18.adapter.MortgageAdapter
+import org.pragyan.dalal18.adapter.MortgagePagerAdapter
 
 class MainMortgageFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         val customView = inflater.inflate(R.layout.fragment_main_mortgage, container, false)
 
-        // Binding view for Tabbed Fragments
         val viewPager = customView.findViewById<ViewPager>(R.id.content_viewPager_mortgage)
         val tabLayout = customView.findViewById<TabLayout>(R.id.tab_main_mortgage)
 
-        // Set adapter to viewpager and custom colors to tabLayout
-        viewPager.adapter = MortgageAdapter(childFragmentManager)
+        viewPager.adapter = MortgagePagerAdapter(childFragmentManager)
         tabLayout.setupWithViewPager(viewPager)
 
         tabLayout.setTabTextColors(

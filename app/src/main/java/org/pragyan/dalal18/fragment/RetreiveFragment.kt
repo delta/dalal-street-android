@@ -13,7 +13,6 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProviders
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import dalalstreet.api.DalalActionServiceGrpc
@@ -21,7 +20,6 @@ import dalalstreet.api.actions.GetMortgageDetailsRequest
 import dalalstreet.api.actions.GetMortgageDetailsResponse
 import dalalstreet.api.actions.RetrieveMortgageStocksRequest
 import dalalstreet.api.actions.RetrieveMortgageStocksResponse
-import kotlinx.android.synthetic.main.fragment_mortgage.*
 import kotlinx.android.synthetic.main.fragment_retrieve.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
@@ -29,18 +27,15 @@ import org.pragyan.dalal18.R
 import org.pragyan.dalal18.adapter.RetrieveRecyclerAdapter
 import org.pragyan.dalal18.dagger.ContextModule
 import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent
-import org.pragyan.dalal18.data.DalalViewModel
 import org.pragyan.dalal18.data.MortgageDetails
 import org.pragyan.dalal18.utils.ConnectionUtils
 import org.pragyan.dalal18.utils.Constants
-import org.pragyan.dalal18.utils.StockUtils
 import javax.inject.Inject
 
-class RetreiveFragment:Fragment(),RetrieveRecyclerAdapter.OnRetrieveButtonClickListener {
+class RetreiveFragment : Fragment(), RetrieveRecyclerAdapter.OnRetrieveButtonClickListener {
     @Inject
     lateinit var actionServiceBlockingStub: DalalActionServiceGrpc.DalalActionServiceBlockingStub
 
-    private lateinit var model: DalalViewModel
 
     lateinit var networkDownHandler: ConnectionUtils.OnNetworkDownHandler
     private var loadingDialog: AlertDialog? = null
@@ -50,14 +45,10 @@ class RetreiveFragment:Fragment(),RetrieveRecyclerAdapter.OnRetrieveButtonClickL
 
     private val refreshStockPricesReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
-            if (intent.action != null && intent.action.equals(Constants.REFRESH_MORTGAGE_UPDATE_ACTION, ignoreCase = true)){
+            if (intent.action != null && intent.action.equals(Constants.REFRESH_MORTGAGE_UPDATE_ACTION, ignoreCase = true)) {
                 val quantity = intent.getLongExtra(MortgageFragment.STOCKS_QUANTITY_KEY, 0)
                 val stockId = intent.getIntExtra(MortgageFragment.STOCKS_ID_KEY, 0)
                 val price = intent.getLongExtra(MortgageFragment.STOCKS_PRICE_KEY, 0)
-
-                /*val ownedString = " :  " + StockUtils.getQuantityOwnedFromStockId(model.ownedStockDetails, stockId).toString()
-                stocksOwnedTextView.text = ownedString*/
-
 
                 if (quantity < 0) /* Mortgage Action */ {
 
@@ -95,15 +86,20 @@ class RetreiveFragment:Fragment(),RetrieveRecyclerAdapter.OnRetrieveButtonClickL
 
     override fun onRetrieveButtonClick(position: Int, quantity: Long) {
         //To change body of created functions use File | Settings | File Templates.
-        val retrieveStocksResponse = actionServiceBlockingStub.retrieveMortgageStocks(
-                RetrieveMortgageStocksRequest.newBuilder().setStockId(mortgageDetailsList[position].stockId)
-                        .setStockQuantity(quantity).setRetrievePrice(mortgageDetailsList[position].mortgagePrice).build())
+        doAsync {
+            val retrieveStocksResponse = actionServiceBlockingStub.retrieveMortgageStocks(
+                    RetrieveMortgageStocksRequest.newBuilder().setStockId(mortgageDetailsList[position].stockId)
+                            .setStockQuantity(quantity).setRetrievePrice(mortgageDetailsList[position].mortgagePrice).build())
+            uiThread {
+                if (retrieveStocksResponse.statusCode == RetrieveMortgageStocksResponse.StatusCode.OK)
+                    Toast.makeText(context, "Transaction successful", Toast.LENGTH_SHORT).show()
+                else
+                    Toast.makeText(context, retrieveStocksResponse.statusMessage, Toast.LENGTH_SHORT).show()
 
-        if (retrieveStocksResponse.statusCode == RetrieveMortgageStocksResponse.StatusCode.OK) {
-            Toast.makeText(context, "Transaction successful", Toast.LENGTH_SHORT).show()
-        } else {
-            Toast.makeText(context, retrieveStocksResponse.statusMessage, Toast.LENGTH_SHORT).show()
+            }
         }
+
+
     }
 
     override fun onAttach(context: Context) {
@@ -125,11 +121,11 @@ class RetreiveFragment:Fragment(),RetrieveRecyclerAdapter.OnRetrieveButtonClickL
             loadingDialog = AlertDialog.Builder(context!!).setView(dialogView).setCancelable(false).create()
         }
     }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
         val rootView = inflater.inflate(R.layout.fragment_retrieve, container, false)
 
-        model = activity?.run { ViewModelProviders.of(this).get(DalalViewModel::class.java) } ?: throw Exception("Invalid activity")
         DaggerDalalStreetApplicationComponent.builder().contextModule(ContextModule(context!!)).build().inject(this)
         retrieveAdapter = RetrieveRecyclerAdapter(context, null, this)
 
@@ -180,6 +176,7 @@ class RetreiveFragment:Fragment(),RetrieveRecyclerAdapter.OnRetrieveButtonClickL
         }
 
     }
+
     override fun onResume() {
         super.onResume()
         val intentFilter = IntentFilter(Constants.REFRESH_STOCK_PRICES_ACTION)

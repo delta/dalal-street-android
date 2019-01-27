@@ -108,11 +108,6 @@
                 android:textSize="20sp" />
 
         </LinearLayout>
-<!--
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/retrieveRecyclerView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />-->
 
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"

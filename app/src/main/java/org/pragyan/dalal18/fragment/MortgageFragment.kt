@@ -21,10 +21,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import dalalstreet.api.DalalActionServiceGrpc
 import dalalstreet.api.actions.*
 import kotlinx.android.synthetic.main.fragment_mortgage.*
-import org.jetbrains.anko.doAsync
-import org.jetbrains.anko.uiThread
 import org.pragyan.dalal18.R
-import org.pragyan.dalal18.adapter.RetrieveRecyclerAdapter
 import org.pragyan.dalal18.dagger.ContextModule
 import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent
 import org.pragyan.dalal18.data.DalalViewModel
@@ -59,7 +56,7 @@ class MortgageFragment : Fragment(){
 
             //here implement both listener
             if (intent.action != null && intent.action.equals(Constants.REFRESH_STOCK_PRICES_ACTION, ignoreCase = true)) {
-                // TODO : currentPrice_textView.text = model.globalStockDetails
+
                 currentPrice_textView.text = model.globalStockDetails[mortgage_companies_spinner.selectedItemPosition+1].price.toString()
 
 
@@ -74,7 +71,6 @@ class MortgageFragment : Fragment(){
                 val ownedString = " :  " + getQuantityOwnedFromStockId(model.ownedStockDetails, stockId).toString()
                 stocksOwnedTextView.text = ownedString
 
-                //todo -> ask doubt that if the quantity is negative i.e that stock has been mortgaged than stock should be subtracted but below a negative quantity has been subtracted so it results in increasing the quantity
                 if (quantity < 0) /* Mortgage Action */ {
 
                     mortgageDetailsList.forEachIndexed { index, mortgageDetails ->
@@ -148,6 +144,8 @@ class MortgageFragment : Fragment(){
                 override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
                     val ownedString = " :  " + getQuantityOwnedFromStockId(model.ownedStockDetails, mortgage_companies_spinner.selectedItemPosition + 1).toString()
                     stocksOwnedTextView.text = ownedString
+                    val mortgageString = " :  " + mortgageDetailsList[mortgage_companies_spinner.selectedItemPosition + 1].stockQuantity
+                    stocksMortgagedTextView.text = mortgageString
                 }
 
                 override fun onNothingSelected(parent: AdapterView<*>) {
