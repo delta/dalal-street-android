@@ -7,7 +7,7 @@
     android:background="@color/black_background">
 
     <TextView
-        android:id="@+id/no_stocks_mortgaged_textview"
+        android:id="@+id/noStocksMortgagedTextview"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/no_stocks_mortgaged"
