@@ -57,7 +57,7 @@ class SplashActivity : AppCompatActivity() {
             startLoginProcess(preferences.getString(EMAIL_KEY, null), preferences.getString(PASSWORD_KEY, null))
 
         } else {
-            val playServicesBuilder = AlertDialog.Builder(this)
+            val playServicesBuilder = AlertDialog.Builder(this, R.style.AlertDialogTheme)
             playServicesBuilder
                     .setMessage("Dalal Street requires latest version of google play services.")
                     .setPositiveButton("Close") { _, _ -> finish() }
