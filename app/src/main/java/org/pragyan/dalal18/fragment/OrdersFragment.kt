@@ -194,7 +194,7 @@ class OrdersFragment : Fragment(), OrdersRecyclerAdapter.OnOrderClickListener, S
     override fun onOrderClick(orderId: Int, bid: Boolean) {
 
         if (context != null) {
-            val builder = AlertDialog.Builder(context!!)
+            val builder = AlertDialog.Builder(context!!, R.style.AlertDialogTheme)
                     .setTitle("Cancel Confirm")
                     .setCancelable(true)
                     .setMessage("Do you want to cancel this order ?")

@@ -112,7 +112,7 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
         updateStockWorthViaStreamUpdates(intent.getLongExtra(CASH_WORTH_KEY, 0).toLong())
 
         if (!intent.getBooleanExtra(SplashActivity.MARKET_OPEN_KEY, false)) {
-            AlertDialog.Builder(this)
+            AlertDialog.Builder(this, R.style.AlertDialogTheme)
                     .setTitle("Market Closed")
                     .setMessage("Please check notifications for market opening time. Sorry for the inconvenience.")
                     .setCancelable(true)

@@ -49,7 +49,7 @@ class LoginActivity : AppCompatActivity() {
         signingInAlertDialog = AlertDialog.Builder(this).setView(R.layout.progress_dialog).setCancelable(false).create()
 
         if (intent.getStringExtra(RegistrationActivity.REGISTER_MESSAGE_KEY) != null) {
-            AlertDialog.Builder(this)
+            AlertDialog.Builder(this, R.style.AlertDialogTheme)
                     .setTitle("Registration Message")
                     .setMessage(intent.getStringExtra(RegistrationActivity.REGISTER_MESSAGE_KEY))
                     .setPositiveButton("OKAY") { dI, _ -> dI.dismiss() }
@@ -106,7 +106,6 @@ class LoginActivity : AppCompatActivity() {
 
     private fun onRegisterButtonClick() {
         startActivity(Intent(this, RegistrationActivity::class.java))
-        finish()
     }
 
     private fun validateEmail(): Boolean {

@@ -93,6 +93,7 @@ class RegistrationActivity : AppCompatActivity() {
                 uiThread {
                     val loginIntent = Intent(this@RegistrationActivity, LoginActivity::class.java)
                     loginIntent.putExtra(REGISTER_MESSAGE_KEY, message)
+                    loginIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
                     startActivity(loginIntent)
                     finish()
                 }
