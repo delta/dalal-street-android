@@ -57,9 +57,7 @@ class MortgageFragment : Fragment() {
         override fun onReceive(context: Context, intent: Intent) {
 
             if (intent.action.equals(Constants.REFRESH_STOCK_PRICES_ACTION, ignoreCase = true)) {
-                val currentPriceText = " :  " + Constants.RUPEE_SYMBOL +
-                        getPriceFromStockId(model.globalStockDetails, mortgage_companies_spinner.selectedItemPosition + 1).toString()
-                currentPriceTextView.text = currentPriceText
+                currentPrice_textView.text = model.globalStockDetails[mortgage_companies_spinner.selectedItemPosition + 1].price.toString()
 
             } else if (intent.action.equals(Constants.REFRESH_MORTGAGE_UPDATE_ACTION, ignoreCase = true)) {
 
@@ -97,7 +95,7 @@ class MortgageFragment : Fragment() {
                     }
                 }
 
-                val mortgagedString = " :  " + getStocksMortgagedFromStockId(mortgage_companies_spinner.selectedItemPosition+1)
+                val mortgagedString = " :  " + mortgageDetailsList[mortgage_companies_spinner.selectedItemPosition].stockQuantity
                 stocksMortgagedTextView.text = mortgagedString
             }
         }
@@ -147,13 +145,9 @@ class MortgageFragment : Fragment() {
                     stocksOwnedTextView.text = ownedString
 
                     if(mortgageDetailsList.size > 0) {
-                        val mortgageString = " :  " + getStocksMortgagedFromStockId(mortgage_companies_spinner.selectedItemPosition+1)
+                        val mortgageString = " :  " + mortgageDetailsList[mortgage_companies_spinner.selectedItemPosition].stockQuantity
                         stocksMortgagedTextView.text = mortgageString
                     }
-
-                    val currentPriceText = " :  " + Constants.RUPEE_SYMBOL +
-                            getPriceFromStockId(model.globalStockDetails, mortgage_companies_spinner.selectedItemPosition + 1).toString()
-                    currentPriceTextView.text = currentPriceText
                 }
 
                 override fun onNothingSelected(parent: AdapterView<*>) {
@@ -212,9 +206,9 @@ class MortgageFragment : Fragment() {
                         stocksOwnedTextView.text = ownedString
 
                         val tempString = " :  " + Constants.RUPEE_SYMBOL + " " + StockUtils.getPriceFromStockId(model.globalStockDetails, lastStockId).toString()
-                        currentPriceTextView.text = tempString
+                        currentPrice_textView.text = tempString
 
-                        val mortgagedString = " :  " + getStocksMortgagedFromStockId(mortgage_companies_spinner.selectedItemPosition+1)
+                        val mortgagedString = " :  " + mortgageDetailsList[mortgage_companies_spinner.selectedItemPosition].stockQuantity
                         stocksMortgagedTextView.text = mortgagedString
 
                     } else {
@@ -239,18 +233,6 @@ class MortgageFragment : Fragment() {
             } else
                 Toast.makeText(context, mortgageStocksResponse.statusMessage, Toast.LENGTH_SHORT).show()
         }
-    }
-
-    private fun getStocksMortgagedFromStockId(stockId: Int): Long {
-
-        var totalCount = 0L
-
-        for(mortgageDetail in mortgageDetailsList) {
-            if(mortgageDetail.stockId == stockId)
-                totalCount += mortgageDetail.stockQuantity
-        }
-
-        return totalCount
     }
 
     override fun onResume() {

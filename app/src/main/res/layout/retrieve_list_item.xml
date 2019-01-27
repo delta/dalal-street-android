@@ -7,50 +7,54 @@
 
     <TextView
         android:id="@+id/companyNameTextView"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:text="NZMA"
         android:textColor="@color/neutral_font_color"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/stockQuantityTextView"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintHorizontal_weight="3"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/stockQuantityTextView"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:text="17"
         android:textColor="@color/neutral_font_color"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/mortgagePriceTextView"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintHorizontal_weight="2"
         app:layout_constraintStart_toEndOf="@+id/companyNameTextView"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.511" />
 
     <TextView
         android:id="@+id/mortgagePriceTextView"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:text="178265"
         android:textColor="@color/neutral_font_color"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/retrieveQuantityEditText"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintHorizontal_weight="3"
         app:layout_constraintStart_toEndOf="@+id/stockQuantityTextView"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/retrieveButton"
+        style="@style/Widget.AppCompat.Button.Borderless"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/retrieve"
+        android:textColor="@color/neon_green"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/retrieveQuantityEditText"
         app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
         android:id="@+id/retrieveQuantityEditText"
-        android:layout_width="0dp"
+        android:layout_width="48dp"
         android:layout_height="wrap_content"
         android:backgroundTint="@color/neon_blue"
         android:gravity="center"
@@ -63,23 +67,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/retrieveButton"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintHorizontal_weight="2"
         app:layout_constraintStart_toEndOf="@+id/mortgagePriceTextView"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <Button
-        android:id="@+id/retrieveButton"
-        style="@style/Widget.AppCompat.Button.Borderless"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:text="@string/retrieve"
-        android:textColor="@color/neon_green"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintHorizontal_weight="4"
-        app:layout_constraintStart_toEndOf="@+id/retrieveQuantityEditText"
         app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

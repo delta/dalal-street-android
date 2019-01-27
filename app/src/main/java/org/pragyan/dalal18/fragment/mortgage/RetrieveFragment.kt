@@ -70,17 +70,15 @@ class RetrieveFragment : Fragment(), RetrieveRecyclerAdapter.OnRetrieveButtonCli
                             if (mortgageDetails.stockQuantity == quantity) {
                                 mortgageDetailsList.remove(mortgageDetails)
                                 retrieveAdapter.removeSingleItem(mortgageDetailsList, index)
-                                return@forEachIndexed
+                                return
                             } else {
                                 mortgageDetails.stockQuantity -= quantity
                                 retrieveAdapter.changeSingleItem(mortgageDetailsList, index)
-                                return@forEachIndexed
+                                return
                             }
                         }
                     }
                 }
-
-                if(mortgageDetailsList.size == 0) flipVisibilities(true)
             }
         }
     }
@@ -145,12 +143,7 @@ class RetrieveFragment : Fragment(), RetrieveRecyclerAdapter.OnRetrieveButtonCli
                             mortgageDetailsList.add(MortgageDetails(currentDetails.stockId, currentDetails.stocksInBank, currentDetails.mortgagePrice))
                         }
 
-                        if(mortgageDetailsList.size == 0) {
-                            flipVisibilities(true)
-                        } else {
-                            retrieveAdapter.swapData(mortgageDetailsList)
-                            flipVisibilities(false)
-                        }
+                        retrieveAdapter.swapData(mortgageDetailsList)
                     } else {
                         Toast.makeText(context, response.statusMessage, Toast.LENGTH_SHORT).show()
                     }
@@ -173,11 +166,6 @@ class RetrieveFragment : Fragment(), RetrieveRecyclerAdapter.OnRetrieveButtonCli
                     Toast.makeText(context, retrieveStocksResponse.statusMessage, Toast.LENGTH_SHORT).show()
             }
         }
-    }
-
-    private fun flipVisibilities(noStocksMortgaged: Boolean) {
-        noStocksMortgagedTextview.visibility = if (noStocksMortgaged) View.VISIBLE else View.GONE
-        retrieveRecyclerView.visibility = if (noStocksMortgaged) View.GONE else View.VISIBLE
     }
 
     override fun onResume() {
