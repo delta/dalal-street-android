@@ -49,7 +49,7 @@ class LoginActivity : AppCompatActivity() {
         signingInAlertDialog = AlertDialog.Builder(this).setView(R.layout.progress_dialog).setCancelable(false).create()
 
         if (intent.getStringExtra(RegistrationActivity.REGISTER_MESSAGE_KEY) != null) {
-            AlertDialog.Builder(this)
+            AlertDialog.Builder(this, R.style.AlertDialogTheme)
                     .setTitle("Registration Message")
                     .setMessage(intent.getStringExtra(RegistrationActivity.REGISTER_MESSAGE_KEY))
                     .setPositiveButton("OKAY") { dI, _ -> dI.dismiss() }
@@ -106,7 +106,6 @@ class LoginActivity : AppCompatActivity() {
 
     private fun onRegisterButtonClick() {
         startActivity(Intent(this, RegistrationActivity::class.java))
-        finish()
     }
 
     private fun validateEmail(): Boolean {
@@ -192,7 +191,7 @@ class LoginActivity : AppCompatActivity() {
                                         currentStockDetails.stocksInExchange,
                                         currentStockDetails.previousDayClose,
                                         if (currentStockDetails.upOrDown) 1 else 0,
-                                        "https://logo-core.clearbit.com/airbnb.com"))
+                                        resources.getStringArray(R.array.image_links)[q-1]))
                                         //Constants.COMPANY_IMAGES_BASE_URL + currentStockDetails.shortName.toUpperCase() + ".png"))
                             }
                         }
