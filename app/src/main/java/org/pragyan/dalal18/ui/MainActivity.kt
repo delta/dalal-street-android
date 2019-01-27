@@ -32,7 +32,7 @@ import org.pragyan.dalal18.dagger.ContextModule
 import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent
 import org.pragyan.dalal18.data.DalalViewModel
 import org.pragyan.dalal18.data.StockDetails
-import org.pragyan.dalal18.fragment.mortgage.MortgageFragment
+import org.pragyan.dalal18.fragment.MortgageFragment
 import org.pragyan.dalal18.notifications.NotificationService
 import org.pragyan.dalal18.utils.*
 import java.text.DecimalFormat
