@@ -8,6 +8,7 @@
 
     <color name="redTint">#ff0000</color>
 
+    <color name="dark_blue_background">#00202F</color>
     <color name="black_background">#30303C</color>
     <color name="neutral_font_color">#FFFFFF</color>
     <color name="neon_green">#39FF14</color>

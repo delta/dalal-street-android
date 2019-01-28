@@ -17,6 +17,7 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.FragmentNavigator
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.PagerSnapHelper
@@ -221,7 +222,7 @@ class HomeFragment : Fragment(), NewsRecyclerAdapter.NewsItemClickListener, Swip
     override fun onCompanyTickerClick(view: View, position: Int) {
         val bundle = Bundle()
         bundle.putString(CompanyDescriptionFragment.COMPANY_NAME_KEY, companyTickerDetailsList[position].fullName)
-        view.findNavController().navigate(R.id.action_company_ticker_to_details, bundle)
+        findNavController().navigate(R.id.action_company_ticker_to_details, bundle)
     }
 
     override fun onRefresh() = getLatestNewsAsynchronously()

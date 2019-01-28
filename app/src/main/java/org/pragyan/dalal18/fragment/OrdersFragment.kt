@@ -12,6 +12,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import dalalstreet.api.DalalActionServiceGrpc
@@ -55,7 +56,6 @@ class OrdersFragment : Fragment(), OrdersRecyclerAdapter.OnOrderClickListener, S
         } catch (classCastException: ClassCastException) {
             throw ClassCastException(context.toString() + " must implement network down handler.")
         }
-
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -87,6 +87,10 @@ class OrdersFragment : Fragment(), OrdersRecyclerAdapter.OnOrderClickListener, S
         getOpenOrdersAsynchronously()
 
         getMyOrdersSubscriptionId()
+
+        tradeFloatingActionButton.setOnClickListener {
+            findNavController().navigate(R.id.trade_dest)
+        }
     }
 
     private fun getMyOrdersSubscriptionId() {
