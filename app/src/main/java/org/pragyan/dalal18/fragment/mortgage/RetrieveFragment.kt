@@ -65,11 +65,14 @@ class RetrieveFragment : Fragment(), RetrieveRecyclerAdapter.OnRetrieveButtonCli
                     retrieveAdapter.addSingleItem(mortgageDetailsList, mortgageDetailsList.size - 1)
 
                 } else /* Retrieve Action */ {
+                    var modifyIndex = -1
+                    var modifyMortgageDetails: MortgageDetails? = null
+
                     mortgageDetailsList.forEachIndexed { index, mortgageDetails ->
                         if (mortgageDetails.stockId == stockId && mortgageDetails.mortgagePrice == price) {
                             if (mortgageDetails.stockQuantity == quantity) {
-                                mortgageDetailsList.remove(mortgageDetails)
-                                retrieveAdapter.removeSingleItem(mortgageDetailsList, index)
+                                modifyMortgageDetails = mortgageDetails
+                                modifyIndex = index
                                 return@forEachIndexed
                             } else {
                                 mortgageDetails.stockQuantity -= quantity
@@ -77,6 +80,11 @@ class RetrieveFragment : Fragment(), RetrieveRecyclerAdapter.OnRetrieveButtonCli
                                 return@forEachIndexed
                             }
                         }
+                    }
+
+                    if(modifyIndex != -1) {
+                        mortgageDetailsList.remove(modifyMortgageDetails)
+                        retrieveAdapter.removeSingleItem(mortgageDetailsList, modifyIndex)
                     }
                 }
 

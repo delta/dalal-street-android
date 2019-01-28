@@ -7,7 +7,9 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.Handler;
 import android.os.Message;
+
 import androidx.annotation.Nullable;
+
 import android.util.AttributeSet;
 import android.util.Pair;
 import android.view.View;
@@ -23,12 +25,12 @@ import java.util.Random;
 public class GraphDrawView extends View implements Runnable {
 
     public Context context;
-    int width = 0;
-    int height = 0;
+    int width;
+    int height;
     int FPS = 60;
 
-    List<Pair<Integer,String> > points = new ArrayList<>();
-    List<Integer> points2= new ArrayList<>();
+    List<Pair<Integer, String>> points = new ArrayList<>();
+    List<Integer> points2 = new ArrayList<>();
     Random random = new Random();
     int listLength = 20;
     int xMov = 0;
@@ -59,8 +61,8 @@ public class GraphDrawView extends View implements Runnable {
         height = context.getResources().getDisplayMetrics().heightPixels;
         unitWidth = width / listLength;
         for (int i = 0; i <= listLength + 1; i++) {
-            date.setTime(date.getTime()+5*60000);
-            points.add(new Pair(-random.nextInt(height / 4) + height / 2 - width / 6,dateFormat.format(date)));
+            date.setTime(date.getTime() + 5 * 60000);
+            points.add(new Pair<>(-random.nextInt(height / 4) + height / 2 - width / 6, dateFormat.format(date)));
         }
         for (int i = 0; i <= listLength + 1; i++) {
             points2.add((-random.nextInt(height / 4) + height - width / 6));
@@ -86,7 +88,7 @@ public class GraphDrawView extends View implements Runnable {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        canvas.drawRect(0, 0, width, height, backgroundPaint);
+        canvas.drawColor(Color.parseColor("#111111"));
         canvas.drawLine(0, height / 2, width, height / 2, graphPaint);
         for (int i = listLength; i >= 0; i--) {
             canvas.drawLine(xMov + (i - 1) * (unitWidth), points.get(i).first, xMov + (i) * unitWidth, points.get(i + 1).first, graphPaint);
@@ -94,14 +96,14 @@ public class GraphDrawView extends View implements Runnable {
             canvas.drawLine(xMov + (i - 1) * (unitWidth), height / 2 - 5, xMov + (i - 1) * (unitWidth), height / 2 + 5, linePaint);
             canvas.drawText(points.get(i).second, xMov + (i - 1) * (unitWidth), height / 2 - 10, textPaint);
         }
-        xMov--;
+        xMov -= 5;
         if (xMov <= 0) {
             xMov = unitWidth;
             points.remove(0);
             points2.remove(0);
-            date.setTime(date.getTime()+5*60000);
-            points.add(new Pair(-random.nextInt(height / 4) + height / 2 - width / 6,dateFormat.format(date)));
-            points2.add(-random.nextInt(height / 4) + height - (height / 4)+width/6);
+            date.setTime(date.getTime() + 5 * 60000);
+            points.add(new Pair<>(-random.nextInt(height / 4) + height / 2 - width / 6, dateFormat.format(date)));
+            points2.add(-random.nextInt(height / 4) + height - (height / 4) + width / 6);
         }
     }
 

@@ -2,7 +2,7 @@ package org.pragyan.dalal18.utils;
 
 public class Constants {
 
-    public static final String HOST = "10.2.75.254";
+    public static final String HOST = "192.168.0.14";
     public static final int PORT = 8000;
 
     public static final String COMPANY_IMAGES_BASE_URL = "https://dalal.pragyan.org/public/src/images/companies/";
