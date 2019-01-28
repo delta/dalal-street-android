@@ -11,7 +11,7 @@ import androidx.core.content.ContextCompat
 import androidx.viewpager.widget.ViewPager
 import com.google.android.material.tabs.TabLayout
 import org.pragyan.dalal18.R
-import org.pragyan.dalal18.adapter.ContentAdapter
+import org.pragyan.dalal18.adapter.DepthPagerAdapter
 
 class MarketDepthFragment : Fragment() {
 
@@ -24,7 +24,7 @@ class MarketDepthFragment : Fragment() {
         val tabLayout = customView.findViewById<TabLayout>(R.id.tab_headings)
 
         // Set adapter to viewpager and custom colors to tabLayout
-        viewPager.adapter = ContentAdapter(childFragmentManager)
+        viewPager.adapter = DepthPagerAdapter(childFragmentManager)
         tabLayout.setupWithViewPager(viewPager)
 
         if (context != null) {
