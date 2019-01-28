@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -58,7 +59,7 @@ class MortgageFragment : Fragment() {
 
             if (intent.action.equals(Constants.REFRESH_STOCK_PRICES_ACTION, ignoreCase = true)) {
                 val currentPriceText = " :  " + Constants.RUPEE_SYMBOL +
-                        getPriceFromStockId(model.globalStockDetails, mortgage_companies_spinner.selectedItemPosition + 1).toString()
+                        getPriceFromStockId(model.globalStockDetails, lastStockId).toString()
                 currentPriceTextView.text = currentPriceText
 
             } else if (intent.action.equals(Constants.REFRESH_MORTGAGE_UPDATE_ACTION, ignoreCase = true)) {
@@ -97,7 +98,7 @@ class MortgageFragment : Fragment() {
                     }
                 }
 
-                val mortgagedString = " :  " + getStocksMortgagedFromStockId(mortgage_companies_spinner.selectedItemPosition+1)
+                val mortgagedString = " :  " + getStocksMortgagedFromStockId(lastStockId)
                 stocksMortgagedTextView.text = mortgagedString
             }
         }
@@ -110,15 +111,6 @@ class MortgageFragment : Fragment() {
         } catch (classCastException: ClassCastException) {
             throw ClassCastException(context.toString() + " must implement network down handler.")
         }
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        val dialogView = LayoutInflater.from(context).inflate(R.layout.progress_dialog, null)
-        val tempString = "Getting mortgage details..."
-        (dialogView.findViewById<View>(R.id.progressDialog_textView) as TextView).text = tempString
-        loadingDialog = AlertDialog.Builder(context!!).setView(dialogView).setCancelable(false).create()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -136,6 +128,11 @@ class MortgageFragment : Fragment() {
 
         (activity as AppCompatActivity).supportActionBar?.title = resources.getString(R.string.mortgage)
 
+        val dialogView = LayoutInflater.from(context).inflate(R.layout.progress_dialog, null)
+        val tempString = "Getting mortgage details..."
+        (dialogView.findViewById<View>(R.id.progressDialog_textView) as TextView).text = tempString
+        loadingDialog = AlertDialog.Builder(context!!).setView(dialogView).setCancelable(false).create()
+
         getMortgageDetailsAsynchronously()
 
         with(mortgage_companies_spinner) {
@@ -143,16 +140,18 @@ class MortgageFragment : Fragment() {
 
             onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
                 override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
-                    val ownedString = " :  " + getQuantityOwnedFromStockId(model.ownedStockDetails, mortgage_companies_spinner.selectedItemPosition + 1).toString()
+
+                    lastStockId = getStockIdFromCompanyName(companiesArray[position])
+                    val ownedString = " :  " + getQuantityOwnedFromStockId(model.ownedStockDetails, lastStockId).toString()
                     stocksOwnedTextView.text = ownedString
 
                     if(mortgageDetailsList.size > 0) {
-                        val mortgageString = " :  " + getStocksMortgagedFromStockId(mortgage_companies_spinner.selectedItemPosition+1)
+                        val mortgageString = " :  " + getStocksMortgagedFromStockId(lastStockId)
                         stocksMortgagedTextView.text = mortgageString
                     }
 
                     val currentPriceText = " :  " + Constants.RUPEE_SYMBOL +
-                            getPriceFromStockId(model.globalStockDetails, mortgage_companies_spinner.selectedItemPosition + 1).toString()
+                            getPriceFromStockId(model.globalStockDetails, lastStockId).toString()
                     currentPriceTextView.text = currentPriceText
                 }
 
@@ -168,13 +167,21 @@ class MortgageFragment : Fragment() {
     private fun onMortgageButtonClick() {
 
         with(stocks_editText) {
-            if (text.toString().trim { it <= ' ' }.isEmpty()) {
-                error = "Stocks quantity missing"
-                requestFocus()
-                return
-            } else {
-                error = null
-                clearFocus()
+            when {
+                text.toString().trim { it <= ' ' }.isEmpty() -> {
+                    error = "Stocks quantity missing"
+                    requestFocus()
+                    return
+                }
+                text.toString().toLong() == 0L -> {
+                    error = "Enter valid number of stocks"
+                    requestFocus()
+                    return
+                }
+                else -> {
+                    error = null
+                    clearFocus()
+                }
             }
         }
 
@@ -201,7 +208,6 @@ class MortgageFragment : Fragment() {
                     mortgage_companies_spinner.isEnabled = true
 
                     if (response.statusCode == GetMortgageDetailsResponse.StatusCode.OK) {
-                        lastStockId = StockUtils.getStockIdFromCompanyName(companiesArray[mortgage_companies_spinner.selectedItemPosition])
 
                         mortgageDetailsList.clear()
                         for (currentDetails in response.mortgageDetailsList) {
@@ -214,7 +220,7 @@ class MortgageFragment : Fragment() {
                         val tempString = " :  " + Constants.RUPEE_SYMBOL + " " + StockUtils.getPriceFromStockId(model.globalStockDetails, lastStockId).toString()
                         currentPriceTextView.text = tempString
 
-                        val mortgagedString = " :  " + getStocksMortgagedFromStockId(mortgage_companies_spinner.selectedItemPosition+1)
+                        val mortgagedString = " :  " + getStocksMortgagedFromStockId(lastStockId)
                         stocksMortgagedTextView.text = mortgagedString
 
                     } else {
@@ -228,16 +234,26 @@ class MortgageFragment : Fragment() {
     }
 
     private fun mortgageStocksAsynchronously(stocksTransaction: Long) {
+        val dialogView = LayoutInflater.from(context).inflate(R.layout.progress_dialog, null)
+        val tempString = "Mortgaging Stocks..."
+        (dialogView.findViewById<View>(R.id.progressDialog_textView) as TextView).text = tempString
+        loadingDialog = AlertDialog.Builder(context!!).setView(dialogView).setCancelable(false).create()
+        loadingDialog?.show()
         doAsync {
             val mortgageStocksResponse = actionServiceBlockingStub.mortgageStocks(
-                    MortgageStocksRequest.newBuilder().setStockId(mortgage_companies_spinner.selectedItemPosition + 1)
+                    MortgageStocksRequest.newBuilder().setStockId(lastStockId)
                             .setStockQuantity(stocksTransaction).build())
 
-            if (mortgageStocksResponse.statusCode == MortgageStocksResponse.StatusCode.OK) {
-                Toast.makeText(context, "Transaction successful", Toast.LENGTH_SHORT).show()
-                stocks_editText.setText("")
-            } else
-                Toast.makeText(context, mortgageStocksResponse.statusMessage, Toast.LENGTH_SHORT).show()
+            uiThread {
+                if (mortgageStocksResponse.statusCode == MortgageStocksResponse.StatusCode.OK) {
+                    Toast.makeText(context, "Transaction successful", Toast.LENGTH_SHORT).show()
+                    stocks_editText.setText("")
+                } else {
+                    Toast.makeText(context, mortgageStocksResponse.statusMessage, Toast.LENGTH_SHORT).show()
+                }
+                loadingDialog?.dismiss()
+            }
+
         }
     }
 
