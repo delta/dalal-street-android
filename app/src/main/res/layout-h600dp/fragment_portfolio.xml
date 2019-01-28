@@ -1,90 +1,108 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/black_background"
     android:paddingTop="8dp">
 
-    <RelativeLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content">
 
-        <LinearLayout
-            android:id="@+id/headings_tab_linearLayout"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingLeft="6dp"
-            android:paddingRight="6dp"
-            android:paddingBottom="8dp"
-            android:paddingTop="10dp">
+            android:layout_height="wrap_content">
 
-            <TextView
-                android:layout_width="0dp"
+            <LinearLayout
+                android:id="@+id/headings_tab_linearLayout"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="4"
-                android:gravity="center"
-                android:text="@string/company"
-                android:textAllCaps="true"
-                android:fontFamily="@font/kreon_light"
-                android:textColor="@color/neutral_font_color"
-                android:textSize="18sp"
-                android:textStyle="bold" />
+                android:paddingLeft="6dp"
+                android:paddingRight="6dp"
+                android:paddingBottom="8dp"
+                android:paddingTop="10dp">
 
-            <TextView
-                android:layout_width="0dp"
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="4"
+                    android:gravity="center"
+                    android:text="@string/company"
+                    android:textAllCaps="true"
+                    android:fontFamily="@font/kreon_light"
+                    android:textColor="@color/neutral_font_color"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="4"
+                    android:gravity="center"
+                    android:text="@string/quantity"
+                    android:textAllCaps="true"
+                    android:fontFamily="@font/kreon_light"
+                    android:textColor="@color/neutral_font_color"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="3"
+                    android:gravity="center"
+                    android:text="@string/price"
+                    android:textAllCaps="true"
+                    android:fontFamily="@font/kreon_light"
+                    android:textColor="@color/neutral_font_color"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="3"
+                    android:gravity="center"
+                    android:text="@string/worth"
+                    android:textAllCaps="true"
+                    android:fontFamily="@font/kreon_light"
+                    android:textColor="@color/neutral_font_color"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+            <View
+                android:id="@+id/view"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_below="@+id/headings_tab_linearLayout"
+                android:layout_margin="4dp"
+                android:background="@color/neutral_font_color" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/portfolioRecyclerView"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="4"
-                android:gravity="center"
-                android:text="@string/quantity"
-                android:textAllCaps="true"
-                android:fontFamily="@font/kreon_light"
-                android:textColor="@color/neutral_font_color"
-                android:textSize="18sp"
-                android:textStyle="bold" />
+                android:layout_alignParentStart="true"
+                android:layout_below="@+id/view"
+                android:visibility="visible" />
 
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="3"
-                android:gravity="center"
-                android:text="@string/price"
-                android:textAllCaps="true"
-                android:fontFamily="@font/kreon_light"
-                android:textColor="@color/neutral_font_color"
-                android:textSize="18sp"
-                android:textStyle="bold" />
+            <com.github.mikephil.charting.charts.PieChart
+                android:id="@+id/portfolio_piechart"
+                android:layout_width="match_parent"
+                android:layout_height="500dp"
+                android:layout_below="@id/portfolioRecyclerView"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="3"
-                android:gravity="center"
-                android:text="@string/worth"
-                android:textAllCaps="true"
-                android:fontFamily="@font/kreon_light"
-                android:textColor="@color/neutral_font_color"
-                android:textSize="18sp"
-                android:textStyle="bold" />
+        </RelativeLayout>
 
-        </LinearLayout>
 
-        <View
-            android:id="@+id/view"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_below="@+id/headings_tab_linearLayout"
-            android:layout_margin="4dp"
-            android:background="@color/neutral_font_color" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/portfolioRecyclerView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_alignParentStart="true"
-            android:layout_below="@+id/view"
-            android:visibility="visible" />
-
-    </RelativeLayout>
+    </ScrollView>
 
     <RelativeLayout
         android:id="@+id/emptyPortfolioRelativeLayout"

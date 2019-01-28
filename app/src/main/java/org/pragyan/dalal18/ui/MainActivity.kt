@@ -124,7 +124,7 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
 
         val navController = findNavController(R.id.main_host_fragment)
         button_bar.setOnClickListener {
-            navController.navigate(R.id.worth_dest, null, NavOptions.Builder().setPopUpTo(R.id.home_dest, false).build())
+            navController.navigate(R.id.portfolio_dest, null, NavOptions.Builder().setPopUpTo(R.id.home_dest, false).build())
         }
     }
 
