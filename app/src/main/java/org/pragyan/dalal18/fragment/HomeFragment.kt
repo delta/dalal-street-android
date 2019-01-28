@@ -132,7 +132,7 @@ class HomeFragment : Fragment(), NewsRecyclerAdapter.NewsItemClickListener, Swip
                 val marketEventsResponse = actionServiceBlockingStub.getMarketEvents(GetMarketEventsRequest.newBuilder().setCount(0).setLastEventId(0).build())
 
                 uiThread {
-                    newsSwipeRefreshLayout.isRefreshing = false
+                    newsSwipeRefreshLayout?.isRefreshing = false
                     if (marketEventsResponse.statusCode == GetMarketEventsResponse.StatusCode.OK) {
 
                         newsList.clear()
@@ -144,8 +144,8 @@ class HomeFragment : Fragment(), NewsRecyclerAdapter.NewsItemClickListener, Swip
                         if (newsList.isNotEmpty()) {
                             newsRecyclerAdapter.swapData(newsList)
                         }
-                        loadingNewsRelativeLayout.visibility = View.GONE
-                        newsRecyclerView.visibility = View.VISIBLE
+                        loadingNewsRelativeLayout?.visibility = View.GONE
+                        newsRecyclerView?.visibility = View.VISIBLE
                     } else {
                         Toast.makeText(context, marketEventsResponse.statusMessage, Toast.LENGTH_SHORT).show()
                     }
