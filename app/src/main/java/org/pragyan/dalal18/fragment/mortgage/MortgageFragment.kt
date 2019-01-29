@@ -9,7 +9,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.TextView
 import android.widget.Toast
@@ -24,6 +23,7 @@ import dalalstreet.api.actions.GetMortgageDetailsResponse
 import dalalstreet.api.actions.MortgageStocksRequest
 import dalalstreet.api.actions.MortgageStocksResponse
 import kotlinx.android.synthetic.main.fragment_mortgage.*
+import kotlinx.android.synthetic.main.fragment_mortgage.view.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
 import org.pragyan.dalal18.R
@@ -136,30 +136,27 @@ class MortgageFragment : Fragment() {
         loadingDialog = AlertDialog.Builder(context!!).setView(dialogView).setCancelable(false).create()
 
         getMortgageDetailsAsynchronously()
+        mortgage_button.isEnabled = false
+
+        val arrayAdapter = ArrayAdapter<String>(activity!!, R.layout.company_spinner_item, companiesArray)
 
         with(mortgage_companies_spinner) {
-            adapter = ArrayAdapter(context!!, R.layout.company_spinner_item, companiesArray)
+            setAdapter(arrayAdapter)
+            setOnItemClickListener { _, _, _, _ ->
+                lastStockId = getStockIdFromCompanyName(mortgage_companies_spinner.text.toString())
+                val ownedString = " :  " + getQuantityOwnedFromStockId(model.ownedStockDetails, lastStockId).toString()
+                view.stocksOwnedTextView.text = ownedString
 
-            onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-                override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
-
-                    lastStockId = getStockIdFromCompanyName(companiesArray[position])
-                    val ownedString = " :  " + getQuantityOwnedFromStockId(model.ownedStockDetails, lastStockId).toString()
-                    stocksOwnedTextView.text = ownedString
-
-                    if(mortgageDetailsList.size > 0) {
-                        val mortgageString = " :  " + getStocksMortgagedFromStockId(lastStockId)
-                        stocksMortgagedTextView.text = mortgageString
-                    }
-
-                    val currentPriceText = " :  " + Constants.RUPEE_SYMBOL +
-                            getPriceFromStockId(model.globalStockDetails, lastStockId).toString()
-                    currentPriceTextView.text = currentPriceText
+                if(mortgageDetailsList.size > 0) {
+                    val mortgageString = " :  " + getStocksMortgagedFromStockId(lastStockId)
+                    view.stocksMortgagedTextView.text = mortgageString
                 }
 
-                override fun onNothingSelected(parent: AdapterView<*>) {
+                val currentPriceText = " :  " + Constants.RUPEE_SYMBOL +
+                        getPriceFromStockId(model.globalStockDetails, lastStockId).toString()
+                view.currentPriceTextView.text = currentPriceText
 
-                }
+                view.mortgage_button.isEnabled = true
             }
         }
 
@@ -216,14 +213,14 @@ class MortgageFragment : Fragment() {
                             mortgageDetailsList.add(MortgageDetails(currentDetails.stockId, currentDetails.stocksInBank, currentDetails.mortgagePrice))
                         }
 
-                        val ownedString = " :  " + getQuantityOwnedFromCompanyName(model.ownedStockDetails, getCompanyNameFromStockId(lastStockId)).toString()
+                       /* val ownedString = " :  " + getQuantityOwnedFromCompanyName(model.ownedStockDetails, getCompanyNameFromStockId(lastStockId)).toString()
                         stocksOwnedTextView.text = ownedString
 
                         val tempString = " :  " + Constants.RUPEE_SYMBOL + " " + StockUtils.getPriceFromStockId(model.globalStockDetails, lastStockId).toString()
                         currentPriceTextView.text = tempString
 
                         val mortgagedString = " :  " + getStocksMortgagedFromStockId(lastStockId)
-                        stocksMortgagedTextView.text = mortgagedString
+                        stocksMortgagedTextView.text = mortgagedString*/
 
                     } else {
                         Toast.makeText(context, response.statusMessage, Toast.LENGTH_SHORT).show()

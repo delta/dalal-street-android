@@ -1,4 +1,5 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/black_background"
@@ -15,29 +16,34 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <Spinner
+        <com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner
             android:id="@+id/companySpinner"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="12dp"
-            android:layout_marginEnd="8dp"
-            android:backgroundTint="@color/neutral_font_color"
+            android:fontFamily="@font/kreon_light"
             android:hint="@string/pick_a_company"
-            android:textColorHint="@color/neutral_font_color" />
+            app:met_baseColor="@color/divider_line_gray"
+            app:met_floatingLabel="normal"
+            app:met_primaryColor="@color/divider_line_gray"
+            app:met_textColor="@color/neutral_font_color"
+            app:met_textColorHint="@color/neutral_font_color"
+            app:met_underlineColor="@color/divider_line_gray"
+            android:drawableEnd="@drawable/arrow_down_grey"/>
 
-        <Spinner
+        <com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner
             android:id="@+id/order_select_spinner"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/companySpinner"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="20dp"
-            android:layout_marginEnd="8dp"
-            android:backgroundTint="@color/neutral_font_color"
-            android:hint="@string/pick_a_company"
-            android:textColorHint="@color/neutral_font_color" />
-
+            android:fontFamily="@font/kreon_light"
+            android:hint="@string/select_an_order_type"
+            app:met_baseColor="@color/divider_line_gray"
+            app:met_floatingLabel="normal"
+            app:met_primaryColor="@color/divider_line_gray"
+            app:met_textColor="@color/neutral_font_color"
+            app:met_textColorHint="@color/neutral_font_color"
+            app:met_underlineColor="@color/divider_line_gray"
+            android:drawableEnd="@drawable/arrow_down_grey"/>
 
         <RadioGroup
             android:id="@+id/radioGroupStock"

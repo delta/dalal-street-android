@@ -77,21 +77,20 @@ class StockExchangeFragment : Fragment() {
                 .setView(dialogView)
                 .setCancelable(false)
                 .create()
+        buyExchangeButton.isEnabled = false
 
         companiesArray = StockUtils.getCompanyNamesArray()
         val arrayAdapter = ArrayAdapter<String>(activity!!, R.layout.company_spinner_item, companiesArray)
-        with(companySpinner) {
-            adapter = arrayAdapter
-            onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-                override fun onNothingSelected(parent: AdapterView<*>?) {
 
+        with(companySpinner){
+            setAdapter(arrayAdapter)
+            setOnItemClickListener { _, _, _, _ ->
+                if(!buyExchangeButton.isEnabled){
+                    buyExchangeButton.isEnabled = true
                 }
-
-                override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                    val stockId = StockUtils.getStockIdFromCompanyName(companiesArray[position])
-                    lastSelectedStockId = stockId
-                    getCompanyProfileAsynchronously(lastSelectedStockId)
-                }
+                val stockId = StockUtils.getStockIdFromCompanyName(companySpinner.text.toString())
+                lastSelectedStockId = stockId
+                getCompanyProfileAsynchronously(lastSelectedStockId)
             }
         }
 
