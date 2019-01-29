@@ -153,6 +153,8 @@ class SplashActivity : AppCompatActivity() {
                                     Constants.MORTGAGE_DEPOSIT_RATE = value.toDouble()
                                 else if (key == "MORTGAGE_RETRIEVE_RATE")
                                     Constants.MORTGAGE_RETRIEVE_RATE = value.toDouble()
+                                else if (key == "ORDER_FEE_PERCENT")
+                                    Constants.ORDER_FEE_RATE = (value.toDouble()/100)
                             }
 
                             preferences.edit().putString(Constants.MARKET_OPEN_TEXT_KEY, loginResponse.marketIsOpenHackyNotif)

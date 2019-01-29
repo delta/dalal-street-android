@@ -2,7 +2,7 @@ package org.pragyan.dalal18.utils;
 
 public class Constants {
 
-    public static final String HOST = "10.2.75.254";
+    public static final String HOST = "192.168.0.20";
     public static final int PORT = 8000;
 
     public static final String COMPANY_IMAGES_BASE_URL = "https://dalal.pragyan.org/public/src/images/companies/";
@@ -25,6 +25,7 @@ public class Constants {
 
     public static double MORTGAGE_DEPOSIT_RATE = 0.8;
     public static double MORTGAGE_RETRIEVE_RATE = 0.9;
+    public static double ORDER_FEE_RATE = 0.03;
     public static final String MARKET_OPEN_TEXT_KEY = "market-open-text-key";
     public static final String MARKET_CLOSED_TEXT_KEY = "market-closed-text-key";
 

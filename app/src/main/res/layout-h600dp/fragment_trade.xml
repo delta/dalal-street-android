@@ -2,17 +2,17 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/black_background"
-    android:paddingBottom="12dp"
+    android:paddingStart="12dp"
     android:paddingEnd="12dp"
-    android:paddingStart="12dp">
+    android:paddingBottom="12dp">
 
     <Spinner
         android:id="@+id/companySpinner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="20dp"
+        android:layout_marginEnd="8dp"
         android:backgroundTint="@color/neutral_font_color"
         android:hint="@string/pick_a_company"
         android:textColorHint="@color/neutral_font_color" />
@@ -22,10 +22,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/companySpinner"
-        android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
-        android:layout_marginBottom="8dp"
         android:layout_marginTop="20dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
         android:backgroundTint="@color/neutral_font_color"
         android:hint="@string/pick_a_company"
         android:textColorHint="@color/neutral_font_color" />
@@ -34,8 +34,8 @@
         android:id="@+id/radioGroupStock"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignStart="@+id/order_select_spinner"
         android:layout_below="@+id/order_select_spinner"
+        android:layout_alignStart="@+id/order_select_spinner"
         android:layout_marginTop="15dp"
         android:orientation="horizontal">
 
@@ -164,6 +164,7 @@
             android:ems="10"
             android:hint="@string/enter_the_number_of_stocks"
             android:inputType="number"
+            android:maxLength="6"
             android:textColor="@color/neutral_font_color" />
 
     </com.google.android.material.textfield.TextInputLayout>
@@ -172,8 +173,8 @@
         android:id="@+id/order_price_input"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignStart="@+id/no_of_stocks_input"
         android:layout_below="@+id/no_of_stocks_input"
+        android:layout_alignStart="@+id/no_of_stocks_input"
         android:layout_marginTop="20dp"
         android:textColorHint="@color/neutral_font_color">
 
@@ -184,6 +185,7 @@
             android:ems="10"
             android:hint="@string/order_price"
             android:inputType="number"
+            android:maxLength="8"
             android:textColor="@color/neutral_font_color" />
 
     </com.google.android.material.textfield.TextInputLayout>
