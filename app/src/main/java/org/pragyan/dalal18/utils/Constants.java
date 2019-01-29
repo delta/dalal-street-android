@@ -16,7 +16,7 @@ public class Constants {
     public static final String REFRESH_OWNED_STOCKS_ACTION = "refresh-owned-stocks-action";
     public static final String REFRESH_MARKET_DEPTH= "refresh_market_depth";
     public static final String REFRESH_WORTH_TEXTVIEW_ACTION = "refresh-cash-worth-textview";
-    public static final String REFRESH_DIVIDEND_ACTION = "refresh-dividend-worth-textview";
+    public static final String REFRESH_CASH_ACTION = "refresh-hard-cash-worth-textview";
     public static final String UPDATE_WORTH_VIA_STREAM_ACTION = "refresh-worth-via-stream-action";
     public static final String STOP_NOTIFICATION_ACTION = "stop-notification-action";
     public static final String REFRESH_MORTGAGE_UPDATE_ACTION = "refresh-mortgage-update-action";

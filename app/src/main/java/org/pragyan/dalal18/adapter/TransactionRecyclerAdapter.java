@@ -2,6 +2,8 @@ package org.pragyan.dalal18.adapter;
 
 import android.content.Context;
 import android.graphics.drawable.GradientDrawable;
+
+import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -28,18 +30,21 @@ public class TransactionRecyclerAdapter extends RecyclerView.Adapter<Transaction
         this.transactionList = transactionList;
     }
 
+    @NonNull
     @Override
-    public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
         View itemView = LayoutInflater.from(context).inflate(R.layout.transactions_list_item, parent, false);
         return new MyViewHolder(itemView);
     }
 
     @Override
-    public void onBindViewHolder(MyViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
 
         String tempAssigningString;
         Transaction currentTransaction = transactionList.get(position);
+
+        if(currentTransaction.getType() == null) return;
 
         switch (currentTransaction.getType()){
             case "FROM_EXCHANGE_TRANSACTION":
@@ -64,6 +69,20 @@ public class TransactionRecyclerAdapter extends RecyclerView.Adapter<Transaction
                 tempAssigningString = "Dividend";
                 holder.typeTextView.setText(tempAssigningString);
                 break;
+
+            case "TAX_TRANSACTION":
+                tempAssigningString = "Tax";
+                holder.typeTextView.setText(tempAssigningString);
+                break;
+
+            case "ORDER_FEE_TRANSACTION":
+                tempAssigningString = "Order Fee";
+                holder.typeTextView.setText(tempAssigningString);
+                break;
+
+                default:
+                    holder.typeTextView.setText(currentTransaction.getType());
+                    break;
         }
 
         tempAssigningString =  getCompanyNameFromStockId(currentTransaction.getStockId());
@@ -73,9 +92,14 @@ public class TransactionRecyclerAdapter extends RecyclerView.Adapter<Transaction
         if (tempAssigningString != null)
             holder.timeTextView.setText(tempAssigningString);
 
-        tempAssigningString = String.valueOf(Math.abs(currentTransaction.getNoOfStocks()))
+        if(currentTransaction.getType().equals("TAX_TRANSACTION") || currentTransaction.getType().equals("ORDER_FEE_TRANSACTION")) {
+            tempAssigningString = Constants.RUPEE_SYMBOL + " " + String.valueOf(-currentTransaction.getTotalMoney());
+            holder.noOfStocksTextView.setText(tempAssigningString);
+        } else {
+            tempAssigningString = String.valueOf(Math.abs(currentTransaction.getNoOfStocks()))
                     + " stocks @ " + Constants.RUPEE_SYMBOL + " " + String.valueOf(Math.abs(currentTransaction.getStockPrice()));
-        holder.noOfStocksTextView.setText(tempAssigningString);
+            holder.noOfStocksTextView.setText(tempAssigningString);
+        }
 
         GradientDrawable buySellDrawable = (GradientDrawable)holder.buySellTextView.getBackground();
         if (currentTransaction.getTotalMoney() < 0) {

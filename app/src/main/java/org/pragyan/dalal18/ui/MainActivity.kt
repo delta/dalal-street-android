@@ -69,12 +69,11 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
         override fun onReceive(context: Context, intent: Intent) {
             when (intent.action) {
                 Constants.REFRESH_WORTH_TEXTVIEW_ACTION -> {
-
                     changeTextViewValue(stockWorthTextView, intent.getLongExtra(TOTAL_WORTH_KEY, 0), false)
                     changeTextViewValue(cashWorthTextView, intent.getLongExtra(TOTAL_WORTH_KEY, 0), true)
                 }
 
-                Constants.REFRESH_DIVIDEND_ACTION -> {
+                Constants.REFRESH_CASH_ACTION -> {
                     changeTextViewValue(totalWorthTextView, intent.getLongExtra(TOTAL_WORTH_KEY, 0), true)
                     changeTextViewValue(cashWorthTextView, intent.getLongExtra(TOTAL_WORTH_KEY, 0), true)
                 }
@@ -242,12 +241,11 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
 
                         when (transaction.type) {
                             TransactionType.DIVIDEND_TRANSACTION -> {
-
-                                val intent = Intent(Constants.REFRESH_DIVIDEND_ACTION)
+                                val intent = Intent(Constants.REFRESH_CASH_ACTION)
                                 intent.putExtra(TOTAL_WORTH_KEY, transaction.total)
                                 LocalBroadcastManager.getInstance(this@MainActivity).sendBroadcast(intent)
-
                             }
+
                             TransactionType.ORDER_FILL_TRANSACTION -> {
                                 // TODO: Condition when shorting the stocks
                                 updateOwnedStockIdAndQuantity(transaction.stockId, Math.abs(transaction.stockQuantity), transaction.stockQuantity > 0)
@@ -258,6 +256,7 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
                                 LocalBroadcastManager.getInstance(this@MainActivity).sendBroadcast(Intent(Constants.REFRESH_OWNED_STOCKS_ACTION))
 
                             }
+
                             TransactionType.FROM_EXCHANGE_TRANSACTION -> {
 
                                 updateOwnedStockIdAndQuantity(transaction.stockId, transaction.stockQuantity, true)
@@ -265,9 +264,9 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
                                 val intent = Intent(Constants.REFRESH_WORTH_TEXTVIEW_ACTION)
                                 intent.putExtra(TOTAL_WORTH_KEY, transaction.total)
                                 LocalBroadcastManager.getInstance(this@MainActivity).sendBroadcast(intent)
-
                             }
-                            else -> /* Meant for MORTGAGE TRANSACTION type; While retrieving stockQuantity is positive */ {
+
+                            TransactionType.MORTGAGE_TRANSACTION -> /* Meant for MORTGAGE TRANSACTION type; While retrieving stockQuantity is positive */ {
 
                                 updateOwnedStockIdAndQuantity(transaction.stockId, transaction.stockQuantity, true)
 
@@ -280,6 +279,22 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
                                 intent.putExtra(MortgageFragment.STOCKS_PRICE_KEY, transaction.price)
                                 intent.putExtra(MortgageFragment.STOCKS_QUANTITY_KEY, transaction.stockQuantity)
                                 LocalBroadcastManager.getInstance(this@MainActivity).sendBroadcast(intent)
+                            }
+
+                            TransactionType.TAX_TRANSACTION -> {
+                                val intent = Intent(Constants.REFRESH_CASH_ACTION)
+                                intent.putExtra(TOTAL_WORTH_KEY, transaction.total)
+                                LocalBroadcastManager.getInstance(this@MainActivity).sendBroadcast(intent)
+                            }
+
+                            TransactionType.ORDER_FEE_TRANSACTION -> {
+                                val intent = Intent(Constants.REFRESH_CASH_ACTION)
+                                intent.putExtra(TOTAL_WORTH_KEY, transaction.total)
+                                LocalBroadcastManager.getInstance(this@MainActivity).sendBroadcast(intent)
+                            }
+
+                            else -> {
+
                             }
                         }
                     }
@@ -435,6 +450,7 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
         animateWorthChange(oldValue, netStockWorth + oldCash, totalWorthTextView)
     }
 
+    // Increases/decreases text view value depending on input parameters
     private fun changeTextViewValue(textView: TextView, value: Long, increase: Boolean) {
         val oldValue = textView.text.toString().replace(",", "").toLong()
         val newValue = oldValue + if (increase) value else -1 * value
@@ -484,7 +500,7 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
 
         subscribeToStreamsAsynchronously()
 
-        val intentFilter = IntentFilter(Constants.REFRESH_DIVIDEND_ACTION)
+        val intentFilter = IntentFilter(Constants.REFRESH_CASH_ACTION)
         intentFilter.addAction(Constants.REFRESH_WORTH_TEXTVIEW_ACTION)
         intentFilter.addAction(Constants.UPDATE_WORTH_VIA_STREAM_ACTION)
         LocalBroadcastManager.getInstance(this).registerReceiver(refreshCashStockReceiver, IntentFilter(intentFilter))
