@@ -40,7 +40,7 @@ class SplashActivity : AppCompatActivity() {
     @Inject
     lateinit var preferences: SharedPreferences
 
-    var drawingThread: Thread? = null
+    private var drawingThread: Thread? = null
 
     private val isGooglePlayServicesAvailable: Boolean
         get() {

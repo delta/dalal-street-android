@@ -20,9 +20,7 @@ class DalalViewModel : ViewModel() {
         globalStockDetails[pos-1].price = price
     }
 
-    fun addNewOwnedStock(stock: StockDetails) {
-        ownedStockDetails.add(stock)
-    }
+    fun addNewOwnedStock(stock: StockDetails) = ownedStockDetails.add(stock)
 
     fun createCompanyArrayFromGlobalStockDetails() {
         stockIdCompanyNameList = ArrayList<StockIdCompanyName>()

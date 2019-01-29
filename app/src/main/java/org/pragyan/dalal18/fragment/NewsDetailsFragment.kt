@@ -1,7 +1,6 @@
 package org.pragyan.dalal18.fragment
 
 import android.app.AlertDialog
-import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View

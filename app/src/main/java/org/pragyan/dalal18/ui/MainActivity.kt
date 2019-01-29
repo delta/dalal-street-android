@@ -109,7 +109,7 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
         updateWorthTextViews()
 
         startMakingButtonsTransparent()
-        updateStockWorthViaStreamUpdates(intent.getLongExtra(CASH_WORTH_KEY, 0).toLong())
+        updateStockWorthViaStreamUpdates(intent.getLongExtra(CASH_WORTH_KEY, 0))
 
         if (!intent.getBooleanExtra(SplashActivity.MARKET_OPEN_KEY, false)) {
             AlertDialog.Builder(this, R.style.AlertDialogTheme)

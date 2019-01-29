@@ -30,6 +30,5 @@ class MainMortgageFragment : Fragment() {
 
         mainMortgageTabLayout.setTabTextColors(ContextCompat.getColor(context!!, R.color.neutral_font_color), ContextCompat.getColor(context!!, R.color.neon_blue))
         mainMortgageTabLayout.setBackgroundColor(Color.parseColor("#20202C"))
-
     }
 }

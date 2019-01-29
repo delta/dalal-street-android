@@ -33,9 +33,9 @@ import org.pragyan.dalal18.utils.Constants
 import javax.inject.Inject
 
 class RetrieveFragment : Fragment(), RetrieveRecyclerAdapter.OnRetrieveButtonClickListener {
+
     @Inject
     lateinit var actionServiceBlockingStub: DalalActionServiceGrpc.DalalActionServiceBlockingStub
-
 
     lateinit var networkDownHandler: ConnectionUtils.OnNetworkDownHandler
     private var loadingDialog: AlertDialog? = null

@@ -11,12 +11,6 @@ import java.util.Locale;
 
 public class MiscellaneousUtils {
 
-    public static float convertDpToPixel(Context context, float dp){
-        Resources resources = context.getResources();
-        DisplayMetrics metrics = resources.getDisplayMetrics();
-        return dp * ((float)metrics.densityDpi / DisplayMetrics.DENSITY_DEFAULT);
-    }
-
     public static String parseDate(String time) {
         String inputPattern = "yyyy-MM-dd'T'HH:mm:ss'Z'";
         String outputPattern = "HH:mm MMM dd";

@@ -41,7 +41,7 @@ class LeaderboardFragment : Fragment() {
     lateinit var networkDownHandler: ConnectionUtils.OnNetworkDownHandler
 
     private lateinit var loadingDialog: AlertDialog
-    lateinit var totalWorthTextView: TextView
+    private lateinit var totalWorthTextView: TextView
     private lateinit var leaderBoardRecyclerAdapter: LeaderboardRecyclerAdapter
 
     override fun onAttach(context: Context) {

@@ -6,7 +6,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,7 +19,10 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import dalalstreet.api.DalalActionServiceGrpc
-import dalalstreet.api.actions.*
+import dalalstreet.api.actions.GetMortgageDetailsRequest
+import dalalstreet.api.actions.GetMortgageDetailsResponse
+import dalalstreet.api.actions.MortgageStocksRequest
+import dalalstreet.api.actions.MortgageStocksResponse
 import kotlinx.android.synthetic.main.fragment_mortgage.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
