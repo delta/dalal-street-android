@@ -148,7 +148,7 @@
             android:ems="10"
             android:hint="@string/enter_the_number_of_stocks"
             android:inputType="number"
-            android:maxLength="4"
+            android:maxLength="6"
             android:textColor="@color/neutral_font_color" />
 
     </com.google.android.material.textfield.TextInputLayout>

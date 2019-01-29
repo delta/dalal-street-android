@@ -1,5 +1,4 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/black_background"
@@ -9,11 +8,11 @@
         android:id="@+id/companySpinner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="10dp"
-        android:hint="@string/pick_a_company"
+        android:layout_marginEnd="8dp"
         android:backgroundTint="@color/neutral_font_color"
+        android:hint="@string/pick_a_company"
         android:textColorHint="@color/neutral_font_color" />
 
     <LinearLayout
@@ -177,6 +176,7 @@
             android:fontFamily="@font/kreon_light"
             android:hint="@string/enter_the_number_of_stocks"
             android:inputType="number"
+            android:maxLength="6"
             android:textColor="@color/neutral_font_color"
             android:textSize="20sp" />
 
@@ -186,8 +186,8 @@
         android:id="@+id/buyExchangeButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
         android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
         android:layout_marginBottom="15dp"
         android:background="@drawable/black_white_rounded_button"
         android:text="@string/buy_stocks"
