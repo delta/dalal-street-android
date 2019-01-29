@@ -5,6 +5,8 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -75,10 +77,10 @@ class TradeFragment : Fragment() {
         val companiesAdapter = ArrayAdapter(context!!, R.layout.order_spinner_item, StockUtils.getCompanyNamesArray())
         val orderSelectAdapter = ArrayAdapter(context!!, R.layout.order_spinner_item, resources.getStringArray(R.array.orderType))
 
-        with(order_select_spinner){
+        with(order_select_spinner) {
             adapter = orderSelectAdapter
             setSelection(1)
-            onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
+            onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
                 override fun onNothingSelected(parent: AdapterView<*>?) {
 
                 }
@@ -89,13 +91,14 @@ class TradeFragment : Fragment() {
                     } else {
                         orderPriceEditText.visibility = View.VISIBLE
                     }
+                    calculateOrderFee()
                 }
             }
         }
 
-        with(companySpinner){
+        with(companySpinner) {
             adapter = companiesAdapter
-            onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
+            onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
 
                 override fun onNothingSelected(parent: AdapterView<*>?) {
                 }
@@ -107,6 +110,8 @@ class TradeFragment : Fragment() {
 
                     tempString = " : " + Constants.RUPEE_SYMBOL + " " + StockUtils.getPriceFromStockId(model.globalStockDetails, StockUtils.getStockIdFromCompanyName(companySpinner.selectedItem.toString())).toString()
                     currentStockPrice_textView.text = tempString
+
+                    calculateOrderFee()
                 }
             }
         }
@@ -123,7 +128,55 @@ class TradeFragment : Fragment() {
                 .setCancelable(false)
                 .create()
 
+        noOfStocksEditText.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(p0: Editable?) {
+                calculateOrderFee()
+            }
+
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+            }
+
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+            }
+        })
+
+        orderPriceEditText.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(p0: Editable?) {
+                calculateOrderFee()
+            }
+
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+            }
+
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+            }
+        })
+
         bidAskButton.setOnClickListener { onBidAskButtonClick() }
+    }
+
+    private fun calculateOrderFee() {
+
+        val price = if (orderPriceEditText.visibility == View.GONE) {
+            StockUtils.getPriceFromStockId(model.globalStockDetails, StockUtils.getStockIdFromCompanyName(companySpinner.selectedItem.toString()))
+        } else {
+            if (!orderPriceEditText.text.toString().trim { it <= ' ' }.isEmpty()) {
+                (orderPriceEditText.text.toString()).toLong()
+            } else {
+                0
+            }
+        }
+
+        val noOfStocks = if (!noOfStocksEditText.text.toString().trim { it <= ' ' }.isEmpty()) {
+            noOfStocksEditText.text.toString().toLong()
+        } else {
+            0
+        }
+
+        val orderFee = (.03 * price * noOfStocks).toLong()
+
+        val temp = " : " + Constants.RUPEE_SYMBOL + orderFee.toString()
+        order_fee_textview.text = temp
     }
 
     private fun onBidAskButtonClick() {
@@ -163,7 +216,7 @@ class TradeFragment : Fragment() {
                 .build()
 
         doAsync {
-            if (ConnectionUtils.getConnectionInfo(context) && ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)){
+            if (ConnectionUtils.getConnectionInfo(context) && ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
                 val orderResponse = actionServiceBlockingStub.placeOrder(orderRequest)
 
                 uiThread {

@@ -129,11 +129,39 @@
 
         </LinearLayout>
 
+        <LinearLayout
+            android:id="@+id/orderFeeLinearLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/currentStockPriceLinearLayout"
+            android:layout_marginTop="8dp">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:fontFamily="@font/marcellus_sc"
+                android:text="@string/order_fee"
+                android:textColor="@color/redTint"
+                android:textSize="22sp" />
+
+            <TextView
+                android:id="@+id/order_fee_textview"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:fontFamily="@font/kreon_light"
+                android:text="@string/n_a"
+                android:textColor="@color/neutral_font_color"
+                android:textSize="22sp" />
+
+        </LinearLayout>
+
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/no_of_stocks_input"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/currentStockPriceLinearLayout"
+            android:layout_below="@+id/orderFeeLinearLayout"
             android:layout_marginTop="12dp"
             android:textColorHint="@color/neutral_font_color">
 
