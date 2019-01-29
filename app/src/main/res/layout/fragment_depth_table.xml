@@ -26,7 +26,8 @@
                 app:met_primaryColor="@color/neon_orange"
                 app:met_textColor="@color/neutral_font_color"
                 app:met_textColorHint="@color/neutral_font_color"
-                app:met_underlineColor="@color/neon_orange" />
+                app:met_underlineColor="@color/neon_orange"
+                android:drawableEnd="@drawable/arrow_down_neon_orange"/>
 
             <RelativeLayout
                 android:id="@+id/current_stock_price_layout"

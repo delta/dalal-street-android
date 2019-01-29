@@ -25,7 +25,8 @@
             app:met_primaryColor="@color/neon_orange"
             app:met_textColor="@color/neutral_font_color"
             app:met_textColorHint="@color/neutral_font_color"
-            app:met_underlineColor="@color/neon_orange" />
+            app:met_underlineColor="@color/neon_orange"
+            android:drawableEnd="@drawable/arrow_down_neon_orange"/>
 
         <com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner
             android:id="@+id/graph_time_spinner"
@@ -39,7 +40,8 @@
             app:met_primaryColor="@color/neon_orange"
             app:met_textColor="@color/neutral_font_color"
             app:met_textColorHint="@color/neutral_font_color"
-            app:met_underlineColor="@color/neon_orange" />
+            app:met_underlineColor="@color/neon_orange"
+            android:drawableEnd="@drawable/arrow_down_neon_orange"/>
 
     </LinearLayout>
 
