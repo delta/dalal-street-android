@@ -186,7 +186,7 @@ class RetrieveFragment : Fragment(), RetrieveRecyclerAdapter.OnRetrieveButtonCli
 
     private fun flipVisibilities(noStocksMortgaged: Boolean) {
         noStocksMortgagedTextview.visibility = if (noStocksMortgaged) View.VISIBLE else View.GONE
-        retrieveRecyclerView.visibility = if (noStocksMortgaged) View.GONE else View.VISIBLE
+        retrieveRecyclerViewParentLayout.visibility = if (noStocksMortgaged) View.GONE else View.VISIBLE
     }
 
     override fun onResume() {
