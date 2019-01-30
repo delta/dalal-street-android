@@ -63,6 +63,7 @@ class RetrieveFragment : Fragment(), RetrieveRecyclerAdapter.OnRetrieveButtonCli
 
                     mortgageDetailsList.add(MortgageDetails(stockId, -quantity, price))
                     retrieveAdapter.addSingleItem(mortgageDetailsList, mortgageDetailsList.size - 1)
+                    if (mortgageDetailsList.size > 0) flipVisibilities(false)
 
                 } else /* Retrieve Action */ {
                     var modifyIndex = -1
@@ -82,13 +83,13 @@ class RetrieveFragment : Fragment(), RetrieveRecyclerAdapter.OnRetrieveButtonCli
                         }
                     }
 
-                    if(modifyIndex != -1) {
+                    if (modifyIndex != -1) {
                         mortgageDetailsList.remove(modifyMortgageDetails)
                         retrieveAdapter.removeSingleItem(mortgageDetailsList, modifyIndex)
                     }
                 }
 
-                if(mortgageDetailsList.size == 0) flipVisibilities(true)
+                if (mortgageDetailsList.size == 0) flipVisibilities(true)
             }
         }
     }
@@ -153,7 +154,7 @@ class RetrieveFragment : Fragment(), RetrieveRecyclerAdapter.OnRetrieveButtonCli
                             mortgageDetailsList.add(MortgageDetails(currentDetails.stockId, currentDetails.stocksInBank, currentDetails.mortgagePrice))
                         }
 
-                        if(mortgageDetailsList.size == 0) {
+                        if (mortgageDetailsList.size == 0) {
                             flipVisibilities(true)
                         } else {
                             retrieveAdapter.swapData(mortgageDetailsList)
