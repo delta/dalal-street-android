@@ -90,9 +90,9 @@ class TradeFragment : Fragment() {
 
                 override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                     if (parent?.getItemAtPosition(position).toString() == "Market Order") {
-                        orderPriceEditText.visibility = View.GONE
+                        order_price_input.visibility = View.GONE
                     } else {
-                        orderPriceEditText.visibility = View.VISIBLE
+                        order_price_input.visibility = View.VISIBLE
                     }
                     calculateOrderFee()
                 }
@@ -160,7 +160,7 @@ class TradeFragment : Fragment() {
 
     private fun calculateOrderFee() {
 
-        val price = if (orderPriceEditText.visibility == View.GONE) {
+        val price = if (order_price_input.visibility == View.GONE) {
             StockUtils.getPriceFromStockId(model.globalStockDetails, StockUtils.getStockIdFromCompanyName(companySpinner.selectedItem.toString()))
         } else {
             if (!orderPriceEditText.text.toString().trim { it <= ' ' }.isEmpty()) {
@@ -189,7 +189,7 @@ class TradeFragment : Fragment() {
             Toast.makeText(activity, "Enter valid number of stocks", Toast.LENGTH_SHORT).show()
         } else if (radioGroupStock.checkedRadioButtonId == -1) {
             Toast.makeText(activity, "Select order type", Toast.LENGTH_SHORT).show()
-        } else if (orderPriceEditText.visibility == View.VISIBLE && orderPriceEditText.text.toString().trim { it <= ' ' }.isEmpty()) {
+        } else if (order_price_input.visibility == View.VISIBLE && orderPriceEditText.text.toString().trim { it <= ' ' }.isEmpty()) {
             Toast.makeText(activity, "Enter the order price", Toast.LENGTH_SHORT).show()
         } else if (radioGroupStock.checkedRadioButtonId == R.id.askRadioButton) {
             val validQuantity = getQuantityOwnedFromCompanyName(model.ownedStockDetails, companySpinner.selectedItem.toString())
@@ -208,7 +208,7 @@ class TradeFragment : Fragment() {
 
         loadingDialog?.show()
 
-        val price = if (orderPriceEditText.visibility == View.GONE) 0 else (orderPriceEditText.text.toString()).toLong()
+        val price = if (order_price_input.visibility == View.GONE) 0 else (orderPriceEditText.text.toString()).toLong()
         val orderRequest = PlaceOrderRequest
                 .newBuilder()
                 .setIsAsk(radioGroupStock.checkedRadioButtonId == R.id.askRadioButton)
