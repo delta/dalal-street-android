@@ -58,7 +58,7 @@ public class TransactionRecyclerAdapter extends RecyclerView.Adapter<Transaction
                 break;
 
             case "MORTGAGE_TRANSACTION":
-                if (currentTransaction.getNoOfStocks() < 0)
+                if (currentTransaction.getNoOfStocks() > 0)
                     tempAssigningString = "Retrieve Mortgage";
                 else
                     tempAssigningString = "Mortgage";
