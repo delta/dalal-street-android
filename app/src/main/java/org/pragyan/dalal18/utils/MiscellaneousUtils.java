@@ -12,7 +12,7 @@ import java.util.Locale;
 public class MiscellaneousUtils {
 
     public static String parseDate(String time) {
-        String inputPattern = "yyyy-MM-dd'T'HH:mm:ss'Z'";
+        String inputPattern = "yyyy-MM-dd'T'HH:mm:ssX";
         String outputPattern = "HH:mm MMM dd";
         SimpleDateFormat inputFormat = new SimpleDateFormat(inputPattern, Locale.US);
         SimpleDateFormat outputFormat = new SimpleDateFormat(outputPattern, Locale.US);
