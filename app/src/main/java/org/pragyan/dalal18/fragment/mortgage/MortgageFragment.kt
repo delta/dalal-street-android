@@ -47,6 +47,7 @@ class MortgageFragment : Fragment() {
     lateinit var actionServiceBlockingStub: DalalActionServiceGrpc.DalalActionServiceBlockingStub
 
     private var lastStockId = 1
+    private var companySelected = false
     private var companiesArray = StockUtils.getCompanyNamesArray()
 
     private lateinit var model: DalalViewModel
@@ -136,7 +137,6 @@ class MortgageFragment : Fragment() {
         loadingDialog = AlertDialog.Builder(context!!).setView(dialogView).setCancelable(false).create()
 
         getMortgageDetailsAsynchronously()
-        mortgage_button.isEnabled = false
 
         val arrayAdapter = ArrayAdapter<String>(activity!!, R.layout.company_spinner_item, companiesArray)
 
@@ -156,7 +156,7 @@ class MortgageFragment : Fragment() {
                         getPriceFromStockId(model.globalStockDetails, lastStockId).toString()
                 view.currentPriceTextView.text = currentPriceText
 
-                view.mortgage_button.isEnabled = true
+                companySelected  = true
             }
         }
 
@@ -165,6 +165,10 @@ class MortgageFragment : Fragment() {
 
     private fun onMortgageButtonClick() {
 
+        if(!companySelected){
+            Toast.makeText(activity, "Select a company", Toast.LENGTH_SHORT).show()
+            return
+        }
         with(stocks_editText) {
             when {
                 text.toString().trim { it <= ' ' }.isEmpty() -> {

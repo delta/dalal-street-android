@@ -81,7 +81,6 @@ class TradeFragment : Fragment() {
         val companiesAdapter = ArrayAdapter(context!!, R.layout.order_spinner_item, StockUtils.getCompanyNamesArray())
         val orderSelectAdapter = ArrayAdapter(context!!, R.layout.order_spinner_item, resources.getStringArray(R.array.orderType))
 
-        bidAskButton.isEnabled = false
         with(order_select_spinner) {
             setAdapter(orderSelectAdapter)
             setOnItemClickListener { _, _, _, _ ->
@@ -91,7 +90,6 @@ class TradeFragment : Fragment() {
                     order_price_input.visibility = View.VISIBLE
                 }
                 orderTypeSelected = true
-                enableButton()
                 calculateOrderFee()
             }
         }
@@ -107,7 +105,6 @@ class TradeFragment : Fragment() {
                 currentStockPrice_textView.text = tempString
 
                 companySelected = true
-                enableButton()
                 calculateOrderFee()
 
             }
@@ -152,12 +149,6 @@ class TradeFragment : Fragment() {
         bidAskButton.setOnClickListener { onBidAskButtonClick() }
     }
 
-    private fun enableButton() {
-        if(companySelected && orderTypeSelected){
-            bidAskButton.isEnabled = true
-        }
-    }
-
     private fun calculateOrderFee() {
 
         val price = if (order_price_input.visibility == View.GONE) {
@@ -183,7 +174,13 @@ class TradeFragment : Fragment() {
     }
 
     private fun onBidAskButtonClick() {
-        if (noOfStocksEditText.text.toString().trim { it <= ' ' }.isEmpty()) {
+        if(!companySelected && !orderTypeSelected){
+            Toast.makeText(activity, "Select a company and an order type", Toast.LENGTH_SHORT).show()
+        }else if(!companySelected){
+            Toast.makeText(activity, "Select a company", Toast.LENGTH_SHORT).show()
+        }else if(!orderTypeSelected){
+            Toast.makeText(activity, "Select an order type", Toast.LENGTH_SHORT).show()
+        } else if (noOfStocksEditText.text.toString().trim { it <= ' ' }.isEmpty()) {
             Toast.makeText(activity, "Enter the number of stocks", Toast.LENGTH_SHORT).show()
         } else if ((noOfStocksEditText.text.toString()).toLong() == 0L) {
             Toast.makeText(activity, "Enter valid number of stocks", Toast.LENGTH_SHORT).show()

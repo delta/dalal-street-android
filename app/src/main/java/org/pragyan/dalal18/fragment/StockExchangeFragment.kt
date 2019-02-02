@@ -39,6 +39,7 @@ class StockExchangeFragment : Fragment() {
     lateinit var companiesArray: Array<String>
 
     private var loadingDialog: AlertDialog? = null
+    private var companySelected = false
 
     lateinit var networkDownHandler: ConnectionUtils.OnNetworkDownHandler
 
@@ -77,7 +78,6 @@ class StockExchangeFragment : Fragment() {
                 .setView(dialogView)
                 .setCancelable(false)
                 .create()
-        buyExchangeButton.isEnabled = false
 
         companiesArray = StockUtils.getCompanyNamesArray()
         val arrayAdapter = ArrayAdapter<String>(activity!!, R.layout.company_spinner_item, companiesArray)
@@ -85,9 +85,9 @@ class StockExchangeFragment : Fragment() {
         with(companySpinner){
             setAdapter(arrayAdapter)
             setOnItemClickListener { _, _, _, _ ->
-                if(!buyExchangeButton.isEnabled){
-                    buyExchangeButton.isEnabled = true
-                }
+
+                companySelected = true
+
                 val stockId = StockUtils.getStockIdFromCompanyName(companySpinner.text.toString())
                 lastSelectedStockId = stockId
                 getCompanyProfileAsynchronously(lastSelectedStockId)
@@ -99,7 +99,9 @@ class StockExchangeFragment : Fragment() {
 
     private fun buyStocksFromExchange() {
 
-        if (noOfStocksEditText.text.toString().trim { it <= ' ' }.isEmpty()) {
+        if(!companySelected){
+            Toast.makeText(activity, "Select a company", Toast.LENGTH_SHORT).show()
+        } else if (noOfStocksEditText.text.toString().trim { it <= ' ' }.isEmpty()) {
             Toast.makeText(activity, "Enter the number of Stocks", Toast.LENGTH_SHORT).show()
         } else {
 
