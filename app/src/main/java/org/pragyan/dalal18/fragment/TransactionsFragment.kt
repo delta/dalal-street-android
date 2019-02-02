@@ -119,11 +119,11 @@ class TransactionsFragment : Fragment() {
 
                     if (transactionList.size == 0) {
                         transactionsRecyclerView.visibility = View.GONE
-                        noTransactionsRelativeLayout.visibility = View.VISIBLE
+                        noTransactionsTextView.visibility = View.VISIBLE
                     } else {
                         transactionsAdapter?.swapData(transactionList)
                         transactionsRecyclerView.visibility = View.VISIBLE
-                        noTransactionsRelativeLayout.visibility = View.GONE
+                        noTransactionsTextView.visibility = View.GONE
                     }
                 }
             } else {
