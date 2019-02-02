@@ -1,199 +1,238 @@
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/black_background"
-    android:paddingStart="16dp"
-    android:paddingEnd="16dp">
+    android:paddingStart="4dp"
+    android:paddingEnd="4dp">
 
-    <RelativeLayout
+    <Spinner
+        android:id="@+id/companySpinner"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="8dp"
+        android:backgroundTint="@color/neutral_font_color"
+        android:hint="@string/pick_a_company"
+        android:textColorHint="@color/neutral_font_color"
+        app:layout_constraintBottom_toTopOf="@+id/currentPriceText"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <Spinner
-            android:id="@+id/companySpinner"
-            android:layout_width="match_parent"
+    <TextView
+        android:id="@+id/currentPriceText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:layout_weight="4"
+        android:fontFamily="@font/marcellus_sc"
+        android:text="@string/current_price"
+        android:textColor="@color/neutral_font_color"
+        android:textSize="22sp"
+        app:layout_constraintBottom_toTopOf="@+id/dailyHighText"
+        app:layout_constraintEnd_toStartOf="@+id/guideline"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/companySpinner" />
+
+    <TextView
+        android:id="@+id/currentStockPrice_textView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_weight="2"
+        android:fontFamily="@font/kreon_light"
+        android:text="@string/n_a"
+        android:textColor="@color/neutral_font_color"
+        android:textSize="22sp"
+        app:layout_constraintBottom_toBottomOf="@+id/currentPriceText"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/guideline"
+        app:layout_constraintTop_toTopOf="@+id/currentPriceText" />
+
+    <TextView
+        android:id="@+id/dailyHighText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:layout_weight="4"
+        android:fontFamily="@font/marcellus_sc"
+        android:text="@string/daily_high"
+        android:textColor="@color/neon_green"
+        android:textSize="22sp"
+        app:layout_constraintBottom_toTopOf="@+id/dailyLowText"
+        app:layout_constraintEnd_toStartOf="@+id/guideline"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/currentPriceText" />
+
+    <TextView
+        android:id="@+id/dailyHigh_textView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_weight="2"
+        android:fontFamily="@font/kreon_light"
+        android:text="@string/n_a"
+        android:textColor="@color/neon_green"
+        android:textSize="22sp"
+        app:layout_constraintBottom_toBottomOf="@+id/dailyHighText"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/guideline"
+        app:layout_constraintTop_toTopOf="@+id/dailyHighText" />
+
+    <TextView
+        android:id="@+id/dailyLowText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:layout_marginEnd="8dp"
+        android:layout_weight="4"
+        android:fontFamily="@font/marcellus_sc"
+        android:text="@string/daily_low"
+        android:textColor="@color/neon_orange"
+        android:textSize="22sp"
+        app:layout_constraintBottom_toTopOf="@+id/stocksInMarketText"
+        app:layout_constraintEnd_toStartOf="@+id/guideline"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/dailyHighText" />
+
+    <TextView
+        android:id="@+id/dailyLow_textView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_weight="2"
+        android:fontFamily="@font/kreon_light"
+        android:text="@string/n_a"
+        android:textColor="@color/neon_orange"
+        android:textSize="22sp"
+        app:layout_constraintBottom_toBottomOf="@+id/dailyLowText"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/guideline"
+        app:layout_constraintTop_toTopOf="@+id/dailyLowText" />
+
+    <TextView
+        android:id="@+id/stocksInMarketText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:layout_weight="4"
+        android:fontFamily="@font/marcellus_sc"
+        android:text="@string/stocks_in_market"
+        android:textColor="@color/neon_blue"
+        android:textSize="22sp"
+        app:layout_constraintBottom_toTopOf="@+id/stocksInExchangeText"
+        app:layout_constraintEnd_toStartOf="@+id/guideline"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/dailyLowText" />
+
+    <TextView
+        android:id="@+id/stocksInMarket_textView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_weight="2"
+        android:fontFamily="@font/kreon_light"
+        android:text="@string/n_a"
+        android:textColor="@color/neon_blue"
+        android:textSize="22sp"
+        app:layout_constraintBottom_toBottomOf="@+id/stocksInMarketText"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/guideline"
+        app:layout_constraintTop_toTopOf="@+id/stocksInMarketText" />
+
+    <TextView
+        android:id="@+id/stocksInExchangeText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:fontFamily="@font/marcellus_sc"
+        android:text="@string/stocks_in_exchange"
+        android:textColor="@color/neon_blue"
+        android:textSize="22sp"
+        app:layout_constraintBottom_toTopOf="@+id/stocks_exchange_input"
+        app:layout_constraintEnd_toStartOf="@+id/guideline"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/stocksInMarketText" />
+
+    <TextView
+        android:id="@+id/stocksInExchange_textView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_weight="2"
+        android:fontFamily="@font/kreon_light"
+        android:text="@string/n_a"
+        android:textColor="@color/neon_blue"
+        android:textSize="22sp"
+        app:layout_constraintBottom_toBottomOf="@+id/stocksInExchangeText"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/guideline"
+        app:layout_constraintTop_toTopOf="@+id/stocksInExchangeText" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/stocks_exchange_input"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/buyExchangeButton"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:textColorHint="@color/neutral_font_color"
+        app:layout_constraintBottom_toTopOf="@+id/buyExchangeButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/stocksInExchangeText">
+
+        <EditText
+            android:id="@+id/noOfStocksEditText"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:backgroundTint="@color/neutral_font_color"
-            android:hint="@string/pick_a_company"
-            android:textColorHint="@color/neutral_font_color" />
+            android:ems="10"
+            android:fontFamily="@font/kreon_light"
+            android:hint="@string/enter_the_number_of_stocks"
+            android:inputType="number"
+            android:maxLength="6"
+            android:textColor="@color/neutral_font_color"
+            android:textSize="20sp" />
 
-        <LinearLayout
-            android:id="@+id/currentStockPriceLinearLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/companySpinner"
-            android:layout_marginTop="8dp"
-            android:orientation="horizontal">
+    </com.google.android.material.textfield.TextInputLayout>
 
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="4"
-                android:fontFamily="@font/marcellus_sc"
-                android:text="@string/current_price"
-                android:textColor="@color/neutral_font_color"
-                android:textSize="22sp" />
+    <Button
+        android:id="@+id/buyExchangeButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:background="@drawable/black_white_rounded_button"
+        android:text="@string/buy_stocks"
+        android:textColor="@color/neutral_font_color"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/stocks_exchange_input" />
 
-            <TextView
-                android:id="@+id/currentStockPrice_textView"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="2"
-                android:fontFamily="@font/kreon_light"
-                android:text="@string/n_a"
-                android:textColor="@color/neutral_font_color"
-                android:textSize="22sp" />
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.6" />
 
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/dailyHigh_linearLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/currentStockPriceLinearLayout"
-            android:layout_marginTop="15dp"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="4"
-                android:fontFamily="@font/marcellus_sc"
-                android:text="@string/daily_high"
-                android:textColor="@color/neon_green"
-                android:textSize="22sp" />
-
-            <TextView
-                android:id="@+id/dailyHigh_textView"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="2"
-                android:fontFamily="@font/kreon_light"
-                android:text="@string/n_a"
-                android:textColor="@color/neon_green"
-                android:textSize="22sp" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/dailyLow_linearLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/dailyHigh_linearLayout"
-            android:layout_marginTop="8dp"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="4"
-                android:fontFamily="@font/marcellus_sc"
-                android:text="@string/daily_low"
-                android:textColor="@color/neon_orange"
-                android:textSize="22sp" />
-
-            <TextView
-                android:id="@+id/dailyLow_textView"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="2"
-                android:fontFamily="@font/kreon_light"
-                android:text="@string/n_a"
-                android:textColor="@color/neon_orange"
-                android:textSize="22sp" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/stocksInMarket_linearLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/dailyLow_linearLayout"
-            android:layout_marginTop="15dp"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="4"
-                android:fontFamily="@font/marcellus_sc"
-                android:text="@string/stocks_in_market"
-                android:textColor="@color/neon_blue"
-                android:textSize="20sp" />
-
-            <TextView
-                android:id="@+id/stocksInMarket_textView"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="2"
-                android:fontFamily="@font/kreon_light"
-                android:text="@string/n_a"
-                android:textColor="@color/neon_blue"
-                android:textSize="20sp" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/stocksInExchange_linearLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/stocksInMarket_linearLayout"
-            android:layout_marginTop="8dp"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="4"
-                android:fontFamily="@font/marcellus_sc"
-                android:text="@string/stocks_in_exchange"
-                android:textColor="@color/neon_blue"
-                android:textSize="20sp" />
-
-            <TextView
-                android:id="@+id/stocksInExchange_textView"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="2"
-                android:fontFamily="@font/kreon_light"
-                android:text="@string/n_a"
-                android:textColor="@color/neon_blue"
-                android:textSize="20sp" />
-
-        </LinearLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/stocks_exchange_input"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/stocksInExchange_linearLayout"
-            android:layout_marginTop="12dp"
-            android:textColorHint="@color/neutral_font_color">
-
-            <EditText
-                android:id="@+id/noOfStocksEditText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:ems="10"
-                android:fontFamily="@font/kreon_light"
-                android:hint="@string/enter_the_number_of_stocks"
-                android:inputType="number"
-                android:maxLength="6"
-                android:textColor="@color/neutral_font_color"
-                android:textSize="20sp" />
-
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <Button
-            android:id="@+id/buyExchangeButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/stocks_exchange_input"
-            android:layout_marginTop="20dp"
-            android:background="@drawable/black_white_rounded_button"
-            android:text="@string/buy_stocks"
-            android:textColor="@color/neutral_font_color" />
-
-    </RelativeLayout>
-</ScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>
