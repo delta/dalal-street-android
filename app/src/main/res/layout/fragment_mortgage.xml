@@ -161,7 +161,7 @@
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
         android:layout_weight="0"
-        android:background="@drawable/black_white_rounded_button"
+        android:background="@drawable/black_green_rounded_button"
         android:fontFamily="@font/kreon_light"
         android:padding="12dp"
         android:text="@string/mortgage"
