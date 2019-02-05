@@ -164,6 +164,9 @@ class MortgageFragment : Fragment() {
         }
 
         mortgage_button.setOnClickListener { onMortgageButtonClick() }
+
+        val tempText = " :  ${Constants.MORTGAGE_DEPOSIT_RATE}%"
+        depositRateTextView.text = tempText
     }
 
     private fun onMortgageButtonClick() {

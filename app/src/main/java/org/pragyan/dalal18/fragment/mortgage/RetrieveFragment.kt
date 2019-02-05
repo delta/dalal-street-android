@@ -133,6 +133,9 @@ class RetrieveFragment : Fragment(), RetrieveRecyclerAdapter.OnRetrieveButtonCli
         retrieveRecyclerView.adapter = retrieveAdapter
         retrieveRecyclerView.setHasFixedSize(false)
 
+        val tempString = "(Retrieve Rate: ${Constants.MORTGAGE_RETRIEVE_RATE}%)"
+        retrieveRateTextView.text = tempString
+
         getMortgageDetailsAsynchronously()
     }
 

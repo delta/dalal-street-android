@@ -69,19 +69,21 @@
             android:text="@string/price"
             android:textColor="@color/neutral_font_color"
             android:textStyle="bold"
-            app:layout_constraintEnd_toStartOf="@+id/simpleView"
+            app:layout_constraintEnd_toStartOf="@+id/retrieveRateTextView"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintHorizontal_weight="3"
             app:layout_constraintStart_toEndOf="@+id/stockQuantityTextView"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <View
-            android:id="@+id/simpleView"
+        <TextView
+            android:id="@+id/retrieveRateTextView"
             android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_marginBottom="8dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
             android:gravity="center"
-            app:layout_constraintBottom_toTopOf="@+id/retrieveRecyclerView"
+            android:textColor="@color/neon_orange"
+            android:textStyle="italic"
+            android:text="(Retrieve Rate: 90%)"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintHorizontal_weight="6"

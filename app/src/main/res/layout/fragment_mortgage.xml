@@ -104,7 +104,7 @@
         android:text="@string/current_price"
         android:textColor="@color/neutral_font_color"
         android:textSize="20sp"
-        app:layout_constraintBottom_toTopOf="@+id/textInputLayout"
+        app:layout_constraintBottom_toTopOf="@+id/depositRateTextTextView"
         app:layout_constraintEnd_toStartOf="@+id/guideline"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
@@ -125,6 +125,38 @@
         app:layout_constraintStart_toStartOf="@+id/guideline"
         app:layout_constraintTop_toTopOf="@+id/currentTextView" />
 
+    <TextView
+        android:id="@+id/depositRateTextTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_weight="4"
+        android:fontFamily="@font/marcellus_sc"
+        android:text="@string/deposit_rate_per_stock"
+        android:textColor="@color/neutral_font_color"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toTopOf="@+id/textInputLayout"
+        app:layout_constraintEnd_toStartOf="@+id/guideline"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/currentTextView" />
+
+    <TextView
+        android:id="@+id/depositRateTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_weight="2"
+        android:fontFamily="@font/kreon_light"
+        android:textColor="@color/neutral_font_color"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="@+id/depositRateTextTextView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/guideline"
+        app:layout_constraintTop_toTopOf="@+id/depositRateTextTextView" />
+
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/textInputLayout"
         android:layout_width="match_parent"
@@ -139,7 +171,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/currentTextView">
+        app:layout_constraintTop_toBottomOf="@+id/depositRateTextTextView">
 
         <EditText
             android:id="@+id/stocks_editText"
