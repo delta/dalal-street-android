@@ -53,17 +53,6 @@ class LeaderboardFragment : Fragment() {
         }
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        val dialogView = LayoutInflater.from(context).inflate(R.layout.progress_dialog, null)
-        (dialogView.findViewById<View>(R.id.progressDialog_textView) as TextView).setText(R.string.loading_leaderboard)
-        loadingDialog = AlertDialog.Builder(context!!)
-                .setView(dialogView)
-                .setCancelable(false)
-                .create()
-    }
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
         val rootView = inflater.inflate(R.layout.fragment_leaderboard, container, false)
@@ -71,14 +60,20 @@ class LeaderboardFragment : Fragment() {
         totalWorthTextView = container!!.rootView.findViewById(R.id.totalWorthTextView)
 
         DaggerDalalStreetApplicationComponent.builder().contextModule(ContextModule(context!!)).build().inject(this)
-        if (activity != null) activity!!.title = "Leaderboard"
-
         return rootView
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         (activity as AppCompatActivity).supportActionBar?.title = resources.getString(R.string.leaderboard)
+
+        val dialogView = LayoutInflater.from(context).inflate(R.layout.progress_dialog, null)
+        (dialogView.findViewById<View>(R.id.progressDialog_textView) as TextView).setText(R.string.loading_leaderboard)
+        loadingDialog = AlertDialog.Builder(context!!)
+                .setView(dialogView)
+                .setCancelable(false)
+                .create()
+
         getRankListAsynchronously()
         leaderBoardRecyclerAdapter = LeaderboardRecyclerAdapter(context, leaderBoardDetailsList)
 
@@ -90,6 +85,7 @@ class LeaderboardFragment : Fragment() {
     }
 
     private fun getRankListAsynchronously() {
+        leaderBoardDetailsList.clear();
         loadingDialog.show()
         leaderboard_recyclerView.visibility = View.GONE
         doAsync {

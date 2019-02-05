@@ -62,7 +62,6 @@ class OrdersFragment : Fragment(), OrdersRecyclerAdapter.OnOrderClickListener, S
 
         val rootView = inflater.inflate(R.layout.fragment_my_orders, container, false)
 
-        if (activity != null) activity!!.title = "Open Orders"
         DaggerDalalStreetApplicationComponent.builder().contextModule(ContextModule(context!!)).build().inject(this)
 
         return rootView
@@ -74,15 +73,15 @@ class OrdersFragment : Fragment(), OrdersRecyclerAdapter.OnOrderClickListener, S
         ordersRecyclerAdapter = OrdersRecyclerAdapter(context, null, this)
         ordersRecycler_swipeRefreshLayout.setOnRefreshListener(this)
 
-        orders_recyclerView.setHasFixedSize(false)
-        orders_recyclerView.adapter = ordersRecyclerAdapter
-        orders_recyclerView.layoutManager = LinearLayoutManager(context)
-
-        if (context != null) {
-            val dialogView = LayoutInflater.from(context).inflate(R.layout.progress_dialog, null)
-            (dialogView.findViewById<View>(R.id.progressDialog_textView) as TextView).setText(R.string.getting_your_orders)
-            loadingOrdersDialog = AlertDialog.Builder(context!!).setView(dialogView).setCancelable(false).create()
+        with (orders_recyclerView){
+            setHasFixedSize(false)
+            adapter = ordersRecyclerAdapter
+            layoutManager = LinearLayoutManager(context)
         }
+
+        val dialogView = LayoutInflater.from(context).inflate(R.layout.progress_dialog, null)
+        (dialogView.findViewById<View>(R.id.progressDialog_textView) as TextView).setText(R.string.getting_your_orders)
+        loadingOrdersDialog = AlertDialog.Builder(context!!).setView(dialogView).setCancelable(false).create()
 
         getOpenOrdersAsynchronously()
 
@@ -118,8 +117,7 @@ class OrdersFragment : Fragment(), OrdersRecyclerAdapter.OnOrderClickListener, S
         streamServiceStub.getMyOrderUpdates(subscriptionId, object : StreamObserver<MyOrderUpdate> {
             override fun onNext(orderUpdate: MyOrderUpdate) {
                 if (activity != null) {
-                    val id = orderUpdate.id
-                    ordersRecyclerAdapter?.swapSingleItem(id, orderUpdate)
+                   getOpenOrdersAsynchronously()
                 }
             }
 

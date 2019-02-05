@@ -175,7 +175,7 @@
     <string name="select_a_company_to_view_depth">Select a company to view depth</string>
     <string name="no_open_orders">No Open Orders</string>
     <string name="dalal_street_notifications">Dalal Street Notifications</string>
-    <string name="orders_frag_label">Orders</string>
+    <string name="orders_frag_label">Open Orders</string>
     <string name="leaderboard_frag_label">LeaderBoard</string>
     <string name="news_details_frag_label">NewsDetails</string>
     <string name="dalal">Dalal Street</string>
