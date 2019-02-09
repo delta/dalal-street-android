@@ -206,7 +206,7 @@ class DepthGraphFragment : Fragment() {
                         textColor = ContextCompat.getColor(this@DepthGraphFragment.context!!, android.R.color.white)
                         setDrawGridLines(true)
                         granularity = 0f
-                        labelCount = 4
+                        labelCount = 3
                         setAvoidFirstLastClipping(true)
                     }
 
