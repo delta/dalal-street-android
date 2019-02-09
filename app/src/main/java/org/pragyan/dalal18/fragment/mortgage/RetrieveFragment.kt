@@ -108,7 +108,7 @@ class RetrieveFragment : Fragment(), RetrieveRecyclerAdapter.OnRetrieveButtonCli
 
         if (context != null) {
             val dialogView = LayoutInflater.from(context).inflate(R.layout.progress_dialog, null)
-            val tempString = "Getting Retrieve details..."
+            val tempString = "Getting Mortgage details..."
             (dialogView.findViewById<View>(R.id.progressDialog_textView) as TextView).text = tempString
             loadingDialog = AlertDialog.Builder(context!!).setView(dialogView).setCancelable(false).create()
         }

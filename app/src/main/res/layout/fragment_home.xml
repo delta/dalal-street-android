@@ -82,6 +82,7 @@
             android:textStyle="italic|bold" />
 
         <ProgressBar
+            android:id="@+id/loadingNewsHomeFragmentProgressBar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_above="@+id/loadingNews_textView"

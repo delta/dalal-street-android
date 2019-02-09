@@ -43,12 +43,12 @@ class PortfolioFragment : Fragment() {
 
     private lateinit var model: DalalViewModel
 
-    private lateinit var kreonLightTypeFace : Typeface
+    private lateinit var kreonLightTypeFace: Typeface
 
-    private var totalStockWorth : Long = 0L
-    private var cashWorth :Long = 0
-    private var totalWorth : Long = 0
-    private var stocks : ArrayList<StockDetails> = ArrayList()
+    private var totalStockWorth: Long = 0L
+    private var cashWorth: Long = 0
+    private var totalWorth: Long = 0
+    private var stocks: ArrayList<StockDetails> = ArrayList()
 
     private val refreshPortfolioDetails = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
@@ -62,10 +62,9 @@ class PortfolioFragment : Fragment() {
 
         val rootView = inflater.inflate(R.layout.fragment_portfolio, container, false)
         model = activity?.run { ViewModelProviders.of(this).get(DalalViewModel::class.java) } ?: throw Exception("Invalid activity")
-        cashWorth = container?.rootView?.findViewById<TextView>(R.id.cashWorthTextView)?.text.toString().replace("," , "").toLong()
+        cashWorth = container?.rootView?.findViewById<TextView>(R.id.cashWorthTextView)?.text.toString().replace(",", "").toLong()
         DaggerDalalStreetApplicationComponent.builder().contextModule(ContextModule(context!!)).build().inject(this)
         return rootView
-
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -76,10 +75,11 @@ class PortfolioFragment : Fragment() {
             adapter = portfolioRecyclerAdapter
             setHasFixedSize(false)
         }
+
         updatePortfolioTable()
 
         kreonLightTypeFace = ResourcesCompat.getFont(context!!, R.font.kreon_light)!!
-        with(portfolio_piechart){
+        with(portfolio_piechart) {
             setUsePercentValues(true)
             description.isEnabled = false
             setExtraOffsets(25f, 45f, 25f, 20f)
@@ -100,7 +100,7 @@ class PortfolioFragment : Fragment() {
         }
 
         val legend = portfolio_piechart.legend
-        with(legend){
+        with(legend) {
             textSize = 18f
             verticalAlignment = com.github.mikephil.charting.components.Legend.LegendVerticalAlignment.TOP
             horizontalAlignment = com.github.mikephil.charting.components.Legend.LegendHorizontalAlignment.LEFT
@@ -110,7 +110,7 @@ class PortfolioFragment : Fragment() {
             yEntrySpace = 2f
             yOffset = -65f
             xOffset = 18f
-            textColor = androidx.core.content.ContextCompat.getColor(context!!,R.color.gold_medal)
+            textColor = androidx.core.content.ContextCompat.getColor(context!!, R.color.gold_medal)
             typeface = kreonLightTypeFace
         }
 
@@ -131,7 +131,7 @@ class PortfolioFragment : Fragment() {
                 }
             }
 
-            if(currentStockDetails.quantity > 0L){
+            if (currentStockDetails.quantity > 0L) {
                 currentPriceList.add(currentPrice)
                 totalStockWorth += currentPrice * currentStockDetails.quantity
                 stocks.add(currentStockDetails)
@@ -142,16 +142,16 @@ class PortfolioFragment : Fragment() {
         totalWorth = cashWorth + totalStockWorth
 
         var others = 0L
-        for(i in 0 until stocks.size){
-            if((stocks[i].quantity * currentPriceList[i]) > (.02 * totalWorth)) {
+        for (i in 0 until stocks.size) {
+            if ((stocks[i].quantity * currentPriceList[i]) > (.02 * totalWorth)) {
                 entries.add(PieEntry((stocks[i].quantity * currentPriceList[i]).toFloat(), StockUtils.getCompanyNameFromStockId(stocks[i].stockId)))
             } else {
                 others += stocks[i].quantity * currentPriceList[i]
             }
         }
 
-        if(cashWorth > (.02 * totalWorth)){
-            entries.add(PieEntry(cashWorth.toFloat(),"Cash Worth"))
+        if (cashWorth > (.02 * totalWorth)) {
+            entries.add(PieEntry(cashWorth.toFloat(), "Cash Worth"))
         } else {
             others += cashWorth
         }
@@ -159,28 +159,15 @@ class PortfolioFragment : Fragment() {
         entries.add(PieEntry(others.toFloat(), "Others"))
 
 
-        val dataSet = PieDataSet(entries.toList(),"")
-
+        val dataSet = PieDataSet(entries.toList(), "")
         val colors = ArrayList<Int>()
-        //TODO:  Add more colors
-        /*for (c in ColorTemplate.VORDIPLOM_COLORS)
-            colors.add(c)
-        for (c in ColorTemplate.JOYFUL_COLORS)
-            colors.add(c)
-        for (c in ColorTemplate.COLORFUL_COLORS)
-            colors.add(c)
-        for (c in ColorTemplate.LIBERTY_COLORS)
-            colors.add(c)
-        for (c in ColorTemplate.PASTEL_COLORS)
-            colors.add(c)
-        colors.add(ColorTemplate.getHoloBlue())*/
 
-        colors.add(ContextCompat.getColor(context!!,R.color.neon_blue))
-        colors.add(ContextCompat.getColor(context!!,R.color.neon_green))
-        colors.add(ContextCompat.getColor(context!!,R.color.neon_purple))
-        colors.add(ContextCompat.getColor(context!!,R.color.neon_yellow))
-        colors.add(ContextCompat.getColor(context!!,R.color.neon_orange))
-        colors.add(ContextCompat.getColor(context!!,R.color.neon_pink))
+        colors.add(ContextCompat.getColor(context!!, R.color.neon_blue))
+        colors.add(ContextCompat.getColor(context!!, R.color.neon_green))
+        colors.add(ContextCompat.getColor(context!!, R.color.neon_purple))
+        colors.add(ContextCompat.getColor(context!!, R.color.neon_yellow))
+        colors.add(ContextCompat.getColor(context!!, R.color.neon_orange))
+        colors.add(ContextCompat.getColor(context!!, R.color.neon_pink))
 
         dataSet.colors = colors
         dataSet.selectionShift = 5f
@@ -210,7 +197,7 @@ class PortfolioFragment : Fragment() {
 
     private fun updatePortfolioTable() {
 
-        val portfolioList = ArrayList<Portfolio>()
+        val portfolioList = mutableListOf<Portfolio>()
         for ((stockId, quantity) in model.ownedStockDetails) {
 
             var currentPrice = -1L
@@ -235,10 +222,10 @@ class PortfolioFragment : Fragment() {
 
         if (portfolioList.size > 0) {
             portfolioRecyclerAdapter.swapData(portfolioList)
-            portfolioRecyclerView.visibility = View.VISIBLE
+            portfolioScrollView.visibility = View.VISIBLE
             emptyPortfolioRelativeLayout.visibility = View.GONE
         } else {
-            portfolioRecyclerView.visibility = View.GONE
+            portfolioScrollView.visibility = View.GONE
             emptyPortfolioRelativeLayout.visibility = View.VISIBLE
         }
     }

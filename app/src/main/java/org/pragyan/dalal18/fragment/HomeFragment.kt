@@ -123,8 +123,9 @@ class HomeFragment : Fragment(), NewsRecyclerAdapter.NewsItemClickListener, Swip
     }
 
     private fun getLatestNewsAsynchronously() {
-        loadingNewsRelativeLayout.visibility = View.VISIBLE
-        newsRecyclerView.visibility = View.GONE
+        showNewsAvailable(false)
+        loadingNewsHomeFragmentProgressBar.visibility = View.VISIBLE
+        loadingNews_textView.text = getString(R.string.getting_latest_news)
 
         doAsync {
             if (ConnectionUtils.getConnectionInfo(context) && ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
@@ -143,9 +144,11 @@ class HomeFragment : Fragment(), NewsRecyclerAdapter.NewsItemClickListener, Swip
 
                         if (newsList.isNotEmpty()) {
                             newsRecyclerAdapter.swapData(newsList)
+                            showNewsAvailable(true)
+                        } else {
+                            showNewsAvailable(false)
                         }
-                        loadingNewsRelativeLayout?.visibility = View.GONE
-                        newsRecyclerView?.visibility = View.VISIBLE
+
                     } else {
                         Toast.makeText(context, marketEventsResponse.statusMessage, Toast.LENGTH_SHORT).show()
                     }
@@ -154,6 +157,13 @@ class HomeFragment : Fragment(), NewsRecyclerAdapter.NewsItemClickListener, Swip
                 uiThread { networkDownHandler.onNetworkDownError() }
             }
         }
+    }
+
+    private fun showNewsAvailable(show: Boolean) {
+        loadingNews_textView.text = if(show) getString(R.string.getting_latest_news) else getString(R.string.news_not_available)
+        loadingNewsHomeFragmentProgressBar.visibility = if(show) View.VISIBLE else View.GONE
+        loadingNewsRelativeLayout?.visibility = if(show) View.GONE else View.VISIBLE
+        newsRecyclerView?.visibility = if(show) View.VISIBLE else View.GONE
     }
 
     override fun onAttach(context: Context) {

@@ -7,6 +7,7 @@
 
 
     <ScrollView
+        android:id="@+id/portfolioScrollView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -25,10 +26,10 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="4"
+                    android:fontFamily="@font/kreon_light"
                     android:gravity="center"
                     android:text="@string/company"
                     android:textAllCaps="true"
-                    android:fontFamily="@font/kreon_light"
                     android:textColor="@color/neutral_font_color"
                     android:textSize="16sp"
                     android:textStyle="bold" />
@@ -37,10 +38,10 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="4"
+                    android:fontFamily="@font/kreon_light"
                     android:gravity="center"
                     android:text="@string/quantity"
                     android:textAllCaps="true"
-                    android:fontFamily="@font/kreon_light"
                     android:textColor="@color/neutral_font_color"
                     android:textSize="16sp"
                     android:textStyle="bold" />
@@ -49,10 +50,10 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="3"
+                    android:fontFamily="@font/kreon_light"
                     android:gravity="center"
                     android:text="@string/price"
                     android:textAllCaps="true"
-                    android:fontFamily="@font/kreon_light"
                     android:textColor="@color/neutral_font_color"
                     android:textSize="16sp"
                     android:textStyle="bold" />
@@ -61,10 +62,10 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="3"
+                    android:fontFamily="@font/kreon_light"
                     android:gravity="center"
                     android:text="@string/worth"
                     android:textAllCaps="true"
-                    android:fontFamily="@font/kreon_light"
                     android:textColor="@color/neutral_font_color"
                     android:textSize="16sp"
                     android:textStyle="bold" />
@@ -83,10 +84,8 @@
                 android:id="@+id/portfolioRecyclerView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
                 android:layout_below="@+id/view"
-                android:visibility="visible" />
-
+                android:layout_alignParentStart="true" />
 
             <com.github.mikephil.charting.charts.PieChart
                 android:id="@+id/portfolio_piechart"
@@ -112,9 +111,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
+            android:fontFamily="@font/kreon_light"
             android:text="@string/you_don_t_own_any_stocks"
             android:textColor="@color/neutral_font_color"
-            android:fontFamily="@font/kreon_light"
             android:textSize="22sp" />
 
     </RelativeLayout>
