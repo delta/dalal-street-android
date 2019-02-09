@@ -160,8 +160,8 @@ class HomeFragment : Fragment(), NewsRecyclerAdapter.NewsItemClickListener, Swip
     }
 
     private fun showNewsAvailable(show: Boolean) {
-        loadingNews_textView.text = if(show) getString(R.string.getting_latest_news) else getString(R.string.news_not_available)
-        loadingNewsHomeFragmentProgressBar.visibility = if(show) View.VISIBLE else View.GONE
+        loadingNews_textView?.text = if(show) getString(R.string.getting_latest_news) else getString(R.string.news_not_available)
+        loadingNewsHomeFragmentProgressBar?.visibility = if(show) View.VISIBLE else View.GONE
         loadingNewsRelativeLayout?.visibility = if(show) View.GONE else View.VISIBLE
         newsRecyclerView?.visibility = if(show) View.VISIBLE else View.GONE
     }
