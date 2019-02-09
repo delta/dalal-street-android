@@ -5,9 +5,10 @@ import android.content.Context;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.security.ProviderInstaller;
+import com.squareup.okhttp.ConnectionSpec;
+
 import org.pragyan.dalal18.utils.Constants;
 import org.pragyan.dalal18.utils.MiscellaneousUtils;
-import com.squareup.okhttp.ConnectionSpec;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -33,11 +34,11 @@ import io.grpc.ManagedChannel;
 import io.grpc.okhttp.OkHttpChannelBuilder;
 
 @Module (includes = ContextModule.class)
-public class ChannelModule {
+class ChannelModule {
 
     @Provides
     @DalalStreetApplicationScope
-    public ManagedChannel getManagedChannel(Context context) {
+    ManagedChannel getManagedChannel(Context context) {
 
         try {
             return OkHttpChannelBuilder
