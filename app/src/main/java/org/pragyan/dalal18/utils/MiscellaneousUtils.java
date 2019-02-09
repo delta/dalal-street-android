@@ -1,9 +1,5 @@
 package org.pragyan.dalal18.utils;
 
-import android.content.Context;
-import android.content.res.Resources;
-import android.util.DisplayMetrics;
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -29,6 +25,46 @@ public class MiscellaneousUtils {
             e.printStackTrace();
         }
         return str;
+    }
+
+    public static int getNumberOfPlayersOnline(long timeInMillis, int startTime24Hr, int endTime24Hr) {
+
+        int numberOfPlayers = 400;
+        double multiplier = 1;
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(timeInMillis);
+        timeInMillis /= 10000;
+        numberOfPlayers += getMagicNumber(timeInMillis);
+
+        /* If current time is not within 1 hour of event starting/ending, multiplier is 0.2
+           If current time is within 1 hour of event, mulitpler is 0.5
+           If current time is within the event, then
+                For first and last hour, multiplier is 1 (default)
+                Otherwise multipler is 1.5
+         */
+
+        if (calendar.get(Calendar.HOUR_OF_DAY) + 1 < startTime24Hr || calendar.get(Calendar.HOUR_OF_DAY) - 1 > endTime24Hr)
+            multiplier = 0.2;
+        if (calendar.get(Calendar.HOUR_OF_DAY) == startTime24Hr - 1 || calendar.get(Calendar.HOUR_OF_DAY) == endTime24Hr)
+            multiplier = 0.5;
+        if (calendar.get(Calendar.HOUR_OF_DAY) < endTime24Hr - 1 && calendar.get(Calendar.HOUR_OF_DAY) > startTime24Hr)
+            multiplier = 1.5;
+
+        return (int) (numberOfPlayers * multiplier);
+    }
+
+    // Returns product of 7th power of individual digits
+    private static int getMagicNumber(long num) {
+        long answer = 1;
+        while (num > 0) {
+            if (num % 10 != 0)
+                answer *= Math.pow(num % 10, 3);
+            num /= 10;
+        }
+
+        while (answer > 1000) answer /= 10;
+        return (int) (answer % 200);
     }
 
     public static String sessionId = "dalalStreetSessionId";

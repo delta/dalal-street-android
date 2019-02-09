@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
 
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="@dimen/nav_header_height"
     android:background="@raw/dalalcover2">
@@ -9,34 +10,57 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_above="@id/usernameTextView"
-        android:layout_marginStart="16dp"
-        android:text="@string/app_name"
+        android:layout_marginStart="8dp"
         android:fontFamily="@font/marcellus_sc"
+        android:text="@string/app_name"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
-        android:textColor="@color/neon_green" />
+        android:textColor="@color/neon_green"
+        app:layout_constraintBottom_toTopOf="@+id/usernameTextView"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
         android:id="@+id/usernameTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
         android:layout_alignParentStart="true"
-        android:layout_marginBottom="24dp"
-        android:layout_marginStart="16dp"
-        android:text="@string/username"
-        android:textSize="20sp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="8dp"
         android:fontFamily="@font/kreon_light"
+        android:text="@string/username"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-        android:textColor="@color/neon_blue" />
+        android:textColor="@color/neon_blue"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toTopOf="@+id/numberOfPlayersOnlineTextView"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
+        android:id="@+id/madeWithLoveText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:text="@string/made_with_u2661_by_delta_force"
         android:textColor="@color/neutral_font_color"
-        android:layout_marginBottom="2dp"
         android:textSize="12sp"
-        android:text="@string/made_with_u2661_by_delta_force"/>
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
-</RelativeLayout>
+    <TextView
+        android:id="@+id/numberOfPlayersOnlineTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        android:textColor="@color/neon_orange"
+        android:textSize="12sp"
+        android:textStyle="italic"
+        app:layout_constraintBottom_toTopOf="@+id/madeWithLoveText"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

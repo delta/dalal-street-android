@@ -3,6 +3,7 @@ package org.pragyan.dalal18.ui
 import android.animation.ValueAnimator
 import android.content.*
 import android.os.Bundle
+import android.os.Handler
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.TextView
@@ -35,6 +36,7 @@ import org.pragyan.dalal18.data.StockDetails
 import org.pragyan.dalal18.fragment.mortgage.MortgageFragment
 import org.pragyan.dalal18.notifications.NotificationService
 import org.pragyan.dalal18.utils.*
+import org.pragyan.dalal18.utils.MiscellaneousUtils.getNumberOfPlayersOnline
 import java.text.DecimalFormat
 import java.util.*
 import javax.inject.Inject
@@ -62,6 +64,7 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
     private var logoutDialog: AlertDialog? = null
 
     private var notifIntent: Intent? = null
+    private var handler: Handler? = null
 
     private var shouldUnsubscribeAsNetworkDown = true
 
@@ -137,6 +140,16 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
         MiscellaneousUtils.username = intent.getStringExtra(Constants.USERNAME_KEY)
         val header = navigationViewLeft.getHeaderView(0)
         header.find<TextView>(R.id.usernameTextView).text = MiscellaneousUtils.username
+
+        // Refresh every 1 min
+        handler = Handler()
+        handler?.post(object : Runnable {
+            override fun run() {
+                val tempString = "Players Online: " + getNumberOfPlayersOnline(System.currentTimeMillis(), 20, 24)
+                header.find<TextView>(R.id.numberOfPlayersOnlineTextView).text = tempString
+                handler?.postDelayed(this, 30000L)
+            }
+        })
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
