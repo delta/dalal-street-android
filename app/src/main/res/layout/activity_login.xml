@@ -73,7 +73,9 @@
                 android:layout_below="@+id/email_input"
                 android:layout_marginTop="12dp"
                 android:padding="12dp"
-                android:textColorHint="@color/neutral_font_color">
+                android:textColorHint="@color/neutral_font_color"
+                app:passwordToggleEnabled="true"
+                app:passwordToggleTint="@color/neutral_font_color">
 
                 <EditText
                     android:id="@+id/passwordEditText"

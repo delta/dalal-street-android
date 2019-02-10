@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schema.android.com/apk/res-auto"
+    xmlns:app1="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/black_background"
@@ -31,10 +32,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="#20202C"
+            android:paddingStart="10dp"
             android:paddingTop="20dp"
-            android:paddingBottom="20dp"
             android:paddingEnd="10dp"
-            android:paddingStart="10dp">
+            android:paddingBottom="20dp">
 
             <TextView
                 android:id="@+id/register_text"
@@ -51,19 +52,19 @@
                 android:id="@+id/register_name_input"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
                 android:layout_below="@+id/register_text"
-                android:paddingEnd="2dp"
+                android:layout_marginTop="24dp"
                 android:paddingStart="12dp"
+                android:paddingEnd="2dp"
                 android:textColorHint="@color/neutral_font_color">
 
                 <EditText
                     android:id="@+id/nameEditText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:backgroundTint="@color/neutral_font_color"
                     android:ems="10"
                     android:fontFamily="@font/kreon_light"
-                    android:backgroundTint="@color/neutral_font_color"
                     android:hint="@string/name_lowercase"
                     android:inputType="textPersonName"
                     android:maxLength="30"
@@ -76,24 +77,24 @@
                 android:id="@+id/register_email_input"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
                 android:layout_below="@+id/register_name_input"
-                android:paddingEnd="2dp"
+                android:layout_marginTop="24dp"
                 android:paddingStart="12dp"
+                android:paddingEnd="2dp"
                 android:textColorHint="@color/neutral_font_color">
 
                 <EditText
                     android:id="@+id/emailEditText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:backgroundTint="@color/neutral_font_color"
                     android:ems="10"
                     android:fontFamily="@font/kreon_light"
-                    android:backgroundTint="@color/neutral_font_color"
                     android:hint="@string/email_address"
                     android:inputType="textEmailAddress"
                     android:maxLength="45"
                     android:maxLines="1"
-                    android:textColor="@color/neutral_font_color"/>
+                    android:textColor="@color/neutral_font_color" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -101,24 +102,26 @@
                 android:id="@+id/register_password_input"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
                 android:layout_below="@id/register_email_input"
+                android:layout_marginTop="24dp"
                 android:hint="@string/password"
-                android:paddingEnd="2dp"
                 android:paddingStart="12dp"
-                android:textColorHint="@color/neutral_font_color">
+                android:paddingEnd="2dp"
+                android:textColorHint="@color/neutral_font_color"
+                app1:passwordToggleEnabled="true"
+                app1:passwordToggleTint="@color/neutral_font_color">
 
                 <EditText
                     android:id="@+id/passwordEditText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:backgroundTint="@color/neutral_font_color"
                     android:ems="10"
                     android:fontFamily="@font/kreon_light"
-                    android:backgroundTint="@color/neutral_font_color"
                     android:inputType="textPassword"
                     android:maxLength="20"
                     android:maxLines="1"
-                    android:textColor="@color/neon_orange"/>
+                    android:textColor="@color/neon_orange" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -126,20 +129,22 @@
                 android:id="@+id/register_password_confirm_input"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
                 android:layout_below="@id/register_password_input"
+                android:layout_marginTop="24dp"
                 android:hint="@string/confirm_password"
-                android:paddingEnd="2dp"
                 android:paddingStart="12dp"
-                android:textColorHint="@color/neutral_font_color">
+                android:paddingEnd="2dp"
+                android:textColorHint="@color/neutral_font_color"
+                app1:passwordToggleEnabled="true"
+                app1:passwordToggleTint="@color/neutral_font_color">
 
                 <EditText
                     android:id="@+id/confirmPasswordEditText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:backgroundTint="@color/neutral_font_color"
                     android:ems="10"
                     android:fontFamily="@font/kreon_light"
-                    android:backgroundTint="@color/neutral_font_color"
                     android:inputType="textPassword"
                     android:maxLength="20"
                     android:maxLines="1"
@@ -151,10 +156,10 @@
                 android:id="@+id/countrySpinner"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="6dp"
+                android:layout_below="@id/register_password_confirm_input"
                 android:layout_marginStart="12dp"
                 android:layout_marginTop="24dp"
-                android:layout_below="@id/register_password_confirm_input"
+                android:layout_marginEnd="6dp"
                 android:backgroundTint="@color/neutral_font_color"
                 android:textColorHint="@color/neutral_font_color" />
 
@@ -177,9 +182,7 @@
         </RelativeLayout>
 
 
-
     </androidx.cardview.widget.CardView>
-
 
 
 </RelativeLayout>
