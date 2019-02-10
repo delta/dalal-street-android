@@ -167,7 +167,11 @@ class PortfolioFragment : Fragment() {
         colors.add(ContextCompat.getColor(context!!, R.color.neon_purple))
         colors.add(ContextCompat.getColor(context!!, R.color.neon_yellow))
         colors.add(ContextCompat.getColor(context!!, R.color.neon_orange))
+        colors.add(ContextCompat.getColor(context!!, R.color.bronze_medal))
         colors.add(ContextCompat.getColor(context!!, R.color.neon_pink))
+        colors.add(ContextCompat.getColor(context!!, R.color.redTint))
+        colors.add(ContextCompat.getColor(context!!, R.color.gold_medal))
+
 
         dataSet.colors = colors
         dataSet.selectionShift = 5f
