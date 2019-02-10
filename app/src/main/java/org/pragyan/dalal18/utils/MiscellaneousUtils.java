@@ -1,5 +1,9 @@
 package org.pragyan.dalal18.utils;
 
+import android.content.Context;
+import android.view.View;
+import android.view.inputmethod.InputMethodManager;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -65,6 +69,14 @@ public class MiscellaneousUtils {
 
         while (answer > 1000) answer /= 10;
         return (int) (answer % 200);
+    }
+
+    public static void hideSoftKeyboard(Context context, View view){
+        if(context != null && view != null){
+            InputMethodManager inputMethodManager = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+            inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(),
+                    InputMethodManager.HIDE_NOT_ALWAYS);
+        }
     }
 
     public static String sessionId = "dalalStreetSessionId";

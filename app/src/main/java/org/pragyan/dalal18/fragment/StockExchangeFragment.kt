@@ -26,6 +26,7 @@ import org.pragyan.dalal18.dagger.ContextModule
 import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent
 import org.pragyan.dalal18.utils.ConnectionUtils
 import org.pragyan.dalal18.utils.Constants
+import org.pragyan.dalal18.utils.MiscellaneousUtils
 import org.pragyan.dalal18.utils.StockUtils
 import javax.inject.Inject
 
@@ -78,6 +79,9 @@ class StockExchangeFragment : Fragment() {
                 .setCancelable(false)
                 .create()
 
+
+
+
         companiesArray = StockUtils.getCompanyNamesArray()
         val arrayAdapter = ArrayAdapter<String>(activity!!, R.layout.company_spinner_item, companiesArray)
         with(companySpinner) {
@@ -122,6 +126,8 @@ class StockExchangeFragment : Fragment() {
                                 Toast.makeText(context, "Stocks bought", Toast.LENGTH_SHORT).show()
                                 noOfStocksEditText.setText("")
                                 getCompanyProfileAsynchronously(lastSelectedStockId)
+
+                                MiscellaneousUtils.hideSoftKeyboard(context,view)
                             }
                             else
                                 Toast.makeText(context, response.statusMessage, Toast.LENGTH_SHORT).show()
