@@ -30,6 +30,7 @@ import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent
 import org.pragyan.dalal18.data.MortgageDetails
 import org.pragyan.dalal18.utils.ConnectionUtils
 import org.pragyan.dalal18.utils.Constants
+import org.pragyan.dalal18.utils.MiscellaneousUtils
 import javax.inject.Inject
 
 class RetrieveFragment : Fragment(), RetrieveRecyclerAdapter.OnRetrieveButtonClickListener {
@@ -179,8 +180,10 @@ class RetrieveFragment : Fragment(), RetrieveRecyclerAdapter.OnRetrieveButtonCli
                     RetrieveMortgageStocksRequest.newBuilder().setStockId(mortgageDetailsList[position].stockId)
                             .setStockQuantity(quantity).setRetrievePrice(mortgageDetailsList[position].mortgagePrice).build())
             uiThread {
-                if (retrieveStocksResponse.statusCode == RetrieveMortgageStocksResponse.StatusCode.OK)
+                if (retrieveStocksResponse.statusCode == RetrieveMortgageStocksResponse.StatusCode.OK){
                     Toast.makeText(context, "Transaction successful", Toast.LENGTH_SHORT).show()
+                    MiscellaneousUtils.hideSoftKeyboard(context,view)
+                }
                 else
                     Toast.makeText(context, retrieveStocksResponse.statusMessage, Toast.LENGTH_SHORT).show()
             }

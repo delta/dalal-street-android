@@ -33,6 +33,7 @@ import org.pragyan.dalal18.data.DalalViewModel
 import org.pragyan.dalal18.data.MortgageDetails
 import org.pragyan.dalal18.utils.ConnectionUtils
 import org.pragyan.dalal18.utils.Constants
+import org.pragyan.dalal18.utils.MiscellaneousUtils
 import org.pragyan.dalal18.utils.StockUtils
 import org.pragyan.dalal18.utils.StockUtils.*
 import javax.inject.Inject
@@ -253,6 +254,8 @@ class MortgageFragment : Fragment() {
                 if (mortgageStocksResponse.statusCode == MortgageStocksResponse.StatusCode.OK) {
                     Toast.makeText(context, "Transaction successful", Toast.LENGTH_SHORT).show()
                     stocks_editText.setText("")
+
+                    MiscellaneousUtils.hideSoftKeyboard(context,view)
                 } else {
                     Toast.makeText(context, mortgageStocksResponse.statusMessage, Toast.LENGTH_SHORT).show()
                 }

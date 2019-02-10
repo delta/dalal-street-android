@@ -6,11 +6,14 @@ import android.os.Bundle
 import android.os.Handler
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.ViewModelProviders
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.navigation.NavOptions
@@ -104,6 +107,23 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
         supportActionBar?.setHomeAsUpIndicator(ContextCompat.getDrawable(this, R.drawable.hamburger_icon))
 
         setupNavigationDrawer()
+        (findViewById<DrawerLayout>(R.id.mainDrawerLayout)).addDrawerListener(object : DrawerLayout.DrawerListener {
+            override fun onDrawerSlide(drawerView: View, slideOffset: Float) {
+
+            }
+
+            override fun onDrawerOpened(drawerView: View) {
+              hideSoftKeyboard()
+            }
+
+            override fun onDrawerClosed(drawerView: View) {
+
+            }
+
+            override fun onDrawerStateChanged(newState: Int) {
+
+            }
+        })
 
         model.ownedStockDetails = intent.getParcelableArrayListExtra(STOCKS_OWNED_KEY)
         model.globalStockDetails = intent.getParcelableArrayListExtra(GLOBAL_STOCKS_KEY)
@@ -127,6 +147,7 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
 
         val navController = findNavController(R.id.main_host_fragment)
         button_bar.setOnClickListener {
+            hideSoftKeyboard()
             navController.navigate(R.id.portfolio_dest, null, NavOptions.Builder().setPopUpTo(R.id.home_dest, false).build())
         }
     }
@@ -160,6 +181,7 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
 
         val id = item.itemId
+        hideSoftKeyboard()
 
         when (id) {
             R.id.action_notifications -> {
@@ -226,6 +248,13 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
                 uiThread { onNetworkDownError() }
             }
         }
+    }
+
+    private fun hideSoftKeyboard(){
+        val inputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        inputMethodManager.hideSoftInputFromWindow(currentFocus?.windowToken,
+                InputMethodManager.HIDE_NOT_ALWAYS)
+
     }
 
     private fun updateWorthTextViews() {
