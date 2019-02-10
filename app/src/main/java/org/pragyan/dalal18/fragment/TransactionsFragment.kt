@@ -42,6 +42,7 @@ class TransactionsFragment : Fragment() {
     lateinit var networkDownHandler: ConnectionUtils.OnNetworkDownHandler
 
     internal var paginate = true
+    private var lastId = 0
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -77,7 +78,7 @@ class TransactionsFragment : Fragment() {
                 .setView(dialogView)
                 .setCancelable(false)
                 .create()
-
+        preferences.edit().remove(Constants.LAST_TRANSACTION_ID).apply()
         getTransactionsAsynchronously()
     }
 
@@ -87,7 +88,7 @@ class TransactionsFragment : Fragment() {
 
         doAsync {
 
-            val lastId = preferences.getInt(Constants.LAST_TRANSACTION_ID, 0)
+            lastId = preferences.getInt(Constants.LAST_TRANSACTION_ID, 0)
 
             if (ConnectionUtils.getConnectionInfo(context) && ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
 
