@@ -2,12 +2,14 @@ package org.pragyan.dalal18.ui
 
 import android.content.Intent
 import android.content.SharedPreferences
+import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.material.snackbar.Snackbar
@@ -177,12 +179,15 @@ class SplashActivity : AppCompatActivity() {
             } else /* No internet available */ {
                 uiThread {
                     Handler().postDelayed({
-                        Snackbar.make(findViewById<View>(android.R.id.content), "Please check internet connection", Snackbar.LENGTH_INDEFINITE)
+                        val snackBar = Snackbar.make(findViewById<View>(android.R.id.content), "Please check internet connection", Snackbar.LENGTH_INDEFINITE)
                                 .setAction("RETRY") {
                                     startLoginProcess(email, password)
                                     splashTextView.setText(R.string.error_signing_in)
                                 }
-                                .show()
+
+                        snackBar.setActionTextColor(ContextCompat.getColor(this@SplashActivity, R.color.neon_green))
+                        snackBar.view.setBackgroundColor(Color.parseColor("#20202C"))
+                        snackBar.show()
                         splashTextView.setText(R.string.error_signing_in)
                     }, 500)
                 }

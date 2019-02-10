@@ -2,12 +2,14 @@ package org.pragyan.dalal18.ui
 
 import android.content.Intent
 import android.content.SharedPreferences
-import androidx.appcompat.app.AppCompatActivity
+import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.core.content.ContextCompat
 import com.google.android.material.snackbar.Snackbar
 import dalalstreet.api.DalalActionServiceGrpc
 import dalalstreet.api.actions.LoginRequest
@@ -23,7 +25,7 @@ import org.pragyan.dalal18.data.StockDetails
 import org.pragyan.dalal18.utils.ConnectionUtils
 import org.pragyan.dalal18.utils.Constants
 import org.pragyan.dalal18.utils.MiscellaneousUtils
-import java.util.ArrayList
+import java.util.*
 import javax.inject.Inject
 
 class LoginActivity : AppCompatActivity() {
@@ -77,10 +79,7 @@ class LoginActivity : AppCompatActivity() {
                 uiThread {
                     play_button.isEnabled = false
                     Handler().postDelayed({
-                        Snackbar
-                                .make(findViewById(android.R.id.content), "Please check internet connection", Snackbar.LENGTH_INDEFINITE)
-                                .setAction("RETRY") { startLoginProcess(true) }
-                                .show()
+                        showSnackBar("Please check internet connection")
                     }, 500)
                 }
             }
@@ -191,8 +190,8 @@ class LoginActivity : AppCompatActivity() {
                                         currentStockDetails.stocksInExchange,
                                         currentStockDetails.previousDayClose,
                                         if (currentStockDetails.upOrDown) 1 else 0,
-                                        resources.getStringArray(R.array.image_links)[q-1]))
-                                        //Constants.COMPANY_IMAGES_BASE_URL + currentStockDetails.shortName.toUpperCase() + ".png"))
+                                        resources.getStringArray(R.array.image_links)[q - 1]))
+                                //Constants.COMPANY_IMAGES_BASE_URL + currentStockDetails.shortName.toUpperCase() + ".png"))
                             }
                         }
 
@@ -211,7 +210,7 @@ class LoginActivity : AppCompatActivity() {
                             else if (key == "MORTGAGE_RETRIEVE_RATE")
                                 Constants.MORTGAGE_RETRIEVE_RATE = value.toDouble()
                             else if (key == "ORDER_FEE_PERCENT")
-                                Constants.ORDER_FEE_RATE = (value.toDouble()/100)
+                                Constants.ORDER_FEE_RATE = (value.toDouble() / 100)
                         }
 
                         preferences.edit()
@@ -228,10 +227,19 @@ class LoginActivity : AppCompatActivity() {
                 }
             } else {
                 uiThread {
-                    Snackbar.make(findViewById(android.R.id.content), "Server Down", Snackbar.LENGTH_INDEFINITE)
-                            .setAction("RETRY") { startLoginProcess(true) }.show()
+                    signingInAlertDialog?.dismiss()
+                    showSnackBar("Server Unreachable")
                 }
             }
         }
+    }
+
+    private fun showSnackBar(message: String) {
+        val snackBar = Snackbar.make(findViewById(android.R.id.content), message, Snackbar.LENGTH_INDEFINITE)
+                .setAction("RETRY") { startLoginProcess(true) }
+
+        snackBar.setActionTextColor(ContextCompat.getColor(this, R.color.neon_green))
+        snackBar.view.setBackgroundColor(Color.parseColor("#20202C"))
+        snackBar.show()
     }
 }
