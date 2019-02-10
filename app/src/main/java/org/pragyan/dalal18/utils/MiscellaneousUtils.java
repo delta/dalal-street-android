@@ -70,7 +70,7 @@ public class MiscellaneousUtils {
     public static String sessionId = "dalalStreetSessionId";
     public static String username = null;
 
-    public static final String SERVER_CERT = "-----BEGIN CERTIFICATE-----\n" +
+  /*  public static final String SERVER_CERT = "-----BEGIN CERTIFICATE-----\n" +
             "MIIEBDCCAuygAwIBAgIJAM5SBbvFhUJOMA0GCSqGSIb3DQEBCwUAMIGWMQswCQYD\n" +
             "VQQGEwJJTjETMBEGA1UECAwKVGFtaWwgTmFkdTEPMA0GA1UEBwwGVHJpY2h5MRow\n" +
             "GAYDVQQKDBFEYWxhbCBTdHJlZXQgMjAxOTEOMAwGA1UECwwFRGVsdGExDjAMBgNV\n" +
@@ -93,10 +93,9 @@ public class MiscellaneousUtils {
             "IiEyEYpJAwTxI16YMdZUb/8PJxeg1SCT7bl5oar5csJLR0uSWUpR7Vo/z8WFRZh/\n" +
             "/uHVYSAsrLIjQvnQzhxUCzR7nfCVbFolQjBWD3sGv0DVGrbrNXiwqKppPykl0xNG\n" +
             "AL+9u/l/TqfBVFQB5yHObagyOTunUTUm\n" +
-            "-----END CERTIFICATE-----";
+            "-----END CERTIFICATE-----";*/
 
-    /*  Test Server Certificate
-
+    //  Test Server Certificate
     public static final String SERVER_CERT = "-----BEGIN CERTIFICATE-----\n" +
             "MIIDjzCCAnegAwIBAgIJAON0T+GsNoM0MA0GCSqGSIb3DQEBCwUAMF4xCzAJBgNV\n" +
             "BAYTAklOMQ8wDQYDVQQHDAZUcmljaHkxDjAMBgNVBAoMBURlbHRhMRowGAYDVQQL\n" +
@@ -117,6 +116,5 @@ public class MiscellaneousUtils {
             "8BByY+l/L8EOXdk+DTq2kPS1mcv6a500Q9JTDAfAM6uUVnwiF4fWtfSUyyRpWl6s\n" +
             "xY01aSxRMQud7e8h/FDMPdTvcFpcnWUB2byRdw7gv5kIjfRsZZSwy/8zODZx/biR\n" +
             "n8lG/ZKeivbUai547FHqdI2qJwv2mElxojG2hLV7sImSg26fuaTyy5+ftP3GH8Yj\n" +
-            "5+8T\n" +
-            "-----END CERTIFICATE-----";*/
+            "5+8T\n-----END CERTIFICATE-----";
 }

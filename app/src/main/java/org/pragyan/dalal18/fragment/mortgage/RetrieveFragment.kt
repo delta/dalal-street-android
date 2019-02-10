@@ -30,8 +30,7 @@ import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent
 import org.pragyan.dalal18.data.MortgageDetails
 import org.pragyan.dalal18.utils.ConnectionUtils
 import org.pragyan.dalal18.utils.Constants
-import org.pragyan.dalal18.utils.MiscellaneousUtils
-import org.pragyan.dalal18.utils.hideKeyboard
+
 import javax.inject.Inject
 
 class RetrieveFragment : Fragment(), RetrieveRecyclerAdapter.OnRetrieveButtonClickListener {
@@ -175,18 +174,21 @@ class RetrieveFragment : Fragment(), RetrieveRecyclerAdapter.OnRetrieveButtonCli
         }
     }
 
-    override fun onRetrieveButtonClick(position: Int, quantity: Long) {
-        doAsync {
-            val retrieveStocksResponse = actionServiceBlockingStub.retrieveMortgageStocks(
-                    RetrieveMortgageStocksRequest.newBuilder().setStockId(mortgageDetailsList[position].stockId)
-                            .setStockQuantity(quantity).setRetrievePrice(mortgageDetailsList[position].mortgagePrice).build())
-            uiThread {
-                if (retrieveStocksResponse.statusCode == RetrieveMortgageStocksResponse.StatusCode.OK){
-                    Toast.makeText(context, "Transaction successful", Toast.LENGTH_SHORT).show()
-                    view?.hideKeyboard()
+    override fun onRetrieveButtonClick(position: Int, retrieveQuantity: String, stocksQuantity : String) {
+        when {
+            retrieveQuantity.isEmpty() || retrieveQuantity == "" -> Toast.makeText(context, "Enter stocks to retrieve", Toast.LENGTH_SHORT).show()
+            retrieveQuantity.toInt() == 0 -> Toast.makeText(context, "Enter valid number of stocks", Toast.LENGTH_SHORT).show()
+            retrieveQuantity.toLong() > stocksQuantity.toLong() -> Toast.makeText(context, "Insufficient stocks to retrieve", Toast.LENGTH_SHORT).show()
+            else -> doAsync {
+                val retrieveStocksResponse = actionServiceBlockingStub.retrieveMortgageStocks(
+                        RetrieveMortgageStocksRequest.newBuilder().setStockId(mortgageDetailsList[position].stockId)
+                                .setStockQuantity(retrieveQuantity.toLong()).setRetrievePrice(mortgageDetailsList[position].mortgagePrice).build())
+                uiThread {
+                    if (retrieveStocksResponse.statusCode == RetrieveMortgageStocksResponse.StatusCode.OK)
+                        Toast.makeText(context, "Transaction successful", Toast.LENGTH_SHORT).show()
+                    else
+                        Toast.makeText(context, retrieveStocksResponse.statusMessage, Toast.LENGTH_SHORT).show()
                 }
-                else
-                    Toast.makeText(context, retrieveStocksResponse.statusMessage, Toast.LENGTH_SHORT).show()
             }
         }
     }

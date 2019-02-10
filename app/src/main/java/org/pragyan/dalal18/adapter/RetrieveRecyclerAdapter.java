@@ -8,7 +8,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import org.jetbrains.anko.ToastsKt;
 import org.pragyan.dalal18.R;
 import org.pragyan.dalal18.data.MortgageDetails;
 import org.pragyan.dalal18.utils.StockUtils;
@@ -25,7 +24,7 @@ public class RetrieveRecyclerAdapter extends RecyclerView.Adapter<RetrieveRecycl
     private OnRetrieveButtonClickListener listener;
 
     public interface OnRetrieveButtonClickListener {
-        void onRetrieveButtonClick(int position, long quantity);
+        void onRetrieveButtonClick(int position, String retrieveQuantity, String stocksQuantity);
     }
 
     public RetrieveRecyclerAdapter(Context context, List<MortgageDetails> mortgageDetailsList, OnRetrieveButtonClickListener listener) {
@@ -96,10 +95,7 @@ public class RetrieveRecyclerAdapter extends RecyclerView.Adapter<RetrieveRecycl
 
         @Override
         public void onClick(View view) {
-            if (!retrieveQuantityEditText.getText().toString().isEmpty() && !retrieveQuantityEditText.getText().toString().equals(""))
-                listener.onRetrieveButtonClick(getAdapterPosition(), Long.parseLong(retrieveQuantityEditText.getText().toString()));
-            else
-                ToastsKt.toast(context, "Enter stocks to retrieve");
+            listener.onRetrieveButtonClick(getAdapterPosition(), retrieveQuantityEditText.getText().toString() , stockQuantityTextView.getText().toString());
         }
     }
 }
