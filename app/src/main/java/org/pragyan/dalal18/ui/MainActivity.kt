@@ -7,6 +7,7 @@ import android.os.Handler
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -76,17 +77,17 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
             when (intent.action) {
                 REFRESH_WORTH_TEXTVIEW_ACTION -> {
                     // Passing future value of cash worth TextView beforehand as old cash
-                    updateStockWorthViaStreamUpdates(cashWorthTextView.text.toString().replace(",","").toLong() + intent.getLongExtra(TOTAL_WORTH_KEY, 0))
-                    changeTextViewValue(cashWorthTextView, intent.getLongExtra(TOTAL_WORTH_KEY, 0), true)
+                    updateStockWorthViaStreamUpdates(cashWorthTextView.text.toString().replace(",", "").toLong() + intent.getLongExtra(TOTAL_WORTH_KEY, 0))
+                    changeTextViewValue(cashWorthTextView, cashIndicatorImageView, intent.getLongExtra(TOTAL_WORTH_KEY, 0), true)
                 }
 
                 REFRESH_CASH_ACTION -> {
-                    changeTextViewValue(totalWorthTextView, intent.getLongExtra(TOTAL_WORTH_KEY, 0), true)
-                    changeTextViewValue(cashWorthTextView, intent.getLongExtra(TOTAL_WORTH_KEY, 0), true)
+                    changeTextViewValue(totalWorthTextView, totalIndicatorImageVIew, intent.getLongExtra(TOTAL_WORTH_KEY, 0), true)
+                    changeTextViewValue(cashWorthTextView, cashIndicatorImageView, intent.getLongExtra(TOTAL_WORTH_KEY, 0), true)
                 }
 
                 UPDATE_WORTH_VIA_STREAM_ACTION ->
-                    updateStockWorthViaStreamUpdates(cashWorthTextView.text.toString().replace(",","").toLong())
+                    updateStockWorthViaStreamUpdates(cashWorthTextView.text.toString().replace(",", "").toLong())
             }
         }
     }
@@ -129,7 +130,7 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
         drawerEdgeButton.setOnClickListener { mainDrawerLayout.openDrawer(GravityCompat.START, true) }
 
         val navController = findNavController(R.id.main_host_fragment)
-        button_bar.setOnClickListener {
+        stocksInHandTextView.setOnClickListener {
             contentView?.hideKeyboard()
             navController.navigate(R.id.portfolio_dest, null, NavOptions.Builder().setPopUpTo(R.id.home_dest, false).build())
         }
@@ -145,7 +146,7 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
         val header = navigationViewLeft.getHeaderView(0)
         header.find<TextView>(R.id.usernameTextView).text = MiscellaneousUtils.username
 
-        mainDrawerLayout.addDrawerListener(object: DrawerLayout.DrawerListener {
+        mainDrawerLayout.addDrawerListener(object : DrawerLayout.DrawerListener {
             override fun onDrawerStateChanged(newState: Int) {
             }
 
@@ -255,13 +256,13 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
         val stockWorth = totalWorth - cashWorth
 
         var oldValue = cashWorthTextView.text.toString().replace(",", "").toLong()
-        animateWorthChange(oldValue, cashWorth, cashWorthTextView)
+        animateWorthChange(oldValue, cashWorth, cashWorthTextView, cashIndicatorImageView)
 
         oldValue = stockWorthTextView.text.toString().replace(",", "").toLong()
-        animateWorthChange(oldValue, stockWorth, stockWorthTextView)
+        animateWorthChange(oldValue, stockWorth, stockWorthTextView, stockIndicatorImageView)
 
         oldValue = totalWorthTextView.text.toString().replace(",", "").toLong()
-        animateWorthChange(oldValue, totalWorth, totalWorthTextView)
+        animateWorthChange(oldValue, totalWorth, totalWorthTextView, totalIndicatorImageVIew)
     }
 
     // Subscribes to transaction stream and gets updates (TESTED)
@@ -476,17 +477,17 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
         }
 
         var oldValue = stockWorthTextView.text.toString().replace(",", "").toLong()
-        animateWorthChange(oldValue, netStockWorth, stockWorthTextView)
+        animateWorthChange(oldValue, netStockWorth, stockWorthTextView, stockIndicatorImageView)
 
         oldValue = totalWorthTextView.text.toString().replace(",", "").toLong()
-        animateWorthChange(oldValue, netStockWorth + oldCash, totalWorthTextView)
+        animateWorthChange(oldValue, netStockWorth + oldCash, totalWorthTextView, totalIndicatorImageVIew)
     }
 
     // Increases/decreases text view value depending on input parameters
-    private fun changeTextViewValue(textView: TextView, value: Long, increase: Boolean) {
+    private fun changeTextViewValue(textView: TextView, indicatorImageView: ImageView, value: Long, increase: Boolean) {
         val oldValue = textView.text.toString().replace(",", "").toLong()
         val newValue = oldValue + if (increase) value else -1 * value
-        animateWorthChange(oldValue, newValue, textView)
+        animateWorthChange(oldValue, newValue, textView, indicatorImageView)
     }
 
     // Starts making drawer button translucent
@@ -509,7 +510,8 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
         }.start()
     }
 
-    @Synchronized private fun animateWorthChange(oldValue: Long, newValue: Long, textView: TextView) {
+    @Synchronized
+    private fun animateWorthChange(oldValue: Long, newValue: Long, textView: TextView, indicatorImageView: ImageView) {
         val formatter = DecimalFormat("##,##,###")
         val valueAnimator = ValueAnimator.ofObject(LongEvaluator(), oldValue, newValue)
         valueAnimator.duration = 450
@@ -517,6 +519,14 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
             textView.text = formatter.format(it.animatedValue)
         }
         valueAnimator.start()
+
+        indicatorImageView.setImageResource(if (oldValue > newValue) R.drawable.arrow_down_red else R.drawable.arrow_up_green)
+        val alphaAnimator = ValueAnimator.ofInt(0, 255)
+        alphaAnimator.duration = 350
+        alphaAnimator.repeatCount = 5
+        alphaAnimator.repeatMode = ValueAnimator.REVERSE
+        alphaAnimator.addUpdateListener { indicatorImageView.imageAlpha = it.animatedValue as Int }
+        alphaAnimator.start()
     }
 
     override fun onBackPressed() {

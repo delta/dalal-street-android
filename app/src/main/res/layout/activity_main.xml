@@ -21,119 +21,109 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <LinearLayout
-            android:id="@+id/button_bar"
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:layout_below="@id/mainToolbar"
+
+        <TextView
+            android:id="@+id/cashInHandTextView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
             android:background="#20202C"
-            android:baselineAligned="false"
-            android:elevation="8dp"
-            android:orientation="horizontal"
-            app:layout_constraintTop_toBottomOf="@+id/mainToolbar">
+            android:fontFamily="@font/marcellus_sc"
+            android:gravity="center"
+            android:text="@string/cash_worth"
+            android:textColor="@color/neon_green"
+            android:textSize="12sp"
+            app:layout_constraintEnd_toStartOf="@+id/cashIndicatorImageView"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/mainToolbar" />
 
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:orientation="vertical"
-                android:padding="4dp">
+        <TextView
+            android:id="@+id/cashWorthTextView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="#20202C"
+            android:fontFamily="@font/kreon_light"
+            android:gravity="center"
+            android:text="@string/zero"
+            android:textColor="@color/neon_green"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@+id/main_host_fragment"
+            app:layout_constraintEnd_toEndOf="@+id/cashInHandTextView"
+            app:layout_constraintHorizontal_chainStyle="spread"
+            app:layout_constraintStart_toStartOf="@id/cashInHandTextView"
+            app:layout_constraintTop_toBottomOf="@+id/cashInHandTextView" />
 
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/marcellus_sc"
-                    android:gravity="center"
-                    android:text="@string/cash_worth"
-                    android:textColor="@color/neon_green"
-                    android:textSize="12sp" />
+        <TextView
+            android:id="@+id/stocksInHandTextView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="#20202C"
+            android:fontFamily="@font/marcellus_sc"
+            android:gravity="center"
+            android:text="@string/stock_worth"
+            android:textColor="@color/neon_blue"
+            android:textSize="12sp"
+            app:layout_constraintEnd_toStartOf="@+id/stockIndicatorImageView"
+            app:layout_constraintStart_toEndOf="@+id/cashIndicatorImageView"
+            app:layout_constraintTop_toBottomOf="@+id/mainToolbar" />
 
-                <TextView
-                    android:id="@+id/cashWorthTextView"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/kreon_light"
-                    android:gravity="center"
-                    android:text="@string/zero"
-                    android:textColor="@color/neon_green"
-                    android:textSize="22sp"
-                    android:textStyle="bold" />
+        <TextView
+            android:id="@+id/stockWorthTextView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="#20202C"
+            android:fontFamily="@font/kreon_light"
+            android:gravity="center"
+            android:text="@string/zero"
+            android:textColor="@color/neon_blue"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@+id/main_host_fragment"
+            app:layout_constraintEnd_toEndOf="@+id/stocksInHandTextView"
+            app:layout_constraintStart_toStartOf="@+id/stocksInHandTextView"
+            app:layout_constraintTop_toBottomOf="@+id/stocksInHandTextView" />
 
-            </LinearLayout>
+        <TextView
+            android:id="@+id/totalInHandTextView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="#20202C"
+            android:fontFamily="@font/marcellus_sc"
+            android:gravity="center"
+            android:text="@string/total_worth"
+            android:textColor="@color/neon_orange"
+            android:textSize="12sp"
+            app:layout_constraintEnd_toStartOf="@+id/totalIndicatorImageVIew"
+            app:layout_constraintStart_toEndOf="@+id/stockIndicatorImageView"
+            app:layout_constraintTop_toBottomOf="@+id/mainToolbar" />
 
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:orientation="vertical"
-                android:padding="4dp">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/marcellus_sc"
-                    android:gravity="center"
-                    android:text="@string/stock_worth"
-                    android:textColor="@color/neon_blue"
-                    android:textSize="12sp" />
-
-                <TextView
-                    android:id="@+id/stockWorthTextView"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/kreon_light"
-                    android:gravity="center"
-                    android:text="@string/zero"
-                    android:textColor="@color/neon_blue"
-                    android:textSize="22sp"
-                    android:textStyle="bold" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:orientation="vertical"
-                android:padding="4dp">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/marcellus_sc"
-                    android:gravity="center"
-                    android:text="@string/total_worth"
-                    android:textColor="@color/neon_orange"
-                    android:textSize="12sp" />
-
-                <TextView
-                    android:id="@+id/totalWorthTextView"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/kreon_light"
-                    android:gravity="center"
-                    android:text="@string/zero"
-                    android:textColor="@color/neon_orange"
-                    android:textSize="22sp"
-                    android:textStyle="bold" />
-
-            </LinearLayout>
-
-        </LinearLayout>
+        <TextView
+            android:id="@+id/totalWorthTextView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="#20202C"
+            android:fontFamily="@font/kreon_light"
+            android:gravity="center"
+            android:text="@string/zero"
+            android:textColor="@color/neon_orange"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@+id/main_host_fragment"
+            app:layout_constraintEnd_toEndOf="@id/totalInHandTextView"
+            app:layout_constraintStart_toStartOf="@+id/totalInHandTextView"
+            app:layout_constraintTop_toBottomOf="@+id/totalInHandTextView"
+            app:layout_constraintVertical_bias="0.0" />
 
         <Button
             android:id="@+id/drawerEdgeButton"
             android:layout_width="12dp"
             android:layout_height="150dp"
-            android:layout_below="@+id/button_bar"
+            android:layout_below="@+id/stockWorthTextView"
             android:layout_alignParentStart="true"
             android:layout_marginTop="9dp"
             android:background="@drawable/drawer_edge_button"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/button_bar" />
+            app:layout_constraintTop_toBottomOf="@+id/stockWorthTextView" />
 
         <fragment
             android:id="@+id/main_host_fragment"
@@ -144,8 +134,44 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/button_bar"
+            app:layout_constraintTop_toBottomOf="@+id/stockWorthTextView"
             app:navGraph="@navigation/dalal_navigation" />
+
+        <ImageView
+            android:id="@+id/cashIndicatorImageView"
+            android:layout_width="16dp"
+            android:layout_height="0dp"
+            android:background="#20202C"
+            android:contentDescription="@string/down_arrow"
+            app:layout_constraintBottom_toBottomOf="@+id/cashWorthTextView"
+            app:layout_constraintEnd_toStartOf="@id/stocksInHandTextView"
+            app:layout_constraintStart_toEndOf="@id/cashInHandTextView"
+            app:layout_constraintTop_toTopOf="@+id/cashInHandTextView"
+            app:srcCompat="@drawable/down_arrow" />
+
+        <ImageView
+            android:id="@+id/totalIndicatorImageVIew"
+            android:layout_width="16dp"
+            android:layout_height="0dp"
+            android:background="#20202C"
+            android:contentDescription="@string/down_arrow"
+            app:layout_constraintBottom_toBottomOf="@+id/totalWorthTextView"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/totalInHandTextView"
+            app:layout_constraintTop_toTopOf="@+id/totalInHandTextView"
+            app:srcCompat="@drawable/down_arrow" />
+
+        <ImageView
+            android:id="@+id/stockIndicatorImageView"
+            android:layout_width="16dp"
+            android:layout_height="0dp"
+            android:background="#20202C"
+            android:contentDescription="@string/down_arrow"
+            app:layout_constraintBottom_toBottomOf="@+id/stockWorthTextView"
+            app:layout_constraintEnd_toStartOf="@id/totalInHandTextView"
+            app:layout_constraintStart_toEndOf="@id/stocksInHandTextView"
+            app:layout_constraintTop_toTopOf="@+id/stocksInHandTextView"
+            app:srcCompat="@drawable/up_arrow" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

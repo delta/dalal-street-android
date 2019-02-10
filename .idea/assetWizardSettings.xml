@@ -18,7 +18,7 @@
                                 <PersistentState>
                                   <option name="values">
                                     <map>
-                                      <entry key="url" value="jar:file:/home/harsh/android-studio/plugins/android/lib/android.jar!/images/material_design_icons/action/ic_compare_arrows_black_24dp.xml" />
+                                      <entry key="url" value="jar:file:/home/harsh/android-studio/plugins/android/lib/android.jar!/images/material_design_icons/navigation/ic_arrow_downward_black_24dp.xml" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -28,8 +28,8 @@
                         </option>
                         <option name="values">
                           <map>
-                            <entry key="color" value="ffffff" />
-                            <entry key="outputName" value="trade_icon" />
+                            <entry key="color" value="ff0000" />
+                            <entry key="outputName" value="arrow_down_red" />
                             <entry key="sourceFile" value="$USER_HOME$" />
                           </map>
                         </option>
