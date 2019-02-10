@@ -42,7 +42,7 @@ class NotificationFragment : Fragment() {
     private var loadingDialog: AlertDialog? = null
     private var paginate = true
     private var customNotificationList = ArrayList<Notification>()
-
+    private var lastId = 0
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -82,13 +82,14 @@ class NotificationFragment : Fragment() {
             layoutManager = LinearLayoutManager(this@NotificationFragment.context)
         }
 
+        preferences.edit().remove(Constants.LAST_NOTIFICATION_ID).apply()
         getNotificationsAsynchronously()
     }
 
     private fun getNotificationsAsynchronously() {
 
         loadingDialog?.show()
-        val lastId = preferences.getInt(Constants.LAST_NOTIFICATION_ID, 0)
+        lastId = preferences.getInt(Constants.LAST_NOTIFICATION_ID, 0)
 
         doAsync {
             if (ConnectionUtils.getConnectionInfo(context) && ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
