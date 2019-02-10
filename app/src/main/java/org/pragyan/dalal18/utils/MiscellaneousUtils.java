@@ -1,9 +1,5 @@
 package org.pragyan.dalal18.utils;
 
-import android.content.Context;
-import android.view.View;
-import android.view.inputmethod.InputMethodManager;
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -71,14 +67,6 @@ public class MiscellaneousUtils {
         return (int) (answer % 200);
     }
 
-    public static void hideSoftKeyboard(Context context, View view){
-        if(context != null && view != null){
-            InputMethodManager inputMethodManager = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
-            inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(),
-                    InputMethodManager.HIDE_NOT_ALWAYS);
-        }
-    }
-
     public static String sessionId = "dalalStreetSessionId";
     public static String username = null;
 
@@ -129,5 +117,6 @@ public class MiscellaneousUtils {
             "8BByY+l/L8EOXdk+DTq2kPS1mcv6a500Q9JTDAfAM6uUVnwiF4fWtfSUyyRpWl6s\n" +
             "xY01aSxRMQud7e8h/FDMPdTvcFpcnWUB2byRdw7gv5kIjfRsZZSwy/8zODZx/biR\n" +
             "n8lG/ZKeivbUai547FHqdI2qJwv2mElxojG2hLV7sImSg26fuaTyy5+ftP3GH8Yj\n" +
-            "5+8T\n-----END CERTIFICATE-----";*/
+            "5+8T\n" +
+            "-----END CERTIFICATE-----";*/
 }

@@ -31,6 +31,7 @@ import org.pragyan.dalal18.data.MortgageDetails
 import org.pragyan.dalal18.utils.ConnectionUtils
 import org.pragyan.dalal18.utils.Constants
 import org.pragyan.dalal18.utils.MiscellaneousUtils
+import org.pragyan.dalal18.utils.hideKeyboard
 import javax.inject.Inject
 
 class RetrieveFragment : Fragment(), RetrieveRecyclerAdapter.OnRetrieveButtonClickListener {
@@ -182,7 +183,7 @@ class RetrieveFragment : Fragment(), RetrieveRecyclerAdapter.OnRetrieveButtonCli
             uiThread {
                 if (retrieveStocksResponse.statusCode == RetrieveMortgageStocksResponse.StatusCode.OK){
                     Toast.makeText(context, "Transaction successful", Toast.LENGTH_SHORT).show()
-                    MiscellaneousUtils.hideSoftKeyboard(context,view)
+                    view?.hideKeyboard()
                 }
                 else
                     Toast.makeText(context, retrieveStocksResponse.statusMessage, Toast.LENGTH_SHORT).show()

@@ -2,6 +2,7 @@ package org.pragyan.dalal18.utils;
 
 public class Constants {
 
+    // wss://157.230.165.9:8000/ws
     public static final String HOST = "157.230.165.9";
     public static final int PORT = 8000;
 

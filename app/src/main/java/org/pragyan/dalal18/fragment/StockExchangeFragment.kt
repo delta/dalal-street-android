@@ -5,13 +5,16 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import dalalstreet.api.DalalActionServiceGrpc
 import dalalstreet.api.actions.BuyStocksFromExchangeRequest
@@ -26,8 +29,8 @@ import org.pragyan.dalal18.dagger.ContextModule
 import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent
 import org.pragyan.dalal18.utils.ConnectionUtils
 import org.pragyan.dalal18.utils.Constants
-import org.pragyan.dalal18.utils.MiscellaneousUtils
 import org.pragyan.dalal18.utils.StockUtils
+import org.pragyan.dalal18.utils.hideKeyboard
 import javax.inject.Inject
 
 class StockExchangeFragment : Fragment() {
@@ -79,9 +82,6 @@ class StockExchangeFragment : Fragment() {
                 .setCancelable(false)
                 .create()
 
-
-
-
         companiesArray = StockUtils.getCompanyNamesArray()
         val arrayAdapter = ArrayAdapter<String>(activity!!, R.layout.company_spinner_item, companiesArray)
         with(companySpinner) {
@@ -126,8 +126,7 @@ class StockExchangeFragment : Fragment() {
                                 Toast.makeText(context, "Stocks bought", Toast.LENGTH_SHORT).show()
                                 noOfStocksEditText.setText("")
                                 getCompanyProfileAsynchronously(lastSelectedStockId)
-
-                                MiscellaneousUtils.hideSoftKeyboard(context,view)
+                                view?.hideKeyboard()
                             }
                             else
                                 Toast.makeText(context, response.statusMessage, Toast.LENGTH_SHORT).show()
