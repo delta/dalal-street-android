@@ -64,8 +64,7 @@
                         android:layout_height="20dp"
                         android:layout_marginTop="12dp"
                         android:layout_toEndOf="@+id/prev_day_close_stock_price"
-                        android:contentDescription="@string/company_profile"
-                        android:src="@drawable/down_arrow" />
+                        android:contentDescription="@string/company_profile" />
 
                 </RelativeLayout>
 

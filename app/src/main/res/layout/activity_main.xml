@@ -146,8 +146,7 @@
             app:layout_constraintBottom_toBottomOf="@+id/cashWorthTextView"
             app:layout_constraintEnd_toStartOf="@id/stocksInHandTextView"
             app:layout_constraintStart_toEndOf="@id/cashInHandTextView"
-            app:layout_constraintTop_toTopOf="@+id/cashInHandTextView"
-            app:srcCompat="@drawable/down_arrow" />
+            app:layout_constraintTop_toTopOf="@+id/cashInHandTextView" />
 
         <ImageView
             android:id="@+id/totalIndicatorImageVIew"
@@ -158,8 +157,7 @@
             app:layout_constraintBottom_toBottomOf="@+id/totalWorthTextView"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/totalInHandTextView"
-            app:layout_constraintTop_toTopOf="@+id/totalInHandTextView"
-            app:srcCompat="@drawable/down_arrow" />
+            app:layout_constraintTop_toTopOf="@+id/totalInHandTextView" />
 
         <ImageView
             android:id="@+id/stockIndicatorImageView"
@@ -170,8 +168,7 @@
             app:layout_constraintBottom_toBottomOf="@+id/stockWorthTextView"
             app:layout_constraintEnd_toStartOf="@id/totalInHandTextView"
             app:layout_constraintStart_toEndOf="@id/stocksInHandTextView"
-            app:layout_constraintTop_toTopOf="@+id/stocksInHandTextView"
-            app:srcCompat="@drawable/up_arrow" />
+            app:layout_constraintTop_toTopOf="@+id/stocksInHandTextView" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

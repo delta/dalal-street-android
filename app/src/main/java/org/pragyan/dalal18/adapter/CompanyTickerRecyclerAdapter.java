@@ -45,12 +45,10 @@ public class CompanyTickerRecyclerAdapter extends RecyclerView.Adapter<CompanyTi
         position = position % companyTickerDetailsList.size();
 
         CompanyTickerDetails currentCompanyTickerDetails = companyTickerDetailsList.get(position);
-        int downArrowResourceId = R.drawable.down_arrow;
-        int upArrowResourceId = R.drawable.up_arrow;
 
         holder.nameTextView.setText(currentCompanyTickerDetails.getFullName());
 
-        Picasso.with(context).load(currentCompanyTickerDetails.isUp()? upArrowResourceId : downArrowResourceId).into(holder.arrowImageView);
+        holder.arrowImageView.setImageResource(currentCompanyTickerDetails.isUp()? R.drawable.arrow_up_green : R.drawable.arrow_down_red);
 
         String worthString = Constants.RUPEE_SYMBOL + String.valueOf(currentCompanyTickerDetails.getPreviousDayClose());
         holder.previousDayCloseTextView.setText(worthString);

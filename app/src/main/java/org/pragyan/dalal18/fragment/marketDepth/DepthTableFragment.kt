@@ -286,9 +286,9 @@ class DepthTableFragment : Fragment() {
                         val prevDayClosePrice = Constants.RUPEE_SYMBOL + Math.abs(currentPrice - prevDayClose).toString()
                         prev_day_close_stock_price.text = prevDayClosePrice
                         if (currentPrice >= prevDayClose) {
-                            arrow_image_view.setImageResource(R.drawable.up_arrow)
+                            arrow_image_view.setImageResource(R.drawable.arrow_up_green)
                         } else {
-                            arrow_image_view.setImageResource(R.drawable.down_arrow)
+                            arrow_image_view.setImageResource(R.drawable.arrow_down_red)
                         }
                     }
                 }

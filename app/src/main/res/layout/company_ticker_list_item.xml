@@ -26,8 +26,7 @@
             android:layout_alignParentEnd="true"
             android:layout_marginEnd="4dp"
             android:contentDescription="@string/company_profile"
-            android:foregroundGravity="center"
-            android:src="@drawable/down_arrow" />
+            android:foregroundGravity="center" />
 
         <TextView
             android:id="@+id/company_name"
