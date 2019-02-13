@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -16,6 +15,7 @@ import dalalstreet.api.actions.GetLeaderboardRequest
 import dalalstreet.api.actions.GetLeaderboardResponse
 import kotlinx.android.synthetic.main.fragment_leaderboard.*
 import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.longToast
 import org.jetbrains.anko.uiThread
 import org.pragyan.dalal18.R
 import org.pragyan.dalal18.adapter.LeaderboardRecyclerAdapter
@@ -105,7 +105,7 @@ class LeaderboardFragment : Fragment() {
                         leaderBoardRecyclerAdapter.swapData(leaderBoardDetailsList)
                         leaderboard_recyclerView.visibility = View.VISIBLE
                     } else {
-                        Toast.makeText(activity, rankListResponse?.statusMessage + "Internal server error", Toast.LENGTH_LONG).show()
+                        context?.longToast("Server internal error")
                     }
                     loadingDialog.dismiss()
                 }

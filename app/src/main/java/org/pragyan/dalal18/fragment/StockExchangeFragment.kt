@@ -11,7 +11,6 @@ import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -23,6 +22,7 @@ import dalalstreet.api.actions.GetCompanyProfileRequest
 import dalalstreet.api.models.Stock
 import kotlinx.android.synthetic.main.fragment_stock_exchange.*
 import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.toast
 import org.jetbrains.anko.uiThread
 import org.pragyan.dalal18.R
 import org.pragyan.dalal18.dagger.ContextModule
@@ -105,7 +105,7 @@ class StockExchangeFragment : Fragment() {
     private fun buyStocksFromExchange() {
 
         if (noOfStocksEditText.text.toString().trim { it <= ' ' }.isEmpty()) {
-            Toast.makeText(activity, "Enter the number of Stocks", Toast.LENGTH_SHORT).show()
+            context?.toast("Enter the number of Stocks")
         } else {
 
             doAsync {
@@ -123,16 +123,16 @@ class StockExchangeFragment : Fragment() {
 
                         uiThread {
                             if (response.statusCode == BuyStocksFromExchangeResponse.StatusCode.OK) {
-                                Toast.makeText(context, "Stocks bought", Toast.LENGTH_SHORT).show()
+                                context?.toast("Stocks bought")
                                 noOfStocksEditText.setText("")
                                 getCompanyProfileAsynchronously(lastSelectedStockId)
                                 view?.hideKeyboard()
                             }
                             else
-                                Toast.makeText(context, response.statusMessage, Toast.LENGTH_SHORT).show()
+                                context?.toast(response.statusMessage)
                         }
                     } else {
-                        uiThread { Toast.makeText(activity, "Insufficient stocks in exchange", Toast.LENGTH_SHORT).show() }
+                        uiThread { context?.toast("Insufficient stocks in exchange") }
                     }
                 }
             }

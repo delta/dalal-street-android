@@ -12,7 +12,6 @@ import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -25,6 +24,7 @@ import dalalstreet.api.actions.MortgageStocksRequest
 import dalalstreet.api.actions.MortgageStocksResponse
 import kotlinx.android.synthetic.main.fragment_mortgage.*
 import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.toast
 import org.jetbrains.anko.uiThread
 import org.pragyan.dalal18.R
 import org.pragyan.dalal18.dagger.ContextModule
@@ -196,7 +196,7 @@ class MortgageFragment : Fragment() {
         if (stocksTransaction <= getQuantityOwnedFromCompanyName(model.ownedStockDetails, getCompanyNameFromStockId(lastStockId))) {
             mortgageStocksAsynchronously(stocksTransaction)
         } else {
-            Toast.makeText(activity, "Insufficient Stocks", Toast.LENGTH_SHORT).show()
+            context?.toast("Insufficient Stocks")
         }
     }
 
@@ -230,7 +230,7 @@ class MortgageFragment : Fragment() {
                         stocksMortgagedTextView.text = mortgagedString
 
                     } else {
-                        Toast.makeText(context, response.statusMessage, Toast.LENGTH_SHORT).show()
+                        context?.toast(response.statusMessage)
                     }
                 }
             } else {
@@ -252,11 +252,11 @@ class MortgageFragment : Fragment() {
 
             uiThread {
                 if (mortgageStocksResponse.statusCode == MortgageStocksResponse.StatusCode.OK) {
-                    Toast.makeText(context, "Transaction successful", Toast.LENGTH_SHORT).show()
+                    context?.toast("Transaction successful")
                     stocks_editText.setText("")
                     view?.hideKeyboard()
                 } else {
-                    Toast.makeText(context, mortgageStocksResponse.statusMessage, Toast.LENGTH_SHORT).show()
+                    context?.toast(mortgageStocksResponse.statusMessage)
                 }
                 loadingDialog?.dismiss()
             }

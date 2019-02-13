@@ -13,7 +13,6 @@ import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -23,6 +22,7 @@ import dalalstreet.api.DalalActionServiceGrpc
 import dalalstreet.api.actions.PlaceOrderRequest
 import kotlinx.android.synthetic.main.fragment_trade.*
 import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.toast
 import org.jetbrains.anko.uiThread
 import org.pragyan.dalal18.R
 import org.pragyan.dalal18.dagger.ContextModule
@@ -184,18 +184,18 @@ class TradeFragment : Fragment() {
 
     private fun onBidAskButtonClick() {
         if (noOfStocksEditText.text.toString().trim { it <= ' ' }.isEmpty()) {
-            Toast.makeText(activity, "Enter the number of stocks", Toast.LENGTH_SHORT).show()
+            context?.toast("Enter the number of stocks")
         } else if ((noOfStocksEditText.text.toString()).toLong() == 0L) {
-            Toast.makeText(activity, "Enter valid number of stocks", Toast.LENGTH_SHORT).show()
+            context?.toast("Enter valid number of stocks")
         } else if (radioGroupStock.checkedRadioButtonId == -1) {
-            Toast.makeText(activity, "Select order type", Toast.LENGTH_SHORT).show()
+            context?.toast("Select order type")
         } else if (order_price_input.visibility == View.VISIBLE && orderPriceEditText.text.toString().trim { it <= ' ' }.isEmpty()) {
-            Toast.makeText(activity, "Enter the order price", Toast.LENGTH_SHORT).show()
+            context?.toast("Enter the order price")
         } else if (radioGroupStock.checkedRadioButtonId == R.id.askRadioButton) {
             val validQuantity = getQuantityOwnedFromCompanyName(model.ownedStockDetails, companySpinner.selectedItem.toString())
             val askingQuantity = (noOfStocksEditText.text.toString()).toLong()
             if (askingQuantity > validQuantity) {
-                Toast.makeText(context, "You don't have sufficient stocks", Toast.LENGTH_SHORT).show()
+                context?.toast("You don't have sufficient stocks")
             } else {
                 tradeAsynchronously()
             }
@@ -225,12 +225,12 @@ class TradeFragment : Fragment() {
                 uiThread {
                     loadingDialog?.dismiss()
                     if (orderResponse.statusCodeValue == 0) {
-                        Toast.makeText(context, "Order Placed", Toast.LENGTH_SHORT).show()
+                        context?.toast("Order Placed")
                         noOfStocksEditText.setText("")
                         orderPriceEditText.setText("")
                         view?.hideKeyboard()
                     } else {
-                        Toast.makeText(context, orderResponse.statusMessage, Toast.LENGTH_SHORT).show()
+                        context?.toast(orderResponse.statusMessage)
                     }
                 }
             } else {

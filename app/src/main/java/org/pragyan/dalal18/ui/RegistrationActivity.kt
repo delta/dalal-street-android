@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import dalalstreet.api.DalalActionServiceGrpc
@@ -15,6 +14,7 @@ import dalalstreet.api.actions.RegisterResponse
 import io.grpc.ManagedChannel
 import kotlinx.android.synthetic.main.activity_registration.*
 import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.toast
 import org.jetbrains.anko.uiThread
 import org.pragyan.dalal18.R
 import org.pragyan.dalal18.dagger.ContextModule
@@ -56,13 +56,13 @@ class RegistrationActivity : AppCompatActivity() {
 
     private fun startRegistration() {
         if (nameEditText.text.toString().isEmpty() || nameEditText.text.toString() == "") {
-            Toast.makeText(this, "Please enter your full name", Toast.LENGTH_SHORT).show()
+            toast("Please enter your full name")
         } else if (passwordEditText.text.toString().length < 6) {
-            Toast.makeText(this, "Password must be at least 6 characters", Toast.LENGTH_SHORT).show()
+            toast("Password must be at least 6 characters")
         } else if (passwordEditText.text.toString() != confirmPasswordEditText.text.toString()) {
-            Toast.makeText(this, "Confirm password mismatch", Toast.LENGTH_SHORT).show()
+            toast("Confirm password mismatch")
         } else if (emailEditText.text.toString().isEmpty() || emailEditText.text.toString() == "") {
-            Toast.makeText(this, "Please enter valid email ID", Toast.LENGTH_SHORT).show()
+            toast("Please enter valid email ID")
         } else {
             registerAsynchronously()
         }

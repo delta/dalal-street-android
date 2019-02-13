@@ -8,7 +8,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -24,6 +23,8 @@ import dalalstreet.api.datastreams.*
 import io.grpc.stub.StreamObserver
 import kotlinx.android.synthetic.main.fragment_my_orders.*
 import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.longToast
+import org.jetbrains.anko.toast
 import org.jetbrains.anko.uiThread
 import org.pragyan.dalal18.R
 import org.pragyan.dalal18.adapter.OrdersRecyclerAdapter
@@ -184,7 +185,7 @@ class OrdersFragment : Fragment(), OrdersRecyclerAdapter.OnOrderClickListener, S
                         }
                     }
                 } else {
-                    uiThread { Toast.makeText(activity, openOrdersResponse?.statusMessage, Toast.LENGTH_LONG).show() }
+                    uiThread { context?.longToast(openOrdersResponse.statusMessage) }
                 }
                 uiThread { loadingOrdersDialog.dismiss() }
             } else {
@@ -206,11 +207,11 @@ class OrdersFragment : Fragment(), OrdersRecyclerAdapter.OnOrderClickListener, S
                                     CancelOrderRequest.newBuilder().setOrderId(orderId).setIsAsk(!bid).build())
 
                             if (response.statusCodeValue == 0) {
-                                Toast.makeText(context, "Order cancelled", Toast.LENGTH_SHORT).show()
+                                context?.toast("Order cancelled")
                                 if (activity != null)
                                     getOpenOrdersAsynchronously()
                             } else {
-                                Toast.makeText(context, response.statusMessage, Toast.LENGTH_SHORT).show()
+                                context?.toast(response.statusMessage)
                             }
                         }
                     }

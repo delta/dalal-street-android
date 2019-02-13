@@ -6,7 +6,6 @@ import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
 import android.view.View
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -21,6 +20,7 @@ import io.grpc.Metadata
 import io.grpc.stub.MetadataUtils
 import kotlinx.android.synthetic.main.activity_splash.*
 import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.toast
 import org.jetbrains.anko.uiThread
 import org.pragyan.dalal18.R
 import org.pragyan.dalal18.dagger.ContextModule
@@ -166,7 +166,7 @@ class SplashActivity : AppCompatActivity() {
                             finish()
                             
                         } else {
-                            Toast.makeText(this@SplashActivity, "Please login again", Toast.LENGTH_SHORT).show()
+                            toast("Please login again")
                             preferences.edit().putString(EMAIL_KEY, null).putString(PASSWORD_KEY, null).apply()
                             startActivity(Intent(this@SplashActivity, LoginActivity::class.java))
                             finish()

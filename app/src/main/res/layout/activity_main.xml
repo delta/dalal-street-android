@@ -4,7 +4,7 @@
     android:id="@+id/mainDrawerLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background">
+    android:background="@color/black_background">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -21,7 +21,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-
         <TextView
             android:id="@+id/cashInHandTextView"
             android:layout_width="0dp"
@@ -29,6 +28,7 @@
             android:background="#20202C"
             android:fontFamily="@font/marcellus_sc"
             android:gravity="center"
+            android:paddingTop="4dp"
             android:text="@string/cash_worth"
             android:textColor="@color/neon_green"
             android:textSize="12sp"
@@ -43,6 +43,7 @@
             android:background="#20202C"
             android:fontFamily="@font/kreon_light"
             android:gravity="center"
+            android:paddingBottom="4dp"
             android:text="@string/zero"
             android:textColor="@color/neon_green"
             android:textSize="20sp"
@@ -60,6 +61,7 @@
             android:background="#20202C"
             android:fontFamily="@font/marcellus_sc"
             android:gravity="center"
+            android:paddingTop="4dp"
             android:text="@string/stock_worth"
             android:textColor="@color/neon_blue"
             android:textSize="12sp"
@@ -74,6 +76,7 @@
             android:background="#20202C"
             android:fontFamily="@font/kreon_light"
             android:gravity="center"
+            android:paddingBottom="4dp"
             android:text="@string/zero"
             android:textColor="@color/neon_blue"
             android:textSize="20sp"
@@ -90,6 +93,7 @@
             android:background="#20202C"
             android:fontFamily="@font/marcellus_sc"
             android:gravity="center"
+            android:paddingTop="4dp"
             android:text="@string/total_worth"
             android:textColor="@color/neon_orange"
             android:textSize="12sp"
@@ -104,6 +108,7 @@
             android:background="#20202C"
             android:fontFamily="@font/kreon_light"
             android:gravity="center"
+            android:paddingBottom="4dp"
             android:text="@string/zero"
             android:textColor="@color/neon_orange"
             android:textSize="20sp"

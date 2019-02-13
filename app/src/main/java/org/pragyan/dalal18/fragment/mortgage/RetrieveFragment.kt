@@ -9,7 +9,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -22,6 +21,7 @@ import dalalstreet.api.actions.RetrieveMortgageStocksRequest
 import dalalstreet.api.actions.RetrieveMortgageStocksResponse
 import kotlinx.android.synthetic.main.fragment_retrieve.*
 import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.toast
 import org.jetbrains.anko.uiThread
 import org.pragyan.dalal18.R
 import org.pragyan.dalal18.adapter.RetrieveRecyclerAdapter
@@ -30,7 +30,6 @@ import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent
 import org.pragyan.dalal18.data.MortgageDetails
 import org.pragyan.dalal18.utils.ConnectionUtils
 import org.pragyan.dalal18.utils.Constants
-
 import javax.inject.Inject
 
 class RetrieveFragment : Fragment(), RetrieveRecyclerAdapter.OnRetrieveButtonClickListener {
@@ -165,7 +164,7 @@ class RetrieveFragment : Fragment(), RetrieveRecyclerAdapter.OnRetrieveButtonCli
                             flipVisibilities(false)
                         }
                     } else {
-                        Toast.makeText(context, response.statusMessage, Toast.LENGTH_SHORT).show()
+                        context?.toast(response.statusMessage)
                     }
                 }
             } else {
@@ -176,18 +175,18 @@ class RetrieveFragment : Fragment(), RetrieveRecyclerAdapter.OnRetrieveButtonCli
 
     override fun onRetrieveButtonClick(position: Int, retrieveQuantity: String, stocksQuantity : String) {
         when {
-            retrieveQuantity.isEmpty() || retrieveQuantity == "" -> Toast.makeText(context, "Enter stocks to retrieve", Toast.LENGTH_SHORT).show()
-            retrieveQuantity.toInt() == 0 -> Toast.makeText(context, "Enter valid number of stocks", Toast.LENGTH_SHORT).show()
-            retrieveQuantity.toLong() > stocksQuantity.toLong() -> Toast.makeText(context, "Insufficient stocks to retrieve", Toast.LENGTH_SHORT).show()
+            retrieveQuantity.isEmpty() || retrieveQuantity == "" -> context?.toast("Enter stocks to retrieve")
+            retrieveQuantity.toInt() == 0 -> context?.toast("Enter valid number of stocks")
+            retrieveQuantity.toLong() > stocksQuantity.toLong() -> context?.toast("Insufficient stocks to retrieve")
             else -> doAsync {
                 val retrieveStocksResponse = actionServiceBlockingStub.retrieveMortgageStocks(
                         RetrieveMortgageStocksRequest.newBuilder().setStockId(mortgageDetailsList[position].stockId)
                                 .setStockQuantity(retrieveQuantity.toLong()).setRetrievePrice(mortgageDetailsList[position].mortgagePrice).build())
                 uiThread {
                     if (retrieveStocksResponse.statusCode == RetrieveMortgageStocksResponse.StatusCode.OK)
-                        Toast.makeText(context, "Transaction successful", Toast.LENGTH_SHORT).show()
+                        context?.toast( "Transaction successful")
                     else
-                        Toast.makeText(context, retrieveStocksResponse.statusMessage, Toast.LENGTH_SHORT).show()
+                        context?.toast(retrieveStocksResponse.statusMessage)
                 }
             }
         }

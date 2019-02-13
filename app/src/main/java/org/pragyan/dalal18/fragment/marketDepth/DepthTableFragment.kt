@@ -10,7 +10,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
@@ -22,6 +21,7 @@ import dalalstreet.api.datastreams.*
 import io.grpc.stub.StreamObserver
 import kotlinx.android.synthetic.main.fragment_depth_table.*
 import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.toast
 import org.jetbrains.anko.uiThread
 import org.pragyan.dalal18.R
 import org.pragyan.dalal18.adapter.MarketDepthRecyclerAdapter
@@ -162,7 +162,7 @@ class DepthTableFragment : Fragment() {
                                 subscriptionId = value.subscriptionId
                                 getMarketDepth(value.subscriptionId)
                             } else {
-                                uiThread { Toast.makeText(context, "Server internal error", Toast.LENGTH_SHORT).show() }
+                                uiThread { context?.toast("Server internal error") }
                             }
                             onCompleted()
                         }
@@ -245,7 +245,7 @@ class DepthTableFragment : Fragment() {
                         object : StreamObserver<UnsubscribeResponse> {
                             override fun onNext(value: UnsubscribeResponse) {
                                 if (value.statusCode.number != 0)
-                                    Toast.makeText(context, "Server internal error", Toast.LENGTH_SHORT).show()
+                                    context?.toast("Server internal error")
                                 onCompleted()
                             }
 

@@ -9,7 +9,6 @@ import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.fragment.app.Fragment
@@ -27,6 +26,7 @@ import dalalstreet.api.actions.GetMarketEventsRequest
 import dalalstreet.api.actions.GetMarketEventsResponse
 import kotlinx.android.synthetic.main.fragment_home.*
 import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.toast
 import org.jetbrains.anko.uiThread
 import org.pragyan.dalal18.R
 import org.pragyan.dalal18.adapter.CompanyTickerRecyclerAdapter
@@ -150,7 +150,7 @@ class HomeFragment : Fragment(), NewsRecyclerAdapter.NewsItemClickListener, Swip
                         }
 
                     } else {
-                        Toast.makeText(context, marketEventsResponse.statusMessage, Toast.LENGTH_SHORT).show()
+                        context?.toast(marketEventsResponse.statusMessage)
                     }
                 }
             } else {
@@ -160,10 +160,10 @@ class HomeFragment : Fragment(), NewsRecyclerAdapter.NewsItemClickListener, Swip
     }
 
     private fun showNewsAvailable(show: Boolean) {
-        loadingNews_textView?.text = if(show) getString(R.string.getting_latest_news) else getString(R.string.news_not_available)
-        loadingNewsHomeFragmentProgressBar?.visibility = if(show) View.VISIBLE else View.GONE
-        loadingNewsRelativeLayout?.visibility = if(show) View.GONE else View.VISIBLE
-        newsRecyclerView?.visibility = if(show) View.VISIBLE else View.GONE
+        loadingNews_textView?.text = if (show) getString(R.string.getting_latest_news) else getString(R.string.news_not_available)
+        loadingNewsHomeFragmentProgressBar?.visibility = if (show) View.VISIBLE else View.GONE
+        loadingNewsRelativeLayout?.visibility = if (show) View.GONE else View.VISIBLE
+        newsRecyclerView?.visibility = if (show) View.VISIBLE else View.GONE
     }
 
     override fun onAttach(context: Context) {
