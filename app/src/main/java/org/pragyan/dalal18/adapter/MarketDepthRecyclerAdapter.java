@@ -14,12 +14,14 @@ import android.widget.TextView;
 import org.pragyan.dalal18.R;
 import org.pragyan.dalal18.data.MarketDepth;
 
+import java.text.DecimalFormat;
 import java.util.List;
 
 public class MarketDepthRecyclerAdapter extends RecyclerView.Adapter<MarketDepthRecyclerAdapter.MyViewHolder> {
 
     private Context context;
     private List<MarketDepth> marketDepthList;
+    private DecimalFormat df;
 
     public MarketDepthRecyclerAdapter(Context context, List<MarketDepth> marketDepthList) {
         this.context = context;
@@ -41,7 +43,8 @@ public class MarketDepthRecyclerAdapter extends RecyclerView.Adapter<MarketDepth
             holder.price.setTextColor(ContextCompat.getColor(context, R.color.neon_blue));
             holder.volume.setTextColor(ContextCompat.getColor(context, R.color.neon_blue));
         }else {
-            holder.price.setText(fromHtml(String.valueOf(price)));
+            df = new DecimalFormat("##,##,###");
+            holder.price.setText(fromHtml(String.valueOf(df.format(price))));
         }
         holder.volume.setText(String.valueOf(marketDepthList.get(position).getVolume()));
     }

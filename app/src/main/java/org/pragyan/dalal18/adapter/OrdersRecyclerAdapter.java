@@ -15,6 +15,7 @@ import org.pragyan.dalal18.data.Order;
 import org.pragyan.dalal18.utils.Constants;
 import org.pragyan.dalal18.utils.StockUtils;
 
+import java.text.DecimalFormat;
 import java.util.Collections;
 import java.util.List;
 
@@ -26,6 +27,7 @@ public class OrdersRecyclerAdapter extends RecyclerView.Adapter<OrdersRecyclerAd
     private Context context;
     private List<Order> orderList;
     private OnOrderClickListener listener;
+    private DecimalFormat df;
 
     public interface OnOrderClickListener {
         void onOrderClick(int orderId, boolean bid);
@@ -68,8 +70,9 @@ public class OrdersRecyclerAdapter extends RecyclerView.Adapter<OrdersRecyclerAd
             holder.priceTextView.setVisibility(View.GONE);
         } else {
             holder.priceTextView.setVisibility(View.VISIBLE);
+            df = new DecimalFormat("##,##,###");
             tempString = (order.getStockQuantityFulfilled() == 0 ? "Placed " : order.getStockQuantity() == order.getStockQuantityFulfilled() ? "Filled" : "Partially Filled") + " at " +
-                    Constants.RUPEE_SYMBOL + " " + String.valueOf(order.getPrice() + "/stock");
+                    Constants.RUPEE_SYMBOL + " " + String.valueOf(df.format(order.getPrice()) + "/stock");
             holder.priceTextView.setText(tempString);
         }
 

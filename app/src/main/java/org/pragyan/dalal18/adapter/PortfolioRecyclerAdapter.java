@@ -9,6 +9,7 @@ import android.widget.TextView;
 import org.pragyan.dalal18.R;
 import org.pragyan.dalal18.data.Portfolio;
 
+import java.text.DecimalFormat;
 import java.util.List;
 
 import androidx.annotation.NonNull;
@@ -19,6 +20,7 @@ public class PortfolioRecyclerAdapter extends RecyclerView.Adapter<PortfolioRecy
 
     private Context context;
     private List<Portfolio> portfolioList;
+    private DecimalFormat df;
 
     public PortfolioRecyclerAdapter(Context context, List<Portfolio> portfolioList) {
         this.context = context;
@@ -42,17 +44,17 @@ public class PortfolioRecyclerAdapter extends RecyclerView.Adapter<PortfolioRecy
         else
             holder.companyNameTextView.setText(currentPortfolioItem.getCompanyName());
 
-        holder.priceTextView.setText(String.valueOf(currentPortfolioItem.getPrice()));
+        holder.priceTextView.setText(String.valueOf(df.format(currentPortfolioItem.getPrice())));
         if (currentPortfolioItem.getPreviousDayClose() > currentPortfolioItem.getPrice())
             holder.priceTextView.setTextColor(ContextCompat.getColor(context, R.color.neon_orange));
         else if (currentPortfolioItem.getPreviousDayClose() < currentPortfolioItem.getPrice())
             holder.priceTextView.setTextColor(ContextCompat.getColor(context, R.color.neon_green));
         else
             holder.priceTextView.setTextColor(ContextCompat.getColor(context, R.color.neutral_font_color));
+        df = new DecimalFormat("##,##,###");
+        holder.quantityTextView.setText(String.valueOf(df.format(currentPortfolioItem.getQuantityOwned())));
 
-        holder.quantityTextView.setText(String.valueOf(currentPortfolioItem.getQuantityOwned()));
-
-        holder.worthTextView.setText(String.valueOf(currentPortfolioItem.getPrice() * currentPortfolioItem.getQuantityOwned()));
+        holder.worthTextView.setText(String.valueOf(df.format(currentPortfolioItem.getPrice() * currentPortfolioItem.getQuantityOwned())));
     }
 
     @Override

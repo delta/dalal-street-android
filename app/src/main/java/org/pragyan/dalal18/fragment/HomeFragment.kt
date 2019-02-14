@@ -38,6 +38,7 @@ import org.pragyan.dalal18.data.DalalViewModel
 import org.pragyan.dalal18.data.NewsDetails
 import org.pragyan.dalal18.utils.ConnectionUtils
 import org.pragyan.dalal18.utils.Constants
+import java.text.DecimalFormat
 import javax.inject.Inject
 
 class HomeFragment : Fragment(), NewsRecyclerAdapter.NewsItemClickListener, SwipeRefreshLayout.OnRefreshListener,
@@ -197,8 +198,8 @@ class HomeFragment : Fragment(), NewsRecyclerAdapter.NewsItemClickListener, Swip
 
         val builder = StringBuilder("")
         for ((_, shortName, _, _, price, _, _, _, up) in model.globalStockDetails) {
-
-            builder.append(shortName).append(" : ").append(price)
+            val df = DecimalFormat("##,##,###")
+            builder.append(shortName).append(" : ").append(df.format(price))
             if (activity != null) {
                 builder.append(if (up == 1) "\u2191" else "\u2193")
             }

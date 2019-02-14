@@ -15,6 +15,7 @@ import org.pragyan.dalal18.data.CompanyTickerDetails;
 import org.pragyan.dalal18.utils.Constants;
 import com.squareup.picasso.Picasso;
 
+import java.text.DecimalFormat;
 import java.util.List;
 
 public class CompanyTickerRecyclerAdapter extends RecyclerView.Adapter<CompanyTickerRecyclerAdapter.MyViewHolder> {
@@ -22,6 +23,7 @@ public class CompanyTickerRecyclerAdapter extends RecyclerView.Adapter<CompanyTi
     private Context context;
     private List<CompanyTickerDetails> companyTickerDetailsList;
     private OnCompanyTickerClickListener listener;
+    private DecimalFormat df;
 
     public interface OnCompanyTickerClickListener {
         void onCompanyTickerClick(View view, int position);
@@ -50,7 +52,8 @@ public class CompanyTickerRecyclerAdapter extends RecyclerView.Adapter<CompanyTi
 
         holder.arrowImageView.setImageResource(currentCompanyTickerDetails.isUp()? R.drawable.arrow_up_green : R.drawable.arrow_down_red);
 
-        String worthString = Constants.RUPEE_SYMBOL + String.valueOf(currentCompanyTickerDetails.getPreviousDayClose());
+        df = new DecimalFormat("##,##,###");
+        String worthString = Constants.RUPEE_SYMBOL + String.valueOf(df.format(currentCompanyTickerDetails.getPreviousDayClose()));
         holder.previousDayCloseTextView.setText(worthString);
 
         if (currentCompanyTickerDetails.getImageUrl() != null) {

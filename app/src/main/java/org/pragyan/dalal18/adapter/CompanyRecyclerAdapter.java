@@ -9,6 +9,7 @@ import android.widget.TextView;
 import org.pragyan.dalal18.R;
 import org.pragyan.dalal18.data.CompanyDetails;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -22,6 +23,7 @@ public class CompanyRecyclerAdapter extends RecyclerView.Adapter<CompanyRecycler
     private Context context;
     private List<CompanyDetails> list;
     private OnCompanyClickListener listener;
+    private DecimalFormat df;
 
     public interface OnCompanyClickListener {
         void onCompanyClick(View view, int position);
@@ -50,8 +52,8 @@ public class CompanyRecyclerAdapter extends RecyclerView.Adapter<CompanyRecycler
         } else {
             holder.companyNameTextView.setText(currentCompanyDetails.getCompany());
         }
-
-        String temporaryString = String.valueOf(currentCompanyDetails.getValue()) + "/stock";
+        df = new DecimalFormat("##,##,###");
+        String temporaryString = String.valueOf(df.format(currentCompanyDetails.getValue())) + "/stock";
         holder.priceTextView.setText(temporaryString);
 
         double diff = (double)(currentCompanyDetails.getValue() - currentCompanyDetails.getPreviousDayClose()) / (double)currentCompanyDetails.getPreviousDayClose() * 100.0;
