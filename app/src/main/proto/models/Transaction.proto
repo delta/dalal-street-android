@@ -11,15 +11,17 @@ enum TransactionType {
     DIVIDEND_TRANSACTION = 3;
     ORDER_FEE_TRANSACTION = 4;
     TAX_TRANSACTION = 5;
+    PLACE_ORDER_TRANSACTION = 6;
+    CANCEL_ORDER_TRANSACTION = 7;
 }
 
 message Transaction {
-    uint32 id = 1;
-    uint32 user_id = 2;
-    uint32 stock_id = 3;
-    TransactionType type = 4;
-    int64 stock_quantity = 5;
-    uint64 price = 6;
-    int64 total = 7;
-    string created_at = 8;
+  uint32 id = 1;
+  uint32 user_id = 2;
+  uint32 stock_id = 3;
+  TransactionType type = 4;
+  int64 stock_quantity = 5;
+  uint64 price = 6;
+  int64 total = 7;
+  string created_at = 8;
 }

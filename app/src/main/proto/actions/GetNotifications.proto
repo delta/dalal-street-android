@@ -1,9 +1,9 @@
 syntax = "proto3";
 package dalalstreet.api.actions;
 
-option java_multiple_files=true;
-
 import "models/Notification.proto";
+
+option java_multiple_files=true;
 
 message GetNotificationsRequest {
     uint32 last_notification_id = 1;

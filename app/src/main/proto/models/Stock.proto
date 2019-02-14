@@ -19,6 +19,7 @@ message Stock {
   bool up_or_down = 12;
   uint64 previous_day_close = 13;
   uint64 last_trade_price = 14;
-  string created_at = 15;
-  string updated_at = 16;
+  double real_avg_price = 15;
+  string created_at = 16;
+  string updated_at = 17;
 }
