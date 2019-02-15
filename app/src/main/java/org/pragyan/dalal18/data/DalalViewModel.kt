@@ -9,6 +9,9 @@ class DalalViewModel : ViewModel() {
 
     lateinit var ownedStockDetails: MutableList<StockDetails>
     lateinit var globalStockDetails: MutableList<GlobalStockDetails>
+    lateinit var reservedStockDetails: MutableList<StockDetails>
+
+    var reservedCash = 0L
 
     fun updateGlobalStock(position: Int, price: Long, quantityInMarket: Long, quantityInExchange: Long) {
         globalStockDetails[position].price = price
@@ -28,5 +31,27 @@ class DalalViewModel : ViewModel() {
         for (currentStockDetails in globalStockDetails) {
             stockIdCompanyNameList.add(StockIdCompanyName(currentStockDetails.stockId, currentStockDetails.fullName, currentStockDetails.shortName))
         }
+    }
+
+    /* If quantity is positive it means user is getting back stocks as he cancelled an order so here reservedStocks will decrease
+       when quantity is negative it means stocks reserved because he place new order so here reservedStocks will increase */
+    fun updateReservedStocks(stockId: Int, quantity: Long) {
+        for (currentStock in reservedStockDetails)
+            if (currentStock.stockId == stockId) {
+                currentStock.quantity -= quantity
+                return
+            }
+
+        reservedStockDetails.add(StockDetails(stockId, -quantity)) // It means new stocks reserved
+    }
+
+    fun updateStocksOwned(stockId: Int, quantity: Long) {
+        for (currentStock in ownedStockDetails)
+            if (currentStock.stockId == stockId) {
+                currentStock.quantity += quantity
+                return
+            }
+
+        ownedStockDetails.add(StockDetails(stockId, quantity)) // It means new stock company added
     }
 }

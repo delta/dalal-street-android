@@ -167,7 +167,17 @@ class LoginActivity : AppCompatActivity() {
 
                         for (i in 1..Constants.NUMBER_OF_COMPANIES) {
                             if (stocksOwnedMap.containsKey(i)) {
-                                stocksOwnedList.add(StockDetails(i, stocksOwnedMap[i]!!))
+                                stocksOwnedList.add(StockDetails(i, stocksOwnedMap.getValue(i)))
+                            }
+                        }
+
+                        // Adding user's reserved assets details
+                        val reservedStocksList = ArrayList<StockDetails>(30)
+                        val reservedStocksMap = loginResponse.reservedStocksOwnedMap.orEmpty()
+
+                        for (i in 1..Constants.NUMBER_OF_COMPANIES) {
+                            if (reservedStocksMap.containsKey(i)) {
+                                reservedStocksList.add(StockDetails(i, reservedStocksMap.getValue(i)))
                             }
                         }
 
@@ -199,10 +209,12 @@ class LoginActivity : AppCompatActivity() {
                         intent.putExtra(Constants.USERNAME_KEY, loginResponse.user.name)
                         intent.putExtra(MainActivity.CASH_WORTH_KEY, loginResponse.user.cash)
                         intent.putExtra(MainActivity.TOTAL_WORTH_KEY, loginResponse.user.total)
+                        intent.putExtra(MainActivity.RESERVED_CASH_KEY, loginResponse.user.reservedCash)
                         intent.putExtra(Constants.MARKET_OPEN_KEY, loginResponse.isMarketOpen)
 
                         intent.putParcelableArrayListExtra(MainActivity.STOCKS_OWNED_KEY, stocksOwnedList)
                         intent.putParcelableArrayListExtra(MainActivity.GLOBAL_STOCKS_KEY, globalStockList)
+                        intent.putParcelableArrayListExtra(MainActivity.RESERVED_STOCKS_KEY, reservedStocksList)
 
                         for ((key, value) in loginResponse.constantsMap) {
                             when (key) {

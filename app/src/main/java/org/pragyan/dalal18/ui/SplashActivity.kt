@@ -4,7 +4,6 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.graphics.Color
 import android.os.Bundle
-import android.os.Handler
 import android.view.View
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -89,8 +88,7 @@ class SplashActivity : AppCompatActivity() {
     private fun loginAsynchronously(email: String, password: String) {
         doAsync {
             if (ConnectionUtils.getConnectionInfo(this@SplashActivity)) {
-
-                if (ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)){
+                if (ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
                     val sessionId = preferences.getString(Constants.SESSION_KEY, null)
 
                     if (sessionId != null) {
@@ -111,6 +109,16 @@ class SplashActivity : AppCompatActivity() {
                                 for (i in 1..Constants.NUMBER_OF_COMPANIES) {
                                     if (stocksOwnedMap.containsKey(i)) {
                                         stocksOwnedList.add(StockDetails(i, stocksOwnedMap[i]!!))
+                                    }
+                                }
+
+                                // Adding user's reserved assets details
+                                val reservedStocksList = ArrayList<StockDetails>(30)
+                                val reservedStocksMap = loginResponse.reservedStocksOwnedMap.orEmpty()
+
+                                for (i in 1..Constants.NUMBER_OF_COMPANIES) {
+                                    if (reservedStocksMap.containsKey(i)) {
+                                        reservedStocksList.add(StockDetails(i, reservedStocksMap.getValue(i)))
                                     }
                                 }
 
@@ -144,9 +152,13 @@ class SplashActivity : AppCompatActivity() {
                                     putExtra(USERNAME_KEY, loginResponse.user.name)
                                     putExtra(MainActivity.CASH_WORTH_KEY, loginResponse.user.cash)
                                     putExtra(MainActivity.TOTAL_WORTH_KEY, loginResponse.user.total)
+                                    intent.putExtra(MainActivity.RESERVED_CASH_KEY, loginResponse.user.reservedCash)
                                     putExtra(MARKET_OPEN_KEY, loginResponse.isMarketOpen)
 
+                                    putParcelableArrayListExtra(MainActivity.STOCKS_OWNED_KEY, stocksOwnedList)
+                                    putParcelableArrayListExtra(MainActivity.GLOBAL_STOCKS_KEY, globalStockList)
 
+                                    putParcelableArrayListExtra(MainActivity.RESERVED_STOCKS_KEY, reservedStocksList)
                                     putParcelableArrayListExtra(MainActivity.STOCKS_OWNED_KEY, stocksOwnedList)
                                     putParcelableArrayListExtra(MainActivity.GLOBAL_STOCKS_KEY, globalStockList)
                                 }
@@ -156,7 +168,7 @@ class SplashActivity : AppCompatActivity() {
                                     when (key) {
                                         "MORTGAGE_DEPOSIT_RATE" -> Constants.MORTGAGE_DEPOSIT_RATE = value.toDouble()
                                         "MORTGAGE_RETRIEVE_RATE" -> Constants.MORTGAGE_RETRIEVE_RATE = value.toDouble()
-                                        "ORDER_FEE_PERCENT" -> Constants.ORDER_FEE_RATE = (value.toDouble()/100)
+                                        "ORDER_FEE_PERCENT" -> Constants.ORDER_FEE_RATE = (value.toDouble() / 100)
                                         "ORDER_PRICE_WINDOW" -> Constants.ORDER_PRICE_WINDOW = value
                                     }
                                 }
@@ -173,6 +185,7 @@ class SplashActivity : AppCompatActivity() {
                                 startActivity(Intent(this@SplashActivity, LoginActivity::class.java))
                                 finish()
                             }
+
                         }
                     } else {
                         uiThread { startLoginActivity() }
@@ -188,6 +201,7 @@ class SplashActivity : AppCompatActivity() {
                     snackBar.show()
                     splashTextView.setText(R.string.error_signing_in)
                 }
+
             } else /* No internet available */ {
                 uiThread {
 
