@@ -446,6 +446,10 @@
     <string name="error_check_internet">Please check your internet connection</string>
     <string name="retry">Retry</string>
     <string name="error">Error</string>
+    <string name="cash_reserved">Cash Reserved</string>
+    <string name="stocks_reserved">Stocks Reserved</string>
+    <string name="cash_restored">Cash Restored</string>
+    <string name="stocks_restored">Stocks Restored</string>
     <string-array name="intervalType">
         <item>1 min</item>
         <item>5 mins</item>

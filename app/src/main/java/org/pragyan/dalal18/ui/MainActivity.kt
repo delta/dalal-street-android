@@ -37,10 +37,11 @@ import org.pragyan.dalal18.R
 import org.pragyan.dalal18.dagger.ContextModule
 import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent
 import org.pragyan.dalal18.data.DalalViewModel
-import org.pragyan.dalal18.data.StockDetails
 import org.pragyan.dalal18.fragment.mortgage.MortgageFragment
 import org.pragyan.dalal18.notifications.NotificationService
 import org.pragyan.dalal18.utils.*
+import org.pragyan.dalal18.utils.Constants.REFRESH_OWNED_STOCKS_ACTION
+import org.pragyan.dalal18.utils.Constants.REFRESH_RESERVED_ASSETS_ACTION
 import org.pragyan.dalal18.utils.MiscellaneousUtils.getNumberOfPlayersOnline
 import java.text.DecimalFormat
 import java.util.*
@@ -83,8 +84,12 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
                     changeTextViewValue(cashWorthTextView, cashIndicatorImageView, intent.getLongExtra(TOTAL_WORTH_KEY, 0), true)
                 }
 
-                REFRESH_CASH_ACTION -> {
+                REFRESH_CASH_AND_TOTAL_ACTION -> {
                     changeTextViewValue(totalWorthTextView, totalIndicatorImageVIew, intent.getLongExtra(TOTAL_WORTH_KEY, 0), true)
+                    changeTextViewValue(cashWorthTextView, cashIndicatorImageView, intent.getLongExtra(TOTAL_WORTH_KEY, 0), true)
+                }
+
+                REFRESH_CASH_ACTION -> {
                     changeTextViewValue(cashWorthTextView, cashIndicatorImageView, intent.getLongExtra(TOTAL_WORTH_KEY, 0), true)
                 }
 
@@ -113,9 +118,11 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
 
         model.ownedStockDetails = intent.getParcelableArrayListExtra(STOCKS_OWNED_KEY)
         model.globalStockDetails = intent.getParcelableArrayListExtra(GLOBAL_STOCKS_KEY)
+        model.reservedStockDetails = intent.getParcelableArrayListExtra(RESERVED_STOCKS_KEY)
+        model.reservedCash = intent.getLongExtra(RESERVED_CASH_KEY, 0)
         model.createCompanyArrayFromGlobalStockDetails()
 
-        updateWorthTextViews()
+        setupWorthTextViews()
 
         startMakingButtonsTransparent()
         updateStockWorthViaStreamUpdates(intent.getLongExtra(CASH_WORTH_KEY, 0))
@@ -132,10 +139,18 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
         drawerEdgeButton.setOnClickListener { mainDrawerLayout.openDrawer(GravityCompat.START, true) }
 
         val navController = findNavController(R.id.main_host_fragment)
-        stocksInHandTextView.setOnClickListener {
+        val worthViewClickListener = View.OnClickListener {
             contentView?.hideKeyboard()
             navController.navigate(R.id.portfolio_dest, null, NavOptions.Builder().setPopUpTo(R.id.home_dest, false).build())
         }
+
+        // Tried to use single view didn't work; It took up toolbar space also
+        totalInHandTextView.setOnClickListener(worthViewClickListener)
+        totalWorthTextView.setOnClickListener(worthViewClickListener)
+        cashInHandTextView.setOnClickListener(worthViewClickListener)
+        cashWorthTextView.setOnClickListener(worthViewClickListener)
+        stocksInHandTextView.setOnClickListener(worthViewClickListener)
+        stockWorthTextView.setOnClickListener(worthViewClickListener)
     }
 
     // Adding and setting up Navigation drawer
@@ -255,22 +270,6 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
         }
     }
 
-    private fun updateWorthTextViews() {
-
-        val cashWorth = intent.getLongExtra(CASH_WORTH_KEY, -1)
-        val totalWorth = intent.getLongExtra(TOTAL_WORTH_KEY, -1)
-        val stockWorth = totalWorth - cashWorth
-
-        var oldValue = cashWorthTextView.text.toString().replace(",", "").toLong()
-        animateWorthChange(oldValue, cashWorth, cashWorthTextView, cashIndicatorImageView)
-
-        oldValue = stockWorthTextView.text.toString().replace(",", "").toLong()
-        animateWorthChange(oldValue, stockWorth, stockWorthTextView, stockIndicatorImageView)
-
-        oldValue = totalWorthTextView.text.toString().replace(",", "").toLong()
-        animateWorthChange(oldValue, totalWorth, totalWorthTextView, totalIndicatorImageVIew)
-    }
-
     // Subscribes to transaction stream and gets updates (TESTED)
     private fun subscribeToTransactionsStream(transactionsSubscriptionId: SubscriptionId) {
 
@@ -282,23 +281,34 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
 
                         when (transaction.type) {
                             TransactionType.DIVIDEND_TRANSACTION -> {
-                                val intent = Intent(REFRESH_CASH_ACTION)
+                                val intent = Intent(REFRESH_CASH_AND_TOTAL_ACTION)
                                 intent.putExtra(TOTAL_WORTH_KEY, transaction.total)
                                 LocalBroadcastManager.getInstance(this@MainActivity).sendBroadcast(intent)
                             }
 
-                            TransactionType.ORDER_FILL_TRANSACTION -> {
-                                updateOwnedStockIdAndQuantity(transaction.stockId, Math.abs(transaction.stockQuantity), transaction.stockQuantity > 0)
+                            TransactionType.ORDER_FILL_TRANSACTION -> { // transaction.total = -(stockTradePrice * stockTradeQty) + reservedCash
+                                if(transaction.stockQuantity > 0) {  // Bid order transaction which means cash was reserved and user gains stocks
+                                    model.updateStocksOwned(transaction.stockId, transaction.stockQuantity)
+                                    model.reservedCash -= (transaction.stockQuantity * transaction.price + transaction.total)
 
-                                val intent = Intent(REFRESH_WORTH_TEXTVIEW_ACTION)
-                                intent.putExtra(TOTAL_WORTH_KEY, transaction.total)
-                                LocalBroadcastManager.getInstance(this@MainActivity).sendBroadcast(intent)
-                                LocalBroadcastManager.getInstance(this@MainActivity).sendBroadcast(Intent(Constants.REFRESH_OWNED_STOCKS_ACTION))
+                                    // It will refresh all 3 worth TextViews
+                                    val intent = Intent(REFRESH_WORTH_TEXTVIEW_ACTION)
+                                    intent.putExtra(TOTAL_WORTH_KEY, transaction.total)
+                                    LocalBroadcastManager.getInstance(this@MainActivity).sendBroadcast(intent)
+                                    LocalBroadcastManager.getInstance(this@MainActivity).sendBroadcast(Intent(Constants.REFRESH_OWNED_STOCKS_ACTION))
+
+                                } else { // Ask order transaction which means stocks were reserved and OrderFill made user gain cash
+                                    model.updateReservedStocks(transaction.stockId, Math.abs(transaction.stockQuantity))
+                                    val intent = Intent(REFRESH_CASH_ACTION)
+                                    intent.putExtra(TOTAL_WORTH_KEY, transaction.total)
+                                    LocalBroadcastManager.getInstance(this@MainActivity).sendBroadcast(intent)
+                                }
+                                LocalBroadcastManager.getInstance(this@MainActivity).sendBroadcast(Intent(REFRESH_RESERVED_ASSETS_ACTION))
                             }
 
                             TransactionType.FROM_EXCHANGE_TRANSACTION -> {
 
-                                updateOwnedStockIdAndQuantity(transaction.stockId, transaction.stockQuantity, true)
+                                model.updateStocksOwned(transaction.stockId, transaction.stockQuantity)
 
                                 val intent = Intent(REFRESH_WORTH_TEXTVIEW_ACTION)
                                 intent.putExtra(TOTAL_WORTH_KEY, transaction.total)
@@ -307,7 +317,7 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
 
                             TransactionType.MORTGAGE_TRANSACTION -> /* Meant for MORTGAGE TRANSACTION type; While retrieving stockQuantity is positive */ {
 
-                                updateOwnedStockIdAndQuantity(transaction.stockId, transaction.stockQuantity, true)
+                                model.updateStocksOwned(transaction.stockId, transaction.stockQuantity)
 
                                 var intent = Intent(REFRESH_WORTH_TEXTVIEW_ACTION)
                                 intent.putExtra(TOTAL_WORTH_KEY, transaction.total)
@@ -321,19 +331,48 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
                             }
 
                             TransactionType.TAX_TRANSACTION -> {
-                                val intent = Intent(REFRESH_CASH_ACTION)
+                                val intent = Intent(REFRESH_CASH_AND_TOTAL_ACTION)
                                 intent.putExtra(TOTAL_WORTH_KEY, transaction.total)
                                 LocalBroadcastManager.getInstance(this@MainActivity).sendBroadcast(intent)
                             }
 
                             TransactionType.ORDER_FEE_TRANSACTION -> {
-                                val intent = Intent(REFRESH_CASH_ACTION)
+                                val intent = Intent(REFRESH_CASH_AND_TOTAL_ACTION)
                                 intent.putExtra(TOTAL_WORTH_KEY, transaction.total)
                                 LocalBroadcastManager.getInstance(this@MainActivity).sendBroadcast(intent)
                             }
 
-                            else -> {
+                            TransactionType.PLACE_ORDER_TRANSACTION -> {
+                                if(transaction.total != 0L) { // Cash reserved; here transaction.total will be negative as reserveCash is taken from actual cash
+                                    model.reservedCash += Math.abs(transaction.total)
+                                    val intent = Intent(REFRESH_CASH_ACTION)
+                                    intent.putExtra(TOTAL_WORTH_KEY, transaction.total)
+                                    LocalBroadcastManager.getInstance(this@MainActivity).sendBroadcast(intent)
+                                } else {
+                                    model.updateReservedStocks(transaction.stockId, transaction.stockQuantity) // stockQuantity will be negative
+                                    model.updateStocksOwned(transaction.stockId, transaction.stockQuantity)
+                                    LocalBroadcastManager.getInstance(this@MainActivity).sendBroadcast(Intent(REFRESH_OWNED_STOCKS_ACTION))
+                                    LocalBroadcastManager.getInstance(this@MainActivity).sendBroadcast(Intent(UPDATE_WORTH_VIA_STREAM_ACTION))
+                                }
+                                LocalBroadcastManager.getInstance(this@MainActivity).sendBroadcast(Intent(REFRESH_RESERVED_ASSETS_ACTION))
+                            }
 
+                            TransactionType.CANCEL_ORDER_TRANSACTION -> {
+                                if(transaction.total != 0L) { // Here transaction.total will be positive
+                                    model.reservedCash -= Math.abs(transaction.total)
+                                    val intent = Intent(REFRESH_CASH_ACTION)
+                                    intent.putExtra(TOTAL_WORTH_KEY, transaction.total)
+                                    LocalBroadcastManager.getInstance(this@MainActivity).sendBroadcast(intent)
+                                } else {
+                                    model.updateReservedStocks(transaction.stockId, transaction.stockQuantity) // stockQuantity will be positive
+                                    model.updateStocksOwned(transaction.stockId, transaction.stockQuantity)
+                                    LocalBroadcastManager.getInstance(this@MainActivity).sendBroadcast(Intent(UPDATE_WORTH_VIA_STREAM_ACTION))
+                                }
+                                LocalBroadcastManager.getInstance(this@MainActivity).sendBroadcast(Intent(REFRESH_RESERVED_ASSETS_ACTION))
+                            }
+
+                            else -> {
+                                // Do nothing
                             }
                         }
                     }
@@ -431,30 +470,6 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
                 })
     }
 
-    // Method called when user's stock quantity changes (called from Transactions stream update)
-    private fun updateOwnedStockIdAndQuantity(stockId: Int, stockQuantity: Long, increase: Boolean) {
-
-        var isPresentInList = false
-
-        for (currentOwnedStockDetails in model.ownedStockDetails) {
-            if (currentOwnedStockDetails.stockId == stockId) {
-
-                if (increase)
-                    currentOwnedStockDetails.quantity += stockQuantity
-                else
-                    currentOwnedStockDetails.quantity -= stockQuantity
-
-                isPresentInList = true
-
-                break
-            }
-        }
-
-        if (!isPresentInList && increase) {
-            model.addNewOwnedStock(StockDetails(stockId, stockQuantity))
-        }
-    }
-
     // Unsubscribes from all streams
     private fun unsubscribeFromAllStreams() {
         doAsync {
@@ -485,8 +500,30 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
         var oldValue = stockWorthTextView.text.toString().replace(",", "").toLong()
         animateWorthChange(oldValue, netStockWorth, stockWorthTextView, stockIndicatorImageView)
 
+        // We need to add reserved stocks worth to calculate total worth
+        for ((stockId, quantity) in model.reservedStockDetails) {
+            for ((_, _, stockId1, _, price) in model.globalStockDetails) {
+                if (stockId1 == stockId) {
+                    rate = price
+                    break
+                }
+            }
+            netStockWorth += quantity * rate
+        }
+
         oldValue = totalWorthTextView.text.toString().replace(",", "").toLong()
-        animateWorthChange(oldValue, netStockWorth + oldCash, totalWorthTextView, totalIndicatorImageVIew)
+        animateWorthChange(oldValue, netStockWorth + oldCash + model.reservedCash, totalWorthTextView, totalIndicatorImageVIew)
+    }
+
+    // Initial setup, called in activity's onCreate()
+    private fun setupWorthTextViews() {
+
+        // Initial old value is 0; Zero is placeholder
+        val cashWorth = intent.getLongExtra(CASH_WORTH_KEY, -1)
+        animateWorthChange(0, cashWorth, cashWorthTextView, cashIndicatorImageView)
+
+        // Updates stockWorthTextView and totalWorthTextView
+        updateStockWorthViaStreamUpdates(cashWorth)
     }
 
     // Increases/decreases text view value depending on input parameters
@@ -518,6 +555,9 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
 
     @Synchronized
     private fun animateWorthChange(oldValue: Long, newValue: Long, textView: TextView, indicatorImageView: ImageView) {
+
+        if(newValue == oldValue) return
+
         val formatter = DecimalFormat(Constants.PRICE_FORMAT)
         val valueAnimator = ValueAnimator.ofObject(LongEvaluator(), oldValue, newValue)
         valueAnimator.duration = 450
@@ -548,9 +588,10 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
 
         subscribeToStreamsAsynchronously()
 
-        val intentFilter = IntentFilter(REFRESH_CASH_ACTION)
+        val intentFilter = IntentFilter(REFRESH_CASH_AND_TOTAL_ACTION)
         intentFilter.addAction(REFRESH_WORTH_TEXTVIEW_ACTION)
         intentFilter.addAction(UPDATE_WORTH_VIA_STREAM_ACTION)
+        intentFilter.addAction(REFRESH_CASH_ACTION)
         LocalBroadcastManager.getInstance(this).registerReceiver(refreshCashStockReceiver, IntentFilter(intentFilter))
 
         notifIntent = Intent(this, NotificationService::class.java)
@@ -652,11 +693,14 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
 
         const val CASH_WORTH_KEY = "cash-worth-key"
         const val TOTAL_WORTH_KEY = "total-worth-key"
+        const val RESERVED_CASH_KEY = "reserved-cash-key"
         const val STOCKS_OWNED_KEY = "stocks-owned-key"
         const val GLOBAL_STOCKS_KEY = "global-stocks-key"
+        const val RESERVED_STOCKS_KEY = "reserved-stocks-key"
 
         private const val REFRESH_WORTH_TEXTVIEW_ACTION = "refresh-cash-worth-textview"
-        private const val REFRESH_CASH_ACTION = "refresh-hard-cash-worth-textview"
+        private const val REFRESH_CASH_ACTION = "refresh-hard-cash-action-textview"
+        private const val REFRESH_CASH_AND_TOTAL_ACTION = "refresh-cash-and-total-worth-textview"
         private const val UPDATE_WORTH_VIA_STREAM_ACTION = "refresh-worth-via-stream-action"
     }
 }

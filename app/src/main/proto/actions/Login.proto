@@ -31,4 +31,5 @@ message LoginResponse {
     string  market_is_open_hacky_notif = 8;
     string  market_is_closed_hacky_notif = 9;
     bool    is_market_open = 10;
+    map<uint32, int64>          reserved_stocks_owned = 11;
 }
