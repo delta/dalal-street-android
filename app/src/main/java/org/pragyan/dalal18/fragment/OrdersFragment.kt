@@ -17,6 +17,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import dalalstreet.api.DalalActionServiceGrpc
 import dalalstreet.api.DalalStreamServiceGrpc
 import dalalstreet.api.actions.CancelOrderRequest
+import dalalstreet.api.actions.CancelOrderResponse
 import dalalstreet.api.actions.GetMyOpenOrdersRequest
 import dalalstreet.api.actions.GetMyOpenOrdersResponse
 import dalalstreet.api.datastreams.*
@@ -33,7 +34,6 @@ import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent
 import org.pragyan.dalal18.data.Order
 import org.pragyan.dalal18.utils.ConnectionUtils
 import org.pragyan.dalal18.utils.Constants
-import java.util.*
 import javax.inject.Inject
 
 class OrdersFragment : Fragment(), OrdersRecyclerAdapter.OnOrderClickListener, SwipeRefreshLayout.OnRefreshListener {
@@ -44,18 +44,23 @@ class OrdersFragment : Fragment(), OrdersRecyclerAdapter.OnOrderClickListener, S
     @Inject
     lateinit var streamServiceStub: DalalStreamServiceGrpc.DalalStreamServiceStub
 
+    @Inject
+    lateinit var streamServiceBlockingStub: DalalStreamServiceGrpc.DalalStreamServiceBlockingStub
+
     private var ordersRecyclerAdapter: OrdersRecyclerAdapter? = null
     private var orderSubscriptionId: SubscriptionId? = null
 
     private var networkDownHandler: ConnectionUtils.OnNetworkDownHandler? = null
     private lateinit var loadingOrdersDialog: AlertDialog
 
+    private var openOrdersList = mutableListOf<Order>()
+
     override fun onAttach(context: Context) {
         super.onAttach(context)
         try {
             networkDownHandler = context as ConnectionUtils.OnNetworkDownHandler
         } catch (classCastException: ClassCastException) {
-            throw ClassCastException(context.toString() + " must implement network down handler.")
+            throw ClassCastException("$context must implement network down handler.")
         }
     }
 
@@ -74,7 +79,7 @@ class OrdersFragment : Fragment(), OrdersRecyclerAdapter.OnOrderClickListener, S
         ordersRecyclerAdapter = OrdersRecyclerAdapter(context, null, this)
         ordersRecycler_swipeRefreshLayout.setOnRefreshListener(this)
 
-        with (orders_recyclerView){
+        with(orders_recyclerView) {
             setHasFixedSize(false)
             adapter = ordersRecyclerAdapter
             layoutManager = LinearLayoutManager(context)
@@ -86,48 +91,32 @@ class OrdersFragment : Fragment(), OrdersRecyclerAdapter.OnOrderClickListener, S
 
         getOpenOrdersAsynchronously()
 
-        getMyOrdersSubscriptionId()
-
         tradeFloatingActionButton.setOnClickListener {
             findNavController().navigate(R.id.trade_dest)
         }
     }
 
     private fun getMyOrdersSubscriptionId() {
-        Thread {
-            streamServiceStub.subscribe(SubscribeRequest.newBuilder().setDataStreamType(DataStreamType.MY_ORDERS).setDataStreamId("").build(),
-                    object : StreamObserver<SubscribeResponse> {
-                        override fun onNext(value: SubscribeResponse) {
-                            subscribeToMyOrdersStream(value.subscriptionId)
-                            orderSubscriptionId = value.subscriptionId
-                            onCompleted()
-                        }
-
-                        override fun onError(t: Throwable) {
-
-                        }
-
-                        override fun onCompleted() {
-
-                        }
-                    })
-        }.start()
+        doAsync {
+            val response = streamServiceBlockingStub.subscribe(
+                    SubscribeRequest.newBuilder().setDataStreamType(DataStreamType.MY_ORDERS).setDataStreamId("").build())
+            orderSubscriptionId = response.subscriptionId
+            uiThread { subscribeToMyOrdersStream(response.subscriptionId) }
+        }
     }
 
     private fun subscribeToMyOrdersStream(subscriptionId: SubscriptionId) {
         streamServiceStub.getMyOrderUpdates(subscriptionId, object : StreamObserver<MyOrderUpdate> {
             override fun onNext(orderUpdate: MyOrderUpdate) {
-                if (activity != null) {
-                   getOpenOrdersAsynchronously()
-                }
+                // TODO : Check if LocalBroadcast implementation is required
+                openOrdersList = ordersRecyclerAdapter?.updateOrder(orderUpdate)!!
+                flipVisibilitiesIfNeeded()
             }
 
             override fun onError(t: Throwable) {
-
             }
 
             override fun onCompleted() {
-
             }
         })
     }
@@ -137,64 +126,61 @@ class OrdersFragment : Fragment(), OrdersRecyclerAdapter.OnOrderClickListener, S
         doAsync {
             if (ConnectionUtils.getConnectionInfo(context) && ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
                 val openOrdersResponse = actionServiceBlockingStub.getMyOpenOrders(GetMyOpenOrdersRequest.newBuilder().build())
-                if (openOrdersResponse?.statusCode == GetMyOpenOrdersResponse.StatusCode.OK) {
-                    ordersRecycler_swipeRefreshLayout.isRefreshing = false
 
-                    val ordersList = ArrayList<Order>()
+                uiThread {
+                    loadingOrdersDialog.dismiss()
 
-                    val askList = openOrdersResponse.openAskOrdersList
-                    val bidList = openOrdersResponse.openBidOrdersList
+                    if (openOrdersResponse?.statusCode == GetMyOpenOrdersResponse.StatusCode.OK) {
+                        ordersRecycler_swipeRefreshLayout.isRefreshing = false
 
-                    if (askList.size > 0) {
-                        for (currentAskOrder in askList) {
-                            ordersList.add(Order(
-                                    currentAskOrder.id,
-                                    false,
-                                    false,
-                                    currentAskOrder.price,
-                                    currentAskOrder.stockId,
-                                    currentAskOrder.orderType.number,
-                                    currentAskOrder.stockQuantity,
-                                    currentAskOrder.stockQuantityFulfilled
-                            ))
+                        openOrdersList.clear()
+
+                        val askList = openOrdersResponse.openAskOrdersList
+                        val bidList = openOrdersResponse.openBidOrdersList
+
+                        if (askList.size > 0) {
+                            for (currentAskOrder in askList) {
+                                openOrdersList.add(Order(
+                                        currentAskOrder.id,
+                                        false,
+                                        false,
+                                        currentAskOrder.price,
+                                        currentAskOrder.stockId,
+                                        currentAskOrder.orderType,
+                                        currentAskOrder.stockQuantity,
+                                        currentAskOrder.stockQuantityFulfilled
+                                ))
+                            }
                         }
-                    }
 
-                    if (bidList.size > 0) {
-                        for (currentBidOrder in bidList) {
-                            ordersList.add(Order(
-                                    currentBidOrder.id,
-                                    true,
-                                    false,
-                                    currentBidOrder.price,
-                                    currentBidOrder.stockId,
-                                    currentBidOrder.orderType.number,
-                                    currentBidOrder.stockQuantity,
-                                    currentBidOrder.stockQuantityFulfilled
-                            ))
+                        if (bidList.size > 0) {
+                            for (currentBidOrder in bidList) {
+                                openOrdersList.add(Order(
+                                        currentBidOrder.id,
+                                        true,
+                                        false,
+                                        currentBidOrder.price,
+                                        currentBidOrder.stockId,
+                                        currentBidOrder.orderType,
+                                        currentBidOrder.stockQuantity,
+                                        currentBidOrder.stockQuantityFulfilled
+                                ))
+                            }
                         }
+
+                        flipVisibilitiesIfNeeded()
+
+                    } else {
+                        context?.longToast(openOrdersResponse.statusMessage)
                     }
-                    uiThread {
-                        if (ordersList.size > 0) {
-                            ordersRecyclerAdapter!!.swapData(ordersList)
-                            ordersRecycler_swipeRefreshLayout.visibility = View.VISIBLE
-                            emptyOrders_relativeLayout.visibility = View.GONE
-                        } else {
-                            ordersRecycler_swipeRefreshLayout.visibility = View.GONE
-                            emptyOrders_relativeLayout.visibility = View.VISIBLE
-                        }
-                    }
-                } else {
-                    uiThread { context?.longToast(openOrdersResponse.statusMessage) }
                 }
-                uiThread { loadingOrdersDialog.dismiss() }
             } else {
-                networkDownHandler?.onNetworkDownError()
+                uiThread { networkDownHandler?.onNetworkDownError() }
             }
         }
     }
 
-    override fun onOrderClick(orderId: Int, bid: Boolean) {
+    override fun onCancelOrderClick(orderId: Int, bid: Boolean) {
 
         if (context != null) {
             val builder = AlertDialog.Builder(context!!, R.style.AlertDialogTheme)
@@ -206,10 +192,11 @@ class OrdersFragment : Fragment(), OrdersRecyclerAdapter.OnOrderClickListener, S
                             val response = actionServiceBlockingStub.cancelOrder(
                                     CancelOrderRequest.newBuilder().setOrderId(orderId).setIsAsk(!bid).build())
 
-                            if (response.statusCodeValue == 0) {
+                            if (response.statusCode == CancelOrderResponse.StatusCode.OK) {
                                 context?.toast("Order cancelled")
-                                if (activity != null)
-                                    getOpenOrdersAsynchronously()
+                                openOrdersList = ordersRecyclerAdapter?.cancelOrder(orderId)!!
+                                flipVisibilitiesIfNeeded()
+
                             } else {
                                 context?.toast(response.statusMessage)
                             }
@@ -220,30 +207,31 @@ class OrdersFragment : Fragment(), OrdersRecyclerAdapter.OnOrderClickListener, S
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    private fun flipVisibilitiesIfNeeded() {
+        if (openOrdersList.size > 0) {
+            ordersRecyclerAdapter?.swapData(openOrdersList)
+            ordersRecycler_swipeRefreshLayout.visibility = View.VISIBLE
+            emptyOrders_relativeLayout.visibility = View.GONE
+        } else {
+            ordersRecycler_swipeRefreshLayout.visibility = View.GONE
+            emptyOrders_relativeLayout.visibility = View.VISIBLE
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        getMyOrdersSubscriptionId()
+    }
+
+    override fun onPause() {
+        super.onPause()
         loadingOrdersDialog.dismiss()
-        Handler().post {
+        doAsync {
             if (orderSubscriptionId != null) {
-                streamServiceStub.unsubscribe(UnsubscribeRequest.newBuilder().setSubscriptionId(orderSubscriptionId).build(),
-                        object : StreamObserver<UnsubscribeResponse> {
-                            override fun onNext(value: UnsubscribeResponse) {
-                                onCompleted()
-                            }
-
-                            override fun onError(t: Throwable) {
-
-                            }
-
-                            override fun onCompleted() {
-
-                            }
-                        })
+                streamServiceBlockingStub.unsubscribe(UnsubscribeRequest.newBuilder().setSubscriptionId(orderSubscriptionId).build())
             }
         }
     }
 
-    override fun onRefresh() {
-        getOpenOrdersAsynchronously()
-    }
+    override fun onRefresh() = getOpenOrdersAsynchronously()
 }

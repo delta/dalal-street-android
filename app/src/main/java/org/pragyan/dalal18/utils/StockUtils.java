@@ -40,7 +40,7 @@ public class StockUtils {
 
     public static String[] getCompanyNamesArray() {
         String[] companyNames = new String[stockIdCompanyNameList.size()];
-        for (int i=0 ; i<stockIdCompanyNameList.size() ; ++i) {
+        for (int i = 0; i < stockIdCompanyNameList.size(); ++i) {
             companyNames[i] = stockIdCompanyNameList.get(i).getCompanyName();
         }
         return companyNames;
@@ -49,21 +49,29 @@ public class StockUtils {
     public static OrderType getOrderTypeFromName(String orderType) {
 
         switch (orderType) {
-            
-            case  "Limit Order"           : return  OrderType.LIMIT;
-            case  "Market Order"          : return  OrderType.MARKET;
-            case  "Stoploss Order"        : return  OrderType.STOPLOSS;
-            case  "Stoploss Active Order" : return  OrderType.STOPLOSSACTIVE;
-            default: return OrderType.UNRECOGNIZED;
+
+            case "Limit Order":
+                return OrderType.LIMIT;
+            case "Market Order":
+                return OrderType.MARKET;
+            case "Stoploss Order":
+                return OrderType.STOPLOSS;
+            case "Stoploss Active Order":
+                return OrderType.STOPLOSSACTIVE;
+            default:
+                return OrderType.UNRECOGNIZED;
         }
     }
 
-    public static String getOrderTypeFromTypeId(int id) {
-        switch (id) {
-            case 0 : return "Limit Order";
-            case 1 : return "Market Order";
-            case 2 : return "Stoploss Order";
-            default: return "Unrecognized order";
+    public static String getOrderTypeFromType(OrderType orderType) {
+        if (orderType == OrderType.LIMIT) {
+            return "Limit Order";
+        } else if (orderType == OrderType.MARKET) {
+            return "Market Order";
+        } else if (orderType == OrderType.STOPLOSS) {
+            return "Stoploss Order";
+        } else {
+            return "Unrecognized order";
         }
     }
 
@@ -121,8 +129,8 @@ public class StockUtils {
     public static String getDescriptionFromCompanyName(List<GlobalStockDetails> list, String companyName) {
         int stockId = getStockIdFromCompanyName(companyName);
 
-        for(GlobalStockDetails globalStockDetails : list) {
-            if(globalStockDetails.getStockId() == stockId)
+        for (GlobalStockDetails globalStockDetails : list) {
+            if (globalStockDetails.getStockId() == stockId)
                 return globalStockDetails.getDescription();
         }
 
@@ -132,8 +140,8 @@ public class StockUtils {
     public static String getImageUrlFromCompanyName(List<GlobalStockDetails> list, String companyName) {
         int stockId = getStockIdFromCompanyName(companyName);
 
-        for(GlobalStockDetails globalStockDetails : list) {
-            if(globalStockDetails.getStockId() == stockId)
+        for (GlobalStockDetails globalStockDetails : list) {
+            if (globalStockDetails.getStockId() == stockId)
                 return globalStockDetails.getImagePath();
         }
 
