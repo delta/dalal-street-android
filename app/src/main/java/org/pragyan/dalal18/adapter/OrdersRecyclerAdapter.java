@@ -1,8 +1,6 @@
 package org.pragyan.dalal18.adapter;
 
 import android.content.Context;
-import androidx.core.content.ContextCompat;
-import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,39 +16,43 @@ import org.pragyan.dalal18.utils.StockUtils;
 import java.util.Collections;
 import java.util.List;
 
+import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.RecyclerView;
 import dalalstreet.api.datastreams.MyOrderUpdate;
 import dalalstreet.api.models.OrderType;
 
 public class OrdersRecyclerAdapter extends RecyclerView.Adapter<OrdersRecyclerAdapter.MyViewHolder> {
 
     private Context context;
-    private List<Order> orderList;
+    private List<Order> openOrdersList;
     private OnOrderClickListener listener;
 
     public interface OnOrderClickListener {
-        void onOrderClick(int orderId, boolean bid);
+        void onCancelOrderClick(int orderId, boolean bid);
     }
 
     public OrdersRecyclerAdapter(Context context, List<Order> orderList, OnOrderClickListener listener) {
         this.context = context;
-        this.orderList = orderList;
+        this.openOrdersList = orderList;
         this.listener = listener;
     }
 
+    @NonNull
     @Override
-    public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
         View itemView = LayoutInflater.from(context).inflate(R.layout.order_list_item, parent, false);
         return new OrdersRecyclerAdapter.MyViewHolder(itemView);
     }
 
     @Override
-    public void onBindViewHolder(MyViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
 
-        Order order = orderList.get(position);
+        Order order = openOrdersList.get(position);
         String tempString;
 
-        tempString = (order.isBid() ? "BID - " : "ASK - ") + StockUtils.getOrderTypeFromTypeId(order.getOrderType());
+        tempString = (order.isBid() ? "BID - " : "ASK - ") + StockUtils.getOrderTypeFromType(order.getOrderType());
         holder.typeTextView.setText(tempString);
 
         if (holder.typeTextView.getText().toString().substring(0, 3).equals("BID"))
@@ -64,7 +66,7 @@ public class OrdersRecyclerAdapter extends RecyclerView.Adapter<OrdersRecyclerAd
         tempString = String.valueOf(order.getStockQuantityFulfilled()) + " / " + String.valueOf(order.getStockQuantity());
         holder.quantityTextView.setText(tempString);
 
-        if (order.getOrderType() == OrderType.MARKET_VALUE) {
+        if (order.getOrderType() == OrderType.MARKET) {
             holder.priceTextView.setVisibility(View.GONE);
         } else {
             holder.priceTextView.setVisibility(View.VISIBLE);
@@ -73,23 +75,24 @@ public class OrdersRecyclerAdapter extends RecyclerView.Adapter<OrdersRecyclerAd
             holder.priceTextView.setText(tempString);
         }
 
-        holder.quantitySeekbar.setMax((int)order.getStockQuantity());
-        holder.quantitySeekbar.setProgress((int)order.getStockQuantityFulfilled());
+        holder.quantitySeekbar.setMax((int) order.getStockQuantity());
+        holder.quantitySeekbar.setProgress((int) order.getStockQuantityFulfilled());
 
         holder.quantitySeekbar.setOnTouchListener((view, motionEvent) -> true);
     }
 
     @Override
     public int getItemCount() {
-        if (orderList == null || orderList.size() == 0) return 0;
-        return orderList.size();
+        if (openOrdersList == null || openOrdersList.size() == 0) return 0;
+        return openOrdersList.size();
     }
 
-    public void swapData(List<Order> list) {
+    // Returns true if openOrdersList is empty
+    public boolean swapData(List<Order> list) {
 
-        orderList = list;
+        openOrdersList = list;
 
-        Collections.sort(orderList, (o1, o2) -> {
+        Collections.sort(openOrdersList, (o1, o2) -> {
             if (o1.isBid() && !o2.isBid())
                 return 1;
             else if (o2.isBid() && !o1.isBid())
@@ -99,30 +102,56 @@ public class OrdersRecyclerAdapter extends RecyclerView.Adapter<OrdersRecyclerAd
         });
 
         notifyDataSetChanged();
-    }
-    public void swapSingleItem(int id,MyOrderUpdate order)
-    {
-        for(Order o : orderList)
-        {
-            //The logic of updating the order is pending as I did not understood how to do it.
-            if(o.getOrderId() == id)
-            {
 
-            }
-        }
+        return openOrdersList.size() <= 0;
     }
 
-    public void orderUpdate(int orderId, int quantityFilled, boolean closed) {
-        for (Order currentOrder : orderList) {
-            if (currentOrder.getOrderId() == orderId) {
-                if (closed) {
-                    orderList.remove(currentOrder);
-                } else {
-                    currentOrder.setStockQuantityFulfilled(quantityFilled);
+    // Returns true if openOrdersList is empty
+    public boolean updateOrder(MyOrderUpdate order) {
+
+        if (order.getIsNewOrder()) {
+            openOrdersList.add(new Order(order.getId(), !order.getIsAsk(), order.getIsClosed(), order.getOrderPrice(), order.getStockId(),
+                    order.getOrderType(), Math.abs(order.getStockQuantity()), 0));
+            notifyItemInserted(openOrdersList.size() - 1);
+        } else {
+            int position = -1;
+
+            for (int i = 0; i < openOrdersList.size(); ++i) {
+                Order currentOrder = openOrdersList.get(i);
+                if (currentOrder.getOrderId() == order.getId()) {
+                    position = i;
+                    break;
                 }
-                notifyDataSetChanged();
+            }
+
+            if (position != -1 && order.getIsClosed()) {
+                openOrdersList.remove(position);
+                notifyItemRemoved(position);
+            } else if (position != -1) {
+                openOrdersList.get(position).incrementQuantityFulfilled(Math.abs(order.getStockQuantity()));
+                notifyItemChanged(position);
             }
         }
+
+        return openOrdersList.size() <= 0;
+    }
+
+    // Returns true if openOrdersList is empty
+    public boolean cancelOrder(int orderId) {
+        int position = -1;
+
+        for (int i = 0; i < openOrdersList.size(); ++i) {
+            Order currentOrder = openOrdersList.get(i);
+            if (currentOrder.getOrderId() == orderId) {
+                position = i;
+                break;
+            }
+        }
+
+        openOrdersList.remove(position);
+        notifyItemRemoved(position);
+
+        return openOrdersList.size() <= 0;
     }
 
     class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -146,7 +175,7 @@ public class OrdersRecyclerAdapter extends RecyclerView.Adapter<OrdersRecyclerAd
 
         @Override
         public void onClick(View view) {
-            listener.onOrderClick(orderList.get(getAdapterPosition()).getOrderId(), orderList.get(getAdapterPosition()).isBid());
+            listener.onCancelOrderClick(openOrdersList.get(getAdapterPosition()).getOrderId(), openOrdersList.get(getAdapterPosition()).isBid());
         }
     }
 }
