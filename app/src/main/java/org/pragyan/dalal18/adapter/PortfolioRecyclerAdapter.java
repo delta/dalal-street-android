@@ -8,6 +8,7 @@ import android.widget.TextView;
 
 import org.pragyan.dalal18.R;
 import org.pragyan.dalal18.data.Portfolio;
+import org.pragyan.dalal18.utils.Constants;
 
 import java.text.DecimalFormat;
 import java.util.List;
@@ -20,7 +21,6 @@ public class PortfolioRecyclerAdapter extends RecyclerView.Adapter<PortfolioRecy
 
     private Context context;
     private List<Portfolio> portfolioList;
-    private DecimalFormat df;
 
     public PortfolioRecyclerAdapter(Context context, List<Portfolio> portfolioList) {
         this.context = context;
@@ -44,17 +44,17 @@ public class PortfolioRecyclerAdapter extends RecyclerView.Adapter<PortfolioRecy
         else
             holder.companyNameTextView.setText(currentPortfolioItem.getCompanyName());
 
-        holder.priceTextView.setText(String.valueOf(df.format(currentPortfolioItem.getPrice())));
+        holder.priceTextView.setText(String.valueOf(new DecimalFormat(Constants.PRICE_FORMAT).format(currentPortfolioItem.getPrice())));
         if (currentPortfolioItem.getPreviousDayClose() > currentPortfolioItem.getPrice())
             holder.priceTextView.setTextColor(ContextCompat.getColor(context, R.color.neon_orange));
         else if (currentPortfolioItem.getPreviousDayClose() < currentPortfolioItem.getPrice())
             holder.priceTextView.setTextColor(ContextCompat.getColor(context, R.color.neon_green));
         else
             holder.priceTextView.setTextColor(ContextCompat.getColor(context, R.color.neutral_font_color));
-        df = new DecimalFormat("##,##,###");
-        holder.quantityTextView.setText(String.valueOf(df.format(currentPortfolioItem.getQuantityOwned())));
 
-        holder.worthTextView.setText(String.valueOf(df.format(currentPortfolioItem.getPrice() * currentPortfolioItem.getQuantityOwned())));
+        holder.quantityTextView.setText(String.valueOf(new DecimalFormat(Constants.PRICE_FORMAT).format(currentPortfolioItem.getQuantityOwned())));
+
+        holder.worthTextView.setText(String.valueOf(new DecimalFormat(Constants.PRICE_FORMAT).format(currentPortfolioItem.getPrice() * currentPortfolioItem.getQuantityOwned())));
     }
 
     @Override

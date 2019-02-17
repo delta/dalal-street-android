@@ -42,7 +42,6 @@ class StockExchangeFragment : Fragment() {
     private lateinit var currentStock: Stock
     private var lastSelectedStockId: Int = 0
     lateinit var companiesArray: Array<String>
-    val df = DecimalFormat("##,##,###")
     private var loadingDialog: AlertDialog? = null
 
     lateinit var networkDownHandler: ConnectionUtils.OnNetworkDownHandler
@@ -161,20 +160,20 @@ class StockExchangeFragment : Fragment() {
 
                     currentStock = companyProfileResponse.stockDetails
 
-                    var temporaryTextViewString: String = ": ₹" + df.format(currentStock.currentPrice).toString()
+                    var temporaryTextViewString: String = ": ₹" + DecimalFormat(Constants.PRICE_FORMAT).format(currentStock.currentPrice).toString()
 
                     currentStockPrice_textView.text = temporaryTextViewString
 
-                    temporaryTextViewString = ": ₹" + df.format(currentStock.dayHigh).toString()
+                    temporaryTextViewString = ": ₹" + DecimalFormat(Constants.PRICE_FORMAT).format(currentStock.dayHigh).toString()
                     dailyHigh_textView.text = temporaryTextViewString
 
-                    temporaryTextViewString = ": ₹" + df.format(currentStock.dayLow).toString()
+                    temporaryTextViewString = ": ₹" + DecimalFormat(Constants.PRICE_FORMAT).format(currentStock.dayLow).toString()
                     dailyLow_textView.text = temporaryTextViewString
 
-                    temporaryTextViewString = ": " + df.format(currentStock.stocksInMarket).toString()
+                    temporaryTextViewString = ": " + DecimalFormat(Constants.PRICE_FORMAT).format(currentStock.stocksInMarket).toString()
                     stocksInMarket_textView.text = temporaryTextViewString
 
-                    temporaryTextViewString = ": " + df.format(currentStock.stocksInExchange).toString()
+                    temporaryTextViewString = ": " + DecimalFormat(Constants.PRICE_FORMAT).format(currentStock.stocksInExchange).toString()
                     stocksInExchange_textView.text = temporaryTextViewString
                 }
             } else {

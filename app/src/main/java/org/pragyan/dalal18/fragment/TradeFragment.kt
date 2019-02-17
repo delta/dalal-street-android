@@ -43,7 +43,7 @@ class TradeFragment : Fragment() {
     lateinit var actionServiceBlockingStub: DalalActionServiceGrpc.DalalActionServiceBlockingStub
 
     private lateinit var model: DalalViewModel
-    private val df = DecimalFormat("##,##,###")
+    private val df = DecimalFormat(Constants.PRICE_FORMAT)
 
     private var loadingDialog: AlertDialog? = null
     lateinit var networkDownHandler: ConnectionUtils.OnNetworkDownHandler
@@ -52,10 +52,10 @@ class TradeFragment : Fragment() {
         override fun onReceive(context: Context, intent: Intent) {
             if (intent.action != null && (intent.action == Constants.REFRESH_OWNED_STOCKS_ACTION || intent.action == Constants.REFRESH_STOCK_PRICES_ACTION)) {
                 val stocksOwned = StockUtils.getQuantityOwnedFromCompanyName(model.ownedStockDetails, companySpinner.selectedItem.toString())
-                var tempString = " :  " + df.format(stocksOwned).toString()
+                var tempString = " :  " + DecimalFormat(Constants.PRICE_FORMAT).format(stocksOwned).toString()
                 stocksOwnedTextView.text = tempString
 
-                tempString = " : " + Constants.RUPEE_SYMBOL + " " + df.format(StockUtils.getPriceFromStockId(model.globalStockDetails, StockUtils.getStockIdFromCompanyName(companySpinner.selectedItem.toString()))).toString()
+                tempString = " : " + Constants.RUPEE_SYMBOL + " " + DecimalFormat(Constants.PRICE_FORMAT).format(StockUtils.getPriceFromStockId(model.globalStockDetails, StockUtils.getStockIdFromCompanyName(companySpinner.selectedItem.toString()))).toString()
                 currentStockPrice_textView.text = tempString
             }
         }
@@ -113,7 +113,7 @@ class TradeFragment : Fragment() {
                     var tempString = " :  " + stocksOwned.toString()
                     stocksOwnedTextView.text = tempString
 
-                    tempString = " : " + Constants.RUPEE_SYMBOL + " " + df.format(StockUtils.getPriceFromStockId(model.globalStockDetails, StockUtils.getStockIdFromCompanyName(companySpinner.selectedItem.toString()))).toString()
+                    tempString = " : " + Constants.RUPEE_SYMBOL + " " + DecimalFormat(Constants.PRICE_FORMAT).format(StockUtils.getPriceFromStockId(model.globalStockDetails, StockUtils.getStockIdFromCompanyName(companySpinner.selectedItem.toString()))).toString()
                     currentStockPrice_textView.text = tempString
 
                     calculateOrderFee()
@@ -180,7 +180,7 @@ class TradeFragment : Fragment() {
 
         val orderFee = (ORDER_FEE_RATE * price.toDouble() * noOfStocks.toDouble()).toLong()
 
-        val temp = " : " + Constants.RUPEE_SYMBOL + df.format(orderFee).toString()
+        val temp = " : " + Constants.RUPEE_SYMBOL + DecimalFormat(Constants.PRICE_FORMAT).format(orderFee).toString()
         order_fee_textview.text = temp
     }
 

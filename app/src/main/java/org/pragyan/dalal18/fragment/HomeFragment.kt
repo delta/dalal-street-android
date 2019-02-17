@@ -198,8 +198,8 @@ class HomeFragment : Fragment(), NewsRecyclerAdapter.NewsItemClickListener, Swip
 
         val builder = StringBuilder("")
         for ((_, shortName, _, _, price, _, _, _, up) in model.globalStockDetails) {
-            val df = DecimalFormat("##,##,###")
-            builder.append(shortName).append(" : ").append(df.format(price))
+
+            builder.append(shortName).append(" : ").append(DecimalFormat(Constants.PRICE_FORMAT).format(price))
             if (activity != null) {
                 builder.append(if (up == 1) "\u2191" else "\u2193")
             }
