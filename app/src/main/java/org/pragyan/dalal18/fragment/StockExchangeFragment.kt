@@ -43,7 +43,7 @@ class StockExchangeFragment : Fragment() {
     private var lastSelectedStockId: Int = 0
     lateinit var companiesArray: Array<String>
     private var loadingDialog: AlertDialog? = null
-
+    private var decimalFormat = DecimalFormat(Constants.PRICE_FORMAT)
     lateinit var networkDownHandler: ConnectionUtils.OnNetworkDownHandler
 
 
@@ -160,20 +160,20 @@ class StockExchangeFragment : Fragment() {
 
                     currentStock = companyProfileResponse.stockDetails
 
-                    var temporaryTextViewString: String = ": ₹" + DecimalFormat(Constants.PRICE_FORMAT).format(currentStock.currentPrice).toString()
+                    var temporaryTextViewString: String = ": ₹" + decimalFormat.format(currentStock.currentPrice).toString()
 
                     currentStockPrice_textView.text = temporaryTextViewString
 
-                    temporaryTextViewString = ": ₹" + DecimalFormat(Constants.PRICE_FORMAT).format(currentStock.dayHigh).toString()
+                    temporaryTextViewString = ": ₹" + decimalFormat.format(currentStock.dayHigh).toString()
                     dailyHigh_textView.text = temporaryTextViewString
 
-                    temporaryTextViewString = ": ₹" + DecimalFormat(Constants.PRICE_FORMAT).format(currentStock.dayLow).toString()
+                    temporaryTextViewString = ": ₹" + decimalFormat.format(currentStock.dayLow).toString()
                     dailyLow_textView.text = temporaryTextViewString
 
-                    temporaryTextViewString = ": " + DecimalFormat(Constants.PRICE_FORMAT).format(currentStock.stocksInMarket).toString()
+                    temporaryTextViewString = ": " + decimalFormat.format(currentStock.stocksInMarket).toString()
                     stocksInMarket_textView.text = temporaryTextViewString
 
-                    temporaryTextViewString = ": " + DecimalFormat(Constants.PRICE_FORMAT).format(currentStock.stocksInExchange).toString()
+                    temporaryTextViewString = ": " + decimalFormat.format(currentStock.stocksInExchange).toString()
                     stocksInExchange_textView.text = temporaryTextViewString
                 }
             } else {
