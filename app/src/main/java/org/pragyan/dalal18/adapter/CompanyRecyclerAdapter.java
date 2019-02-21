@@ -52,7 +52,7 @@ public class CompanyRecyclerAdapter extends RecyclerView.Adapter<CompanyRecycler
         } else {
             holder.companyNameTextView.setText(currentCompanyDetails.getCompany());
         }
-        String temporaryString = String.valueOf(new DecimalFormat(Constants.PRICE_FORMAT).format(currentCompanyDetails.getValue())) + "/stock";
+        String temporaryString = String.valueOf(new DecimalFormat(Constants.PRICE_FORMAT).format(currentCompanyDetails.getValue()));
         holder.priceTextView.setText(temporaryString);
 
         double diff = (double)(currentCompanyDetails.getValue() - currentCompanyDetails.getPreviousDayClose()) / (double)currentCompanyDetails.getPreviousDayClose() * 100.0;

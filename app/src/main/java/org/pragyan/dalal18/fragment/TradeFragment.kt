@@ -66,7 +66,7 @@ class TradeFragment : Fragment() {
         try {
             networkDownHandler = context as ConnectionUtils.OnNetworkDownHandler
         } catch (classCastException: ClassCastException) {
-            throw ClassCastException(context.toString() + " must implement network down handler.")
+            throw ClassCastException("$context must implement network down handler.")
         }
     }
 
@@ -110,7 +110,7 @@ class TradeFragment : Fragment() {
 
                 override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                     val stocksOwned = StockUtils.getQuantityOwnedFromCompanyName(model.ownedStockDetails, companySpinner.selectedItem.toString())
-                    var tempString = " :  " + stocksOwned.toString()
+                    var tempString = " :  $stocksOwned"
                     stocksOwnedTextView.text = tempString
 
                     tempString = " : " + Constants.RUPEE_SYMBOL + " " + decimalFormat.format(StockUtils.getPriceFromStockId(model.globalStockDetails, StockUtils.getStockIdFromCompanyName(companySpinner.selectedItem.toString()))).toString()

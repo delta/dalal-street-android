@@ -46,7 +46,7 @@ class DepthTableFragment : Fragment() {
 
     private var bidArrayList = mutableListOf<MarketDepth>()
     private var askArrayList = mutableListOf<MarketDepth>()
-    private val df = DecimalFormat("##,##,###")
+    private val df = DecimalFormat(Constants.PRICE_FORMAT)
     private var loadingDialog: AlertDialog? = null
     lateinit var networkDownHandler: ConnectionUtils.OnNetworkDownHandler
 

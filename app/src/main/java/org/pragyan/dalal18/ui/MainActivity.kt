@@ -512,7 +512,7 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
 
     @Synchronized
     private fun animateWorthChange(oldValue: Long, newValue: Long, textView: TextView, indicatorImageView: ImageView) {
-        val formatter = DecimalFormat("##,##,###")
+        val formatter = DecimalFormat(Constants.PRICE_FORMAT)
         val valueAnimator = ValueAnimator.ofObject(LongEvaluator(), oldValue, newValue)
         valueAnimator.duration = 450
         valueAnimator.addUpdateListener {
