@@ -2,6 +2,7 @@ package org.pragyan.dalal18.notifications
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,9 +10,11 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.snackbar.Snackbar
 import dalalstreet.api.DalalActionServiceGrpc
 import dalalstreet.api.actions.GetNotificationsRequest
 import kotlinx.android.synthetic.main.fragment_notification.*
@@ -117,16 +120,26 @@ class NotificationFragment : Fragment() {
                             noNotification_textView.visibility = View.VISIBLE
                             notifications_recyclerView.visibility = View.GONE
                         }
-                        loadingDialog?.dismiss()
-
                     }
                 } else {
-                    uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_server_down)) }
+                    uiThread { showErrorSnackBar(resources.getString(R.string.error_server_down)) }
+                    paginate = true
                 }
             } else {
-                uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_check_internet)) }
+                uiThread { showErrorSnackBar(resources.getString(R.string.error_check_internet)) }
+                paginate = true
             }
+            uiThread { loadingDialog?.dismiss() }
         }
+    }
+
+    private fun showErrorSnackBar(error: String) {
+        val snackBar = Snackbar.make(activity!!.findViewById(android.R.id.content), error, Snackbar.LENGTH_LONG)
+                .setAction("RETRY") { getNotificationsAsynchronously() }
+
+        snackBar.setActionTextColor(ContextCompat.getColor(context!!, R.color.neon_green))
+        snackBar.view.setBackgroundColor(Color.parseColor("#20202C"))
+        snackBar.show()
     }
 
     inner class CustomScrollListener internal constructor() : RecyclerView.OnScrollListener() {

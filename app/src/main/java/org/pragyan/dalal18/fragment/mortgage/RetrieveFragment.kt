@@ -4,7 +4,9 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,6 +16,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.google.android.material.snackbar.Snackbar
 import dalalstreet.api.DalalActionServiceGrpc
 import dalalstreet.api.actions.GetMortgageDetailsRequest
 import dalalstreet.api.actions.GetMortgageDetailsResponse
@@ -32,7 +36,7 @@ import org.pragyan.dalal18.utils.ConnectionUtils
 import org.pragyan.dalal18.utils.Constants
 import javax.inject.Inject
 
-class RetrieveFragment : Fragment(), RetrieveRecyclerAdapter.OnRetrieveButtonClickListener {
+class RetrieveFragment : Fragment(), RetrieveRecyclerAdapter.OnRetrieveButtonClickListener, SwipeRefreshLayout.OnRefreshListener {
 
     @Inject
     lateinit var actionServiceBlockingStub: DalalActionServiceGrpc.DalalActionServiceBlockingStub
@@ -108,7 +112,7 @@ class RetrieveFragment : Fragment(), RetrieveRecyclerAdapter.OnRetrieveButtonCli
 
         if (context != null) {
             val dialogView = LayoutInflater.from(context).inflate(R.layout.progress_dialog, null)
-            val tempString = "Getting Mortgage details..."
+            val tempString = "Retrieving Stocks..."
             (dialogView.findViewById<View>(R.id.progressDialog_textView) as TextView).text = tempString
             loadingDialog = AlertDialog.Builder(context!!).setView(dialogView).setCancelable(false).create()
         }
@@ -135,12 +139,15 @@ class RetrieveFragment : Fragment(), RetrieveRecyclerAdapter.OnRetrieveButtonCli
 
         val tempString = "(Retrieve Rate: ${Constants.MORTGAGE_RETRIEVE_RATE}%)"
         retrieveRateTextView.text = tempString
+        retrieveSwipeRefreshLayout.setOnRefreshListener(this)
+
 
         getMortgageDetailsAsynchronously()
     }
 
     private fun getMortgageDetailsAsynchronously() {
-        loadingDialog?.show()
+        messageStocksMortgagedTextview.text = resources.getString(R.string.getting_mortgage_details)
+        retrieveSwipeRefreshLayout.isRefreshing = true
 
         doAsync {
             if (ConnectionUtils.getConnectionInfo(context)) {
@@ -148,8 +155,6 @@ class RetrieveFragment : Fragment(), RetrieveRecyclerAdapter.OnRetrieveButtonCli
                     val response = actionServiceBlockingStub.getMortgageDetails(GetMortgageDetailsRequest.newBuilder().build())
 
                     uiThread {
-                        loadingDialog?.dismiss()
-
                         if (response.statusCode == GetMortgageDetailsResponse.StatusCode.OK) {
 
                             mortgageDetailsList.clear()
@@ -168,10 +173,15 @@ class RetrieveFragment : Fragment(), RetrieveRecyclerAdapter.OnRetrieveButtonCli
                         }
                     }
                 } else {
-                    uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_server_down)) }
+                    uiThread { showErrorMessage(resources.getString(R.string.error_server_down)) }
+
                 }
             } else {
-                uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_check_internet)) }
+                uiThread { showErrorMessage(resources.getString(R.string.error_check_internet)) }
+
+            }
+            uiThread {
+                retrieveSwipeRefreshLayout.isRefreshing = false
             }
         }
     }
@@ -182,6 +192,7 @@ class RetrieveFragment : Fragment(), RetrieveRecyclerAdapter.OnRetrieveButtonCli
             retrieveQuantity.toInt() == 0 -> context?.toast("Enter valid number of stocks")
             retrieveQuantity.toLong() > stocksQuantity.toLong() -> context?.toast("Insufficient stocks to retrieve")
             else -> {
+                loadingDialog?.show()
                 doAsync {
                     if (ConnectionUtils.getConnectionInfo(context)) {
                         if (ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
@@ -195,18 +206,32 @@ class RetrieveFragment : Fragment(), RetrieveRecyclerAdapter.OnRetrieveButtonCli
                                     context?.toast(retrieveStocksResponse.statusMessage)
                             }
                         } else {
-                            uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_server_down)) }
+                            uiThread { showErrorSnackBar(resources.getString(R.string.error_server_down)) }
                         }
                     } else {
-                        uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_check_internet)) }
+                         uiThread { showErrorSnackBar(resources.getString(R.string.error_check_internet)) }
                     }
+                    uiThread { loadingDialog?.dismiss() }
                 }
             }
         }
     }
 
+    private fun showErrorSnackBar(error: String) {
+        val snackBar = Snackbar.make(activity!!.findViewById(android.R.id.content), error, Snackbar.LENGTH_LONG)
+        snackBar.view.setBackgroundColor(Color.parseColor("#20202C"))
+        snackBar.show()
+    }
+
+    private fun showErrorMessage(error: String) {
+        retrieveRecyclerViewParentLayout.visibility = View.GONE
+        messageStocksMortgagedTextview.visibility = View.VISIBLE
+        val message = "$error, Swipe to refresh"
+        messageStocksMortgagedTextview.text = message
+    }
+
     private fun flipVisibilities(noStocksMortgaged: Boolean) {
-        noStocksMortgagedTextview.visibility = if (noStocksMortgaged) View.VISIBLE else View.GONE
+        messageStocksMortgagedTextview.visibility = if (noStocksMortgaged) View.VISIBLE else View.GONE
         retrieveRecyclerViewParentLayout.visibility = if (noStocksMortgaged) View.GONE else View.VISIBLE
     }
 
@@ -219,5 +244,10 @@ class RetrieveFragment : Fragment(), RetrieveRecyclerAdapter.OnRetrieveButtonCli
     override fun onPause() {
         super.onPause()
         LocalBroadcastManager.getInstance(context!!).unregisterReceiver(refreshMortgageListReceiver)
+    }
+
+    override fun onRefresh() {
+        Log.e("SAN","hello refresh")
+        getMortgageDetailsAsynchronously()
     }
 }

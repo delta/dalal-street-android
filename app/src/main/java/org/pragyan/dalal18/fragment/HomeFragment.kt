@@ -125,8 +125,8 @@ class HomeFragment : Fragment(), NewsRecyclerAdapter.NewsItemClickListener, Swip
 
     private fun getLatestNewsAsynchronously() {
         showNewsAvailable(false)
-        loadingNewsHomeFragmentProgressBar.visibility = View.VISIBLE
         loadingNews_textView.text = getString(R.string.getting_latest_news)
+        newsSwipeRefreshLayout.isRefreshing = true
 
         doAsync {
             if (ConnectionUtils.getConnectionInfo(context)) {
@@ -135,7 +135,6 @@ class HomeFragment : Fragment(), NewsRecyclerAdapter.NewsItemClickListener, Swip
                     val marketEventsResponse = actionServiceBlockingStub.getMarketEvents(GetMarketEventsRequest.newBuilder().setCount(0).setLastEventId(0).build())
 
                     uiThread {
-                        newsSwipeRefreshLayout?.isRefreshing = false
                         if (marketEventsResponse.statusCode == GetMarketEventsResponse.StatusCode.OK) {
 
                             newsList.clear()
@@ -156,17 +155,28 @@ class HomeFragment : Fragment(), NewsRecyclerAdapter.NewsItemClickListener, Swip
                         }
                     }
                 } else {
-                    uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_server_down)) }
+                    uiThread {
+                        showErrorMessage(resources.getString(R.string.error_server_down))
+                    }
                 }
             } else {
-                uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_check_internet)) }
+                uiThread {
+                    showErrorMessage(resources.getString(R.string.error_check_internet))
+                }
             }
+            uiThread { newsSwipeRefreshLayout?.isRefreshing = false }
         }
+    }
+
+    private fun showErrorMessage(error: String){
+        loadingNewsRelativeLayout?.visibility = View.VISIBLE
+        newsRecyclerView?.visibility = View.GONE
+        val message = "$error, Swipe to refresh"
+        loadingNews_textView?.text = message
     }
 
     private fun showNewsAvailable(show: Boolean) {
         loadingNews_textView?.text = if (show) getString(R.string.getting_latest_news) else getString(R.string.news_not_available)
-        loadingNewsHomeFragmentProgressBar?.visibility = if (show) View.VISIBLE else View.GONE
         loadingNewsRelativeLayout?.visibility = if (show) View.GONE else View.VISIBLE
         newsRecyclerView?.visibility = if (show) View.VISIBLE else View.GONE
     }

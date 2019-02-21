@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -14,9 +15,11 @@ import android.widget.ArrayAdapter
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import com.google.android.material.snackbar.Snackbar
 import dalalstreet.api.DalalActionServiceGrpc
 import dalalstreet.api.actions.GetMortgageDetailsRequest
 import dalalstreet.api.actions.GetMortgageDetailsResponse
@@ -78,7 +81,7 @@ class MortgageFragment : Fragment() {
                 if (quantity < 0) /* Mortgage Action */ {
                     var newStockMortgaged = true
 
-                    for(mortgageDetails in mortgageDetailsList) {
+                    for (mortgageDetails in mortgageDetailsList) {
                         if (mortgageDetails.stockId == stockId && mortgageDetails.mortgagePrice == price) {
                             mortgageDetails.stockQuantity -= quantity
                             newStockMortgaged = false
@@ -86,10 +89,10 @@ class MortgageFragment : Fragment() {
                         }
                     }
 
-                    if(newStockMortgaged) mortgageDetailsList.add(MortgageDetails(stockId, -quantity, price))
+                    if (newStockMortgaged) mortgageDetailsList.add(MortgageDetails(stockId, -quantity, price))
 
                 } else /* Retrieve Action */ {
-                    for(mortgageDetails in mortgageDetailsList) {
+                    for (mortgageDetails in mortgageDetailsList) {
                         if (mortgageDetails.stockId == stockId && mortgageDetails.mortgagePrice == price) {
                             if (mortgageDetails.stockQuantity == quantity) {
                                 mortgageDetailsList.remove(mortgageDetails)
@@ -121,7 +124,8 @@ class MortgageFragment : Fragment() {
 
         val rootView = inflater.inflate(R.layout.fragment_mortgage, container, false)
 
-        model = activity?.run { ViewModelProviders.of(this).get(DalalViewModel::class.java) } ?: throw Exception("Invalid activity")
+        model = activity?.run { ViewModelProviders.of(this).get(DalalViewModel::class.java) }
+                ?: throw Exception("Invalid activity")
         DaggerDalalStreetApplicationComponent.builder().contextModule(ContextModule(context!!)).build().inject(this)
 
         return rootView
@@ -203,7 +207,6 @@ class MortgageFragment : Fragment() {
 
     private fun getMortgageDetailsAsynchronously() {
         loadingDialog?.show()
-        mortgage_companies_spinner.isEnabled = false
 
         doAsync {
             if (ConnectionUtils.getConnectionInfo(context)) {
@@ -212,8 +215,6 @@ class MortgageFragment : Fragment() {
                     val response = actionServiceBlockingStub.getMortgageDetails(GetMortgageDetailsRequest.newBuilder().build())
 
                     uiThread {
-                        loadingDialog?.dismiss()
-                        mortgage_companies_spinner.isEnabled = true
 
                         if (response.statusCode == GetMortgageDetailsResponse.StatusCode.OK) {
 
@@ -236,11 +237,12 @@ class MortgageFragment : Fragment() {
                         }
                     }
                 } else {
-                    uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_server_down)) }
+                    uiThread { showErrorSnackBar(resources.getString(R.string.error_server_down), false) }
                 }
             } else {
-                uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_check_internet)) }
+                uiThread { showErrorSnackBar(resources.getString(R.string.error_check_internet), false) }
             }
+            uiThread { loadingDialog?.dismiss() }
         }
     }
 
@@ -266,23 +268,37 @@ class MortgageFragment : Fragment() {
                         } else {
                             context?.toast(mortgageStocksResponse.statusMessage)
                         }
-                        loadingDialog?.dismiss()
                     }
                 } else {
-                    uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_server_down)) }
+                    uiThread { showErrorSnackBar(resources.getString(R.string.error_server_down), true) }
                 }
             } else {
-                uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_check_internet)) }
+                uiThread { showErrorSnackBar(resources.getString(R.string.error_check_internet), true) }
             }
+            uiThread { loadingDialog?.dismiss() }
         }
+    }
+
+    private fun showErrorSnackBar(error: String, isMortgaging: Boolean) {
+        view?.hideKeyboard()
+        val snackBar = Snackbar.make(activity!!.findViewById(android.R.id.content), error, Snackbar.LENGTH_LONG)
+        snackBar.setActionTextColor(ContextCompat.getColor(context!!, R.color.neon_green))
+        snackBar.view.setBackgroundColor(Color.parseColor("#20202C"))
+
+        if (isMortgaging) {
+            snackBar.setAction("RETRY") { onMortgageButtonClick() }
+        } else {
+            snackBar.setAction("RETRY") { getMortgageDetailsAsynchronously() }
+        }
+        snackBar.show()
     }
 
     private fun getStocksMortgagedFromStockId(stockId: Int): Long {
 
         var totalCount = 0L
 
-        for(mortgageDetail in mortgageDetailsList) {
-            if(mortgageDetail.stockId == stockId)
+        for (mortgageDetail in mortgageDetailsList) {
+            if (mortgageDetail.stockId == stockId)
                 totalCount += mortgageDetail.stockQuantity
         }
 

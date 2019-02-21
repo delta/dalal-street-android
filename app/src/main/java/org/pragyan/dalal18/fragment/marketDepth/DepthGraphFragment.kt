@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Color
 import android.graphics.Paint
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,6 +18,7 @@ import com.github.mikephil.charting.data.CandleData
 import com.github.mikephil.charting.data.CandleDataSet
 import com.github.mikephil.charting.data.CandleEntry
 import com.github.mikephil.charting.formatter.IAxisValueFormatter
+import com.google.android.material.snackbar.Snackbar
 import dalalstreet.api.DalalActionServiceGrpc
 import dalalstreet.api.actions.GetStockHistoryRequest
 import dalalstreet.api.actions.StockHistoryResolution
@@ -97,17 +99,7 @@ class DepthGraphFragment : Fragment() {
             isSelected = false
             setOnItemClickListener { _, _, _, _ ->
                 currentCompany = graph_company_spinner.text.toString()
-                stockHistoryList.clear()
-                xVals.clear()
-                yVals.clear()
-                if (!market_depth_chart.isEmpty) {
-                    market_depth_chart.invalidate()
-                    market_depth_chart.clear()
-                }
-                market_depth_chart.clearFocus()
-                if (activity != null && isAdded) {
-                    loadStockHistoryAsynchronously()
-                }
+                preProcessForLoading()
             }
         }
 
@@ -117,18 +109,22 @@ class DepthGraphFragment : Fragment() {
             isSelected = false
             setOnItemClickListener { _, _, _, _ ->
                 currentInterval = graph_time_spinner.text.toString()
-                stockHistoryList.clear()
-                xVals.clear()
-                yVals.clear()
-                if (!market_depth_chart.isEmpty) {
-                    market_depth_chart.invalidate()
-                    market_depth_chart.clear()
-                }
-                market_depth_chart.clearFocus()
-                if (activity != null && isAdded) {
-                    loadStockHistoryAsynchronously()
-                }
+                preProcessForLoading()
             }
+        }
+    }
+
+    private fun preProcessForLoading(){
+        stockHistoryList.clear()
+        xVals.clear()
+        yVals.clear()
+        market_depth_chart.clear()
+        if (!market_depth_chart.isEmpty) {
+            market_depth_chart.invalidate()
+        }
+        market_depth_chart.clearFocus()
+        if (activity != null && isAdded) {
+            loadStockHistoryAsynchronously()
         }
     }
 
@@ -243,16 +239,24 @@ class DepthGraphFragment : Fragment() {
                         market_depth_chart.data = data
                         market_depth_chart.invalidate()
                         market_depth_chart.description.text = "($currentInterval)"
-
-                        loadingDialog?.dismiss()
                     }
                 } else {
-                    uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_server_down)) }
+                    uiThread { showErrorSnackBar(resources.getString(R.string.error_server_down)) }
                 }
             } else {
-                uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_check_internet)) }
+                uiThread { showErrorSnackBar(resources.getString(R.string.error_check_internet)) }
             }
+            uiThread { loadingDialog?.dismiss() }
         }
+    }
+
+    private fun showErrorSnackBar(error: String) {
+        val snackBar = Snackbar.make(activity!!.findViewById(android.R.id.content), error, Snackbar.LENGTH_LONG)
+                .setAction("RETRY") { preProcessForLoading() }
+
+        snackBar.setActionTextColor(ContextCompat.getColor(context!!, R.color.neon_green))
+        snackBar.view.setBackgroundColor(Color.parseColor("#20202C"))
+        snackBar.show()
     }
 
     private fun convertToDate(stringDate: String): Date? {

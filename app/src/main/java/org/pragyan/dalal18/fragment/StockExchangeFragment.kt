@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -13,8 +14,10 @@ import android.widget.ArrayAdapter
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import com.google.android.material.snackbar.Snackbar
 import dalalstreet.api.DalalActionServiceGrpc
 import dalalstreet.api.actions.BuyStocksFromExchangeRequest
 import dalalstreet.api.actions.BuyStocksFromExchangeResponse
@@ -44,6 +47,8 @@ class StockExchangeFragment : Fragment() {
     lateinit var companiesArray: Array<String>
     private var loadingDialog: AlertDialog? = null
     private var decimalFormat = DecimalFormat(Constants.PRICE_FORMAT)
+    private var snackBar: Snackbar? = null
+
     lateinit var networkDownHandler: ConnectionUtils.OnNetworkDownHandler
 
 
@@ -74,13 +79,6 @@ class StockExchangeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         (activity as AppCompatActivity).supportActionBar?.title = resources.getString(R.string.stock_exchange)
-        val tempString = "Getting stocks details..."
-        val dialogView = LayoutInflater.from(context).inflate(R.layout.progress_dialog, null)
-        (dialogView.findViewById<View>(R.id.progressDialog_textView) as TextView).text = tempString
-        loadingDialog = AlertDialog.Builder(context!!)
-                .setView(dialogView)
-                .setCancelable(false)
-                .create()
 
         companiesArray = StockUtils.getCompanyNamesArray()
         val arrayAdapter = ArrayAdapter<String>(activity!!, R.layout.company_spinner_item, companiesArray)
@@ -99,10 +97,23 @@ class StockExchangeFragment : Fragment() {
             }
         }
 
-        buyExchangeButton.setOnClickListener { buyStocksFromExchange() }
+        buyExchangeButton.setOnClickListener {
+            snackBar?.dismiss()
+            buyStocksFromExchange()
+        }
+
     }
 
     private fun buyStocksFromExchange() {
+
+        val tempString = "Buying Stocks..."
+        val dialogView = LayoutInflater.from(context).inflate(R.layout.progress_dialog, null)
+        (dialogView.findViewById<View>(R.id.progressDialog_textView) as TextView).text = tempString
+        loadingDialog = AlertDialog.Builder(context!!)
+                .setView(dialogView)
+                .setCancelable(false)
+                .create()
+        loadingDialog?.show()
 
         if (noOfStocksEditText.text.toString().trim { it <= ' ' }.isEmpty()) {
             context?.toast("Enter the number of Stocks")
@@ -127,20 +138,30 @@ class StockExchangeFragment : Fragment() {
                                     context?.toast(response.statusMessage)
                             }
                         } else {
-                            uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_server_down)) }
+                            uiThread { showErrorSnackBar(resources.getString(R.string.error_server_down),true) }
                         }
                     } else {
-                        uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_check_internet)) }
+                        uiThread { showErrorSnackBar(resources.getString(R.string.error_check_internet),true) }
                     }
+                    uiThread { loadingDialog?.dismiss() }
                 }
             } else {
                 context?.toast("Insufficient stocks in exchange")
+                loadingDialog?.dismiss()
             }
+
         }
     }
 
     private fun getCompanyProfileAsynchronously(stockId: Int) {
 
+        val tempString = "Getting stocks details..."
+        val dialogView = LayoutInflater.from(context).inflate(R.layout.progress_dialog, null)
+        (dialogView.findViewById<View>(R.id.progressDialog_textView) as TextView).text = tempString
+        loadingDialog = AlertDialog.Builder(context!!)
+                .setView(dialogView)
+                .setCancelable(false)
+                .create()
         loadingDialog?.show()
 
         dailyHigh_textView.text = ""
@@ -156,7 +177,7 @@ class StockExchangeFragment : Fragment() {
                             GetCompanyProfileRequest.newBuilder().setStockId(stockId).build())
 
                     uiThread {
-                        loadingDialog?.dismiss()
+
 
                         currentStock = companyProfileResponse.stockDetails
 
@@ -174,14 +195,32 @@ class StockExchangeFragment : Fragment() {
 
                         temporaryTextViewString = ": " + decimalFormat.format(currentStock.stocksInExchange).toString()
                         stocksInExchange_textView.text = temporaryTextViewString
+
+                        buyExchangeButton.isEnabled = true
                     }
                 } else {
-                    uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_server_down)) }
+                    uiThread { showErrorSnackBar(resources.getString(R.string.error_server_down),false) }
                 }
             } else {
-                uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_check_internet)) }
+                uiThread { showErrorSnackBar(resources.getString(R.string.error_check_internet),false) }
             }
+            uiThread { loadingDialog?.dismiss() }
         }
+    }
+
+    private fun showErrorSnackBar(error: String, isBuying: Boolean) {
+        view?.hideKeyboard()
+        snackBar = Snackbar.make(activity!!.findViewById(android.R.id.content), error, Snackbar.LENGTH_LONG)
+        snackBar?.setActionTextColor(ContextCompat.getColor(context!!, R.color.neon_green))
+        snackBar?.view?.setBackgroundColor(Color.parseColor("#20202C"))
+
+        if(!isBuying) {
+            buyExchangeButton.isEnabled = false
+            snackBar?.setAction("RETRY") { getCompanyProfileAsynchronously(lastSelectedStockId) }
+        } else {
+            snackBar?.setAction("RETRY") { buyStocksFromExchange() }
+        }
+        snackBar?.show()
     }
 
     override fun onResume() {

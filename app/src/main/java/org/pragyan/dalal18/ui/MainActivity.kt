@@ -245,10 +245,10 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
                         finish()
                     }
                 } else {
-                    uiThread { onNetworkDownError(resources.getString(R.string.error_server_down)) }
+                    uiThread { onNetworkDownError() }
                 }
             } else {
-                uiThread { onNetworkDownError(resources.getString(R.string.error_check_internet)) }
+                uiThread { onNetworkDownError() }
             }
         }
     }
@@ -600,19 +600,17 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
                     }
 
                 } else {
-                    onNetworkDownError(resources.getString(R.string.error_server_down))
+                    onNetworkDownError()
                 }
             } else {
-                onNetworkDownError(resources.getString(R.string.error_check_internet))
+                onNetworkDownError()
             }
         }
     }
 
-    override fun onNetworkDownError(message: String) {
+    override fun onNetworkDownError() {
         shouldUnsubscribeAsNetworkDown = false
-        val intent = Intent(this, SplashActivity::class.java)
-        intent.putExtra("error_message", message)
-        startActivity(intent)
+        startActivity(Intent(this, SplashActivity::class.java))
         finish()
     }
 

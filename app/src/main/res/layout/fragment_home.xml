@@ -67,7 +67,6 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_gravity="center"
-        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/homeDivider">
 
@@ -78,17 +77,9 @@
             android:layout_centerInParent="true"
             android:text="@string/getting_latest_news"
             android:textColor="@color/neutral_font_color"
-            android:textSize="20sp"
+            android:textSize="18sp"
+            android:fontFamily="@font/kreon_light"
             android:textStyle="italic|bold" />
-
-        <ProgressBar
-            android:id="@+id/loadingNewsHomeFragmentProgressBar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_above="@+id/loadingNews_textView"
-            android:layout_centerHorizontal="true"
-            android:layout_marginBottom="8dp"
-            android:indeterminate="true" />
 
     </RelativeLayout>
 

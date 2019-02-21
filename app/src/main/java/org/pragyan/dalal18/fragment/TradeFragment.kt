@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.graphics.Color
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -15,9 +16,11 @@ import android.widget.ArrayAdapter
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import com.google.android.material.snackbar.Snackbar
 import dalalstreet.api.DalalActionServiceGrpc
 import dalalstreet.api.actions.PlaceOrderRequest
 import kotlinx.android.synthetic.main.fragment_trade.*
@@ -242,7 +245,6 @@ class TradeFragment : Fragment() {
                     val orderResponse = actionServiceBlockingStub.placeOrder(orderRequest)
 
                     uiThread {
-                        loadingDialog?.dismiss()
                         if (orderResponse.statusCodeValue == 0) {
                             context?.toast("Order Placed")
                             noOfStocksEditText.setText("")
@@ -253,12 +255,24 @@ class TradeFragment : Fragment() {
                         }
                     }
                 } else {
-                    uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_server_down)) }
+                    uiThread { showErrorSnackBar(resources.getString(R.string.error_server_down)) }
                 }
             } else {
-                uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_check_internet)) }
+                uiThread { showErrorSnackBar(resources.getString(R.string.error_check_internet)) }
             }
+            uiThread { loadingDialog?.dismiss() }
         }
+    }
+
+    private fun showErrorSnackBar(error: String) {
+        view?.hideKeyboard()
+        val snackBar = Snackbar.make(activity!!.findViewById(android.R.id.content), error, Snackbar.LENGTH_LONG)
+                .setAction("RETRY") { tradeAsynchronously() }
+
+        snackBar.setActionTextColor(ContextCompat.getColor(context!!, R.color.neon_green))
+        snackBar.view.setBackgroundColor(Color.parseColor("#20202C"))
+        snackBar.show()
+
     }
 
     override fun onResume() {

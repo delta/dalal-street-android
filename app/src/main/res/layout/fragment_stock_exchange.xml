@@ -5,7 +5,7 @@
     android:background="@color/black_background"
     android:paddingStart="4dp"
     android:paddingEnd="4dp">
-
+    
     <Spinner
         android:id="@+id/companySpinner"
         android:layout_width="match_parent"

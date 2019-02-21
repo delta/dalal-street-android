@@ -2,6 +2,7 @@ package org.pragyan.dalal18.fragment
 
 
 import android.content.Context
+import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,10 +10,12 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.google.android.material.snackbar.Snackbar
 import dalalstreet.api.DalalActionServiceGrpc
 import dalalstreet.api.DalalStreamServiceGrpc
 import dalalstreet.api.actions.CancelOrderRequest
@@ -119,17 +122,16 @@ class OrdersFragment : Fragment(), OrdersRecyclerAdapter.OnOrderClickListener, S
     }
 
     private fun getOpenOrdersAsynchronously() {
-        loadingOrdersDialog.show()
+        orderMessageTextView.text = resources.getString(R.string.getting_your_orders)
+        ordersRecycler_swipeRefreshLayout.isRefreshing = true
         doAsync {
             if (ConnectionUtils.getConnectionInfo(context)) {
                 if (ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
                     val openOrdersResponse = actionServiceBlockingStub.getMyOpenOrders(GetMyOpenOrdersRequest.newBuilder().build())
 
                     uiThread {
-                        loadingOrdersDialog.dismiss()
 
                         if (openOrdersResponse?.statusCode == GetMyOpenOrdersResponse.StatusCode.OK) {
-                            ordersRecycler_swipeRefreshLayout.isRefreshing = false
 
                             val openOrdersList = mutableListOf<Order>()
 
@@ -165,6 +167,8 @@ class OrdersFragment : Fragment(), OrdersRecyclerAdapter.OnOrderClickListener, S
                                     ))
                                 }
                             }
+                            orders_recyclerView.visibility = View.VISIBLE
+                            orderMessageTextView.visibility = View.GONE
 
                             val empty = ordersRecyclerAdapter?.swapData(openOrdersList)
                             flipVisibilities(empty)
@@ -174,12 +178,20 @@ class OrdersFragment : Fragment(), OrdersRecyclerAdapter.OnOrderClickListener, S
                         }
                     }
                 } else {
-                    uiThread { networkDownHandler?.onNetworkDownError(resources.getString(R.string.error_server_down)) }
+                    uiThread { showErrorMessage(resources.getString(R.string.error_server_down)) }
                 }
             } else {
-                uiThread { networkDownHandler?.onNetworkDownError(resources.getString(R.string.error_check_internet)) }
+                uiThread { showErrorMessage(resources.getString(R.string.error_check_internet)) }
             }
+            uiThread { ordersRecycler_swipeRefreshLayout.isRefreshing = false }
         }
+    }
+
+    private fun showErrorMessage(error: String) {
+        orders_recyclerView.visibility = View.GONE
+        orderMessageTextView.visibility = View.VISIBLE
+        val message = "$error, Swipe to refresh"
+        orderMessageTextView.text = message
     }
 
     override fun onCancelOrderClick(orderId: Int, bid: Boolean) {
@@ -214,12 +226,21 @@ class OrdersFragment : Fragment(), OrdersRecyclerAdapter.OnOrderClickListener, S
                     }
 
                 } else {
-                    uiThread { networkDownHandler?.onNetworkDownError(resources.getString(R.string.error_server_down)) }
+                    uiThread { showErrorSnackBar(resources.getString(R.string.error_server_down), orderId, bid) }
                 }
             } else {
-                uiThread { networkDownHandler?.onNetworkDownError(resources.getString(R.string.error_check_internet)) }
+                uiThread { showErrorSnackBar(resources.getString(R.string.error_check_internet), orderId, bid) }
             }
         }
+    }
+
+    private fun showErrorSnackBar(error: String, orderId: Int, bid: Boolean) {
+        val snackBar = Snackbar.make(activity!!.findViewById(android.R.id.content), error, Snackbar.LENGTH_LONG)
+                .setAction("RETRY") { cancelOrder(orderId, bid) }
+
+        snackBar.setActionTextColor(ContextCompat.getColor(context!!, R.color.neon_green))
+        snackBar.view.setBackgroundColor(Color.parseColor("#20202C"))
+        snackBar.show()
     }
 
     private fun flipVisibilities(empty: Boolean?) {

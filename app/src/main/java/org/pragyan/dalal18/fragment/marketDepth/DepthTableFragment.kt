@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -11,9 +12,11 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.snackbar.Snackbar
 import dalalstreet.api.DalalActionServiceGrpc
 import dalalstreet.api.DalalStreamServiceGrpc
 import dalalstreet.api.actions.GetCompanyProfileRequest
@@ -131,19 +134,23 @@ class DepthTableFragment : Fragment() {
         with(companySpinner) {
             setAdapter(arrayAdapter)
             setOnItemClickListener { _, _, _, _ ->
-                val currentCompany = companySpinner.text.toString()
-                bidArrayList.clear()
-                askArrayList.clear()
-                getValues(currentCompany)
-                unsubscribe(prevSubscriptionId)
-                current_stock_price_layout.visibility = View.INVISIBLE
-                ask_depth_layout.visibility = View.INVISIBLE
-                bid_depth_layout.visibility = View.INVISIBLE
-                if (activity != null && isAdded) {
-                    loadingDialog?.show()
-                    getCompanyProfileAsynchronously(currentCompany)
-                }
+               onCompanySelected()
             }
+        }
+    }
+
+    private fun onCompanySelected(){
+        val currentCompany = companySpinner.text.toString()
+        bidArrayList.clear()
+        askArrayList.clear()
+        unsubscribe(prevSubscriptionId)
+        getValues(currentCompany)
+        current_stock_price_layout.visibility = View.INVISIBLE
+        ask_depth_layout.visibility = View.INVISIBLE
+        bid_depth_layout.visibility = View.INVISIBLE
+        if (activity != null && isAdded) {
+            loadingDialog?.show()
+            getCompanyProfileAsynchronously(currentCompany)
         }
     }
 
@@ -294,12 +301,23 @@ class DepthTableFragment : Fragment() {
                         }
                     }
                 } else {
-                    uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_server_down)) }
+                    uiThread { showErrorSnackBar(resources.getString(R.string.error_server_down)) }
                 }
             } else {
-                uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_check_internet)) }
+                uiThread { showErrorSnackBar(resources.getString(R.string.error_check_internet)) }
             }
+            uiThread { loadingDialog?.dismiss() }
         }
+    }
+
+    private fun showErrorSnackBar(error: String) {
+        unsubscribe(prevSubscriptionId)
+        val snackBar = Snackbar.make(activity!!.findViewById(android.R.id.content), error, Snackbar.LENGTH_LONG)
+                .setAction("RETRY") { onCompanySelected() }
+
+        snackBar.setActionTextColor(ContextCompat.getColor(context!!, R.color.neon_green))
+        snackBar.view.setBackgroundColor(Color.parseColor("#20202C"))
+        snackBar.show()
     }
 
 

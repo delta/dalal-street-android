@@ -65,7 +65,6 @@ class NewsFragment : Fragment(), NewsRecyclerAdapter.NewsItemClickListener, Swip
                             GetMarketEventsRequest.newBuilder().setCount(0).setLastEventId(0).build())
 
                     uiThread {
-                        loadingNewsDialog?.dismiss()
                         newsSwipeRefreshLayout?.isRefreshing = false
 
                         if (marketEventsResponse.statusCode.number == 0) {
@@ -79,10 +78,10 @@ class NewsFragment : Fragment(), NewsRecyclerAdapter.NewsItemClickListener, Swip
 
                             if (newsDetailsList.size != 0) {
                                 newsRecyclerAdapter?.swapData(newsDetailsList)
-                                noNewsTextView?.visibility = View.GONE
+                                newsMessageTextView?.visibility = View.GONE
                                 newsRecyclerView?.visibility = View.VISIBLE
                             } else {
-                                noNewsTextView.visibility = View.VISIBLE
+                                newsMessageTextView.visibility = View.VISIBLE
                                 newsRecyclerView.visibility = View.GONE
                             }
 
@@ -91,12 +90,28 @@ class NewsFragment : Fragment(), NewsRecyclerAdapter.NewsItemClickListener, Swip
                         }
                     }
                 } else {
-                    uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_server_down)) }
+                    uiThread {
+                        showErrorMessage(resources.getString(R.string.error_server_down))
+                    }
+
                 }
             } else {
-                uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_check_internet)) }
+                uiThread {
+                    showErrorMessage(resources.getString(R.string.error_check_internet))
+                }
+            }
+            uiThread {
+                newsSwipeRefreshLayout?.isRefreshing = false
+                loadingNewsDialog?.dismiss()
             }
         }
+    }
+
+    private fun showErrorMessage(error: String) {
+        newsMessageTextView.visibility = View.VISIBLE
+        newsRecyclerView.visibility = View.GONE
+        val message = "$error, Swipe to refresh"
+        newsMessageTextView.text = message
     }
 
     override fun onAttach(context: Context) {
@@ -146,18 +161,21 @@ class NewsFragment : Fragment(), NewsRecyclerAdapter.NewsItemClickListener, Swip
         LocalBroadcastManager.getInstance(context!!).unregisterReceiver(refreshNewsListListener)
     }
 
-    override fun onRefresh() = getNewsAsynchronously()
+    override fun onRefresh() {
+        newsMessageTextView.text = resources.getString(R.string.getting_latest_news)
+        getNewsAsynchronously()
+    }
 
-    override fun onNewsClicked(layout: View, position: Int, headlinesTextView : View, contentTextView : View, createdAtTextView : View) {
+    override fun onNewsClicked(layout: View, position: Int, headlinesTextView: View, contentTextView: View, createdAtTextView: View) {
         val headTransition = "head$position"
         val contentTransition = "content$position"
         val createdAtTransition = "created$position"
 
         val bundle = Bundle()
-        bundle.putString(Constants.NEWS_CREATED_AT_KEY,newsDetailsList[position].createdAt)
-        bundle.putString(Constants.NEWS_CONTENT_KEY,newsDetailsList[position].content)
-        bundle.putString(Constants.NEWS_HEAD_KEY,newsDetailsList[position].headlines)
-        bundle.putString(Constants.NEWS_IMAGE_PATH_KEY,newsDetailsList[position].imagePath)
+        bundle.putString(Constants.NEWS_CREATED_AT_KEY, newsDetailsList[position].createdAt)
+        bundle.putString(Constants.NEWS_CONTENT_KEY, newsDetailsList[position].content)
+        bundle.putString(Constants.NEWS_HEAD_KEY, newsDetailsList[position].headlines)
+        bundle.putString(Constants.NEWS_IMAGE_PATH_KEY, newsDetailsList[position].imagePath)
         bundle.putString(Constants.HEAD_TRANSITION_KEY, headTransition)
         bundle.putString(Constants.CONTENT_TRANSITION_KEY, contentTransition)
         bundle.putString(Constants.CREATED_AT_TRANSITION_KEY, createdAtTransition)

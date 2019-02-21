@@ -1,6 +1,7 @@
 package org.pragyan.dalal18.fragment
 
 import android.content.Context
+import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -8,8 +9,10 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.snackbar.Snackbar
 import dalalstreet.api.DalalActionServiceGrpc
 import dalalstreet.api.actions.GetLeaderboardRequest
 import dalalstreet.api.actions.GetLeaderboardResponse
@@ -109,15 +112,24 @@ class LeaderboardFragment : Fragment() {
                         } else {
                             context?.longToast("Server internal error")
                         }
-                        loadingDialog.dismiss()
                     }
                 } else {
-                    uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_server_down)) }
+                    uiThread { showErrorSnackbar(resources.getString(R.string.error_server_down)) }
                 }
             } else {
-                uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_check_internet)) }
+                uiThread { showErrorSnackbar(resources.getString(R.string.error_check_internet)) }
             }
+            uiThread { loadingDialog.dismiss() }
         }
+    }
+
+    private fun showErrorSnackbar(error: String) {
+        val snackBar = Snackbar.make(activity!!.findViewById(android.R.id.content), error, Snackbar.LENGTH_LONG)
+                .setAction("RETRY") { getRankListAsynchronously() }
+
+        snackBar.setActionTextColor(ContextCompat.getColor(context!!, R.color.neon_green))
+        snackBar.view.setBackgroundColor(Color.parseColor("#20202C"))
+        snackBar.show()
     }
 
     override fun onPause() {
