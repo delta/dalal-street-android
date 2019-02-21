@@ -13,6 +13,7 @@ import org.pragyan.dalal18.data.Order;
 import org.pragyan.dalal18.utils.Constants;
 import org.pragyan.dalal18.utils.StockUtils;
 
+import java.text.DecimalFormat;
 import java.util.Collections;
 import java.util.List;
 
@@ -71,7 +72,7 @@ public class OrdersRecyclerAdapter extends RecyclerView.Adapter<OrdersRecyclerAd
         } else {
             holder.priceTextView.setVisibility(View.VISIBLE);
             tempString = (order.getStockQuantityFulfilled() == 0 ? "Placed " : order.getStockQuantity() == order.getStockQuantityFulfilled() ? "Filled" : "Partially Filled") + " at " +
-                    Constants.RUPEE_SYMBOL + " " + String.valueOf(order.getPrice() + "/stock");
+                    Constants.RUPEE_SYMBOL + " " + String.valueOf(new DecimalFormat(Constants.PRICE_FORMAT).format(order.getPrice()) + "/stock");
             holder.priceTextView.setText(tempString);
         }
 

@@ -36,6 +36,7 @@ import org.pragyan.dalal18.utils.Constants
 import org.pragyan.dalal18.utils.StockUtils
 import org.pragyan.dalal18.utils.StockUtils.*
 import org.pragyan.dalal18.utils.hideKeyboard
+import java.text.DecimalFormat
 import javax.inject.Inject
 
 /*  Uses GetMortgageDetails() for setting stocksMortgaged (int data member)
@@ -49,7 +50,7 @@ class MortgageFragment : Fragment() {
 
     private var lastStockId = 1
     private var companiesArray = StockUtils.getCompanyNamesArray()
-
+    private val decimalFormat = DecimalFormat(Constants.PRICE_FORMAT)
     private lateinit var model: DalalViewModel
 
     lateinit var networkDownHandler: ConnectionUtils.OnNetworkDownHandler
@@ -62,7 +63,7 @@ class MortgageFragment : Fragment() {
 
             if (intent.action.equals(Constants.REFRESH_STOCK_PRICES_ACTION, ignoreCase = true)) {
                 val currentPriceText = " :  " + Constants.RUPEE_SYMBOL +
-                        getPriceFromStockId(model.globalStockDetails, lastStockId).toString()
+                        decimalFormat.format(getPriceFromStockId(model.globalStockDetails, lastStockId)).toString()
                 currentPriceTextView.text = currentPriceText
 
             } else if (intent.action.equals(Constants.REFRESH_MORTGAGE_UPDATE_ACTION, ignoreCase = true)) {
@@ -71,7 +72,7 @@ class MortgageFragment : Fragment() {
                 val stockId = intent.getIntExtra(STOCKS_ID_KEY, 0)
                 val price = intent.getLongExtra(STOCKS_PRICE_KEY, 0)
 
-                val ownedString = " :  " + getQuantityOwnedFromStockId(model.ownedStockDetails, stockId).toString()
+                val ownedString = " :  " + decimalFormat.format(getQuantityOwnedFromStockId(model.ownedStockDetails, stockId)).toString()
                 stocksOwnedTextView.text = ownedString
 
                 if (quantity < 0) /* Mortgage Action */ {
@@ -101,7 +102,7 @@ class MortgageFragment : Fragment() {
                     }
                 }
 
-                val mortgagedString = " :  " + getStocksMortgagedFromStockId(lastStockId)
+                val mortgagedString = " :  " + decimalFormat.format(getStocksMortgagedFromStockId(lastStockId))
                 stocksMortgagedTextView.text = mortgagedString
             }
         }
@@ -145,16 +146,16 @@ class MortgageFragment : Fragment() {
                 override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
 
                     lastStockId = getStockIdFromCompanyName(companiesArray[position])
-                    val ownedString = " :  " + getQuantityOwnedFromStockId(model.ownedStockDetails, lastStockId).toString()
+                    val ownedString = " :  " + decimalFormat.format(getQuantityOwnedFromStockId(model.ownedStockDetails, lastStockId)).toString()
                     stocksOwnedTextView.text = ownedString
 
                     if(mortgageDetailsList.size > 0) {
-                        val mortgageString = " :  " + getStocksMortgagedFromStockId(lastStockId)
+                        val mortgageString = " :  " + decimalFormat.format(getStocksMortgagedFromStockId(lastStockId))
                         stocksMortgagedTextView.text = mortgageString
                     }
 
                     val currentPriceText = " :  " + Constants.RUPEE_SYMBOL +
-                            getPriceFromStockId(model.globalStockDetails, lastStockId).toString()
+                            decimalFormat.format(getPriceFromStockId(model.globalStockDetails, lastStockId)).toString()
                     currentPriceTextView.text = currentPriceText
                 }
 
@@ -220,13 +221,13 @@ class MortgageFragment : Fragment() {
                             mortgageDetailsList.add(MortgageDetails(currentDetails.stockId, currentDetails.stocksInBank, currentDetails.mortgagePrice))
                         }
 
-                        val ownedString = " :  " + getQuantityOwnedFromCompanyName(model.ownedStockDetails, getCompanyNameFromStockId(lastStockId)).toString()
+                        val ownedString = " :  " + decimalFormat.format(getQuantityOwnedFromCompanyName(model.ownedStockDetails, getCompanyNameFromStockId(lastStockId))).toString()
                         stocksOwnedTextView.text = ownedString
 
-                        val tempString = " :  " + Constants.RUPEE_SYMBOL + " " + StockUtils.getPriceFromStockId(model.globalStockDetails, lastStockId).toString()
+                        val tempString = " :  " + Constants.RUPEE_SYMBOL + " " + decimalFormat.format(StockUtils.getPriceFromStockId(model.globalStockDetails, lastStockId)).toString()
                         currentPriceTextView.text = tempString
 
-                        val mortgagedString = " :  " + getStocksMortgagedFromStockId(lastStockId)
+                        val mortgagedString = " :  " + decimalFormat.format(getStocksMortgagedFromStockId(lastStockId))
                         stocksMortgagedTextView.text = mortgagedString
 
                     } else {

@@ -15,6 +15,7 @@ import org.pragyan.dalal18.R;
 import org.pragyan.dalal18.data.Transaction;
 import org.pragyan.dalal18.utils.Constants;
 
+import java.text.DecimalFormat;
 import java.util.List;
 
 import static org.pragyan.dalal18.utils.MiscellaneousUtils.parseDate;
@@ -91,13 +92,12 @@ public class TransactionRecyclerAdapter extends RecyclerView.Adapter<Transaction
         tempAssigningString = parseDate(currentTransaction.getTime());
         if (tempAssigningString != null)
             holder.timeTextView.setText(tempAssigningString);
-
         if(currentTransaction.getType().equals("TAX_TRANSACTION") || currentTransaction.getType().equals("ORDER_FEE_TRANSACTION")) {
-            tempAssigningString = Constants.RUPEE_SYMBOL + " " + String.valueOf(-currentTransaction.getTotalMoney());
+            tempAssigningString = Constants.RUPEE_SYMBOL + " " + String.valueOf(new DecimalFormat(Constants.PRICE_FORMAT).format(-currentTransaction.getTotalMoney()));
             holder.noOfStocksTextView.setText(tempAssigningString);
         } else {
             tempAssigningString = String.valueOf(Math.abs(currentTransaction.getNoOfStocks()))
-                    + " stocks @ " + Constants.RUPEE_SYMBOL + " " + String.valueOf(Math.abs(currentTransaction.getStockPrice()));
+                    + " stocks @ " + Constants.RUPEE_SYMBOL + " " + String.valueOf(new DecimalFormat(Constants.PRICE_FORMAT).format(Math.abs(currentTransaction.getStockPrice())));
             holder.noOfStocksTextView.setText(tempAssigningString);
         }
 

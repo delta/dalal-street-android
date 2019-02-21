@@ -10,7 +10,9 @@ import android.widget.TextView;
 
 import org.pragyan.dalal18.data.LeaderBoardDetails;
 import org.pragyan.dalal18.R;
+import org.pragyan.dalal18.utils.Constants;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,7 +39,7 @@ public class LeaderboardRecyclerAdapter extends RecyclerView.Adapter<Leaderboard
 
         holder.rankTextView.setText(String.valueOf(currentLeaderBoardDetails.getRank()));
         holder.nameTextView.setText(currentLeaderBoardDetails.getName());
-        holder.wealthTextView.setText(String.valueOf(currentLeaderBoardDetails.getWealth()));
+        holder.wealthTextView.setText(new DecimalFormat(Constants.PRICE_FORMAT).format(String.valueOf(currentLeaderBoardDetails.getWealth())));
 
         if (position == 0) {
             holder.nameTextView.setTextColor(ContextCompat.getColor(context, R.color.gold_medal));
