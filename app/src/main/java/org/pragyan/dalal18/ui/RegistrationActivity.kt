@@ -1,6 +1,7 @@
 package org.pragyan.dalal18.ui
 
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -8,6 +9,8 @@ import android.widget.ArrayAdapter
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
+import com.google.android.material.snackbar.Snackbar
 import dalalstreet.api.DalalActionServiceGrpc
 import dalalstreet.api.actions.RegisterRequest
 import dalalstreet.api.actions.RegisterResponse
@@ -73,37 +76,48 @@ class RegistrationActivity : AppCompatActivity() {
         registrationAlertDialog?.show()
 
         doAsync {
-            if (ConnectionUtils.getConnectionInfo(this@RegistrationActivity) && ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
-                val stub = DalalActionServiceGrpc.newBlockingStub(channel)
+            if (ConnectionUtils.getConnectionInfo(this@RegistrationActivity)) {
+                if (ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
+                    val stub = DalalActionServiceGrpc.newBlockingStub(channel)
 
-                val response = stub.register(RegisterRequest.newBuilder()
-                        .setCountry(countrySpinner.selectedItem.toString())
-                        .setEmail(emailEditText.text.toString())
-                        .setFullName(nameEditText.text.toString())
-                        .setPassword(passwordEditText.text.toString())
-                        .setUserName(nameEditText.text.toString())
-                        .build())
+                    val response = stub.register(RegisterRequest.newBuilder()
+                            .setCountry(countrySpinner.selectedItem.toString())
+                            .setEmail(emailEditText.text.toString())
+                            .setFullName(nameEditText.text.toString())
+                            .setPassword(passwordEditText.text.toString())
+                            .setUserName(nameEditText.text.toString())
+                            .build())
 
-                val message = when {
-                    response.statusCode == RegisterResponse.StatusCode.OK -> "Successfully Registered !"
-                    response.statusCode == RegisterResponse.StatusCode.AlreadyRegisteredError -> "You have already registered."
-                    else -> "Internal server error."
-                }
+                    val message = when {
+                        response.statusCode == RegisterResponse.StatusCode.OK -> "Successfully Registered !"
+                        response.statusCode == RegisterResponse.StatusCode.AlreadyRegisteredError -> "You have already registered."
+                        else -> "Internal server error."
+                    }
 
-                uiThread {
-                    val loginIntent = Intent(this@RegistrationActivity, LoginActivity::class.java)
-                    loginIntent.putExtra(REGISTER_MESSAGE_KEY, message)
-                    loginIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                    startActivity(loginIntent)
-                    finish()
+                    uiThread {
+                        val loginIntent = Intent(this@RegistrationActivity, LoginActivity::class.java)
+                        loginIntent.putExtra(REGISTER_MESSAGE_KEY, message)
+                        loginIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                        startActivity(loginIntent)
+                        finish()
+                    }
+                } else {
+                    uiThread { showSnackBar(resources.getString(R.string.error_server_down)) }
                 }
             } else {
-                uiThread {
-                    startActivity(Intent(this@RegistrationActivity, SplashActivity::class.java))
-                    finish()
-                }
+                uiThread { showSnackBar(resources.getString(R.string.error_check_internet)) }
             }
+            uiThread { registrationAlertDialog?.dismiss() }
         }
+    }
+
+    private fun showSnackBar(message : String){
+        val snackBar = Snackbar.make(findViewById(android.R.id.content), message, Snackbar.LENGTH_INDEFINITE)
+                .setAction("RETRY") { startRegistration() }
+
+        snackBar.setActionTextColor(ContextCompat.getColor(this, R.color.neon_green))
+        snackBar.view.setBackgroundColor(Color.parseColor("#20202C"))
+        snackBar.show()
     }
 
     companion object {

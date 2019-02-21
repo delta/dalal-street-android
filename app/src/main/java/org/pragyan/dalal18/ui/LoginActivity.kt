@@ -14,6 +14,7 @@ import dalalstreet.api.DalalActionServiceGrpc
 import dalalstreet.api.actions.LoginRequest
 import io.grpc.ManagedChannel
 import kotlinx.android.synthetic.main.activity_login.*
+import org.jetbrains.anko.contentView
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.toast
 import org.jetbrains.anko.uiThread
@@ -25,6 +26,7 @@ import org.pragyan.dalal18.data.StockDetails
 import org.pragyan.dalal18.utils.ConnectionUtils
 import org.pragyan.dalal18.utils.Constants
 import org.pragyan.dalal18.utils.MiscellaneousUtils
+import org.pragyan.dalal18.utils.hideKeyboard
 import java.util.*
 import javax.inject.Inject
 
@@ -78,9 +80,7 @@ class LoginActivity : AppCompatActivity() {
             } else {
                 uiThread {
                     play_button.isEnabled = false
-                    Handler().postDelayed({
-                        showSnackBar("Please check internet connection")
-                    }, 500)
+                    showSnackBar(resources.getString(R.string.error_check_internet))
                 }
             }
         }
@@ -228,6 +228,7 @@ class LoginActivity : AppCompatActivity() {
             } else {
                 uiThread {
                     signingInAlertDialog?.dismiss()
+                    contentView?.hideKeyboard()
                     showSnackBar("Server Unreachable")
                 }
             }

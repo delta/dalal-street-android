@@ -25,7 +25,7 @@ public class ConnectionUtils {
         try {
             Socket socket = new Socket();
             SocketAddress socketAddress = new InetSocketAddress(host, port);
-            socket.connect(socketAddress, 30000);
+            socket.connect(socketAddress, 6000);
             socket.close();
             return true;
         } catch (IOException e) {
@@ -34,6 +34,6 @@ public class ConnectionUtils {
     }
 
     public interface OnNetworkDownHandler {
-        void onNetworkDownError();
+        void onNetworkDownError(String message);
     }
 }

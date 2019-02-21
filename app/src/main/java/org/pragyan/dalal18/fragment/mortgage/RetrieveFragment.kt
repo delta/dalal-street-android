@@ -143,50 +143,63 @@ class RetrieveFragment : Fragment(), RetrieveRecyclerAdapter.OnRetrieveButtonCli
         loadingDialog?.show()
 
         doAsync {
-            if (ConnectionUtils.getConnectionInfo(context) && ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
+            if (ConnectionUtils.getConnectionInfo(context)) {
+                if (ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
+                    val response = actionServiceBlockingStub.getMortgageDetails(GetMortgageDetailsRequest.newBuilder().build())
 
-                val response = actionServiceBlockingStub.getMortgageDetails(GetMortgageDetailsRequest.newBuilder().build())
+                    uiThread {
+                        loadingDialog?.dismiss()
 
-                uiThread {
-                    loadingDialog?.dismiss()
+                        if (response.statusCode == GetMortgageDetailsResponse.StatusCode.OK) {
 
-                    if (response.statusCode == GetMortgageDetailsResponse.StatusCode.OK) {
+                            mortgageDetailsList.clear()
+                            for (currentDetails in response.mortgageDetailsList) {
+                                mortgageDetailsList.add(MortgageDetails(currentDetails.stockId, currentDetails.stocksInBank, currentDetails.mortgagePrice))
+                            }
 
-                        mortgageDetailsList.clear()
-                        for (currentDetails in response.mortgageDetailsList) {
-                            mortgageDetailsList.add(MortgageDetails(currentDetails.stockId, currentDetails.stocksInBank, currentDetails.mortgagePrice))
-                        }
-
-                        if (mortgageDetailsList.size == 0) {
-                            flipVisibilities(true)
+                            if (mortgageDetailsList.size == 0) {
+                                flipVisibilities(true)
+                            } else {
+                                retrieveAdapter.swapData(mortgageDetailsList)
+                                flipVisibilities(false)
+                            }
                         } else {
-                            retrieveAdapter.swapData(mortgageDetailsList)
-                            flipVisibilities(false)
+                            context?.toast(response.statusMessage)
                         }
-                    } else {
-                        context?.toast(response.statusMessage)
                     }
+                } else {
+                    uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_server_down)) }
                 }
             } else {
-                uiThread { networkDownHandler.onNetworkDownError() }
+                uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_check_internet)) }
             }
         }
     }
 
-    override fun onRetrieveButtonClick(position: Int, retrieveQuantity: String, stocksQuantity : String) {
+    override fun onRetrieveButtonClick(position: Int, retrieveQuantity: String, stocksQuantity: String) {
         when {
             retrieveQuantity.isEmpty() || retrieveQuantity == "" -> context?.toast("Enter stocks to retrieve")
             retrieveQuantity.toInt() == 0 -> context?.toast("Enter valid number of stocks")
             retrieveQuantity.toLong() > stocksQuantity.toLong() -> context?.toast("Insufficient stocks to retrieve")
-            else -> doAsync {
-                val retrieveStocksResponse = actionServiceBlockingStub.retrieveMortgageStocks(
-                        RetrieveMortgageStocksRequest.newBuilder().setStockId(mortgageDetailsList[position].stockId)
-                                .setStockQuantity(retrieveQuantity.toLong()).setRetrievePrice(mortgageDetailsList[position].mortgagePrice).build())
-                uiThread {
-                    if (retrieveStocksResponse.statusCode == RetrieveMortgageStocksResponse.StatusCode.OK)
-                        context?.toast( "Transaction successful")
-                    else
-                        context?.toast(retrieveStocksResponse.statusMessage)
+            else -> {
+                doAsync {
+                    if (ConnectionUtils.getConnectionInfo(context)) {
+                        if (ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
+                            val retrieveStocksResponse = actionServiceBlockingStub.retrieveMortgageStocks(
+                                    RetrieveMortgageStocksRequest.newBuilder().setStockId(mortgageDetailsList[position].stockId)
+                                            .setStockQuantity(retrieveQuantity.toLong()).setRetrievePrice(mortgageDetailsList[position].mortgagePrice).build())
+                            uiThread {
+                                if (retrieveStocksResponse.statusCode == RetrieveMortgageStocksResponse.StatusCode.OK)
+                                    context?.toast("Transaction successful")
+                                else
+                                    context?.toast(retrieveStocksResponse.statusMessage)
+                            }
+                        } else {
+                            uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_server_down)) }
+                        }
+                    } else {
+                        uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_check_internet)) }
+                    }
                 }
             }
         }

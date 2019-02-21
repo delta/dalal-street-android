@@ -58,40 +58,43 @@ class NewsFragment : Fragment(), NewsRecyclerAdapter.NewsItemClickListener, Swip
     private fun getNewsAsynchronously() {
 
         doAsync {
+            if (ConnectionUtils.getConnectionInfo(context!!)) {
+                if (ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
 
-            if (ConnectionUtils.getConnectionInfo(context!!) && ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
+                    val marketEventsResponse = actionServiceBlockingStub.getMarketEvents(
+                            GetMarketEventsRequest.newBuilder().setCount(0).setLastEventId(0).build())
 
-                val marketEventsResponse = actionServiceBlockingStub.getMarketEvents(
-                        GetMarketEventsRequest.newBuilder().setCount(0).setLastEventId(0).build())
+                    uiThread {
+                        loadingNewsDialog?.dismiss()
+                        newsSwipeRefreshLayout?.isRefreshing = false
 
-                uiThread {
-                    loadingNewsDialog?.dismiss()
-                    newsSwipeRefreshLayout?.isRefreshing = false
+                        if (marketEventsResponse.statusCode.number == 0) {
 
-                    if (marketEventsResponse.statusCode.number == 0) {
+                            newsDetailsList.clear()
 
-                        newsDetailsList.clear()
+                            for (currentMarketEvent in marketEventsResponse.marketEventsList) {
+                                newsDetailsList.add(NewsDetails(currentMarketEvent.createdAt, currentMarketEvent.headline,
+                                        currentMarketEvent.text, currentMarketEvent.imagePath))
+                            }
 
-                        for (currentMarketEvent in marketEventsResponse.marketEventsList) {
-                            newsDetailsList.add(NewsDetails(currentMarketEvent.createdAt, currentMarketEvent.headline,
-                                    currentMarketEvent.text, currentMarketEvent.imagePath))
-                        }
+                            if (newsDetailsList.size != 0) {
+                                newsRecyclerAdapter?.swapData(newsDetailsList)
+                                noNewsTextView?.visibility = View.GONE
+                                newsRecyclerView?.visibility = View.VISIBLE
+                            } else {
+                                noNewsTextView.visibility = View.VISIBLE
+                                newsRecyclerView.visibility = View.GONE
+                            }
 
-                        if (newsDetailsList.size != 0) {
-                            newsRecyclerAdapter?.swapData(newsDetailsList)
-                            noNewsTextView?.visibility = View.GONE
-                            newsRecyclerView?.visibility = View.VISIBLE
                         } else {
-                            noNewsTextView.visibility = View.VISIBLE
-                            newsRecyclerView.visibility = View.GONE
+                            context?.toast("Server internal error")
                         }
-
-                    } else {
-                        context?.toast("Server internal error")
                     }
+                } else {
+                    uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_server_down)) }
                 }
             } else {
-                uiThread { networkDownHandler.onNetworkDownError() }
+                uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_check_internet)) }
             }
         }
     }
