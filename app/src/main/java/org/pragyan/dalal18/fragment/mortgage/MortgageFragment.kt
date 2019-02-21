@@ -206,36 +206,40 @@ class MortgageFragment : Fragment() {
         mortgage_companies_spinner.isEnabled = false
 
         doAsync {
-            if (ConnectionUtils.getConnectionInfo(context) && ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
+            if (ConnectionUtils.getConnectionInfo(context)) {
+                if (ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
 
-                val response = actionServiceBlockingStub.getMortgageDetails(GetMortgageDetailsRequest.newBuilder().build())
+                    val response = actionServiceBlockingStub.getMortgageDetails(GetMortgageDetailsRequest.newBuilder().build())
 
-                uiThread {
-                    loadingDialog?.dismiss()
-                    mortgage_companies_spinner.isEnabled = true
+                    uiThread {
+                        loadingDialog?.dismiss()
+                        mortgage_companies_spinner.isEnabled = true
 
-                    if (response.statusCode == GetMortgageDetailsResponse.StatusCode.OK) {
+                        if (response.statusCode == GetMortgageDetailsResponse.StatusCode.OK) {
 
-                        mortgageDetailsList.clear()
-                        for (currentDetails in response.mortgageDetailsList) {
-                            mortgageDetailsList.add(MortgageDetails(currentDetails.stockId, currentDetails.stocksInBank, currentDetails.mortgagePrice))
+                            mortgageDetailsList.clear()
+                            for (currentDetails in response.mortgageDetailsList) {
+                                mortgageDetailsList.add(MortgageDetails(currentDetails.stockId, currentDetails.stocksInBank, currentDetails.mortgagePrice))
+                            }
+
+                            val ownedString = " :  " + decimalFormat.format(getQuantityOwnedFromCompanyName(model.ownedStockDetails, getCompanyNameFromStockId(lastStockId))).toString()
+                            stocksOwnedTextView.text = ownedString
+
+                            val tempString = " :  " + Constants.RUPEE_SYMBOL + " " + decimalFormat.format(StockUtils.getPriceFromStockId(model.globalStockDetails, lastStockId)).toString()
+                            currentPriceTextView.text = tempString
+
+                            val mortgagedString = " :  " + decimalFormat.format(getStocksMortgagedFromStockId(lastStockId))
+                            stocksMortgagedTextView.text = mortgagedString
+
+                        } else {
+                            context?.toast(response.statusMessage)
                         }
-
-                        val ownedString = " :  " + decimalFormat.format(getQuantityOwnedFromCompanyName(model.ownedStockDetails, getCompanyNameFromStockId(lastStockId))).toString()
-                        stocksOwnedTextView.text = ownedString
-
-                        val tempString = " :  " + Constants.RUPEE_SYMBOL + " " + decimalFormat.format(StockUtils.getPriceFromStockId(model.globalStockDetails, lastStockId)).toString()
-                        currentPriceTextView.text = tempString
-
-                        val mortgagedString = " :  " + decimalFormat.format(getStocksMortgagedFromStockId(lastStockId))
-                        stocksMortgagedTextView.text = mortgagedString
-
-                    } else {
-                        context?.toast(response.statusMessage)
                     }
+                } else {
+                    uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_server_down)) }
                 }
             } else {
-                uiThread { networkDownHandler.onNetworkDownError() }
+                uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_check_internet)) }
             }
         }
     }
@@ -247,21 +251,29 @@ class MortgageFragment : Fragment() {
         loadingDialog = AlertDialog.Builder(context!!).setView(dialogView).setCancelable(false).create()
         loadingDialog?.show()
         doAsync {
-            val mortgageStocksResponse = actionServiceBlockingStub.mortgageStocks(
-                    MortgageStocksRequest.newBuilder().setStockId(lastStockId)
-                            .setStockQuantity(stocksTransaction).build())
 
-            uiThread {
-                if (mortgageStocksResponse.statusCode == MortgageStocksResponse.StatusCode.OK) {
-                    context?.toast("Transaction successful")
-                    stocks_editText.setText("")
-                    view?.hideKeyboard()
+            if (ConnectionUtils.getConnectionInfo(context)) {
+                if (ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
+                    val mortgageStocksResponse = actionServiceBlockingStub.mortgageStocks(
+                            MortgageStocksRequest.newBuilder().setStockId(lastStockId)
+                                    .setStockQuantity(stocksTransaction).build())
+
+                    uiThread {
+                        if (mortgageStocksResponse.statusCode == MortgageStocksResponse.StatusCode.OK) {
+                            context?.toast("Transaction successful")
+                            stocks_editText.setText("")
+                            view?.hideKeyboard()
+                        } else {
+                            context?.toast(mortgageStocksResponse.statusMessage)
+                        }
+                        loadingDialog?.dismiss()
+                    }
                 } else {
-                    context?.toast(mortgageStocksResponse.statusMessage)
+                    uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_server_down)) }
                 }
-                loadingDialog?.dismiss()
+            } else {
+                uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_check_internet)) }
             }
-
         }
     }
 

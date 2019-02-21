@@ -54,6 +54,21 @@ class SplashActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
 
+        val extras = intent.extras
+
+        if (extras != null) {
+            if (extras.containsKey("error_message")) {
+                val message = extras.getString("error_message")
+                val snackBar = Snackbar.make(findViewById(android.R.id.content), message?.toString().toString() , Snackbar.LENGTH_LONG)
+                        .setAction("RETRY") {
+                            startLoginProcess(preferences.getString(EMAIL_KEY, null), preferences.getString(PASSWORD_KEY, null))
+                        }
+                snackBar.setActionTextColor(ContextCompat.getColor(this@SplashActivity, R.color.neon_green))
+                snackBar.view.setBackgroundColor(Color.parseColor("#20202C"))
+                snackBar.show()
+            }
+        }
+
         if (isGooglePlayServicesAvailable) {
             DaggerDalalStreetApplicationComponent.builder().contextModule(ContextModule(this)).build().inject(this)
             startLoginProcess(preferences.getString(EMAIL_KEY, null), preferences.getString(PASSWORD_KEY, null))
@@ -78,123 +93,134 @@ class SplashActivity : AppCompatActivity() {
     private fun startLoginProcess(email: String?, password: String?) {
 
         splashTextView.text = getString(R.string.signing_in)
-        
+
         if (email != null && password != null && email != "") {
             loginAsynchronously(email, password)
         } else {
             startLoginActivity()
         }
     }
-    
+
     private fun loginAsynchronously(email: String, password: String) {
         doAsync {
             if (ConnectionUtils.getConnectionInfo(this@SplashActivity)) {
-                
-                val sessionId = preferences.getString(Constants.SESSION_KEY, null)
-                
-                if(sessionId != null) {
-                    
-                    val customStub = MetadataUtils.attachHeaders(DalalActionServiceGrpc.newBlockingStub(channel), getStubMetadata(sessionId))
-                    val loginResponse = customStub.login(LoginRequest.newBuilder().setEmail(email).setPassword(password).build())
-                    
-                    uiThread {
 
-                        if (loginResponse.statusCode == LoginResponse.StatusCode.OK) {
+                if (ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)){
+                    val sessionId = preferences.getString(Constants.SESSION_KEY, null)
 
-                            MiscellaneousUtils.sessionId = loginResponse.sessionId
+                    if (sessionId != null) {
 
-                            // Adding user's stock details
-                            val stocksOwnedList = ArrayList<StockDetails>()
-                            val stocksOwnedMap = loginResponse.stocksOwnedMap
+                        val customStub = MetadataUtils.attachHeaders(DalalActionServiceGrpc.newBlockingStub(channel), getStubMetadata(sessionId))
+                        val loginResponse = customStub.login(LoginRequest.newBuilder().setEmail(email).setPassword(password).build())
 
-                            for (i in 1..Constants.NUMBER_OF_COMPANIES) {
-                                if (stocksOwnedMap.containsKey(i)) {
-                                    stocksOwnedList.add(StockDetails(i, stocksOwnedMap[i]!!))
+                        uiThread {
+
+                            if (loginResponse.statusCode == LoginResponse.StatusCode.OK) {
+
+                                MiscellaneousUtils.sessionId = loginResponse.sessionId
+
+                                // Adding user's stock details
+                                val stocksOwnedList = ArrayList<StockDetails>()
+                                val stocksOwnedMap = loginResponse.stocksOwnedMap
+
+                                for (i in 1..Constants.NUMBER_OF_COMPANIES) {
+                                    if (stocksOwnedMap.containsKey(i)) {
+                                        stocksOwnedList.add(StockDetails(i, stocksOwnedMap[i]!!))
+                                    }
                                 }
-                            }
 
-                            // Adding global stock details
-                            val globalStockList = ArrayList<GlobalStockDetails>()
-                            val globalStockMap = loginResponse.stockListMap
+                                // Adding global stock details
+                                val globalStockList = ArrayList<GlobalStockDetails>()
+                                val globalStockMap = loginResponse.stockListMap
 
-                            for (q in 1..globalStockMap.size) {
+                                for (q in 1..globalStockMap.size) {
 
-                                val currentStockDetails = globalStockMap[q]
+                                    val currentStockDetails = globalStockMap[q]
 
-                                if (currentStockDetails != null) {
-                                    globalStockList.add(GlobalStockDetails(
-                                            currentStockDetails.fullName,
-                                            currentStockDetails.shortName,
-                                            q,
-                                            currentStockDetails.description,
-                                            currentStockDetails.currentPrice,
-                                            currentStockDetails.stocksInMarket,
-                                            currentStockDetails.stocksInExchange,
-                                            currentStockDetails.previousDayClose,
-                                            if (currentStockDetails.upOrDown) 1 else 0,
-                                            resources.getStringArray(R.array.image_links)[q-1]))
-                                            //Constants.COMPANY_IMAGES_BASE_URL + currentStockDetails.shortName.toUpperCase() + ".png"))
+                                    if (currentStockDetails != null) {
+                                        globalStockList.add(GlobalStockDetails(
+                                                currentStockDetails.fullName,
+                                                currentStockDetails.shortName,
+                                                q,
+                                                currentStockDetails.description,
+                                                currentStockDetails.currentPrice,
+                                                currentStockDetails.stocksInMarket,
+                                                currentStockDetails.stocksInExchange,
+                                                currentStockDetails.previousDayClose,
+                                                if (currentStockDetails.upOrDown) 1 else 0,
+                                                resources.getStringArray(R.array.image_links)[q - 1]))
+                                        //Constants.COMPANY_IMAGES_BASE_URL + currentStockDetails.shortName.toUpperCase() + ".png"))
+                                    }
                                 }
-                            }
 
-                            val intent = Intent(this@SplashActivity, MainActivity::class.java)
-                            
-                            with(intent) {
-                                putExtra(USERNAME_KEY, loginResponse.user.name)
-                                putExtra(MainActivity.CASH_WORTH_KEY, loginResponse.user.cash)
-                                putExtra(MainActivity.TOTAL_WORTH_KEY, loginResponse.user.total)
-                                putExtra(MARKET_OPEN_KEY, loginResponse.isMarketOpen)
+                                val intent = Intent(this@SplashActivity, MainActivity::class.java)
 
-                                putParcelableArrayListExtra(MainActivity.STOCKS_OWNED_KEY, stocksOwnedList)
-                                putParcelableArrayListExtra(MainActivity.GLOBAL_STOCKS_KEY, globalStockList)
-                            }
+                                with(intent) {
+                                    putExtra(USERNAME_KEY, loginResponse.user.name)
+                                    putExtra(MainActivity.CASH_WORTH_KEY, loginResponse.user.cash)
+                                    putExtra(MainActivity.TOTAL_WORTH_KEY, loginResponse.user.total)
+                                    putExtra(MARKET_OPEN_KEY, loginResponse.isMarketOpen)
 
-                            // Checking for constants
-                            for ((key, value) in loginResponse.constantsMap) {
-                                when (key) {
-                                    "MORTGAGE_DEPOSIT_RATE" -> Constants.MORTGAGE_DEPOSIT_RATE = value.toDouble()
-                                    "MORTGAGE_RETRIEVE_RATE" -> Constants.MORTGAGE_RETRIEVE_RATE = value.toDouble()
-                                    "ORDER_FEE_PERCENT" -> Constants.ORDER_FEE_RATE = (value.toDouble()/100)
-                                    "ORDER_PRICE_WINDOW" -> Constants.ORDER_PRICE_WINDOW = value
+
+                                    putParcelableArrayListExtra(MainActivity.STOCKS_OWNED_KEY, stocksOwnedList)
+                                    putParcelableArrayListExtra(MainActivity.GLOBAL_STOCKS_KEY, globalStockList)
                                 }
+
+                                // Checking for constants
+                                for ((key, value) in loginResponse.constantsMap) {
+                                    when (key) {
+                                        "MORTGAGE_DEPOSIT_RATE" -> Constants.MORTGAGE_DEPOSIT_RATE = value.toDouble()
+                                        "MORTGAGE_RETRIEVE_RATE" -> Constants.MORTGAGE_RETRIEVE_RATE = value.toDouble()
+                                        "ORDER_FEE_PERCENT" -> Constants.ORDER_FEE_RATE = (value.toDouble()/100)
+                                        "ORDER_PRICE_WINDOW" -> Constants.ORDER_PRICE_WINDOW = value
+                                    }
+                                }
+
+                                preferences.edit().putString(Constants.MARKET_OPEN_TEXT_KEY, loginResponse.marketIsOpenHackyNotif)
+                                        .putString(Constants.MARKET_CLOSED_TEXT_KEY, loginResponse.marketIsClosedHackyNotif).apply()
+
+                                startActivity(intent)
+                                finish()
+
+                            } else {
+                                toast("Please login again")
+                                preferences.edit().putString(EMAIL_KEY, null).putString(PASSWORD_KEY, null).apply()
+                                startActivity(Intent(this@SplashActivity, LoginActivity::class.java))
+                                finish()
                             }
-
-                            preferences.edit().putString(Constants.MARKET_OPEN_TEXT_KEY, loginResponse.marketIsOpenHackyNotif)
-                                    .putString(Constants.MARKET_CLOSED_TEXT_KEY, loginResponse.marketIsClosedHackyNotif).apply()
-
-                            startActivity(intent)
-                            finish()
-                            
-                        } else {
-                            toast("Please login again")
-                            preferences.edit().putString(EMAIL_KEY, null).putString(PASSWORD_KEY, null).apply()
-                            startActivity(Intent(this@SplashActivity, LoginActivity::class.java))
-                            finish()
                         }
+                    } else {
+                        uiThread { startLoginActivity() }
                     }
                 } else {
-                    uiThread { startLoginActivity() }
+                    val snackBar = Snackbar.make(findViewById<View>(android.R.id.content), resources.getString(R.string.error_server_down), Snackbar.LENGTH_INDEFINITE)
+                            .setAction("RETRY") {
+                                startLoginProcess(email, password)
+                            }
+
+                    snackBar.setActionTextColor(ContextCompat.getColor(this@SplashActivity, R.color.neon_green))
+                    snackBar.view.setBackgroundColor(Color.parseColor("#20202C"))
+                    snackBar.show()
+                    splashTextView.setText(R.string.error_signing_in)
                 }
-                
             } else /* No internet available */ {
                 uiThread {
-                    Handler().postDelayed({
-                        val snackBar = Snackbar.make(findViewById<View>(android.R.id.content), "Please check internet connection", Snackbar.LENGTH_INDEFINITE)
-                                .setAction("RETRY") {
-                                    startLoginProcess(email, password)
-                                    splashTextView.setText(R.string.error_signing_in)
-                                }
 
-                        snackBar.setActionTextColor(ContextCompat.getColor(this@SplashActivity, R.color.neon_green))
-                        snackBar.view.setBackgroundColor(Color.parseColor("#20202C"))
-                        snackBar.show()
-                        splashTextView.setText(R.string.error_signing_in)
-                    }, 500)
+                    val snackBar = Snackbar.make(findViewById<View>(android.R.id.content), "Please check internet connection", Snackbar.LENGTH_INDEFINITE)
+                            .setAction("RETRY") {
+                                startLoginProcess(email, password)
+                                splashTextView.setText(R.string.error_signing_in)
+                            }
+
+                    snackBar.setActionTextColor(ContextCompat.getColor(this@SplashActivity, R.color.neon_green))
+                    snackBar.view.setBackgroundColor(Color.parseColor("#20202C"))
+                    snackBar.show()
+                    splashTextView.setText(R.string.error_signing_in)
                 }
             }
         }
     }
-    
+
     private fun startLoginActivity() {
         preferences.edit().putString(EMAIL_KEY, null).putString(PASSWORD_KEY, null).apply()
         startActivity(Intent(this, LoginActivity::class.java))
@@ -203,7 +229,7 @@ class SplashActivity : AppCompatActivity() {
 
     override fun onPause() {
         super.onPause()
-        if(drawingThread != null && drawingThread!!.isAlive)
+        if (drawingThread != null && drawingThread!!.isAlive)
             drawingThread?.interrupt()
     }
 

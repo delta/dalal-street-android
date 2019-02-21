@@ -228,23 +228,27 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
         unsubscribeFromAllStreams()
 
         doAsync {
-            if (ConnectionUtils.getConnectionInfo(this@MainActivity) && ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
-                val logoutResponse = actionServiceBlockingStub.logout(LogoutRequest.newBuilder().build())
+            if (ConnectionUtils.getConnectionInfo(this@MainActivity)) {
+                if (ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
+                    val logoutResponse = actionServiceBlockingStub.logout(LogoutRequest.newBuilder().build())
 
-                uiThread {
-                    if (logoutResponse.statusCode == LogoutResponse.StatusCode.OK) {
+                    uiThread {
+                        if (logoutResponse.statusCode == LogoutResponse.StatusCode.OK) {
 
-                        val stopNotificationIntent = Intent(Constants.STOP_NOTIFICATION_ACTION)
-                        LocalBroadcastManager.getInstance(this@MainActivity).sendBroadcast(stopNotificationIntent)
+                            val stopNotificationIntent = Intent(Constants.STOP_NOTIFICATION_ACTION)
+                            LocalBroadcastManager.getInstance(this@MainActivity).sendBroadcast(stopNotificationIntent)
 
-                        preferences.edit().putString(Constants.EMAIL_KEY, null).putString(Constants.PASSWORD_KEY, null).putString(Constants.SESSION_KEY, null).apply()
+                            preferences.edit().putString(Constants.EMAIL_KEY, null).putString(Constants.PASSWORD_KEY, null).putString(Constants.SESSION_KEY, null).apply()
+                        }
+
+                        startActivity(Intent(this@MainActivity, LoginActivity::class.java))
+                        finish()
                     }
-
-                    startActivity(Intent(this@MainActivity, LoginActivity::class.java))
-                    finish()
+                } else {
+                    uiThread { onNetworkDownError(resources.getString(R.string.error_server_down)) }
                 }
             } else {
-                uiThread { onNetworkDownError() }
+                uiThread { onNetworkDownError(resources.getString(R.string.error_check_internet)) }
             }
         }
     }
@@ -567,41 +571,48 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
 
     private fun subscribeToStreamsAsynchronously() {
         doAsync {
-            if (ConnectionUtils.getConnectionInfo(this@MainActivity) && ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
+            if (ConnectionUtils.getConnectionInfo(this@MainActivity)) {
 
-                var response: SubscribeResponse = streamServiceBlockingStub.subscribe(SubscribeRequest.newBuilder().setDataStreamType(DataStreamType.STOCK_EXCHANGE).setDataStreamId("").build())
-                uiThread {
-                    subscriptionIds.add(response.subscriptionId)
-                    subscribeToStockExchangeStream(response.subscriptionId)
+                if (ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
+
+                    var response: SubscribeResponse = streamServiceBlockingStub.subscribe(SubscribeRequest.newBuilder().setDataStreamType(DataStreamType.STOCK_EXCHANGE).setDataStreamId("").build())
+                    uiThread {
+                        subscriptionIds.add(response.subscriptionId)
+                        subscribeToStockExchangeStream(response.subscriptionId)
+                    }
+
+                    response = streamServiceBlockingStub.subscribe(SubscribeRequest.newBuilder().setDataStreamType(DataStreamType.STOCK_PRICES).setDataStreamId("").build())
+                    uiThread {
+                        subscriptionIds.add(response.subscriptionId)
+                        subscribeToStockPricesStream(response.subscriptionId)
+                    }
+
+                    response = streamServiceBlockingStub.subscribe(SubscribeRequest.newBuilder().setDataStreamType(DataStreamType.MARKET_EVENTS).setDataStreamId("").build())
+                    uiThread {
+                        subscriptionIds.add(response.subscriptionId)
+                        subscribeToMarketEventsUpdateStream(response.subscriptionId)
+                    }
+
+                    response = streamServiceBlockingStub.subscribe(SubscribeRequest.newBuilder().setDataStreamType(DataStreamType.TRANSACTIONS).setDataStreamId("").build())
+                    uiThread {
+                        subscriptionIds.add(response.subscriptionId)
+                        subscribeToTransactionsStream(response.subscriptionId)
+                    }
+
+                } else {
+                    onNetworkDownError(resources.getString(R.string.error_server_down))
                 }
-
-                response = streamServiceBlockingStub.subscribe(SubscribeRequest.newBuilder().setDataStreamType(DataStreamType.STOCK_PRICES).setDataStreamId("").build())
-                uiThread {
-                    subscriptionIds.add(response.subscriptionId)
-                    subscribeToStockPricesStream(response.subscriptionId)
-                }
-
-                response = streamServiceBlockingStub.subscribe(SubscribeRequest.newBuilder().setDataStreamType(DataStreamType.MARKET_EVENTS).setDataStreamId("").build())
-                uiThread {
-                    subscriptionIds.add(response.subscriptionId)
-                    subscribeToMarketEventsUpdateStream(response.subscriptionId)
-                }
-
-                response = streamServiceBlockingStub.subscribe(SubscribeRequest.newBuilder().setDataStreamType(DataStreamType.TRANSACTIONS).setDataStreamId("").build())
-                uiThread {
-                    subscriptionIds.add(response.subscriptionId)
-                    subscribeToTransactionsStream(response.subscriptionId)
-                }
-
             } else {
-                onNetworkDownError()
+                onNetworkDownError(resources.getString(R.string.error_check_internet))
             }
         }
     }
 
-    override fun onNetworkDownError() {
+    override fun onNetworkDownError(message: String) {
         shouldUnsubscribeAsNetworkDown = false
-        startActivity(Intent(this, SplashActivity::class.java))
+        val intent = Intent(this, SplashActivity::class.java)
+        intent.putExtra("error_message", message)
+        startActivity(intent)
         finish()
     }
 

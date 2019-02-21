@@ -107,34 +107,34 @@ class StockExchangeFragment : Fragment() {
         if (noOfStocksEditText.text.toString().trim { it <= ' ' }.isEmpty()) {
             context?.toast("Enter the number of Stocks")
         } else {
+            if ((noOfStocksEditText.text.toString().trim { it <= ' ' }).toLong() <= currentStock.stocksInExchange) {
+                doAsync {
+                    if (ConnectionUtils.getConnectionInfo(context!!)) {
+                        if (ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
+                            val response = actionServiceBlockingStub.buyStocksFromExchange(
+                                    BuyStocksFromExchangeRequest.newBuilder().setStockId(lastSelectedStockId)
+                                            .setStockQuantity(noOfStocksEditText.text.toString().toLong()).build()
+                            )
 
-            doAsync {
-                if (!ConnectionUtils.getConnectionInfo(context!!)) {
-                    uiThread {
-                        networkDownHandler.onNetworkDownError()
-                    }
-                } else {
-                    if ((noOfStocksEditText.text.toString().trim { it <= ' ' }).toLong() <= currentStock.stocksInExchange) {
-
-                        val response = actionServiceBlockingStub.buyStocksFromExchange(
-                                BuyStocksFromExchangeRequest.newBuilder().setStockId(lastSelectedStockId)
-                                        .setStockQuantity(noOfStocksEditText.text.toString().toLong()).build()
-                        )
-
-                        uiThread {
-                            if (response.statusCode == BuyStocksFromExchangeResponse.StatusCode.OK) {
-                                context?.toast("Stocks bought")
-                                noOfStocksEditText.setText("")
-                                getCompanyProfileAsynchronously(lastSelectedStockId)
-                                view?.hideKeyboard()
+                            uiThread {
+                                if (response.statusCode == BuyStocksFromExchangeResponse.StatusCode.OK) {
+                                    context?.toast("Stocks bought")
+                                    noOfStocksEditText.setText("")
+                                    getCompanyProfileAsynchronously(lastSelectedStockId)
+                                    view?.hideKeyboard()
+                                }
+                                else
+                                    context?.toast(response.statusMessage)
                             }
-                            else
-                                context?.toast(response.statusMessage)
+                        } else {
+                            uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_server_down)) }
                         }
                     } else {
-                        uiThread { context?.toast("Insufficient stocks in exchange") }
+                        uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_check_internet)) }
                     }
                 }
+            } else {
+                context?.toast("Insufficient stocks in exchange")
             }
         }
     }
@@ -150,34 +150,36 @@ class StockExchangeFragment : Fragment() {
         stocksInExchange_textView.text = ""
 
         doAsync {
+            if (ConnectionUtils.getConnectionInfo(context)) {
+                if (ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
+                    val companyProfileResponse = actionServiceBlockingStub.getCompanyProfile(
+                            GetCompanyProfileRequest.newBuilder().setStockId(stockId).build())
 
-            if (ConnectionUtils.getConnectionInfo(context) && ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
-                val companyProfileResponse = actionServiceBlockingStub.getCompanyProfile(
-                        GetCompanyProfileRequest.newBuilder().setStockId(stockId).build())
+                    uiThread {
+                        loadingDialog?.dismiss()
 
-                uiThread {
-                    loadingDialog?.dismiss()
+                        currentStock = companyProfileResponse.stockDetails
 
-                    currentStock = companyProfileResponse.stockDetails
+                        var temporaryTextViewString: String = ": ₹" + decimalFormat.format(currentStock.currentPrice).toString()
+                        currentStockPrice_textView.text = temporaryTextViewString
 
-                    var temporaryTextViewString: String = ": ₹" + decimalFormat.format(currentStock.currentPrice).toString()
+                        temporaryTextViewString = ": ₹" + decimalFormat.format(currentStock.dayHigh).toString()
+                        dailyHigh_textView.text = temporaryTextViewString
 
-                    currentStockPrice_textView.text = temporaryTextViewString
+                        temporaryTextViewString = ": ₹" + decimalFormat.format(currentStock.dayLow).toString()
+                        dailyLow_textView.text = temporaryTextViewString
 
-                    temporaryTextViewString = ": ₹" + decimalFormat.format(currentStock.dayHigh).toString()
-                    dailyHigh_textView.text = temporaryTextViewString
+                        temporaryTextViewString = ": " + decimalFormat.format(currentStock.stocksInMarket).toString()
+                        stocksInMarket_textView.text = temporaryTextViewString
 
-                    temporaryTextViewString = ": ₹" + decimalFormat.format(currentStock.dayLow).toString()
-                    dailyLow_textView.text = temporaryTextViewString
-
-                    temporaryTextViewString = ": " + decimalFormat.format(currentStock.stocksInMarket).toString()
-                    stocksInMarket_textView.text = temporaryTextViewString
-
-                    temporaryTextViewString = ": " + decimalFormat.format(currentStock.stocksInExchange).toString()
-                    stocksInExchange_textView.text = temporaryTextViewString
+                        temporaryTextViewString = ": " + decimalFormat.format(currentStock.stocksInExchange).toString()
+                        stocksInExchange_textView.text = temporaryTextViewString
+                    }
+                } else {
+                    uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_server_down)) }
                 }
             } else {
-                uiThread { networkDownHandler.onNetworkDownError() }
+                uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_check_internet)) }
             }
         }
     }

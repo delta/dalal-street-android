@@ -3,7 +3,6 @@ package org.pragyan.dalal18.fragment
 
 import android.content.Context
 import android.os.Bundle
-import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -122,59 +121,63 @@ class OrdersFragment : Fragment(), OrdersRecyclerAdapter.OnOrderClickListener, S
     private fun getOpenOrdersAsynchronously() {
         loadingOrdersDialog.show()
         doAsync {
-            if (ConnectionUtils.getConnectionInfo(context) && ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
-                val openOrdersResponse = actionServiceBlockingStub.getMyOpenOrders(GetMyOpenOrdersRequest.newBuilder().build())
+            if (ConnectionUtils.getConnectionInfo(context)) {
+                if (ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
+                    val openOrdersResponse = actionServiceBlockingStub.getMyOpenOrders(GetMyOpenOrdersRequest.newBuilder().build())
 
-                uiThread {
-                    loadingOrdersDialog.dismiss()
+                    uiThread {
+                        loadingOrdersDialog.dismiss()
 
-                    if (openOrdersResponse?.statusCode == GetMyOpenOrdersResponse.StatusCode.OK) {
-                        ordersRecycler_swipeRefreshLayout.isRefreshing = false
+                        if (openOrdersResponse?.statusCode == GetMyOpenOrdersResponse.StatusCode.OK) {
+                            ordersRecycler_swipeRefreshLayout.isRefreshing = false
 
-                        val openOrdersList = mutableListOf<Order>()
+                            val openOrdersList = mutableListOf<Order>()
 
-                        val askList = openOrdersResponse.openAskOrdersList
-                        val bidList = openOrdersResponse.openBidOrdersList
+                            val askList = openOrdersResponse.openAskOrdersList
+                            val bidList = openOrdersResponse.openBidOrdersList
 
-                        if (askList.size > 0) {
-                            for (currentAskOrder in askList) {
-                                openOrdersList.add(Order(
-                                        currentAskOrder.id,
-                                        false,
-                                        false,
-                                        currentAskOrder.price,
-                                        currentAskOrder.stockId,
-                                        currentAskOrder.orderType,
-                                        currentAskOrder.stockQuantity,
-                                        currentAskOrder.stockQuantityFulfilled
-                                ))
+                            if (askList.size > 0) {
+                                for (currentAskOrder in askList) {
+                                    openOrdersList.add(Order(
+                                            currentAskOrder.id,
+                                            false,
+                                            false,
+                                            currentAskOrder.price,
+                                            currentAskOrder.stockId,
+                                            currentAskOrder.orderType,
+                                            currentAskOrder.stockQuantity,
+                                            currentAskOrder.stockQuantityFulfilled
+                                    ))
+                                }
                             }
-                        }
 
-                        if (bidList.size > 0) {
-                            for (currentBidOrder in bidList) {
-                                openOrdersList.add(Order(
-                                        currentBidOrder.id,
-                                        true,
-                                        false,
-                                        currentBidOrder.price,
-                                        currentBidOrder.stockId,
-                                        currentBidOrder.orderType,
-                                        currentBidOrder.stockQuantity,
-                                        currentBidOrder.stockQuantityFulfilled
-                                ))
+                            if (bidList.size > 0) {
+                                for (currentBidOrder in bidList) {
+                                    openOrdersList.add(Order(
+                                            currentBidOrder.id,
+                                            true,
+                                            false,
+                                            currentBidOrder.price,
+                                            currentBidOrder.stockId,
+                                            currentBidOrder.orderType,
+                                            currentBidOrder.stockQuantity,
+                                            currentBidOrder.stockQuantityFulfilled
+                                    ))
+                                }
                             }
+
+                            val empty = ordersRecyclerAdapter?.swapData(openOrdersList)
+                            flipVisibilities(empty)
+
+                        } else {
+                            context?.longToast(openOrdersResponse.statusMessage)
                         }
-
-                        val empty = ordersRecyclerAdapter?.swapData(openOrdersList)
-                        flipVisibilities(empty)
-
-                    } else {
-                        context?.longToast(openOrdersResponse.statusMessage)
                     }
+                } else {
+                    uiThread { networkDownHandler?.onNetworkDownError(resources.getString(R.string.error_server_down)) }
                 }
             } else {
-                uiThread { networkDownHandler?.onNetworkDownError() }
+                uiThread { networkDownHandler?.onNetworkDownError(resources.getString(R.string.error_check_internet)) }
             }
         }
     }
@@ -186,23 +189,36 @@ class OrdersFragment : Fragment(), OrdersRecyclerAdapter.OnOrderClickListener, S
                     .setTitle("Cancel Confirm")
                     .setCancelable(true)
                     .setMessage("Do you want to cancel this order ?")
-                    .setPositiveButton("Yes") { _, _ ->
-                        Handler().post {
-                            val response = actionServiceBlockingStub.cancelOrder(
-                                    CancelOrderRequest.newBuilder().setOrderId(orderId).setIsAsk(!bid).build())
-
-                            if (response.statusCode == CancelOrderResponse.StatusCode.OK) {
-                                context?.toast("Order cancelled")
-                                val empty = ordersRecyclerAdapter?.cancelOrder(orderId)
-                                flipVisibilities(empty)
-
-                            } else {
-                                context?.toast(response.statusMessage)
-                            }
-                        }
-                    }
+                    .setPositiveButton("Yes") { _, _ -> cancelOrder(orderId, bid) }
                     .setNegativeButton("No") { dialogInterface, _ -> dialogInterface.dismiss() }
             builder.show()
+        }
+    }
+
+    private fun cancelOrder(orderId: Int, bid: Boolean) {
+        doAsync {
+            if (ConnectionUtils.getConnectionInfo(context)) {
+                if (ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
+
+                    val response = actionServiceBlockingStub.cancelOrder(
+                            CancelOrderRequest.newBuilder().setOrderId(orderId).setIsAsk(!bid).build())
+
+                    uiThread {
+                        if (response.statusCode == CancelOrderResponse.StatusCode.OK) {
+                            context?.toast("Order cancelled")
+                            val empty = ordersRecyclerAdapter?.cancelOrder(orderId)
+                            flipVisibilities(empty)
+                        } else {
+                            context?.toast(response.statusMessage)
+                        }
+                    }
+
+                } else {
+                    uiThread { networkDownHandler?.onNetworkDownError(resources.getString(R.string.error_server_down)) }
+                }
+            } else {
+                uiThread { networkDownHandler?.onNetworkDownError(resources.getString(R.string.error_check_internet)) }
+            }
         }
     }
 

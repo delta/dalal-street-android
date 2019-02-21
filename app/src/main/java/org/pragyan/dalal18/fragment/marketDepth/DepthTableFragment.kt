@@ -51,10 +51,10 @@ class DepthTableFragment : Fragment() {
     lateinit var networkDownHandler: ConnectionUtils.OnNetworkDownHandler
 
     lateinit var bidDepthAdapter: MarketDepthRecyclerAdapter
-    lateinit var askDepthAdapter:MarketDepthRecyclerAdapter
+    lateinit var askDepthAdapter: MarketDepthRecyclerAdapter
 
     private var subscriptionId: SubscriptionId? = null
-    private var prevSubscriptionId:SubscriptionId? = null
+    private var prevSubscriptionId: SubscriptionId? = null
 
 
     private val refreshMarketDepth = object : BroadcastReceiver() {
@@ -113,14 +113,14 @@ class DepthTableFragment : Fragment() {
         bidDepthAdapter = MarketDepthRecyclerAdapter(context, bidArrayList)
         askDepthAdapter = MarketDepthRecyclerAdapter(context, askArrayList)
 
-        with(bid_depth_rv){
+        with(bid_depth_rv) {
             layoutManager = LinearLayoutManager(context)
             setHasFixedSize(false)
             adapter = bidDepthAdapter
             isNestedScrollingEnabled = false
         }
 
-        with(ask_depth_rv){
+        with(ask_depth_rv) {
             layoutManager = LinearLayoutManager(context)
             setHasFixedSize(false)
             adapter = askDepthAdapter
@@ -128,7 +128,7 @@ class DepthTableFragment : Fragment() {
         }
 
         val arrayAdapter = ArrayAdapter(activity!!, R.layout.company_spinner_item, StockUtils.getCompanyNamesArray())
-        with(companySpinner){
+        with(companySpinner) {
             setAdapter(arrayAdapter)
             setOnItemClickListener { _, _, _, _ ->
                 val currentCompany = companySpinner.text.toString()
@@ -270,33 +270,35 @@ class DepthTableFragment : Fragment() {
     private fun getCompanyProfileAsynchronously(currentCompany: String) {
 
         doAsync {
+            if (ConnectionUtils.getConnectionInfo(context)) {
+                if (ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
+                    val companyProfileResponse = actionServiceBlockingStub.getCompanyProfile(
+                            GetCompanyProfileRequest.newBuilder().setStockId(getStockIdFromCompanyName(currentCompany)).build())
+                    uiThread {
+                        if (activity != null && isAdded) {
+                            val currentStock = companyProfileResponse.stockDetails
 
-            if (ConnectionUtils.getConnectionInfo(context) && ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)){
-                val companyProfileResponse = actionServiceBlockingStub.getCompanyProfile(
-                        GetCompanyProfileRequest.newBuilder().setStockId(getStockIdFromCompanyName(currentCompany)).build())
-                uiThread {
-                    if (activity != null && isAdded) {
-                        val currentStock = companyProfileResponse.stockDetails
+                            val currentPrice = currentStock.currentPrice
+                            val prevDayClose = currentStock.previousDayClose
 
-                        val currentPrice = currentStock.currentPrice
-                        val prevDayClose = currentStock.previousDayClose
-
-                        current_stock_price_layout.visibility = View.VISIBLE
-                        val currentStockPrice = "Current Stock Price : " + Constants.RUPEE_SYMBOL + df.format(currentPrice).toString()
-                        current_stock_price_textView.text = currentStockPrice
-                        val prevDayClosePrice = Constants.RUPEE_SYMBOL + df.format(Math.abs(currentPrice - prevDayClose)).toString()
-                        prev_day_close_stock_price.text = prevDayClosePrice
-                        if (currentPrice >= prevDayClose) {
-                            arrow_image_view.setImageResource(R.drawable.arrow_up_green)
-                        } else {
-                            arrow_image_view.setImageResource(R.drawable.arrow_down_red)
+                            current_stock_price_layout.visibility = View.VISIBLE
+                            val currentStockPrice = "Current Stock Price : " + Constants.RUPEE_SYMBOL + df.format(currentPrice).toString()
+                            current_stock_price_textView.text = currentStockPrice
+                            val prevDayClosePrice = Constants.RUPEE_SYMBOL + df.format(Math.abs(currentPrice - prevDayClose)).toString()
+                            prev_day_close_stock_price.text = prevDayClosePrice
+                            if (currentPrice >= prevDayClose) {
+                                arrow_image_view.setImageResource(R.drawable.arrow_up_green)
+                            } else {
+                                arrow_image_view.setImageResource(R.drawable.arrow_down_red)
+                            }
                         }
                     }
+                } else {
+                    uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_server_down)) }
                 }
-            } else{
-                uiThread { networkDownHandler.onNetworkDownError() }
+            } else {
+                uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_check_internet)) }
             }
-
         }
     }
 
