@@ -151,12 +151,12 @@ class SplashActivity : AppCompatActivity() {
 
                             // Checking for constants
                             for ((key, value) in loginResponse.constantsMap) {
-                                if (key == "MORTGAGE_DEPOSIT_RATE")
-                                    Constants.MORTGAGE_DEPOSIT_RATE = value.toDouble()
-                                else if (key == "MORTGAGE_RETRIEVE_RATE")
-                                    Constants.MORTGAGE_RETRIEVE_RATE = value.toDouble()
-                                else if (key == "ORDER_FEE_PERCENT")
-                                    Constants.ORDER_FEE_RATE = (value.toDouble()/100)
+                                when (key) {
+                                    "MORTGAGE_DEPOSIT_RATE" -> Constants.MORTGAGE_DEPOSIT_RATE = value.toDouble()
+                                    "MORTGAGE_RETRIEVE_RATE" -> Constants.MORTGAGE_RETRIEVE_RATE = value.toDouble()
+                                    "ORDER_FEE_PERCENT" -> Constants.ORDER_FEE_RATE = (value.toDouble()/100)
+                                    "ORDER_PRICE_WINDOW" -> Constants.ORDER_PRICE_WINDOW = value
+                                }
                             }
 
                             preferences.edit().putString(Constants.MARKET_OPEN_TEXT_KEY, loginResponse.marketIsOpenHackyNotif)

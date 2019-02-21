@@ -57,6 +57,8 @@ class TradeFragment : Fragment() {
 
                 tempString = " : " + Constants.RUPEE_SYMBOL + " " + decimalFormat.format(StockUtils.getPriceFromStockId(model.globalStockDetails, StockUtils.getStockIdFromCompanyName(companySpinner.selectedItem.toString()))).toString()
                 currentStockPrice_textView.text = tempString
+
+                setOrderPriceWindow()
             }
         }
     }
@@ -72,7 +74,8 @@ class TradeFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val rootView = inflater.inflate(R.layout.fragment_trade, container, false)
-        model = activity?.run { ViewModelProviders.of(this).get(DalalViewModel::class.java) } ?: throw Exception("Invalid activity")
+        model = activity?.run { ViewModelProviders.of(this).get(DalalViewModel::class.java) }
+                ?: throw Exception("Invalid activity")
         DaggerDalalStreetApplicationComponent.builder().contextModule(ContextModule(context!!)).build().inject(this)
         return rootView
     }
@@ -93,8 +96,11 @@ class TradeFragment : Fragment() {
                 override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                     if (parent?.getItemAtPosition(position).toString() == "Market Order") {
                         order_price_input.visibility = View.GONE
+                        orderPriceWindowTextView.visibility = View.GONE
                     } else {
                         order_price_input.visibility = View.VISIBLE
+                        orderPriceWindowTextView.visibility = View.VISIBLE
+                        setOrderPriceWindow()
                     }
                     calculateOrderFee()
                 }
@@ -117,6 +123,7 @@ class TradeFragment : Fragment() {
                     currentStockPrice_textView.text = tempString
 
                     calculateOrderFee()
+                    setOrderPriceWindow()
                 }
             }
         }
@@ -182,6 +189,15 @@ class TradeFragment : Fragment() {
 
         val temp = " : " + Constants.RUPEE_SYMBOL + decimalFormat.format(orderFee).toString()
         order_fee_textview.text = temp
+    }
+
+    private fun setOrderPriceWindow() {
+        val currentPrice = StockUtils.getPriceFromStockId(model.globalStockDetails, StockUtils.getStockIdFromCompanyName(companySpinner.selectedItem.toString()))
+        val lowerLimit = currentPrice.toDouble() * (1 - Constants.ORDER_PRICE_WINDOW.toDouble() / 100)
+        val higherLimit = currentPrice.toDouble() * (1 + Constants.ORDER_PRICE_WINDOW.toDouble() / 100)
+        val tempOrderPriceText = "Price must be between " + Constants.RUPEE_SYMBOL + DecimalFormat(Constants.PRICE_FORMAT).format(lowerLimit.toLong()) + " - " +
+                Constants.RUPEE_SYMBOL + DecimalFormat(Constants.PRICE_FORMAT).format(higherLimit.toLong())
+        orderPriceWindowTextView.text = tempOrderPriceText
     }
 
     private fun onBidAskButtonClick() {
