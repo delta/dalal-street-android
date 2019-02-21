@@ -90,45 +90,49 @@ class TransactionsFragment : Fragment() {
 
             lastId = preferences.getInt(Constants.LAST_TRANSACTION_ID, 0)
 
-            if (ConnectionUtils.getConnectionInfo(context) && ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
+            if (ConnectionUtils.getConnectionInfo(context)) {
+                if (ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
 
-                val transactionsResponse = actionServiceBlockingStub.getTransactions(GetTransactionsRequest
-                        .newBuilder()
-                        .setCount(0)
-                        .setLastTransactionId(lastId)
-                        .build())
+                    val transactionsResponse = actionServiceBlockingStub.getTransactions(GetTransactionsRequest
+                            .newBuilder()
+                            .setCount(0)
+                            .setLastTransactionId(lastId)
+                            .build())
 
-                uiThread {
+                    uiThread {
 
-                    loadingDialog?.dismiss()
-                    paginate = transactionsResponse.transactionsCount == 10
+                        loadingDialog?.dismiss()
+                        paginate = transactionsResponse.transactionsCount == 10
 
-                    for (i in 0 until transactionsResponse.transactionsCount) {
-                        val currentTransaction = transactionsResponse.getTransactions(i)
-                        transactionList.add(Transaction(
-                                currentTransaction.type.name,
-                                currentTransaction.stockId,
-                                currentTransaction.stockQuantity,
-                                currentTransaction.price,
-                                currentTransaction.createdAt,
-                                currentTransaction.total
-                        ))
-                        preferences.edit()
-                                .putInt(Constants.LAST_TRANSACTION_ID, currentTransaction.id)
-                                .apply()
+                        for (i in 0 until transactionsResponse.transactionsCount) {
+                            val currentTransaction = transactionsResponse.getTransactions(i)
+                            transactionList.add(Transaction(
+                                    currentTransaction.type.name,
+                                    currentTransaction.stockId,
+                                    currentTransaction.stockQuantity,
+                                    currentTransaction.price,
+                                    currentTransaction.createdAt,
+                                    currentTransaction.total
+                            ))
+                            preferences.edit()
+                                    .putInt(Constants.LAST_TRANSACTION_ID, currentTransaction.id)
+                                    .apply()
+                        }
+
+                        if (transactionList.size == 0) {
+                            transactionsRecyclerView.visibility = View.GONE
+                            noTransactionsTextView.visibility = View.VISIBLE
+                        } else {
+                            transactionsAdapter?.swapData(transactionList)
+                            transactionsRecyclerView.visibility = View.VISIBLE
+                            noTransactionsTextView.visibility = View.GONE
+                        }
                     }
-
-                    if (transactionList.size == 0) {
-                        transactionsRecyclerView.visibility = View.GONE
-                        noTransactionsTextView.visibility = View.VISIBLE
-                    } else {
-                        transactionsAdapter?.swapData(transactionList)
-                        transactionsRecyclerView.visibility = View.VISIBLE
-                        noTransactionsTextView.visibility = View.GONE
-                    }
+                } else {
+                    uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_server_down)) }
                 }
             } else {
-                uiThread { networkDownHandler.onNetworkDownError() }
+                uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_check_internet)) }
             }
         }
     }

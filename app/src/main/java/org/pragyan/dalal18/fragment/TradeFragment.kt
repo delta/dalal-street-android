@@ -237,22 +237,26 @@ class TradeFragment : Fragment() {
                 .build()
 
         doAsync {
-            if (ConnectionUtils.getConnectionInfo(context) && ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
-                val orderResponse = actionServiceBlockingStub.placeOrder(orderRequest)
+            if (ConnectionUtils.getConnectionInfo(context)) {
+                if (ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
+                    val orderResponse = actionServiceBlockingStub.placeOrder(orderRequest)
 
-                uiThread {
-                    loadingDialog?.dismiss()
-                    if (orderResponse.statusCodeValue == 0) {
-                        context?.toast("Order Placed")
-                        noOfStocksEditText.setText("")
-                        orderPriceEditText.setText("")
-                        view?.hideKeyboard()
-                    } else {
-                        context?.toast(orderResponse.statusMessage)
+                    uiThread {
+                        loadingDialog?.dismiss()
+                        if (orderResponse.statusCodeValue == 0) {
+                            context?.toast("Order Placed")
+                            noOfStocksEditText.setText("")
+                            orderPriceEditText.setText("")
+                            view?.hideKeyboard()
+                        } else {
+                            context?.toast(orderResponse.statusMessage)
+                        }
                     }
+                } else {
+                    uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_server_down)) }
                 }
             } else {
-                uiThread { networkDownHandler.onNetworkDownError() }
+                uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_check_internet)) }
             }
         }
     }

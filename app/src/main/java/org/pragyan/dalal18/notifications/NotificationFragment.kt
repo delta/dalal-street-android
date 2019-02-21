@@ -92,35 +92,39 @@ class NotificationFragment : Fragment() {
         lastId = preferences.getInt(Constants.LAST_NOTIFICATION_ID, 0)
 
         doAsync {
-            if (ConnectionUtils.getConnectionInfo(context) && ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
-                val notificationsResponse = actionServiceBlockingStub.getNotifications(
-                        GetNotificationsRequest.newBuilder().setLastNotificationId(lastId).setCount(10).build())
+            if (ConnectionUtils.getConnectionInfo(context)) {
+                if (ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
+                    val notificationsResponse = actionServiceBlockingStub.getNotifications(
+                            GetNotificationsRequest.newBuilder().setLastNotificationId(lastId).setCount(10).build())
 
-                uiThread {
-                    paginate = notificationsResponse.notificationsCount == 10
+                    uiThread {
+                        paginate = notificationsResponse.notificationsCount == 10
 
-                    if (notificationsResponse.notificationsList.size > 0) {
+                        if (notificationsResponse.notificationsList.size > 0) {
 
-                        for (currentNotification in notificationsResponse.notificationsList) {
-                            customNotificationList.add(Notification(currentNotification.text, currentNotification.createdAt))
-                            preferences.edit()
-                                    .putInt(Constants.LAST_NOTIFICATION_ID, currentNotification.id)
-                                    .apply()
+                            for (currentNotification in notificationsResponse.notificationsList) {
+                                customNotificationList.add(Notification(currentNotification.text, currentNotification.createdAt))
+                                preferences.edit()
+                                        .putInt(Constants.LAST_NOTIFICATION_ID, currentNotification.id)
+                                        .apply()
+                            }
+
+                            notificationRecyclerAdapter.swapData(customNotificationList)
+                            noNotification_textView.visibility = View.GONE
+                            notifications_recyclerView.visibility = View.VISIBLE
+
+                        } else {
+                            noNotification_textView.visibility = View.VISIBLE
+                            notifications_recyclerView.visibility = View.GONE
                         }
+                        loadingDialog?.dismiss()
 
-                        notificationRecyclerAdapter.swapData(customNotificationList)
-                        noNotification_textView.visibility = View.GONE
-                        notifications_recyclerView.visibility = View.VISIBLE
-
-                    } else {
-                        noNotification_textView.visibility = View.VISIBLE
-                        notifications_recyclerView.visibility = View.GONE
                     }
-                    loadingDialog?.dismiss()
-
+                } else {
+                    uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_server_down)) }
                 }
             } else {
-                uiThread { networkDownHandler.onNetworkDownError() }
+                uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_check_internet)) }
             }
         }
     }

@@ -91,7 +91,7 @@ class PortfolioFragment : Fragment() {
             setTransparentCircleAlpha(110)
             transparentCircleRadius = 70f
             setDrawCenterText(true)
-            centerText = "Total Worth \n (In percentage)"
+            centerText = "Net Worth \n (In percentage)"
             setCenterTextColor(R.color.black_background)
             setCenterTextSize(22f)
             setCenterTextTypeface(kreonLightTypeFace)

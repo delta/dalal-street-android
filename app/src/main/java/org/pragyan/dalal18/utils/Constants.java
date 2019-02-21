@@ -3,7 +3,7 @@ package org.pragyan.dalal18.utils;
 public class Constants {
 
     // wss://157.230.165.9:8000/ws
-    public static final String HOST = "10.2.64.81";
+    public static final String HOST = "10.2.76.99";
     public static final int PORT = 8000;
 
     public static final String COMPANY_IMAGES_BASE_URL = "https://dalal.pragyan.org/public/src/images/companies/";
