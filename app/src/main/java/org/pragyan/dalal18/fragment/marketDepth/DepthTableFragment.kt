@@ -32,6 +32,7 @@ import org.pragyan.dalal18.utils.ConnectionUtils
 import org.pragyan.dalal18.utils.Constants
 import org.pragyan.dalal18.utils.StockUtils
 import org.pragyan.dalal18.utils.StockUtils.getStockIdFromCompanyName
+import java.text.DecimalFormat
 import java.util.*
 import javax.inject.Inject
 
@@ -45,7 +46,7 @@ class DepthTableFragment : Fragment() {
 
     private var bidArrayList = mutableListOf<MarketDepth>()
     private var askArrayList = mutableListOf<MarketDepth>()
-
+    private val df = DecimalFormat(Constants.PRICE_FORMAT)
     private var loadingDialog: AlertDialog? = null
     lateinit var networkDownHandler: ConnectionUtils.OnNetworkDownHandler
 
@@ -281,9 +282,9 @@ class DepthTableFragment : Fragment() {
                         val prevDayClose = currentStock.previousDayClose
 
                         current_stock_price_layout.visibility = View.VISIBLE
-                        val currentStockPrice = "Current Stock Price : " + Constants.RUPEE_SYMBOL + currentPrice.toString()
+                        val currentStockPrice = "Current Stock Price : " + Constants.RUPEE_SYMBOL + df.format(currentPrice).toString()
                         current_stock_price_textView.text = currentStockPrice
-                        val prevDayClosePrice = Constants.RUPEE_SYMBOL + Math.abs(currentPrice - prevDayClose).toString()
+                        val prevDayClosePrice = Constants.RUPEE_SYMBOL + df.format(Math.abs(currentPrice - prevDayClose)).toString()
                         prev_day_close_stock_price.text = prevDayClosePrice
                         if (currentPrice >= prevDayClose) {
                             arrow_image_view.setImageResource(R.drawable.arrow_up_green)

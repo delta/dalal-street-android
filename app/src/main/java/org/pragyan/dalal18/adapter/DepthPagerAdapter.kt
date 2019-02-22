@@ -28,6 +28,6 @@ class DepthPagerAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm) {
     }
 
     companion object {
-        private val NUMBER_OF_FRAGMENTS = 2
+        private const val NUMBER_OF_FRAGMENTS = 2
     }
 }

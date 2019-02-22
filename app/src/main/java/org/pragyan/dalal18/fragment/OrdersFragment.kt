@@ -108,9 +108,11 @@ class OrdersFragment : Fragment(), OrdersRecyclerAdapter.OnOrderClickListener, S
     private fun subscribeToMyOrdersStream(subscriptionId: SubscriptionId) {
         streamServiceStub.getMyOrderUpdates(subscriptionId, object : StreamObserver<MyOrderUpdate> {
             override fun onNext(orderUpdate: MyOrderUpdate) {
-                // TODO : Check if LocalBroadcast implementation is required
-                openOrdersList = ordersRecyclerAdapter?.updateOrder(orderUpdate)!!
-                flipVisibilitiesIfNeeded()
+
+                // TODO : Check if LocalBroadcast implementation is required because flipVisibilities() changes UI
+                val empty = ordersRecyclerAdapter?.updateOrder(orderUpdate)
+                flipVisibilities(empty)
+
             }
 
             override fun onError(t: Throwable) {
@@ -133,7 +135,8 @@ class OrdersFragment : Fragment(), OrdersRecyclerAdapter.OnOrderClickListener, S
                     if (openOrdersResponse?.statusCode == GetMyOpenOrdersResponse.StatusCode.OK) {
                         ordersRecycler_swipeRefreshLayout.isRefreshing = false
 
-                        openOrdersList.clear()
+                        val openOrdersList = mutableListOf<Order>()
+
 
                         val askList = openOrdersResponse.openAskOrdersList
                         val bidList = openOrdersResponse.openBidOrdersList
@@ -168,7 +171,9 @@ class OrdersFragment : Fragment(), OrdersRecyclerAdapter.OnOrderClickListener, S
                             }
                         }
 
-                        flipVisibilitiesIfNeeded()
+
+                        val empty = ordersRecyclerAdapter?.swapData(openOrdersList)
+                        flipVisibilities(empty)
 
                     } else {
                         context?.longToast(openOrdersResponse.statusMessage)
@@ -194,8 +199,9 @@ class OrdersFragment : Fragment(), OrdersRecyclerAdapter.OnOrderClickListener, S
 
                             if (response.statusCode == CancelOrderResponse.StatusCode.OK) {
                                 context?.toast("Order cancelled")
-                                openOrdersList = ordersRecyclerAdapter?.cancelOrder(orderId)!!
-                                flipVisibilitiesIfNeeded()
+
+                                val empty = ordersRecyclerAdapter?.cancelOrder(orderId)
+                                flipVisibilities(empty)
 
                             } else {
                                 context?.toast(response.statusMessage)
@@ -207,9 +213,8 @@ class OrdersFragment : Fragment(), OrdersRecyclerAdapter.OnOrderClickListener, S
         }
     }
 
-    private fun flipVisibilitiesIfNeeded() {
-        if (openOrdersList.size > 0) {
-            ordersRecyclerAdapter?.swapData(openOrdersList)
+    private fun flipVisibilities(empty: Boolean?) {
+        if (empty != null && !empty) {
             ordersRecycler_swipeRefreshLayout.visibility = View.VISIBLE
             emptyOrders_relativeLayout.visibility = View.GONE
         } else {

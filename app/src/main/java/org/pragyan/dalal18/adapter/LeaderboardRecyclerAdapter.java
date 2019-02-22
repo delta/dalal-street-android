@@ -1,8 +1,11 @@
 package org.pragyan.dalal18.adapter;
 
 import android.content.Context;
+
+import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,13 +13,15 @@ import android.widget.TextView;
 
 import org.pragyan.dalal18.data.LeaderBoardDetails;
 import org.pragyan.dalal18.R;
+import org.pragyan.dalal18.utils.Constants;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LeaderboardRecyclerAdapter extends RecyclerView.Adapter<LeaderboardRecyclerAdapter.MyViewHolder>{
+public class LeaderboardRecyclerAdapter extends RecyclerView.Adapter<LeaderboardRecyclerAdapter.MyViewHolder> {
 
-    private List<LeaderBoardDetails> leaderBoardDetails = new ArrayList<>();
+    private List<LeaderBoardDetails> leaderBoardDetails;
     private Context context;
 
     public LeaderboardRecyclerAdapter(Context context, ArrayList<LeaderBoardDetails> leaderBoardDetails) {
@@ -24,20 +29,21 @@ public class LeaderboardRecyclerAdapter extends RecyclerView.Adapter<Leaderboard
         this.context = context;
     }
 
+    @NonNull
     @Override
-    public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(context).inflate(R.layout.leaderboard_list_item, parent, false);
         return new LeaderboardRecyclerAdapter.MyViewHolder(itemView);
     }
 
     @Override
-    public void onBindViewHolder(MyViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
 
         LeaderBoardDetails currentLeaderBoardDetails = leaderBoardDetails.get(position);
 
         holder.rankTextView.setText(String.valueOf(currentLeaderBoardDetails.getRank()));
         holder.nameTextView.setText(currentLeaderBoardDetails.getName());
-        holder.wealthTextView.setText(String.valueOf(currentLeaderBoardDetails.getWealth()));
+        holder.wealthTextView.setText(new DecimalFormat(Constants.PRICE_FORMAT).format(String.valueOf(currentLeaderBoardDetails.getWealth())));
 
         if (position == 0) {
             holder.nameTextView.setTextColor(ContextCompat.getColor(context, R.color.gold_medal));
@@ -70,12 +76,12 @@ public class LeaderboardRecyclerAdapter extends RecyclerView.Adapter<Leaderboard
     }
 
     class MyViewHolder extends RecyclerView.ViewHolder {
-        
+
         TextView rankTextView, nameTextView, wealthTextView;
 
         MyViewHolder(View view) {
             super(view);
-            
+
             rankTextView = view.findViewById(R.id.rank_textView);
             nameTextView = view.findViewById(R.id.name_textView);
             wealthTextView = view.findViewById(R.id.wealth_textView);

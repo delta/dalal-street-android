@@ -1,11 +1,8 @@
 package org.pragyan.dalal18.adapter;
 
 import android.content.Context;
-import androidx.core.content.ContextCompat;
-import androidx.recyclerview.widget.RecyclerView;
 import android.text.Html;
 import android.text.Spanned;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,8 +10,14 @@ import android.widget.TextView;
 
 import org.pragyan.dalal18.R;
 import org.pragyan.dalal18.data.MarketDepth;
+import org.pragyan.dalal18.utils.Constants;
 
+import java.text.DecimalFormat;
 import java.util.List;
+
+import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.RecyclerView;
 
 public class MarketDepthRecyclerAdapter extends RecyclerView.Adapter<MarketDepthRecyclerAdapter.MyViewHolder> {
 
@@ -26,29 +29,28 @@ public class MarketDepthRecyclerAdapter extends RecyclerView.Adapter<MarketDepth
         this.marketDepthList = marketDepthList;
     }
 
+    @NonNull
     @Override
-    public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemView = LayoutInflater.from(context).inflate(R.layout.market_depth_list_item, parent, false);
-        MyViewHolder viewHolder = new MyViewHolder(itemView);
-        return viewHolder;
+    public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        return new MyViewHolder(LayoutInflater.from(context).inflate(R.layout.market_depth_list_item, parent, false));
     }
 
     @Override
-    public void onBindViewHolder(MyViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         long price = marketDepthList.get(position).getPrice();
-        if(price == 0L ||  price == Long.MAX_VALUE){
+        if (price == 0L || price == Long.MAX_VALUE) {
             holder.price.setText("M.O");
             holder.price.setTextColor(ContextCompat.getColor(context, R.color.neon_blue));
             holder.volume.setTextColor(ContextCompat.getColor(context, R.color.neon_blue));
-        }else {
-            holder.price.setText(fromHtml(String.valueOf(price)));
+        } else {
+            holder.price.setText(fromHtml(String.valueOf(new DecimalFormat(Constants.PRICE_FORMAT).format(price))));
         }
         holder.volume.setText(String.valueOf(marketDepthList.get(position).getVolume()));
     }
 
     @Override
     public int getItemCount() {
-        if (marketDepthList == null || marketDepthList.size() == 0){
+        if (marketDepthList == null || marketDepthList.size() == 0) {
             return 0;
         }
         return marketDepthList.size();
@@ -59,7 +61,7 @@ public class MarketDepthRecyclerAdapter extends RecyclerView.Adapter<MarketDepth
         notifyDataSetChanged();
     }
 
-    public class MyViewHolder extends RecyclerView.ViewHolder{
+    class MyViewHolder extends RecyclerView.ViewHolder {
 
         TextView price, volume;
 
@@ -72,10 +74,10 @@ public class MarketDepthRecyclerAdapter extends RecyclerView.Adapter<MarketDepth
     }
 
     @SuppressWarnings("deprecation")
-    public static Spanned fromHtml(String html){
+    private static Spanned fromHtml(String html) {
         Spanned result;
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-            result = Html.fromHtml("&#8377;"+ html,Html.FROM_HTML_MODE_LEGACY);
+            result = Html.fromHtml("&#8377;" + html, Html.FROM_HTML_MODE_LEGACY);
         } else {
             result = Html.fromHtml("&#8377;" + html);
         }

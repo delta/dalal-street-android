@@ -2,9 +2,11 @@ package org.pragyan.dalal18.adapter;
 
 import android.content.Context;
 
+
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
+
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,7 +20,7 @@ import org.pragyan.dalal18.data.Order;
 import org.pragyan.dalal18.utils.Constants;
 import org.pragyan.dalal18.utils.StockUtils;
 
-import java.util.ArrayList;
+import java.text.DecimalFormat;
 import java.util.Collections;
 import java.util.List;
 
@@ -74,7 +76,7 @@ public class OrdersRecyclerAdapter extends RecyclerView.Adapter<OrdersRecyclerAd
         } else {
             holder.priceTextView.setVisibility(View.VISIBLE);
             tempString = (order.getStockQuantityFulfilled() == 0 ? "Placed " : order.getStockQuantity() == order.getStockQuantityFulfilled() ? "Filled" : "Partially Filled") + " at " +
-                    Constants.RUPEE_SYMBOL + " " + String.valueOf(order.getPrice() + "/stock");
+                    Constants.RUPEE_SYMBOL + " " + String.valueOf(new DecimalFormat(Constants.PRICE_FORMAT).format(order.getPrice()) + "/stock");
             holder.priceTextView.setText(tempString);
         }
 
@@ -90,7 +92,8 @@ public class OrdersRecyclerAdapter extends RecyclerView.Adapter<OrdersRecyclerAd
         return openOrdersList.size();
     }
 
-    public void swapData(List<Order> list) {
+    // Returns true if openOrdersList is empty
+    public boolean swapData(List<Order> list) {
 
         openOrdersList = list;
 
@@ -104,13 +107,16 @@ public class OrdersRecyclerAdapter extends RecyclerView.Adapter<OrdersRecyclerAd
         });
 
         notifyDataSetChanged();
+
+        return openOrdersList.size() <= 0;
     }
 
-    public List<Order> updateOrder(MyOrderUpdate order) {
+    // Returns true if openOrdersList is empty
+    public boolean updateOrder(MyOrderUpdate order) {
 
         if (order.getIsNewOrder()) {
             openOrdersList.add(new Order(order.getId(), !order.getIsAsk(), order.getIsClosed(), order.getOrderPrice(), order.getStockId(),
-                    order.getOrderType(), order.getStockQuantity(), 0));
+                    order.getOrderType(), Math.abs(order.getStockQuantity()), 0));
             notifyItemInserted(openOrdersList.size() - 1);
         } else {
             int position = -1;
@@ -127,15 +133,18 @@ public class OrdersRecyclerAdapter extends RecyclerView.Adapter<OrdersRecyclerAd
                 openOrdersList.remove(position);
                 notifyItemRemoved(position);
             } else if (position != -1) {
-                openOrdersList.get(position).incrementQuantityFulfilled(order.getStockQuantity());
+
+                openOrdersList.get(position).incrementQuantityFulfilled(Math.abs(order.getStockQuantity()));
                 notifyItemChanged(position);
             }
         }
 
-        return openOrdersList;
+        return openOrdersList.size() <= 0;
     }
 
-    public List<Order> cancelOrder(int orderId) {
+    // Returns true if openOrdersList is empty
+    public boolean cancelOrder(int orderId) {
+
         int position = -1;
 
         for (int i = 0; i < openOrdersList.size(); ++i) {
@@ -149,7 +158,8 @@ public class OrdersRecyclerAdapter extends RecyclerView.Adapter<OrdersRecyclerAd
         openOrdersList.remove(position);
         notifyItemRemoved(position);
 
-        return openOrdersList;
+        return openOrdersList.size() <= 0;
+
     }
 
     class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
