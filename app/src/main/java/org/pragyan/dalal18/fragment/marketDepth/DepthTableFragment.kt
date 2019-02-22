@@ -299,6 +299,7 @@ class DepthTableFragment : Fragment() {
             } else {
                 uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_check_internet)) }
             }
+            uiThread { loadingDialog?.dismiss() }
         }
     }
 

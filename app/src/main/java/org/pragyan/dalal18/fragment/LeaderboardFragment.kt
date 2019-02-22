@@ -109,7 +109,6 @@ class LeaderboardFragment : Fragment() {
                         } else {
                             context?.longToast("Server internal error")
                         }
-                        loadingDialog.dismiss()
                     }
                 } else {
                     uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_server_down)) }
@@ -117,6 +116,7 @@ class LeaderboardFragment : Fragment() {
             } else {
                 uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_check_internet)) }
             }
+            uiThread { loadingDialog.dismiss() }
         }
     }
 

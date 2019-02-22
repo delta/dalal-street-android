@@ -102,16 +102,16 @@ class RegistrationActivity : AppCompatActivity() {
                         finish()
                     }
                 } else {
-                    uiThread { showSnackBar(resources.getString(R.string.error_server_down)) }
+                    uiThread { showErrorSnackBar(resources.getString(R.string.error_server_down)) }
                 }
             } else {
-                uiThread { showSnackBar(resources.getString(R.string.error_check_internet)) }
+                uiThread { showErrorSnackBar(resources.getString(R.string.error_check_internet)) }
             }
             uiThread { registrationAlertDialog?.dismiss() }
         }
     }
 
-    private fun showSnackBar(message : String){
+    private fun showErrorSnackBar(message : String){
         val snackBar = Snackbar.make(findViewById(android.R.id.content), message, Snackbar.LENGTH_INDEFINITE)
                 .setAction("RETRY") { startRegistration() }
 

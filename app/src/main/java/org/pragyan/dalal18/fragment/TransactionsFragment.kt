@@ -101,7 +101,6 @@ class TransactionsFragment : Fragment() {
 
                     uiThread {
 
-                        loadingDialog?.dismiss()
                         paginate = transactionsResponse.transactionsCount == 10
 
                         for (i in 0 until transactionsResponse.transactionsCount) {
@@ -134,6 +133,7 @@ class TransactionsFragment : Fragment() {
             } else {
                 uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_check_internet)) }
             }
+            uiThread { loadingDialog?.dismiss() }
         }
     }
 

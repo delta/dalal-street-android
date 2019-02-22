@@ -126,7 +126,6 @@ class OrdersFragment : Fragment(), OrdersRecyclerAdapter.OnOrderClickListener, S
                     val openOrdersResponse = actionServiceBlockingStub.getMyOpenOrders(GetMyOpenOrdersRequest.newBuilder().build())
 
                     uiThread {
-                        loadingOrdersDialog.dismiss()
 
                         if (openOrdersResponse?.statusCode == GetMyOpenOrdersResponse.StatusCode.OK) {
                             ordersRecycler_swipeRefreshLayout.isRefreshing = false
@@ -179,6 +178,7 @@ class OrdersFragment : Fragment(), OrdersRecyclerAdapter.OnOrderClickListener, S
             } else {
                 uiThread { networkDownHandler?.onNetworkDownError(resources.getString(R.string.error_check_internet)) }
             }
+            uiThread { loadingOrdersDialog.dismiss() }
         }
     }
 

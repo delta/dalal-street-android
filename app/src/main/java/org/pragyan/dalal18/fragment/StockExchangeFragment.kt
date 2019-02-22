@@ -39,7 +39,7 @@ class StockExchangeFragment : Fragment() {
     @Inject
     lateinit var actionServiceBlockingStub: DalalActionServiceGrpc.DalalActionServiceBlockingStub
 
-    private lateinit var currentStock: Stock
+    private var currentStock: Stock? = null
     private var lastSelectedStockId: Int = 0
     lateinit var companiesArray: Array<String>
     private var loadingDialog: AlertDialog? = null
@@ -106,8 +106,8 @@ class StockExchangeFragment : Fragment() {
 
         if (noOfStocksEditText.text.toString().trim { it <= ' ' }.isEmpty()) {
             context?.toast("Enter the number of Stocks")
-        } else {
-            if ((noOfStocksEditText.text.toString().trim { it <= ' ' }).toLong() <= currentStock.stocksInExchange) {
+        } else if (currentStock != null && !dailyHigh_textView.text.isEmpty()) {
+            if ((noOfStocksEditText.text.toString().trim { it <= ' ' }).toLong() <= currentStock!!.stocksInExchange) {
                 doAsync {
                     if (ConnectionUtils.getConnectionInfo(context!!)) {
                         if (ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
@@ -136,6 +136,8 @@ class StockExchangeFragment : Fragment() {
             } else {
                 context?.toast("Insufficient stocks in exchange")
             }
+        } else {
+            context?.toast("Select a company")
         }
     }
 
@@ -156,23 +158,22 @@ class StockExchangeFragment : Fragment() {
                             GetCompanyProfileRequest.newBuilder().setStockId(stockId).build())
 
                     uiThread {
-                        loadingDialog?.dismiss()
 
                         currentStock = companyProfileResponse.stockDetails
 
-                        var temporaryTextViewString: String = ": ₹" + decimalFormat.format(currentStock.currentPrice).toString()
+                        var temporaryTextViewString: String = ": ₹" + decimalFormat.format(currentStock?.currentPrice).toString()
                         currentStockPrice_textView.text = temporaryTextViewString
 
-                        temporaryTextViewString = ": ₹" + decimalFormat.format(currentStock.dayHigh).toString()
+                        temporaryTextViewString = ": ₹" + decimalFormat.format(currentStock?.dayHigh).toString()
                         dailyHigh_textView.text = temporaryTextViewString
 
-                        temporaryTextViewString = ": ₹" + decimalFormat.format(currentStock.dayLow).toString()
+                        temporaryTextViewString = ": ₹" + decimalFormat.format(currentStock?.dayLow).toString()
                         dailyLow_textView.text = temporaryTextViewString
 
-                        temporaryTextViewString = ": " + decimalFormat.format(currentStock.stocksInMarket).toString()
+                        temporaryTextViewString = ": " + decimalFormat.format(currentStock?.stocksInMarket).toString()
                         stocksInMarket_textView.text = temporaryTextViewString
 
-                        temporaryTextViewString = ": " + decimalFormat.format(currentStock.stocksInExchange).toString()
+                        temporaryTextViewString = ": " + decimalFormat.format(currentStock?.stocksInExchange).toString()
                         stocksInExchange_textView.text = temporaryTextViewString
                     }
                 } else {
@@ -181,6 +182,7 @@ class StockExchangeFragment : Fragment() {
             } else {
                 uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_check_internet)) }
             }
+            uiThread { loadingDialog?.dismiss() }
         }
     }
 

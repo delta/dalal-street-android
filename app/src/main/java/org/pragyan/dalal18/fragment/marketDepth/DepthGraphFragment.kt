@@ -244,7 +244,6 @@ class DepthGraphFragment : Fragment() {
                         market_depth_chart.invalidate()
                         market_depth_chart.description.text = "($currentInterval)"
 
-                        loadingDialog?.dismiss()
                     }
                 } else {
                     uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_server_down)) }
@@ -252,6 +251,7 @@ class DepthGraphFragment : Fragment() {
             } else {
                 uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_check_internet)) }
             }
+            uiThread { loadingDialog?.dismiss() }
         }
     }
 
