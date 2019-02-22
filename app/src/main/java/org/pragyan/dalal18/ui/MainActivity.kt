@@ -70,6 +70,10 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
     private var notifIntent: Intent? = null
     private var handler: Handler? = null
 
+    private var cashWorth: Long = 0
+    private var stockWorth: Long = 0
+    private var totalWorth: Long = 0
+
     private var shouldUnsubscribeAsNetworkDown = true
 
     private val refreshCashStockReceiver = object : BroadcastReceiver() {
@@ -77,17 +81,20 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
             when (intent.action) {
                 REFRESH_WORTH_TEXTVIEW_ACTION -> {
                     // Passing future value of cash worth TextView beforehand as old cash
-                    updateStockWorthViaStreamUpdates(cashWorthTextView.text.toString().replace(",", "").toLong() + intent.getLongExtra(TOTAL_WORTH_KEY, 0))
-                    changeTextViewValue(cashWorthTextView, cashIndicatorImageView, intent.getLongExtra(TOTAL_WORTH_KEY, 0), true)
+                    updateStockWorthViaStreamUpdates(cashWorth + intent.getLongExtra(TOTAL_WORTH_KEY, 0))
+                    cashWorth += intent.getLongExtra(TOTAL_WORTH_KEY,0)
+                    changeTextViewValue(cashWorthTextView, cashIndicatorImageView, cashWorth)
                 }
 
                 REFRESH_CASH_ACTION -> {
-                    changeTextViewValue(totalWorthTextView, totalIndicatorImageVIew, intent.getLongExtra(TOTAL_WORTH_KEY, 0), true)
-                    changeTextViewValue(cashWorthTextView, cashIndicatorImageView, intent.getLongExtra(TOTAL_WORTH_KEY, 0), true)
+                    totalWorth += intent.getLongExtra(TOTAL_WORTH_KEY, 0)
+                    changeTextViewValue(totalWorthTextView, totalIndicatorImageVIew, totalWorth)
+                    cashWorth += intent.getLongExtra(TOTAL_WORTH_KEY,0)
+                    changeTextViewValue(cashWorthTextView, cashIndicatorImageView, cashWorth)
                 }
 
                 UPDATE_WORTH_VIA_STREAM_ACTION ->
-                    updateStockWorthViaStreamUpdates(cashWorthTextView.text.toString().replace(",", "").toLong())
+                    updateStockWorthViaStreamUpdates(cashWorth)
             }
         }
     }
@@ -116,7 +123,7 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
         updateWorthTextViews()
 
         startMakingButtonsTransparent()
-        updateStockWorthViaStreamUpdates(intent.getLongExtra(CASH_WORTH_KEY, 0))
+        updateStockWorthViaStreamUpdates(cashWorth)
 
         if (!intent.getBooleanExtra(SplashActivity.MARKET_OPEN_KEY, false)) {
             AlertDialog.Builder(this, R.style.AlertDialogTheme)
@@ -251,9 +258,9 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
 
     private fun updateWorthTextViews() {
 
-        val cashWorth = intent.getLongExtra(CASH_WORTH_KEY, -1)
-        val totalWorth = intent.getLongExtra(TOTAL_WORTH_KEY, -1)
-        val stockWorth = totalWorth - cashWorth
+        cashWorth = intent.getLongExtra(CASH_WORTH_KEY, -1)
+        totalWorth = intent.getLongExtra(TOTAL_WORTH_KEY, -1)
+        stockWorth = totalWorth - cashWorth
 
         var oldValue = cashWorthTextView.text.toString().replace(",", "").toLong()
         animateWorthChange(oldValue, cashWorth, cashWorthTextView, cashIndicatorImageView)
@@ -484,10 +491,9 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
     }
 
     // Increases/decreases text view value depending on input parameters
-    private fun changeTextViewValue(textView: TextView, indicatorImageView: ImageView, value: Long, increase: Boolean) {
+    private fun changeTextViewValue(textView: TextView, indicatorImageView: ImageView, value: Long) {
         val oldValue = textView.text.toString().replace(",", "").toLong()
-        val newValue = oldValue + if (increase) value else -1 * value
-        animateWorthChange(oldValue, newValue, textView, indicatorImageView)
+        animateWorthChange(oldValue, value, textView, indicatorImageView)
     }
 
     // Starts making drawer button translucent
@@ -510,7 +516,6 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
         }.start()
     }
 
-    @Synchronized
     private fun animateWorthChange(oldValue: Long, newValue: Long, textView: TextView, indicatorImageView: ImageView) {
         val formatter = DecimalFormat(Constants.PRICE_FORMAT)
         val valueAnimator = ValueAnimator.ofObject(LongEvaluator(), oldValue, newValue)
