@@ -242,7 +242,6 @@ class TradeFragment : Fragment() {
                     val orderResponse = actionServiceBlockingStub.placeOrder(orderRequest)
 
                     uiThread {
-                        loadingDialog?.dismiss()
                         if (orderResponse.statusCodeValue == 0) {
                             context?.toast("Order Placed")
                             noOfStocksEditText.setText("")
@@ -258,6 +257,7 @@ class TradeFragment : Fragment() {
             } else {
                 uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_check_internet)) }
             }
+            uiThread { loadingDialog?.dismiss() }
         }
     }
 

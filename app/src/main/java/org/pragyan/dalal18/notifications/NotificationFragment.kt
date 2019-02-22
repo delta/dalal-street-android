@@ -117,8 +117,6 @@ class NotificationFragment : Fragment() {
                             noNotification_textView.visibility = View.VISIBLE
                             notifications_recyclerView.visibility = View.GONE
                         }
-                        loadingDialog?.dismiss()
-
                     }
                 } else {
                     uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_server_down)) }
@@ -126,6 +124,7 @@ class NotificationFragment : Fragment() {
             } else {
                 uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_check_internet)) }
             }
+            uiThread { loadingDialog?.dismiss() }
         }
     }
 

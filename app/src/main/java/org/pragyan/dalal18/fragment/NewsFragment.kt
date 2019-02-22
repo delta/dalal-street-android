@@ -65,7 +65,6 @@ class NewsFragment : Fragment(), NewsRecyclerAdapter.NewsItemClickListener, Swip
                             GetMarketEventsRequest.newBuilder().setCount(0).setLastEventId(0).build())
 
                     uiThread {
-                        loadingNewsDialog?.dismiss()
                         newsSwipeRefreshLayout?.isRefreshing = false
 
                         if (marketEventsResponse.statusCode.number == 0) {
@@ -96,6 +95,7 @@ class NewsFragment : Fragment(), NewsRecyclerAdapter.NewsItemClickListener, Swip
             } else {
                 uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_check_internet)) }
             }
+            uiThread { loadingNewsDialog?.dismiss() }
         }
     }
 

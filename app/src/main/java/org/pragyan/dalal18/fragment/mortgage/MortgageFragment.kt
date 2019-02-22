@@ -212,7 +212,6 @@ class MortgageFragment : Fragment() {
                     val response = actionServiceBlockingStub.getMortgageDetails(GetMortgageDetailsRequest.newBuilder().build())
 
                     uiThread {
-                        loadingDialog?.dismiss()
                         mortgage_companies_spinner.isEnabled = true
 
                         if (response.statusCode == GetMortgageDetailsResponse.StatusCode.OK) {
@@ -241,6 +240,7 @@ class MortgageFragment : Fragment() {
             } else {
                 uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_check_internet)) }
             }
+            uiThread { loadingDialog?.dismiss() }
         }
     }
 
@@ -266,7 +266,6 @@ class MortgageFragment : Fragment() {
                         } else {
                             context?.toast(mortgageStocksResponse.statusMessage)
                         }
-                        loadingDialog?.dismiss()
                     }
                 } else {
                     uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_server_down)) }
@@ -274,6 +273,7 @@ class MortgageFragment : Fragment() {
             } else {
                 uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_check_internet)) }
             }
+            uiThread { loadingDialog?.dismiss() }
         }
     }
 

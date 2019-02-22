@@ -54,21 +54,6 @@ class SplashActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
 
-        val extras = intent.extras
-
-        if (extras != null) {
-            if (extras.containsKey("error_message")) {
-                val message = extras.getString("error_message")
-                val snackBar = Snackbar.make(findViewById(android.R.id.content), message?.toString().toString() , Snackbar.LENGTH_LONG)
-                        .setAction("RETRY") {
-                            startLoginProcess(preferences.getString(EMAIL_KEY, null), preferences.getString(PASSWORD_KEY, null))
-                        }
-                snackBar.setActionTextColor(ContextCompat.getColor(this@SplashActivity, R.color.neon_green))
-                snackBar.view.setBackgroundColor(Color.parseColor("#20202C"))
-                snackBar.show()
-            }
-        }
-
         if (isGooglePlayServicesAvailable) {
             DaggerDalalStreetApplicationComponent.builder().contextModule(ContextModule(this)).build().inject(this)
             startLoginProcess(preferences.getString(EMAIL_KEY, null), preferences.getString(PASSWORD_KEY, null))

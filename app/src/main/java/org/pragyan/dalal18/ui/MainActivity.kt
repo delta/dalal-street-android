@@ -4,6 +4,7 @@ import android.animation.ValueAnimator
 import android.content.*
 import android.os.Bundle
 import android.os.Handler
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -66,6 +67,7 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
 
     private var helpDialog: AlertDialog? = null
     private var logoutDialog: AlertDialog? = null
+    private var errorDialog: AlertDialog? = null
 
     private var notifIntent: Intent? = null
     private var handler: Handler? = null
@@ -610,10 +612,37 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
 
     override fun onNetworkDownError(message: String) {
         shouldUnsubscribeAsNetworkDown = false
-        val intent = Intent(this, SplashActivity::class.java)
-        intent.putExtra("error_message", message)
-        startActivity(intent)
-        finish()
+
+        errorDialog =  AlertDialog.Builder(this, R.style.AlertDialogTheme)
+                .setMessage(message)
+                .setPositiveButton(getString(R.string.retry), null)
+                .setTitle(getString(R.string.error))
+                .setCancelable(false)
+                .create()
+
+        errorDialog?.setOnShowListener {
+            val positiveButton = errorDialog?.getButton(AlertDialog.BUTTON_POSITIVE)
+            positiveButton?.setOnClickListener {
+                cancelDialogOnNoError()
+            }
+        }
+        errorDialog?.show()
+
+
+    }
+
+    private fun cancelDialogOnNoError() {
+        doAsync {
+            if (ConnectionUtils.getConnectionInfo(this@MainActivity)) {
+                if (ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
+                    uiThread { errorDialog?.dismiss() }
+                } else {
+                    uiThread { errorDialog?.setMessage(getString(R.string.error_server_down)) }
+                }
+            } else {
+                uiThread { errorDialog?.setMessage(getString(R.string.error_check_internet)) }
+            }
+        }
     }
 
     companion object {
