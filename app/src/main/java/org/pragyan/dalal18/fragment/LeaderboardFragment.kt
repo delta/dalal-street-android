@@ -1,24 +1,20 @@
 package org.pragyan.dalal18.fragment
 
 import android.content.Context
-import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.google.android.material.snackbar.Snackbar
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import dalalstreet.api.DalalActionServiceGrpc
 import dalalstreet.api.actions.GetLeaderboardRequest
 import dalalstreet.api.actions.GetLeaderboardResponse
 import kotlinx.android.synthetic.main.fragment_leaderboard.*
 import org.jetbrains.anko.doAsync
-import org.jetbrains.anko.longToast
 import org.jetbrains.anko.uiThread
 import org.pragyan.dalal18.R
 import org.pragyan.dalal18.adapter.LeaderboardRecyclerAdapter
@@ -32,7 +28,7 @@ import java.util.*
 import javax.inject.Inject
 
 /* Uses GetLeaderBoard() to set leader board table and to set user's current rank */
-class LeaderboardFragment : Fragment() {
+class LeaderboardFragment : Fragment() , SwipeRefreshLayout.OnRefreshListener {
 
     @Inject
     lateinit var actionServiceBlockingStub: DalalActionServiceGrpc.DalalActionServiceBlockingStub
@@ -43,7 +39,6 @@ class LeaderboardFragment : Fragment() {
 
     lateinit var networkDownHandler: ConnectionUtils.OnNetworkDownHandler
 
-    private lateinit var loadingDialog: AlertDialog
     private lateinit var totalWorthTextView: TextView
     private lateinit var leaderBoardRecyclerAdapter: LeaderboardRecyclerAdapter
 
@@ -70,13 +65,7 @@ class LeaderboardFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         (activity as AppCompatActivity).supportActionBar?.title = resources.getString(R.string.leaderboard)
 
-        val dialogView = LayoutInflater.from(context).inflate(R.layout.progress_dialog, null)
-        (dialogView.findViewById<View>(R.id.progressDialog_textView) as TextView).setText(R.string.loading_leaderboard)
-        loadingDialog = AlertDialog.Builder(context!!)
-                .setView(dialogView)
-                .setCancelable(false)
-                .create()
-
+        leaderboardSwipeRefreshLayout.setOnRefreshListener(this)
         getRankListAsynchronously()
         leaderBoardRecyclerAdapter = LeaderboardRecyclerAdapter(context, leaderBoardDetailsList)
 
@@ -88,9 +77,9 @@ class LeaderboardFragment : Fragment() {
     }
 
     private fun getRankListAsynchronously() {
-        leaderBoardDetailsList.clear();
-        loadingDialog.show()
-        leaderboard_recyclerView.visibility = View.GONE
+        leaderBoardDetailsList.clear()
+        leaderboardMessageTextView.text = resources.getString(R.string.loading_leaderboard)
+        leaderboardSwipeRefreshLayout.isRefreshing = true
         doAsync {
             if (ConnectionUtils.getConnectionInfo(context)) {
                 if (ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
@@ -108,29 +97,31 @@ class LeaderboardFragment : Fragment() {
                                 leaderBoardDetailsList.add(LeaderBoardDetails(currentRow.rank, currentRow.userName, currentRow.totalWorth))
                             }
                             leaderBoardRecyclerAdapter.swapData(leaderBoardDetailsList)
+                            leaderboardMessageTextView.visibility = View.GONE
                             leaderboard_recyclerView.visibility = View.VISIBLE
                         } else {
-                            context?.longToast("Server internal error")
+                            showErrorMessage("Internal server error")
                         }
                     }
                 } else {
-                    uiThread { showErrorSnackbar(resources.getString(R.string.error_server_down)) }
+                    uiThread { showErrorMessage(resources.getString(R.string.error_server_down)) }
                 }
             } else {
-                uiThread { showErrorSnackbar(resources.getString(R.string.error_check_internet)) }
+                uiThread { showErrorMessage(resources.getString(R.string.error_check_internet)) }
             }
-            uiThread { loadingDialog.dismiss() }
+            uiThread { leaderboardSwipeRefreshLayout.isRefreshing = false }
         }
     }
 
-    private fun showErrorSnackbar(error: String) {
-        val snackBar = Snackbar.make(activity!!.findViewById(android.R.id.content), error, Snackbar.LENGTH_LONG)
-                .setAction("RETRY") { getRankListAsynchronously() }
-
-        snackBar.setActionTextColor(ContextCompat.getColor(context!!, R.color.neon_green))
-        snackBar.view.setBackgroundColor(Color.parseColor("#20202C"))
-        snackBar.show()
+    private fun showErrorMessage(error: String) {
+        leaderboardMessageTextView.visibility = View.VISIBLE
+        leaderboard_recyclerView.visibility = View.GONE
+        val message = "$error, Swipe to refresh"
+        leaderboardMessageTextView.text = message
     }
+
+    override fun onRefresh() = getRankListAsynchronously()
+
 
     override fun onPause() {
         super.onPause()

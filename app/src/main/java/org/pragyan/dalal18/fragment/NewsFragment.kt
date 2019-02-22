@@ -8,8 +8,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.fragment.app.Fragment
@@ -22,7 +20,6 @@ import dalalstreet.api.DalalActionServiceGrpc
 import dalalstreet.api.actions.GetMarketEventsRequest
 import kotlinx.android.synthetic.main.fragment_news.*
 import org.jetbrains.anko.doAsync
-import org.jetbrains.anko.toast
 import org.jetbrains.anko.uiThread
 import org.pragyan.dalal18.R
 import org.pragyan.dalal18.adapter.NewsRecyclerAdapter
@@ -41,8 +38,6 @@ class NewsFragment : Fragment(), NewsRecyclerAdapter.NewsItemClickListener, Swip
 
     private var newsRecyclerAdapter: NewsRecyclerAdapter? = null
 
-    private var loadingNewsDialog: AlertDialog? = null
-
     private var newsDetailsList = mutableListOf<NewsDetails>()
 
     lateinit var networkDownHandler: ConnectionUtils.OnNetworkDownHandler
@@ -51,12 +46,13 @@ class NewsFragment : Fragment(), NewsRecyclerAdapter.NewsItemClickListener, Swip
         override fun onReceive(context: Context, intent: Intent) {
             if (intent.action != null && intent.action.equals(Constants.REFRESH_NEWS_ACTION, ignoreCase = true))
                 getNewsAsynchronously()
-                loadingNewsDialog?.show()
         }
     }
 
     private fun getNewsAsynchronously() {
 
+        newsSwipeRefreshLayout.isRefreshing = true
+        newsMessageTextView.text = resources.getString(R.string.getting_latest_news)
         doAsync {
             if (ConnectionUtils.getConnectionInfo(context!!)) {
                 if (ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
@@ -81,29 +77,23 @@ class NewsFragment : Fragment(), NewsRecyclerAdapter.NewsItemClickListener, Swip
                                 newsMessageTextView?.visibility = View.GONE
                                 newsRecyclerView?.visibility = View.VISIBLE
                             } else {
+                                newsMessageTextView.text = resources.getString(R.string.news_not_available)
                                 newsMessageTextView.visibility = View.VISIBLE
                                 newsRecyclerView.visibility = View.GONE
                             }
 
                         } else {
-                            context?.toast("Server internal error")
+                            showErrorMessage("Internal Server error")
                         }
                     }
                 } else {
-                    uiThread {
-                        showErrorMessage(resources.getString(R.string.error_server_down))
-                    }
+                    uiThread { showErrorMessage(resources.getString(R.string.error_server_down)) }
 
                 }
             } else {
-                uiThread {
-                    showErrorMessage(resources.getString(R.string.error_check_internet))
-                }
+                uiThread { showErrorMessage(resources.getString(R.string.error_check_internet)) }
             }
-            uiThread {
-                newsSwipeRefreshLayout?.isRefreshing = false
-                loadingNewsDialog?.dismiss()
-            }
+            uiThread { newsSwipeRefreshLayout?.isRefreshing = false }
         }
     }
 
@@ -142,13 +132,7 @@ class NewsFragment : Fragment(), NewsRecyclerAdapter.NewsItemClickListener, Swip
         }
 
         newsSwipeRefreshLayout.setOnRefreshListener(this)
-
-        val dialogView = LayoutInflater.from(context).inflate(R.layout.progress_dialog, null)
-        (dialogView.findViewById<View>(R.id.progressDialog_textView) as TextView).setText(R.string.getting_latest_news)
-        loadingNewsDialog = AlertDialog.Builder(context!!).setView(dialogView).setCancelable(false).create()
-
         getNewsAsynchronously()
-        loadingNewsDialog?.show()
     }
 
     override fun onResume() {
@@ -161,10 +145,8 @@ class NewsFragment : Fragment(), NewsRecyclerAdapter.NewsItemClickListener, Swip
         LocalBroadcastManager.getInstance(context!!).unregisterReceiver(refreshNewsListListener)
     }
 
-    override fun onRefresh() {
-        newsMessageTextView.text = resources.getString(R.string.getting_latest_news)
-        getNewsAsynchronously()
-    }
+    override fun onRefresh() = getNewsAsynchronously()
+
 
     override fun onNewsClicked(layout: View, position: Int, headlinesTextView: View, contentTextView: View, createdAtTextView: View) {
         val headTransition = "head$position"

@@ -32,7 +32,6 @@
         android:textColor="@color/neutral_font_color"
         android:textSize="20sp"
         android:textStyle="italic"
-        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

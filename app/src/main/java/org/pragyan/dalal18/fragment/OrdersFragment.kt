@@ -26,7 +26,6 @@ import dalalstreet.api.datastreams.*
 import io.grpc.stub.StreamObserver
 import kotlinx.android.synthetic.main.fragment_my_orders.*
 import org.jetbrains.anko.doAsync
-import org.jetbrains.anko.longToast
 import org.jetbrains.anko.toast
 import org.jetbrains.anko.uiThread
 import org.pragyan.dalal18.R
@@ -174,7 +173,7 @@ class OrdersFragment : Fragment(), OrdersRecyclerAdapter.OnOrderClickListener, S
                             flipVisibilities(empty)
 
                         } else {
-                            context?.longToast(openOrdersResponse.statusMessage)
+                            showErrorMessage(openOrdersResponse.statusMessage)
                         }
                     }
                 } else {
