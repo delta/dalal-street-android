@@ -98,6 +98,7 @@ public class TransactionRecyclerAdapter extends RecyclerView.Adapter<Transaction
         } else {
             tempAssigningString = String.valueOf(Math.abs(currentTransaction.getNoOfStocks()))
                     + " stocks @ " + Constants.RUPEE_SYMBOL + " " + String.valueOf(new DecimalFormat(Constants.PRICE_FORMAT).format(Math.abs(currentTransaction.getStockPrice())));
+
             holder.noOfStocksTextView.setText(tempAssigningString);
         }
 

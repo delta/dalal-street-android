@@ -200,6 +200,7 @@ class HomeFragment : Fragment(), NewsRecyclerAdapter.NewsItemClickListener, Swip
         for ((_, shortName, _, _, price, _, _, _, up) in model.globalStockDetails) {
 
             builder.append(shortName).append(" : ").append(DecimalFormat(Constants.PRICE_FORMAT).format(price))
+
             if (activity != null) {
                 builder.append(if (up == 1) "\u2191" else "\u2193")
             }

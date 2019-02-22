@@ -42,6 +42,7 @@ class StockExchangeFragment : Fragment() {
     private lateinit var currentStock: Stock
     private var lastSelectedStockId: Int = 0
     lateinit var companiesArray: Array<String>
+
     private var loadingDialog: AlertDialog? = null
     private var decimalFormat = DecimalFormat(Constants.PRICE_FORMAT)
     lateinit var networkDownHandler: ConnectionUtils.OnNetworkDownHandler
@@ -127,8 +128,7 @@ class StockExchangeFragment : Fragment() {
                                 noOfStocksEditText.setText("")
                                 getCompanyProfileAsynchronously(lastSelectedStockId)
                                 view?.hideKeyboard()
-                            }
-                            else
+                            } else
                                 context?.toast(response.statusMessage)
                         }
                     } else {
@@ -174,6 +174,7 @@ class StockExchangeFragment : Fragment() {
                     stocksInMarket_textView.text = temporaryTextViewString
 
                     temporaryTextViewString = ": " + decimalFormat.format(currentStock.stocksInExchange).toString()
+
                     stocksInExchange_textView.text = temporaryTextViewString
                 }
             } else {

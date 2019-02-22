@@ -2,7 +2,8 @@ package org.pragyan.dalal18.utils;
 
 public class Constants {
 
-    public static final String HOST = "10.2.64.81";
+
+    public static final String HOST = "10.2.59.130";
 
     public static final int PORT = 8000;
 
@@ -18,7 +19,9 @@ public class Constants {
     public static final String REFRESH_MARKET_DEPTH= "refresh_market_depth";
     public static final String STOP_NOTIFICATION_ACTION = "stop-notification-action";
     public static final String REFRESH_MORTGAGE_UPDATE_ACTION = "refresh-mortgage-update-action";
+
     public static final String PRICE_FORMAT = "##,##,##,###";
+
 
     public static final String RUPEE_SYMBOL = "₹";
 

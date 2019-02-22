@@ -76,7 +76,9 @@ public class OrdersRecyclerAdapter extends RecyclerView.Adapter<OrdersRecyclerAd
         } else {
             holder.priceTextView.setVisibility(View.VISIBLE);
             tempString = (order.getStockQuantityFulfilled() == 0 ? "Placed " : order.getStockQuantity() == order.getStockQuantityFulfilled() ? "Filled" : "Partially Filled") + " at " +
+
                     Constants.RUPEE_SYMBOL + " " + String.valueOf(new DecimalFormat(Constants.PRICE_FORMAT).format(order.getPrice()) + "/stock");
+
             holder.priceTextView.setText(tempString);
         }
 

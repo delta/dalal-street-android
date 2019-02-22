@@ -53,6 +53,7 @@ public class CompanyTickerRecyclerAdapter extends RecyclerView.Adapter<CompanyTi
 
 
         String worthString = Constants.RUPEE_SYMBOL + String.valueOf(new DecimalFormat(Constants.PRICE_FORMAT).format(currentCompanyTickerDetails.getPreviousDayClose()));
+
         holder.previousDayCloseTextView.setText(worthString);
 
         if (currentCompanyTickerDetails.getImageUrl() != null) {

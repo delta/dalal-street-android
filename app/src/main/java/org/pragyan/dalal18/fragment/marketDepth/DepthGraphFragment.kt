@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
@@ -21,6 +22,7 @@ import dalalstreet.api.DalalActionServiceGrpc
 import dalalstreet.api.actions.GetStockHistoryRequest
 import dalalstreet.api.actions.StockHistoryResolution
 import kotlinx.android.synthetic.main.fragment_depth_graph.*
+import kotlinx.android.synthetic.main.fragment_trade.*
 import org.jetbrains.anko.backgroundColor
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
@@ -46,13 +48,13 @@ class DepthGraphFragment : Fragment() {
 
     private var xVals = ArrayList<String>()
     private var yVals = ArrayList<CandleEntry>()
-    private lateinit var stockHistoryList : ArrayList<StockHistory>
+    private lateinit var stockHistoryList: ArrayList<StockHistory>
 
     private var loadingDialog: AlertDialog? = null
     lateinit var networkDownHandler: ConnectionUtils.OnNetworkDownHandler
 
-    private var currentCompany: String? =  null
-    private var currentInterval : String? = null
+    private var currentCompany: String? = null
+    private var currentInterval: String? = null
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -108,11 +110,12 @@ class DepthGraphFragment : Fragment() {
                 if (activity != null && isAdded) {
                     loadStockHistoryAsynchronously()
                 }
+
             }
         }
 
         val intervalAdapter = ArrayAdapter(activity!!, R.layout.interval_spinner_item, resources.getStringArray(R.array.intervalType))
-        with(graph_time_spinner){
+        with(graph_time_spinner) {
             setAdapter(intervalAdapter)
             isSelected = false
             setOnItemClickListener { _, _, _, _ ->
@@ -134,12 +137,12 @@ class DepthGraphFragment : Fragment() {
 
     private fun loadStockHistoryAsynchronously() {
 
-        if(currentCompany == null || currentInterval == null){
+        if (currentCompany == null || currentInterval == null) {
             return
         }
 
-        lateinit var resolution : StockHistoryResolution
-        when(currentInterval) {
+        lateinit var resolution: StockHistoryResolution
+        when (currentInterval) {
 
             "1 min" -> {
                 resolution = StockHistoryResolution.OneMinute
@@ -177,7 +180,7 @@ class DepthGraphFragment : Fragment() {
                 uiThread {
 
                     for (map in stockHistoryResponse.stockHistoryMapMap.entries) {
-                        val tempStockHistory = StockHistory(convertToDate(map.key),map.value.high, map.value.low,map.value.open, map.value.close)
+                        val tempStockHistory = StockHistory(convertToDate(map.key), map.value.high, map.value.low, map.value.open, map.value.close)
                         stockHistoryList.add(tempStockHistory)
                     }
                     stockHistoryList.sortWith(kotlin.Comparator { (date1), (date2) -> date1!!.compareTo(date2) })
@@ -185,8 +188,8 @@ class DepthGraphFragment : Fragment() {
                     var highestClose = 0f
                     for (i in stockHistoryList.indices) {
                         xVals.add(parseDate(convertToString(stockHistoryList[i].stockDate)))
-                        yVals.add(CandleEntry(i.toFloat(), stockHistoryList[i].stockHigh.toFloat(),stockHistoryList[i].stockLow.toFloat(),
-                                stockHistoryList[i].stockOpen.toFloat(),stockHistoryList[i].stockClose.toFloat()))
+                        yVals.add(CandleEntry(i.toFloat(), stockHistoryList[i].stockHigh.toFloat(), stockHistoryList[i].stockLow.toFloat(),
+                                stockHistoryList[i].stockOpen.toFloat(), stockHistoryList[i].stockClose.toFloat()))
                         if (highestClose <= stockHistoryList[i].stockClose.toFloat()) {
                             highestClose = stockHistoryList[i].stockClose.toFloat()
                         }
@@ -198,7 +201,7 @@ class DepthGraphFragment : Fragment() {
                     }
                     val formatter = IAxisValueFormatter { value, _ -> xValsArray[value.toInt()] }
                     val xAxis = market_depth_chart.xAxis
-                    with(xAxis){
+                    with(xAxis) {
                         position = XAxis.XAxisPosition.BOTTOM
                         setDrawGridLines(false)
                         valueFormatter = formatter
@@ -213,7 +216,7 @@ class DepthGraphFragment : Fragment() {
                     val leftAxis = market_depth_chart.axisLeft
                     leftAxis.isEnabled = false
                     val yAxis = market_depth_chart.axisRight
-                    with(yAxis){
+                    with(yAxis) {
                         setLabelCount(7, false)
                         setDrawGridLines(false)
                         setDrawAxisLine(true)
@@ -225,7 +228,7 @@ class DepthGraphFragment : Fragment() {
                     }
 
                     val set1 = CandleDataSet(yVals, "Stock Price")
-                    with(set1){
+                    with(set1) {
                         color = Color.rgb(80, 80, 80)
                         shadowColor = ContextCompat.getColor(context!!, android.R.color.white)
                         shadowWidth = 0.5f
@@ -233,7 +236,7 @@ class DepthGraphFragment : Fragment() {
                         decreasingPaintStyle = Paint.Style.FILL
                         increasingColor = ContextCompat.getColor(context!!, R.color.neon_green)
                         increasingPaintStyle = Paint.Style.FILL
-                        neutralColor = ContextCompat.getColor(context!!,  R.color.neon_yellow)
+                        neutralColor = ContextCompat.getColor(context!!, R.color.neon_yellow)
                         setDrawValues(false)
                     }
 
@@ -241,8 +244,11 @@ class DepthGraphFragment : Fragment() {
                     market_depth_chart.data = data
                     market_depth_chart.invalidate()
                     market_depth_chart.description.text = "($currentInterval)"
-
+                    graph_time_spinner.requestFocus()
+                    graph_company_spinner.requestFocus()
                     loadingDialog?.dismiss()
+                    graph_time_spinner.requestFocus()
+                    graph_company_spinner.requestFocus()
                 }
             } else {
                 uiThread { networkDownHandler.onNetworkDownError() }

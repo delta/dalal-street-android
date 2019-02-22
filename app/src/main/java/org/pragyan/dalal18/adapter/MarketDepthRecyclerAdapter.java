@@ -42,8 +42,11 @@ public class MarketDepthRecyclerAdapter extends RecyclerView.Adapter<MarketDepth
             holder.price.setText("M.O");
             holder.price.setTextColor(ContextCompat.getColor(context, R.color.neon_blue));
             holder.volume.setTextColor(ContextCompat.getColor(context, R.color.neon_blue));
+
+
         } else {
             holder.price.setText(fromHtml(String.valueOf(new DecimalFormat(Constants.PRICE_FORMAT).format(price))));
+
         }
         holder.volume.setText(String.valueOf(marketDepthList.get(position).getVolume()));
     }

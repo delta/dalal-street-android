@@ -46,15 +46,17 @@ class DepthTableFragment : Fragment() {
 
     private var bidArrayList = mutableListOf<MarketDepth>()
     private var askArrayList = mutableListOf<MarketDepth>()
-    private val df = DecimalFormat(Constants.PRICE_FORMAT)
+
+    private val decimalFormat = DecimalFormat(Constants.PRICE_FORMAT)
+
     private var loadingDialog: AlertDialog? = null
     lateinit var networkDownHandler: ConnectionUtils.OnNetworkDownHandler
 
     lateinit var bidDepthAdapter: MarketDepthRecyclerAdapter
-    lateinit var askDepthAdapter:MarketDepthRecyclerAdapter
+    lateinit var askDepthAdapter: MarketDepthRecyclerAdapter
 
     private var subscriptionId: SubscriptionId? = null
-    private var prevSubscriptionId:SubscriptionId? = null
+    private var prevSubscriptionId: SubscriptionId? = null
 
 
     private val refreshMarketDepth = object : BroadcastReceiver() {
@@ -81,6 +83,7 @@ class DepthTableFragment : Fragment() {
                 bidDepthAdapter.swapData(bidArrayList)
                 askDepthAdapter.swapData(askArrayList)
                 loadingDialog?.dismiss()
+                companySpinner.requestFocus()
             }
         }
     }
@@ -113,14 +116,14 @@ class DepthTableFragment : Fragment() {
         bidDepthAdapter = MarketDepthRecyclerAdapter(context, bidArrayList)
         askDepthAdapter = MarketDepthRecyclerAdapter(context, askArrayList)
 
-        with(bid_depth_rv){
+        with(bid_depth_rv) {
             layoutManager = LinearLayoutManager(context)
             setHasFixedSize(false)
             adapter = bidDepthAdapter
             isNestedScrollingEnabled = false
         }
 
-        with(ask_depth_rv){
+        with(ask_depth_rv) {
             layoutManager = LinearLayoutManager(context)
             setHasFixedSize(false)
             adapter = askDepthAdapter
@@ -128,7 +131,7 @@ class DepthTableFragment : Fragment() {
         }
 
         val arrayAdapter = ArrayAdapter(activity!!, R.layout.company_spinner_item, StockUtils.getCompanyNamesArray())
-        with(companySpinner){
+        with(companySpinner) {
             setAdapter(arrayAdapter)
             setOnItemClickListener { _, _, _, _ ->
                 val currentCompany = companySpinner.text.toString()
@@ -173,66 +176,68 @@ class DepthTableFragment : Fragment() {
                         }
 
                         override fun onCompleted() {
-
                         }
                     })
         }
     }
 
     private fun getMarketDepth(subscriptionId: SubscriptionId) {
-        streamServiceStub.getMarketDepthUpdates(subscriptionId,
-                object : StreamObserver<MarketDepthUpdate> {
-                    override fun onNext(value: MarketDepthUpdate) {
+        doAsync {
+            streamServiceStub.getMarketDepthUpdates(subscriptionId,
+                    object : StreamObserver<MarketDepthUpdate> {
+                        override fun onNext(value: MarketDepthUpdate) {
 
-                        for (map in value.bidDepthMap.entries) {
-                            if (map.key >= 0) {
+                            for (map in value.bidDepthMap.entries) {
+                                if (map.key >= 0) {
+                                    var price = map.key
+                                    val volume = map.value
+                                    if (price == 0L) {
+                                        price = Long.MAX_VALUE
+                                    }
+                                    val temp = MarketDepth(price, volume)
+                                    bidArrayList.add(temp)
+                                }
+                            }
+
+                            for ((key, value1) in value.askDepthMap) {
+                                if (key >= 0) {
+                                    val temp = MarketDepth(key, value1)
+                                    askArrayList.add(temp)
+                                }
+                            }
+
+                            for (map in value.bidDepthDiffMap.entries) {
                                 var price = map.key
                                 val volume = map.value
                                 if (price == 0L) {
                                     price = Long.MAX_VALUE
                                 }
-                                val temp = MarketDepth(price, volume)
-                                bidArrayList.add(temp)
+                                if (!containsBid(price, volume) && price > 0) {
+                                    bidArrayList.add(MarketDepth(price, volume))
+                                }
                             }
+
+                            for ((price, volume) in value.askDepthDiffMap) {
+                                if (!containsAsk(price, volume) && price > 0) {
+                                    askArrayList.add(MarketDepth(price, volume))
+                                }
+                            }
+                            val marketDepthIntent = Intent(Constants.REFRESH_MARKET_DEPTH)
+
+                            if (context != null)
+                                LocalBroadcastManager.getInstance(context!!).sendBroadcast(marketDepthIntent)
+                            companySpinner.requestFocus()
                         }
 
-                        for ((key, value1) in value.askDepthMap) {
-                            if (key >= 0) {
-                                val temp = MarketDepth(key, value1)
-                                askArrayList.add(temp)
-                            }
+                        override fun onError(t: Throwable) {
+
                         }
 
-                        for (map in value.bidDepthDiffMap.entries) {
-                            var price = map.key
-                            val volume = map.value
-                            if (price == 0L) {
-                                price = Long.MAX_VALUE
-                            }
-                            if (!containsBid(price, volume) && price > 0) {
-                                bidArrayList.add(MarketDepth(price, volume))
-                            }
+                        override fun onCompleted() {
+
                         }
-
-                        for ((price, volume) in value.askDepthDiffMap) {
-                            if (!containsAsk(price, volume) && price > 0) {
-                                askArrayList.add(MarketDepth(price, volume))
-                            }
-                        }
-                        val marketDepthIntent = Intent(Constants.REFRESH_MARKET_DEPTH)
-
-                        if (context != null)
-                            LocalBroadcastManager.getInstance(context!!).sendBroadcast(marketDepthIntent)
-                    }
-
-                    override fun onError(t: Throwable) {
-
-                    }
-
-                    override fun onCompleted() {
-
-                    }
-                })
+                    })
+        }
     }
 
     private fun unsubscribe(prevSubscriptionId: SubscriptionId?) {
@@ -255,7 +260,6 @@ class DepthTableFragment : Fragment() {
                             }
 
                             override fun onCompleted() {
-
                             }
                         })
             }
@@ -271,7 +275,7 @@ class DepthTableFragment : Fragment() {
 
         doAsync {
 
-            if (ConnectionUtils.getConnectionInfo(context) && ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)){
+            if (ConnectionUtils.getConnectionInfo(context) && ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
                 val companyProfileResponse = actionServiceBlockingStub.getCompanyProfile(
                         GetCompanyProfileRequest.newBuilder().setStockId(getStockIdFromCompanyName(currentCompany)).build())
                 uiThread {
@@ -282,9 +286,9 @@ class DepthTableFragment : Fragment() {
                         val prevDayClose = currentStock.previousDayClose
 
                         current_stock_price_layout.visibility = View.VISIBLE
-                        val currentStockPrice = "Current Stock Price : " + Constants.RUPEE_SYMBOL + df.format(currentPrice).toString()
+                        val currentStockPrice = "Current Stock Price : " + Constants.RUPEE_SYMBOL + decimalFormat.format(currentPrice).toString()
                         current_stock_price_textView.text = currentStockPrice
-                        val prevDayClosePrice = Constants.RUPEE_SYMBOL + df.format(Math.abs(currentPrice - prevDayClose)).toString()
+                        val prevDayClosePrice = Constants.RUPEE_SYMBOL + decimalFormat.format(Math.abs(currentPrice - prevDayClose)).toString()
                         prev_day_close_stock_price.text = prevDayClosePrice
                         if (currentPrice >= prevDayClose) {
                             arrow_image_view.setImageResource(R.drawable.arrow_up_green)
@@ -293,7 +297,7 @@ class DepthTableFragment : Fragment() {
                         }
                     }
                 }
-            } else{
+            } else {
                 uiThread { networkDownHandler.onNetworkDownError() }
             }
 

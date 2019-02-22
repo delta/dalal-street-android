@@ -21,7 +21,9 @@ public class PortfolioRecyclerAdapter extends RecyclerView.Adapter<PortfolioRecy
 
     private Context context;
     private List<Portfolio> portfolioList;
-    private DecimalFormat decimalFormat=new DecimalFormat(Constants.PRICE_FORMAT);
+
+    private DecimalFormat decimalFormat = new DecimalFormat(Constants.PRICE_FORMAT);
+
     public PortfolioRecyclerAdapter(Context context, List<Portfolio> portfolioList) {
         this.context = context;
         this.portfolioList = portfolioList;
@@ -45,6 +47,7 @@ public class PortfolioRecyclerAdapter extends RecyclerView.Adapter<PortfolioRecy
             holder.companyNameTextView.setText(currentPortfolioItem.getCompanyName());
 
         holder.priceTextView.setText(String.valueOf(decimalFormat.format(currentPortfolioItem.getPrice())));
+
         if (currentPortfolioItem.getPreviousDayClose() > currentPortfolioItem.getPrice())
             holder.priceTextView.setTextColor(ContextCompat.getColor(context, R.color.neon_orange));
         else if (currentPortfolioItem.getPreviousDayClose() < currentPortfolioItem.getPrice())
@@ -55,6 +58,7 @@ public class PortfolioRecyclerAdapter extends RecyclerView.Adapter<PortfolioRecy
         holder.quantityTextView.setText(String.valueOf(decimalFormat.format(currentPortfolioItem.getQuantityOwned())));
 
         holder.worthTextView.setText(String.valueOf(decimalFormat.format(currentPortfolioItem.getPrice() * currentPortfolioItem.getQuantityOwned())));
+
     }
 
     @Override
