@@ -34,7 +34,6 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:fontFamily="@font/kreon_light"
-            android:hint="@string/interval"
             app:met_baseColor="@color/neon_orange"
             app:met_primaryColor="@color/neon_orange"
             app:met_textColor="@color/neutral_font_color"
