@@ -80,7 +80,7 @@ public class StockUtils {
             if (currentDetails.getStockId() == stockId)
                 return currentDetails.getShortName();
         }
-        return null;
+        return "";
     }
 
     public static class StockIdCompanyName {

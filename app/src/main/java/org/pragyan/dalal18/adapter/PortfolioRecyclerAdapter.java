@@ -14,7 +14,6 @@ import java.text.DecimalFormat;
 import java.util.List;
 
 import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class PortfolioRecyclerAdapter extends RecyclerView.Adapter<PortfolioRecyclerAdapter.PortfolioViewHolder> {
@@ -22,6 +21,7 @@ public class PortfolioRecyclerAdapter extends RecyclerView.Adapter<PortfolioRecy
     private Context context;
     private List<Portfolio> portfolioList;
     private DecimalFormat decimalFormat=new DecimalFormat(Constants.PRICE_FORMAT);
+
     public PortfolioRecyclerAdapter(Context context, List<Portfolio> portfolioList) {
         this.context = context;
         this.portfolioList = portfolioList;
@@ -39,22 +39,10 @@ public class PortfolioRecyclerAdapter extends RecyclerView.Adapter<PortfolioRecy
 
         Portfolio currentPortfolioItem = portfolioList.get(position);
 
-        if (currentPortfolioItem.getCompanyName() != null && currentPortfolioItem.getCompanyName().length() > 10)
-            holder.companyNameTextView.setText(currentPortfolioItem.getShortName());
-        else
-            holder.companyNameTextView.setText(currentPortfolioItem.getCompanyName());
-
-        holder.priceTextView.setText(String.valueOf(decimalFormat.format(currentPortfolioItem.getPrice())));
-        if (currentPortfolioItem.getPreviousDayClose() > currentPortfolioItem.getPrice())
-            holder.priceTextView.setTextColor(ContextCompat.getColor(context, R.color.neon_orange));
-        else if (currentPortfolioItem.getPreviousDayClose() < currentPortfolioItem.getPrice())
-            holder.priceTextView.setTextColor(ContextCompat.getColor(context, R.color.neon_green));
-        else
-            holder.priceTextView.setTextColor(ContextCompat.getColor(context, R.color.neutral_font_color));
-
+        holder.companyShortNameTextView.setText(currentPortfolioItem.getShortName());
+        holder.reservedStocksTextView.setText(String.valueOf(decimalFormat.format(currentPortfolioItem.getReservedStocks())));
         holder.quantityTextView.setText(String.valueOf(decimalFormat.format(currentPortfolioItem.getQuantityOwned())));
-
-        holder.worthTextView.setText(String.valueOf(decimalFormat.format(currentPortfolioItem.getPrice() * currentPortfolioItem.getQuantityOwned())));
+        holder.worthTextView.setText(String.valueOf(decimalFormat.format(currentPortfolioItem.getWorth())));
     }
 
     @Override
@@ -70,13 +58,13 @@ public class PortfolioRecyclerAdapter extends RecyclerView.Adapter<PortfolioRecy
 
     class PortfolioViewHolder extends RecyclerView.ViewHolder {
 
-        TextView companyNameTextView, quantityTextView, priceTextView, worthTextView;
+        TextView companyShortNameTextView, quantityTextView, reservedStocksTextView, worthTextView;
 
         PortfolioViewHolder(View itemView) {
             super(itemView);
-            companyNameTextView = itemView.findViewById(R.id.companyName_textView);
+            companyShortNameTextView = itemView.findViewById(R.id.companyName_textView);
             quantityTextView = itemView.findViewById(R.id.quantity_textView);
-            priceTextView = itemView.findViewById(R.id.price_textView);
+            reservedStocksTextView = itemView.findViewById(R.id.reservedStocksTextView);
             worthTextView = itemView.findViewById(R.id.worth_textView);
         }
     }
