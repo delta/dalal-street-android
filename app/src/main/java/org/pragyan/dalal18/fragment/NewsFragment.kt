@@ -51,49 +51,46 @@ class NewsFragment : Fragment(), NewsRecyclerAdapter.NewsItemClickListener, Swip
         override fun onReceive(context: Context, intent: Intent) {
             if (intent.action != null && intent.action.equals(Constants.REFRESH_NEWS_ACTION, ignoreCase = true))
                 getNewsAsynchronously()
-                loadingNewsDialog?.show()
+            loadingNewsDialog?.show()
         }
     }
 
     private fun getNewsAsynchronously() {
 
         doAsync {
-            if (ConnectionUtils.getConnectionInfo(context!!)) {
-                if (ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
-
-                    val marketEventsResponse = actionServiceBlockingStub.getMarketEvents(
-                            GetMarketEventsRequest.newBuilder().setCount(0).setLastEventId(0).build())
-
-                    uiThread {
-                        newsSwipeRefreshLayout?.isRefreshing = false
-
-                        if (marketEventsResponse.statusCode.number == 0) {
-
-                            newsDetailsList.clear()
-
-                            for (currentMarketEvent in marketEventsResponse.marketEventsList) {
-                                newsDetailsList.add(NewsDetails(currentMarketEvent.createdAt, currentMarketEvent.headline,
-                                        currentMarketEvent.text, currentMarketEvent.imagePath))
-                            }
-
-                            if (newsDetailsList.size != 0) {
-                                newsRecyclerAdapter?.swapData(newsDetailsList)
-                                noNewsTextView?.visibility = View.GONE
-                                newsRecyclerView?.visibility = View.VISIBLE
-                            } else {
-                                noNewsTextView.visibility = View.VISIBLE
-                                newsRecyclerView.visibility = View.GONE
-                            }
-
-                        } else {
-                            context?.toast("Server internal error")
-                        }
-                    }
-                } else {
-                    uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_server_down)) }
-                }
-            } else {
+            if (!ConnectionUtils.getConnectionInfo(context!!)) {
                 uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_check_internet)) }
+            } else if (!ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
+                uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_server_down)) }
+            } else {
+                val marketEventsResponse = actionServiceBlockingStub.getMarketEvents(
+                        GetMarketEventsRequest.newBuilder().setCount(0).setLastEventId(0).build())
+
+                uiThread {
+                    newsSwipeRefreshLayout?.isRefreshing = false
+
+                    if (marketEventsResponse.statusCode.number == 0) {
+
+                        newsDetailsList.clear()
+
+                        for (currentMarketEvent in marketEventsResponse.marketEventsList) {
+                            newsDetailsList.add(NewsDetails(currentMarketEvent.createdAt, currentMarketEvent.headline,
+                                    currentMarketEvent.text, currentMarketEvent.imagePath))
+                        }
+
+                        if (newsDetailsList.size != 0) {
+                            newsRecyclerAdapter?.swapData(newsDetailsList)
+                            noNewsTextView?.visibility = View.GONE
+                            newsRecyclerView?.visibility = View.VISIBLE
+                        } else {
+                            noNewsTextView.visibility = View.VISIBLE
+                            newsRecyclerView.visibility = View.GONE
+                        }
+
+                    } else {
+                        context?.toast("Server internal error")
+                    }
+                }
             }
             uiThread { loadingNewsDialog?.dismiss() }
         }
@@ -148,16 +145,16 @@ class NewsFragment : Fragment(), NewsRecyclerAdapter.NewsItemClickListener, Swip
 
     override fun onRefresh() = getNewsAsynchronously()
 
-    override fun onNewsClicked(layout: View, position: Int, headlinesTextView : View, contentTextView : View, createdAtTextView : View) {
+    override fun onNewsClicked(layout: View, position: Int, headlinesTextView: View, contentTextView: View, createdAtTextView: View) {
         val headTransition = "head$position"
         val contentTransition = "content$position"
         val createdAtTransition = "created$position"
 
         val bundle = Bundle()
-        bundle.putString(Constants.NEWS_CREATED_AT_KEY,newsDetailsList[position].createdAt)
-        bundle.putString(Constants.NEWS_CONTENT_KEY,newsDetailsList[position].content)
-        bundle.putString(Constants.NEWS_HEAD_KEY,newsDetailsList[position].headlines)
-        bundle.putString(Constants.NEWS_IMAGE_PATH_KEY,newsDetailsList[position].imagePath)
+        bundle.putString(Constants.NEWS_CREATED_AT_KEY, newsDetailsList[position].createdAt)
+        bundle.putString(Constants.NEWS_CONTENT_KEY, newsDetailsList[position].content)
+        bundle.putString(Constants.NEWS_HEAD_KEY, newsDetailsList[position].headlines)
+        bundle.putString(Constants.NEWS_IMAGE_PATH_KEY, newsDetailsList[position].imagePath)
         bundle.putString(Constants.HEAD_TRANSITION_KEY, headTransition)
         bundle.putString(Constants.CONTENT_TRANSITION_KEY, contentTransition)
         bundle.putString(Constants.CREATED_AT_TRANSITION_KEY, createdAtTransition)

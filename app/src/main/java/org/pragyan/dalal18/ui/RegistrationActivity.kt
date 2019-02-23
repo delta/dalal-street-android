@@ -76,42 +76,40 @@ class RegistrationActivity : AppCompatActivity() {
         registrationAlertDialog?.show()
 
         doAsync {
-            if (ConnectionUtils.getConnectionInfo(this@RegistrationActivity)) {
-                if (ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
-                    val stub = DalalActionServiceGrpc.newBlockingStub(channel)
-
-                    val response = stub.register(RegisterRequest.newBuilder()
-                            .setCountry(countrySpinner.selectedItem.toString())
-                            .setEmail(emailEditText.text.toString())
-                            .setFullName(nameEditText.text.toString())
-                            .setPassword(passwordEditText.text.toString())
-                            .setUserName(nameEditText.text.toString())
-                            .build())
-
-                    val message = when {
-                        response.statusCode == RegisterResponse.StatusCode.OK -> "Successfully Registered !"
-                        response.statusCode == RegisterResponse.StatusCode.AlreadyRegisteredError -> "You have already registered."
-                        else -> "Internal server error."
-                    }
-
-                    uiThread {
-                        val loginIntent = Intent(this@RegistrationActivity, LoginActivity::class.java)
-                        loginIntent.putExtra(REGISTER_MESSAGE_KEY, message)
-                        loginIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                        startActivity(loginIntent)
-                        finish()
-                    }
-                } else {
-                    uiThread { showErrorSnackBar(resources.getString(R.string.error_server_down)) }
-                }
-            } else {
+            if (!ConnectionUtils.getConnectionInfo(this@RegistrationActivity)) {
                 uiThread { showErrorSnackBar(resources.getString(R.string.error_check_internet)) }
+            } else if (!ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
+                uiThread { showErrorSnackBar(resources.getString(R.string.error_server_down)) }
+            } else {
+                val stub = DalalActionServiceGrpc.newBlockingStub(channel)
+
+                val response = stub.register(RegisterRequest.newBuilder()
+                        .setCountry(countrySpinner.selectedItem.toString())
+                        .setEmail(emailEditText.text.toString())
+                        .setFullName(nameEditText.text.toString())
+                        .setPassword(passwordEditText.text.toString())
+                        .setUserName(nameEditText.text.toString())
+                        .build())
+
+                val message = when {
+                    response.statusCode == RegisterResponse.StatusCode.OK -> "Successfully Registered !"
+                    response.statusCode == RegisterResponse.StatusCode.AlreadyRegisteredError -> "You have already registered."
+                    else -> "Internal server error."
+                }
+
+                uiThread {
+                    val loginIntent = Intent(this@RegistrationActivity, LoginActivity::class.java)
+                    loginIntent.putExtra(REGISTER_MESSAGE_KEY, message)
+                    loginIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                    startActivity(loginIntent)
+                    finish()
+                }
             }
             uiThread { registrationAlertDialog?.dismiss() }
         }
     }
 
-    private fun showErrorSnackBar(message : String){
+    private fun showErrorSnackBar(message: String) {
         val snackBar = Snackbar.make(findViewById(android.R.id.content), message, Snackbar.LENGTH_INDEFINITE)
                 .setAction("RETRY") { startRegistration() }
 

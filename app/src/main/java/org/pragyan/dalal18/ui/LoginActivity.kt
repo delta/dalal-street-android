@@ -70,25 +70,27 @@ class LoginActivity : AppCompatActivity() {
     private fun startLoginProcess(startedFromServerDown: Boolean) {
 
         doAsync {
-            if (ConnectionUtils.getConnectionInfo(this@LoginActivity)) {
-                uiThread {
-                    play_button.isEnabled = true
-
-                    if (startedFromServerDown)
-                        onLoginButtonClick()
-                }
-            } else {
+            if (!ConnectionUtils.getConnectionInfo(this@LoginActivity)) {
                 uiThread {
                     play_button.isEnabled = false
                     showSnackBar(resources.getString(R.string.error_check_internet))
                 }
             }
+            uiThread {
+                play_button.isEnabled = true
+
+                if (startedFromServerDown)
+                    onLoginButtonClick()
+            }
         }
+
     }
 
     private fun onLoginButtonClick() {
         doAsync {
-            if (ConnectionUtils.getConnectionInfo(this@LoginActivity)) {
+            if (!ConnectionUtils.getConnectionInfo(this@LoginActivity)) {
+                uiThread { startLoginProcess(false) }
+            } else {
                 uiThread {
                     if (validateEmail() && validatePassword()) {
                         val email = emailEditText.text.toString()
@@ -97,8 +99,6 @@ class LoginActivity : AppCompatActivity() {
                         loginAsynchronously(email, password)
                     }
                 }
-            } else {
-                uiThread { startLoginProcess(false) }
             }
         }
     }
@@ -142,8 +142,13 @@ class LoginActivity : AppCompatActivity() {
 
         doAsync {
 
-            if (ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
-
+            if (!ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
+                uiThread {
+                    signingInAlertDialog?.dismiss()
+                    contentView?.hideKeyboard()
+                    showSnackBar("Server Unreachable")
+                }
+            } else {
                 val loginResponse = stub.login(loginRequest)
 
                 uiThread {
@@ -208,7 +213,7 @@ class LoginActivity : AppCompatActivity() {
                             when (key) {
                                 "MORTGAGE_DEPOSIT_RATE" -> Constants.MORTGAGE_DEPOSIT_RATE = value.toDouble()
                                 "MORTGAGE_RETRIEVE_RATE" -> Constants.MORTGAGE_RETRIEVE_RATE = value.toDouble()
-                                "ORDER_FEE_PERCENT" -> Constants.ORDER_FEE_RATE = (value.toDouble()/100)
+                                "ORDER_FEE_PERCENT" -> Constants.ORDER_FEE_RATE = (value.toDouble() / 100)
                                 "ORDER_PRICE_WINDOW" -> Constants.ORDER_PRICE_WINDOW = value
                             }
                         }
@@ -224,12 +229,6 @@ class LoginActivity : AppCompatActivity() {
                         toast("Invalid Credentials")
                         passwordEditText.setText("")
                     }
-                }
-            } else {
-                uiThread {
-                    signingInAlertDialog?.dismiss()
-                    contentView?.hideKeyboard()
-                    showSnackBar("Server Unreachable")
                 }
             }
         }

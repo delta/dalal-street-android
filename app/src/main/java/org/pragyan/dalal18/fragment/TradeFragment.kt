@@ -237,25 +237,23 @@ class TradeFragment : Fragment() {
                 .build()
 
         doAsync {
-            if (ConnectionUtils.getConnectionInfo(context)) {
-                if (ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
-                    val orderResponse = actionServiceBlockingStub.placeOrder(orderRequest)
-
-                    uiThread {
-                        if (orderResponse.statusCodeValue == 0) {
-                            context?.toast("Order Placed")
-                            noOfStocksEditText.setText("")
-                            orderPriceEditText.setText("")
-                            view?.hideKeyboard()
-                        } else {
-                            context?.toast(orderResponse.statusMessage)
-                        }
-                    }
-                } else {
-                    uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_server_down)) }
-                }
-            } else {
+            if (!ConnectionUtils.getConnectionInfo(context)) {
                 uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_check_internet)) }
+            } else if (!ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
+                uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_server_down)) }
+            } else {
+                val orderResponse = actionServiceBlockingStub.placeOrder(orderRequest)
+
+                uiThread {
+                    if (orderResponse.statusCodeValue == 0) {
+                        context?.toast("Order Placed")
+                        noOfStocksEditText.setText("")
+                        orderPriceEditText.setText("")
+                        view?.hideKeyboard()
+                    } else {
+                        context?.toast(orderResponse.statusMessage)
+                    }
+                }
             }
             uiThread { loadingDialog?.dismiss() }
         }

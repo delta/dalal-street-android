@@ -129,39 +129,37 @@ class HomeFragment : Fragment(), NewsRecyclerAdapter.NewsItemClickListener, Swip
         loadingNews_textView.text = getString(R.string.getting_latest_news)
 
         doAsync {
-            if (ConnectionUtils.getConnectionInfo(context)) {
-                if (ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
-
-                    val marketEventsResponse = actionServiceBlockingStub.getMarketEvents(GetMarketEventsRequest.newBuilder().setCount(0).setLastEventId(0).build())
-
-                    uiThread {
-                        newsSwipeRefreshLayout?.isRefreshing = false
-                        if (marketEventsResponse.statusCode == GetMarketEventsResponse.StatusCode.OK) {
-
-                            newsList.clear()
-
-                            for (currentMarketEvent in marketEventsResponse.marketEventsList) {
-                                newsList.add(NewsDetails(currentMarketEvent.createdAt, currentMarketEvent.headline, currentMarketEvent.text, currentMarketEvent.imagePath))
-                            }
-
-                            if (newsList.isNotEmpty()) {
-                                newsRecyclerAdapter.swapData(newsList)
-                                showNewsAvailable(true)
-                            } else {
-                                showNewsAvailable(false)
-                            }
-
-                        } else {
-                            context?.toast(marketEventsResponse.statusMessage)
-                        }
-                    }
-                } else {
-                    uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_server_down)) }
-                }
-            } else {
+            if (!ConnectionUtils.getConnectionInfo(context)) {
                 uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_check_internet)) }
+            } else if (!ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
+                uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_server_down)) }
+            } else {
+                val marketEventsResponse = actionServiceBlockingStub.getMarketEvents(GetMarketEventsRequest.newBuilder().setCount(0).setLastEventId(0).build())
+
+                uiThread {
+                    newsSwipeRefreshLayout?.isRefreshing = false
+                    if (marketEventsResponse.statusCode == GetMarketEventsResponse.StatusCode.OK) {
+
+                        newsList.clear()
+
+                        for (currentMarketEvent in marketEventsResponse.marketEventsList) {
+                            newsList.add(NewsDetails(currentMarketEvent.createdAt, currentMarketEvent.headline, currentMarketEvent.text, currentMarketEvent.imagePath))
+                        }
+
+                        if (newsList.isNotEmpty()) {
+                            newsRecyclerAdapter.swapData(newsList)
+                            showNewsAvailable(true)
+                        } else {
+                            showNewsAvailable(false)
+                        }
+
+                    } else {
+                        context?.toast(marketEventsResponse.statusMessage)
+                    }
+                }
             }
         }
+
     }
 
     private fun showNewsAvailable(show: Boolean) {

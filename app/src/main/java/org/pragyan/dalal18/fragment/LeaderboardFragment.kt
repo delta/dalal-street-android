@@ -89,32 +89,30 @@ class LeaderboardFragment : Fragment() {
         loadingDialog.show()
         leaderboard_recyclerView.visibility = View.GONE
         doAsync {
-            if (ConnectionUtils.getConnectionInfo(context)) {
-                if (ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
-                    val rankListResponse = actionServiceBlockingStub.getLeaderboard(GetLeaderboardRequest.newBuilder()
-                            .setCount(LEADERBOARD_SIZE).setStartingId(1).build())
-
-                    uiThread {
-
-                        if (rankListResponse.statusCode == GetLeaderboardResponse.StatusCode.OK) {
-                            personal_rank_textView.text = rankListResponse.myRank.toString()
-                            personal_wealth_textView.text = totalWorthTextView.text.toString()
-                            personal_name_textView.text = MiscellaneousUtils.username
-                            for (i in 0 until rankListResponse.rankListCount) {
-                                val currentRow = rankListResponse.getRankList(i)
-                                leaderBoardDetailsList.add(LeaderBoardDetails(currentRow.rank, currentRow.userName, currentRow.totalWorth))
-                            }
-                            leaderBoardRecyclerAdapter.swapData(leaderBoardDetailsList)
-                            leaderboard_recyclerView.visibility = View.VISIBLE
-                        } else {
-                            context?.longToast("Server internal error")
-                        }
-                    }
-                } else {
-                    uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_server_down)) }
-                }
-            } else {
+            if (!ConnectionUtils.getConnectionInfo(context)) {
                 uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_check_internet)) }
+            } else if (!ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
+                uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_server_down)) }
+            } else {
+                val rankListResponse = actionServiceBlockingStub.getLeaderboard(GetLeaderboardRequest.newBuilder()
+                        .setCount(LEADERBOARD_SIZE).setStartingId(1).build())
+
+                uiThread {
+
+                    if (rankListResponse.statusCode == GetLeaderboardResponse.StatusCode.OK) {
+                        personal_rank_textView.text = rankListResponse.myRank.toString()
+                        personal_wealth_textView.text = totalWorthTextView.text.toString()
+                        personal_name_textView.text = MiscellaneousUtils.username
+                        for (i in 0 until rankListResponse.rankListCount) {
+                            val currentRow = rankListResponse.getRankList(i)
+                            leaderBoardDetailsList.add(LeaderBoardDetails(currentRow.rank, currentRow.userName, currentRow.totalWorth))
+                        }
+                        leaderBoardRecyclerAdapter.swapData(leaderBoardDetailsList)
+                        leaderboard_recyclerView.visibility = View.VISIBLE
+                    } else {
+                        context?.longToast("Server internal error")
+                    }
+                }
             }
             uiThread { loadingDialog.dismiss() }
         }

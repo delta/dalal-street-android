@@ -270,34 +270,32 @@ class DepthTableFragment : Fragment() {
     private fun getCompanyProfileAsynchronously(currentCompany: String) {
 
         doAsync {
-            if (ConnectionUtils.getConnectionInfo(context)) {
-                if (ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
-                    val companyProfileResponse = actionServiceBlockingStub.getCompanyProfile(
-                            GetCompanyProfileRequest.newBuilder().setStockId(getStockIdFromCompanyName(currentCompany)).build())
-                    uiThread {
-                        if (activity != null && isAdded) {
-                            val currentStock = companyProfileResponse.stockDetails
+            if (!ConnectionUtils.getConnectionInfo(context)) {
+                uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_check_internet)) }
+            } else if (!ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
+                uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_server_down)) }
+            } else {
+                val companyProfileResponse = actionServiceBlockingStub.getCompanyProfile(
+                        GetCompanyProfileRequest.newBuilder().setStockId(getStockIdFromCompanyName(currentCompany)).build())
+                uiThread {
+                    if (activity != null && isAdded) {
+                        val currentStock = companyProfileResponse.stockDetails
 
-                            val currentPrice = currentStock.currentPrice
-                            val prevDayClose = currentStock.previousDayClose
+                        val currentPrice = currentStock.currentPrice
+                        val prevDayClose = currentStock.previousDayClose
 
-                            current_stock_price_layout.visibility = View.VISIBLE
-                            val currentStockPrice = "Current Stock Price : " + Constants.RUPEE_SYMBOL + df.format(currentPrice).toString()
-                            current_stock_price_textView.text = currentStockPrice
-                            val prevDayClosePrice = Constants.RUPEE_SYMBOL + df.format(Math.abs(currentPrice - prevDayClose)).toString()
-                            prev_day_close_stock_price.text = prevDayClosePrice
-                            if (currentPrice >= prevDayClose) {
-                                arrow_image_view.setImageResource(R.drawable.arrow_up_green)
-                            } else {
-                                arrow_image_view.setImageResource(R.drawable.arrow_down_red)
-                            }
+                        current_stock_price_layout.visibility = View.VISIBLE
+                        val currentStockPrice = "Current Stock Price : " + Constants.RUPEE_SYMBOL + df.format(currentPrice).toString()
+                        current_stock_price_textView.text = currentStockPrice
+                        val prevDayClosePrice = Constants.RUPEE_SYMBOL + df.format(Math.abs(currentPrice - prevDayClose)).toString()
+                        prev_day_close_stock_price.text = prevDayClosePrice
+                        if (currentPrice >= prevDayClose) {
+                            arrow_image_view.setImageResource(R.drawable.arrow_up_green)
+                        } else {
+                            arrow_image_view.setImageResource(R.drawable.arrow_down_red)
                         }
                     }
-                } else {
-                    uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_server_down)) }
                 }
-            } else {
-                uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_check_internet)) }
             }
             uiThread {
                 companySpinner.clearFocus()

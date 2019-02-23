@@ -109,28 +109,25 @@ class StockExchangeFragment : Fragment() {
         } else if (currentStock != null && !dailyHigh_textView.text.isEmpty()) {
             if ((noOfStocksEditText.text.toString().trim { it <= ' ' }).toLong() <= currentStock!!.stocksInExchange) {
                 doAsync {
-                    if (ConnectionUtils.getConnectionInfo(context!!)) {
-                        if (ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
-                            val response = actionServiceBlockingStub.buyStocksFromExchange(
-                                    BuyStocksFromExchangeRequest.newBuilder().setStockId(lastSelectedStockId)
-                                            .setStockQuantity(noOfStocksEditText.text.toString().toLong()).build()
-                            )
-
-                            uiThread {
-                                if (response.statusCode == BuyStocksFromExchangeResponse.StatusCode.OK) {
-                                    context?.toast("Stocks bought")
-                                    noOfStocksEditText.setText("")
-                                    getCompanyProfileAsynchronously(lastSelectedStockId)
-                                    view?.hideKeyboard()
-                                }
-                                else
-                                    context?.toast(response.statusMessage)
-                            }
-                        } else {
-                            uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_server_down)) }
-                        }
-                    } else {
+                    if (!ConnectionUtils.getConnectionInfo(context!!)) {
                         uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_check_internet)) }
+                    } else if (!ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
+                        uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_server_down)) }
+                    } else {
+                        val response = actionServiceBlockingStub.buyStocksFromExchange(
+                                BuyStocksFromExchangeRequest.newBuilder().setStockId(lastSelectedStockId)
+                                        .setStockQuantity(noOfStocksEditText.text.toString().toLong()).build()
+                        )
+
+                        uiThread {
+                            if (response.statusCode == BuyStocksFromExchangeResponse.StatusCode.OK) {
+                                context?.toast("Stocks bought")
+                                noOfStocksEditText.setText("")
+                                getCompanyProfileAsynchronously(lastSelectedStockId)
+                                view?.hideKeyboard()
+                            } else
+                                context?.toast(response.statusMessage)
+                        }
                     }
                 }
             } else {
@@ -152,35 +149,33 @@ class StockExchangeFragment : Fragment() {
         stocksInExchange_textView.text = ""
 
         doAsync {
-            if (ConnectionUtils.getConnectionInfo(context)) {
-                if (ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
-                    val companyProfileResponse = actionServiceBlockingStub.getCompanyProfile(
-                            GetCompanyProfileRequest.newBuilder().setStockId(stockId).build())
-
-                    uiThread {
-
-                        currentStock = companyProfileResponse.stockDetails
-
-                        var temporaryTextViewString: String = ": ₹" + decimalFormat.format(currentStock?.currentPrice).toString()
-                        currentStockPrice_textView.text = temporaryTextViewString
-
-                        temporaryTextViewString = ": ₹" + decimalFormat.format(currentStock?.dayHigh).toString()
-                        dailyHigh_textView.text = temporaryTextViewString
-
-                        temporaryTextViewString = ": ₹" + decimalFormat.format(currentStock?.dayLow).toString()
-                        dailyLow_textView.text = temporaryTextViewString
-
-                        temporaryTextViewString = ": " + decimalFormat.format(currentStock?.stocksInMarket).toString()
-                        stocksInMarket_textView.text = temporaryTextViewString
-
-                        temporaryTextViewString = ": " + decimalFormat.format(currentStock?.stocksInExchange).toString()
-                        stocksInExchange_textView.text = temporaryTextViewString
-                    }
-                } else {
-                    uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_server_down)) }
-                }
-            } else {
+            if (!ConnectionUtils.getConnectionInfo(context)) {
                 uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_check_internet)) }
+            } else if (!ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
+                uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_server_down)) }
+            } else {
+                val companyProfileResponse = actionServiceBlockingStub.getCompanyProfile(
+                        GetCompanyProfileRequest.newBuilder().setStockId(stockId).build())
+
+                uiThread {
+
+                    currentStock = companyProfileResponse.stockDetails
+
+                    var temporaryTextViewString: String = ": ₹" + decimalFormat.format(currentStock?.currentPrice).toString()
+                    currentStockPrice_textView.text = temporaryTextViewString
+
+                    temporaryTextViewString = ": ₹" + decimalFormat.format(currentStock?.dayHigh).toString()
+                    dailyHigh_textView.text = temporaryTextViewString
+
+                    temporaryTextViewString = ": ₹" + decimalFormat.format(currentStock?.dayLow).toString()
+                    dailyLow_textView.text = temporaryTextViewString
+
+                    temporaryTextViewString = ": " + decimalFormat.format(currentStock?.stocksInMarket).toString()
+                    stocksInMarket_textView.text = temporaryTextViewString
+
+                    temporaryTextViewString = ": " + decimalFormat.format(currentStock?.stocksInExchange).toString()
+                    stocksInExchange_textView.text = temporaryTextViewString
+                }
             }
             uiThread { loadingDialog?.dismiss() }
         }

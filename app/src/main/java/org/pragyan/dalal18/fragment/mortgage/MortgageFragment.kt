@@ -78,7 +78,7 @@ class MortgageFragment : Fragment() {
                 if (quantity < 0) /* Mortgage Action */ {
                     var newStockMortgaged = true
 
-                    for(mortgageDetails in mortgageDetailsList) {
+                    for (mortgageDetails in mortgageDetailsList) {
                         if (mortgageDetails.stockId == stockId && mortgageDetails.mortgagePrice == price) {
                             mortgageDetails.stockQuantity -= quantity
                             newStockMortgaged = false
@@ -86,10 +86,10 @@ class MortgageFragment : Fragment() {
                         }
                     }
 
-                    if(newStockMortgaged) mortgageDetailsList.add(MortgageDetails(stockId, -quantity, price))
+                    if (newStockMortgaged) mortgageDetailsList.add(MortgageDetails(stockId, -quantity, price))
 
                 } else /* Retrieve Action */ {
-                    for(mortgageDetails in mortgageDetailsList) {
+                    for (mortgageDetails in mortgageDetailsList) {
                         if (mortgageDetails.stockId == stockId && mortgageDetails.mortgagePrice == price) {
                             if (mortgageDetails.stockQuantity == quantity) {
                                 mortgageDetailsList.remove(mortgageDetails)
@@ -149,7 +149,7 @@ class MortgageFragment : Fragment() {
                     val ownedString = " :  " + decimalFormat.format(getQuantityOwnedFromStockId(model.ownedStockDetails, lastStockId)).toString()
                     stocksOwnedTextView.text = ownedString
 
-                    if(mortgageDetailsList.size > 0) {
+                    if (mortgageDetailsList.size > 0) {
                         val mortgageString = " :  " + decimalFormat.format(getStocksMortgagedFromStockId(lastStockId))
                         stocksMortgagedTextView.text = mortgageString
                     }
@@ -206,39 +206,36 @@ class MortgageFragment : Fragment() {
         mortgage_companies_spinner.isEnabled = false
 
         doAsync {
-            if (ConnectionUtils.getConnectionInfo(context)) {
-                if (ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
-
-                    val response = actionServiceBlockingStub.getMortgageDetails(GetMortgageDetailsRequest.newBuilder().build())
-
-                    uiThread {
-                        mortgage_companies_spinner.isEnabled = true
-
-                        if (response.statusCode == GetMortgageDetailsResponse.StatusCode.OK) {
-
-                            mortgageDetailsList.clear()
-                            for (currentDetails in response.mortgageDetailsList) {
-                                mortgageDetailsList.add(MortgageDetails(currentDetails.stockId, currentDetails.stocksInBank, currentDetails.mortgagePrice))
-                            }
-
-                            val ownedString = " :  " + decimalFormat.format(getQuantityOwnedFromCompanyName(model.ownedStockDetails, getCompanyNameFromStockId(lastStockId))).toString()
-                            stocksOwnedTextView.text = ownedString
-
-                            val tempString = " :  " + Constants.RUPEE_SYMBOL + " " + decimalFormat.format(StockUtils.getPriceFromStockId(model.globalStockDetails, lastStockId)).toString()
-                            currentPriceTextView.text = tempString
-
-                            val mortgagedString = " :  " + decimalFormat.format(getStocksMortgagedFromStockId(lastStockId))
-                            stocksMortgagedTextView.text = mortgagedString
-
-                        } else {
-                            context?.toast(response.statusMessage)
-                        }
-                    }
-                } else {
-                    uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_server_down)) }
-                }
-            } else {
+            if (!ConnectionUtils.getConnectionInfo(context)) {
                 uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_check_internet)) }
+            } else if (!ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
+                uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_server_down)) }
+            } else {
+                val response = actionServiceBlockingStub.getMortgageDetails(GetMortgageDetailsRequest.newBuilder().build())
+
+                uiThread {
+                    mortgage_companies_spinner.isEnabled = true
+
+                    if (response.statusCode == GetMortgageDetailsResponse.StatusCode.OK) {
+
+                        mortgageDetailsList.clear()
+                        for (currentDetails in response.mortgageDetailsList) {
+                            mortgageDetailsList.add(MortgageDetails(currentDetails.stockId, currentDetails.stocksInBank, currentDetails.mortgagePrice))
+                        }
+
+                        val ownedString = " :  " + decimalFormat.format(getQuantityOwnedFromCompanyName(model.ownedStockDetails, getCompanyNameFromStockId(lastStockId))).toString()
+                        stocksOwnedTextView.text = ownedString
+
+                        val tempString = " :  " + Constants.RUPEE_SYMBOL + " " + decimalFormat.format(StockUtils.getPriceFromStockId(model.globalStockDetails, lastStockId)).toString()
+                        currentPriceTextView.text = tempString
+
+                        val mortgagedString = " :  " + decimalFormat.format(getStocksMortgagedFromStockId(lastStockId))
+                        stocksMortgagedTextView.text = mortgagedString
+
+                    } else {
+                        context?.toast(response.statusMessage)
+                    }
+                }
             }
             uiThread { loadingDialog?.dismiss() }
         }
@@ -252,26 +249,24 @@ class MortgageFragment : Fragment() {
         loadingDialog?.show()
         doAsync {
 
-            if (ConnectionUtils.getConnectionInfo(context)) {
-                if (ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
-                    val mortgageStocksResponse = actionServiceBlockingStub.mortgageStocks(
-                            MortgageStocksRequest.newBuilder().setStockId(lastStockId)
-                                    .setStockQuantity(stocksTransaction).build())
-
-                    uiThread {
-                        if (mortgageStocksResponse.statusCode == MortgageStocksResponse.StatusCode.OK) {
-                            context?.toast("Transaction successful")
-                            stocks_editText.setText("")
-                            view?.hideKeyboard()
-                        } else {
-                            context?.toast(mortgageStocksResponse.statusMessage)
-                        }
-                    }
-                } else {
-                    uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_server_down)) }
-                }
-            } else {
+            if (!ConnectionUtils.getConnectionInfo(context)) {
                 uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_check_internet)) }
+            } else if (!ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
+                uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_server_down)) }
+            } else {
+                val mortgageStocksResponse = actionServiceBlockingStub.mortgageStocks(
+                        MortgageStocksRequest.newBuilder().setStockId(lastStockId)
+                                .setStockQuantity(stocksTransaction).build())
+
+                uiThread {
+                    if (mortgageStocksResponse.statusCode == MortgageStocksResponse.StatusCode.OK) {
+                        context?.toast("Transaction successful")
+                        stocks_editText.setText("")
+                        view?.hideKeyboard()
+                    } else {
+                        context?.toast(mortgageStocksResponse.statusMessage)
+                    }
+                }
             }
             uiThread { loadingDialog?.dismiss() }
         }
@@ -281,8 +276,8 @@ class MortgageFragment : Fragment() {
 
         var totalCount = 0L
 
-        for(mortgageDetail in mortgageDetailsList) {
-            if(mortgageDetail.stockId == stockId)
+        for (mortgageDetail in mortgageDetailsList) {
+            if (mortgageDetail.stockId == stockId)
                 totalCount += mortgageDetail.stockQuantity
         }
 

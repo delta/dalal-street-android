@@ -143,34 +143,32 @@ class RetrieveFragment : Fragment(), RetrieveRecyclerAdapter.OnRetrieveButtonCli
         loadingDialog?.show()
 
         doAsync {
-            if (ConnectionUtils.getConnectionInfo(context)) {
-                if (ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
-                    val response = actionServiceBlockingStub.getMortgageDetails(GetMortgageDetailsRequest.newBuilder().build())
-
-                    uiThread {
-
-                        if (response.statusCode == GetMortgageDetailsResponse.StatusCode.OK) {
-
-                            mortgageDetailsList.clear()
-                            for (currentDetails in response.mortgageDetailsList) {
-                                mortgageDetailsList.add(MortgageDetails(currentDetails.stockId, currentDetails.stocksInBank, currentDetails.mortgagePrice))
-                            }
-
-                            if (mortgageDetailsList.size == 0) {
-                                flipVisibilities(true)
-                            } else {
-                                retrieveAdapter.swapData(mortgageDetailsList)
-                                flipVisibilities(false)
-                            }
-                        } else {
-                            context?.toast(response.statusMessage)
-                        }
-                    }
-                } else {
-                    uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_server_down)) }
-                }
-            } else {
+            if (!ConnectionUtils.getConnectionInfo(context)) {
                 uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_check_internet)) }
+            } else if (!ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
+                uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_server_down)) }
+            } else {
+                val response = actionServiceBlockingStub.getMortgageDetails(GetMortgageDetailsRequest.newBuilder().build())
+
+                uiThread {
+
+                    if (response.statusCode == GetMortgageDetailsResponse.StatusCode.OK) {
+
+                        mortgageDetailsList.clear()
+                        for (currentDetails in response.mortgageDetailsList) {
+                            mortgageDetailsList.add(MortgageDetails(currentDetails.stockId, currentDetails.stocksInBank, currentDetails.mortgagePrice))
+                        }
+
+                        if (mortgageDetailsList.size == 0) {
+                            flipVisibilities(true)
+                        } else {
+                            retrieveAdapter.swapData(mortgageDetailsList)
+                            flipVisibilities(false)
+                        }
+                    } else {
+                        context?.toast(response.statusMessage)
+                    }
+                }
             }
             uiThread { loadingDialog?.dismiss() }
         }
@@ -183,22 +181,20 @@ class RetrieveFragment : Fragment(), RetrieveRecyclerAdapter.OnRetrieveButtonCli
             retrieveQuantity.toLong() > stocksQuantity.toLong() -> context?.toast("Insufficient stocks to retrieve")
             else -> {
                 doAsync {
-                    if (ConnectionUtils.getConnectionInfo(context)) {
-                        if (ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
-                            val retrieveStocksResponse = actionServiceBlockingStub.retrieveMortgageStocks(
-                                    RetrieveMortgageStocksRequest.newBuilder().setStockId(mortgageDetailsList[position].stockId)
-                                            .setStockQuantity(retrieveQuantity.toLong()).setRetrievePrice(mortgageDetailsList[position].mortgagePrice).build())
-                            uiThread {
-                                if (retrieveStocksResponse.statusCode == RetrieveMortgageStocksResponse.StatusCode.OK)
-                                    context?.toast("Transaction successful")
-                                else
-                                    context?.toast(retrieveStocksResponse.statusMessage)
-                            }
-                        } else {
-                            uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_server_down)) }
-                        }
-                    } else {
+                    if (!ConnectionUtils.getConnectionInfo(context)) {
                         uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_check_internet)) }
+                    } else if (!ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
+                        uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_server_down)) }
+                    } else {
+                        val retrieveStocksResponse = actionServiceBlockingStub.retrieveMortgageStocks(
+                                RetrieveMortgageStocksRequest.newBuilder().setStockId(mortgageDetailsList[position].stockId)
+                                        .setStockQuantity(retrieveQuantity.toLong()).setRetrievePrice(mortgageDetailsList[position].mortgagePrice).build())
+                        uiThread {
+                            if (retrieveStocksResponse.statusCode == RetrieveMortgageStocksResponse.StatusCode.OK)
+                                context?.toast("Transaction successful")
+                            else
+                                context?.toast(retrieveStocksResponse.statusMessage)
+                        }
                     }
                 }
             }
