@@ -75,26 +75,35 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
 
     private var shouldUnsubscribeAsNetworkDown = true
 
+    private var cashWorth: Long = 0
+    private var stockWorth: Long = 0
+    private var totalWorth: Long = 0
+
+
     private val refreshCashStockReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             when (intent.action) {
                 REFRESH_WORTH_TEXTVIEW_ACTION -> {
                     // Passing future value of cash worth TextView beforehand as old cash
-                    updateStockWorthViaStreamUpdates(cashWorthTextView.text.toString().replace(",", "").toLong() + intent.getLongExtra(TOTAL_WORTH_KEY, 0))
-                    changeTextViewValue(cashWorthTextView, cashIndicatorImageView, intent.getLongExtra(TOTAL_WORTH_KEY, 0), true)
+                    cashWorth += intent.getLongExtra(TOTAL_WORTH_KEY, 0)
+                    updateStockWorthViaStreamUpdates(cashWorth)
+                    changeTextViewValue(cashWorthTextView, cashIndicatorImageView, cashWorth)
                 }
 
                 REFRESH_CASH_AND_TOTAL_ACTION -> {
-                    changeTextViewValue(totalWorthTextView, totalIndicatorImageVIew, intent.getLongExtra(TOTAL_WORTH_KEY, 0), true)
-                    changeTextViewValue(cashWorthTextView, cashIndicatorImageView, intent.getLongExtra(TOTAL_WORTH_KEY, 0), true)
+                    totalWorth += intent.getLongExtra(TOTAL_WORTH_KEY, 0)
+                    changeTextViewValue(totalWorthTextView, totalIndicatorImageVIew, totalWorth)
+                    cashWorth += intent.getLongExtra(TOTAL_WORTH_KEY, 0)
+                    changeTextViewValue(cashWorthTextView, cashIndicatorImageView, cashWorth)
                 }
 
                 REFRESH_CASH_ACTION -> {
-                    changeTextViewValue(cashWorthTextView, cashIndicatorImageView, intent.getLongExtra(TOTAL_WORTH_KEY, 0), true)
+                    cashWorth += intent.getLongExtra(TOTAL_WORTH_KEY, 0)
+                    changeTextViewValue(cashWorthTextView, cashIndicatorImageView, cashWorth)
                 }
 
                 UPDATE_WORTH_VIA_STREAM_ACTION ->
-                    updateStockWorthViaStreamUpdates(cashWorthTextView.text.toString().replace(",", "").toLong())
+                    updateStockWorthViaStreamUpdates(cashWorth)
             }
         }
     }
@@ -125,7 +134,6 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
         setupWorthTextViews()
 
         startMakingButtonsTransparent()
-        updateStockWorthViaStreamUpdates(intent.getLongExtra(CASH_WORTH_KEY, 0))
 
         if (!intent.getBooleanExtra(SplashActivity.MARKET_OPEN_KEY, false)) {
             AlertDialog.Builder(this, R.style.AlertDialogTheme)
@@ -343,7 +351,7 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
                             TransactionType.PLACE_ORDER_TRANSACTION -> {
                                 if (transaction.total != 0L) { // Cash reserved; here transaction.total will be negative as reserveCash is taken from actual cash
                                     model.reservedCash += Math.abs(transaction.total)
-                                    val intent = Intent(REFRESH_CASH_ACTION)
+                                    val intent = Intent(REFRESH_CASH_AND_TOTAL_ACTION) // Since now TotalWorth = CashWorth + StockWorth
                                     intent.putExtra(TOTAL_WORTH_KEY, transaction.total)
                                     LocalBroadcastManager.getInstance(this@MainActivity).sendBroadcast(intent)
                                 } else {
@@ -358,7 +366,7 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
                             TransactionType.CANCEL_ORDER_TRANSACTION -> {
                                 if (transaction.total != 0L) { // Here transaction.total will be positive
                                     model.reservedCash -= Math.abs(transaction.total)
-                                    val intent = Intent(REFRESH_CASH_ACTION)
+                                    val intent = Intent(REFRESH_CASH_AND_TOTAL_ACTION) //  Since now TotalWorth = CashWorth + StockWorth
                                     intent.putExtra(TOTAL_WORTH_KEY, transaction.total)
                                     LocalBroadcastManager.getInstance(this@MainActivity).sendBroadcast(intent)
                                 } else {
@@ -503,6 +511,7 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
             }
             netStockWorth += quantity * rate
         }
+        stockWorth = netStockWorth
 
         var oldValue = stockWorthTextView.text.toString().replace(",", "").toLong()
         animateWorthChange(oldValue, netStockWorth, stockWorthTextView, stockIndicatorImageView)
@@ -517,26 +526,29 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
             }
             netStockWorth += quantity * rate
         }
+        // Backend has it the way TotalWorth = CashWorth + StockWorth
+        totalWorth = stockWorth + cashWorth
 
         oldValue = totalWorthTextView.text.toString().replace(",", "").toLong()
-        animateWorthChange(oldValue, netStockWorth + oldCash + model.reservedCash, totalWorthTextView, totalIndicatorImageVIew)
+        animateWorthChange(oldValue, totalWorth, totalWorthTextView, totalIndicatorImageVIew)
     }
 
     // Initial setup, called in activity's onCreate()
     private fun setupWorthTextViews() {
 
         // Initial old value is 0; Zero is placeholder
-        val cashWorth = intent.getLongExtra(CASH_WORTH_KEY, -1)
+        cashWorth = intent.getLongExtra(CASH_WORTH_KEY, -1)
         animateWorthChange(0, cashWorth, cashWorthTextView, cashIndicatorImageView)
+
+        totalWorth = intent.getLongExtra(TOTAL_WORTH_KEY, -1)
 
         // Updates stockWorthTextView and totalWorthTextView
         updateStockWorthViaStreamUpdates(cashWorth)
     }
 
     // Increases/decreases text view value depending on input parameters
-    private fun changeTextViewValue(textView: TextView, indicatorImageView: ImageView, value: Long, increase: Boolean) {
+    private fun changeTextViewValue(textView: TextView, indicatorImageView: ImageView, newValue: Long) {
         val oldValue = textView.text.toString().replace(",", "").toLong()
-        val newValue = oldValue + if (increase) value else -1 * value
         animateWorthChange(oldValue, newValue, textView, indicatorImageView)
     }
 
