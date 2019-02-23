@@ -14,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import dalalstreet.api.DalalActionServiceGrpc
 import dalalstreet.api.actions.GetMortgageDetailsRequest
 import dalalstreet.api.actions.GetMortgageDetailsResponse
@@ -32,13 +33,12 @@ import org.pragyan.dalal18.utils.ConnectionUtils
 import org.pragyan.dalal18.utils.Constants
 import javax.inject.Inject
 
-class RetrieveFragment : Fragment(), RetrieveRecyclerAdapter.OnRetrieveButtonClickListener {
+class RetrieveFragment : Fragment(), RetrieveRecyclerAdapter.OnRetrieveButtonClickListener, SwipeRefreshLayout.OnRefreshListener {
 
     @Inject
     lateinit var actionServiceBlockingStub: DalalActionServiceGrpc.DalalActionServiceBlockingStub
 
     lateinit var networkDownHandler: ConnectionUtils.OnNetworkDownHandler
-    private var loadingDialog: AlertDialog? = null
 
     private val mortgageDetailsList = mutableListOf<MortgageDetails>()
     private lateinit var retrieveAdapter: RetrieveRecyclerAdapter
@@ -103,17 +103,6 @@ class RetrieveFragment : Fragment(), RetrieveRecyclerAdapter.OnRetrieveButtonCli
         }
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        if (context != null) {
-            val dialogView = LayoutInflater.from(context).inflate(R.layout.progress_dialog, null)
-            val tempString = "Getting Mortgage details..."
-            (dialogView.findViewById<View>(R.id.progressDialog_textView) as TextView).text = tempString
-            loadingDialog = AlertDialog.Builder(context!!).setView(dialogView).setCancelable(false).create()
-        }
-    }
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
         val rootView = inflater.inflate(R.layout.fragment_retrieve, container, false)
@@ -133,6 +122,7 @@ class RetrieveFragment : Fragment(), RetrieveRecyclerAdapter.OnRetrieveButtonCli
         retrieveRecyclerView.adapter = retrieveAdapter
         retrieveRecyclerView.setHasFixedSize(false)
 
+        retrieveSwipeRefreshLayout.setOnRefreshListener(this)
         val tempString = "(Retrieve Rate: ${Constants.MORTGAGE_RETRIEVE_RATE}%)"
         retrieveRateTextView.text = tempString
 
@@ -140,8 +130,10 @@ class RetrieveFragment : Fragment(), RetrieveRecyclerAdapter.OnRetrieveButtonCli
     }
 
     private fun getMortgageDetailsAsynchronously() {
-        loadingDialog?.show()
-
+        retrieveSwipeRefreshLayout.isRefreshing = true
+        messageStocksMortgagedTextview.visibility = View.VISIBLE
+        retrieveRecyclerViewParentLayout.visibility = View.GONE
+        messageStocksMortgagedTextview.text = getString(R.string.swipe_to_refresh)
         doAsync {
             if (ConnectionUtils.getConnectionInfo(context)) {
                 if (ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
@@ -172,7 +164,7 @@ class RetrieveFragment : Fragment(), RetrieveRecyclerAdapter.OnRetrieveButtonCli
             } else {
                 uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_check_internet)) }
             }
-            uiThread { loadingDialog?.dismiss() }
+            uiThread { retrieveSwipeRefreshLayout.isRefreshing = false }
         }
     }
 
@@ -206,7 +198,8 @@ class RetrieveFragment : Fragment(), RetrieveRecyclerAdapter.OnRetrieveButtonCli
     }
 
     private fun flipVisibilities(noStocksMortgaged: Boolean) {
-        noStocksMortgagedTextview.visibility = if (noStocksMortgaged) View.VISIBLE else View.GONE
+        messageStocksMortgagedTextview.text = getString(R.string.no_stocks_mortgaged)
+        messageStocksMortgagedTextview.visibility = if (noStocksMortgaged) View.VISIBLE else View.GONE
         retrieveRecyclerViewParentLayout.visibility = if (noStocksMortgaged) View.GONE else View.VISIBLE
     }
 
@@ -220,4 +213,9 @@ class RetrieveFragment : Fragment(), RetrieveRecyclerAdapter.OnRetrieveButtonCli
         super.onPause()
         LocalBroadcastManager.getInstance(context!!).unregisterReceiver(refreshMortgageListReceiver)
     }
+
+    override fun onRefresh() {
+        getMortgageDetailsAsynchronously()
+    }
+
 }

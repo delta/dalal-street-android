@@ -36,6 +36,7 @@ import org.pragyan.dalal18.R
 import org.pragyan.dalal18.dagger.ContextModule
 import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent
 import org.pragyan.dalal18.data.DalalViewModel
+import org.pragyan.dalal18.fragment.mortgage.MainMortgageFragment
 import org.pragyan.dalal18.fragment.mortgage.MortgageFragment
 import org.pragyan.dalal18.notifications.NotificationService
 import org.pragyan.dalal18.utils.*
@@ -651,7 +652,7 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
     }
 
     override fun onNetworkDownError(message: String) {
-        shouldUnsubscribeAsNetworkDown = false
+       // shouldUnsubscribeAsNetworkDown = false
 
         errorDialog = AlertDialog.Builder(this, R.style.AlertDialogTheme)
                 .setMessage(message)
@@ -675,7 +676,23 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
         doAsync {
             if (ConnectionUtils.getConnectionInfo(this@MainActivity)) {
                 if (ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
-                    uiThread { errorDialog?.dismiss() }
+                    uiThread {
+                        errorDialog?.dismiss()
+
+                        subscribeToStreamsAsynchronously()
+
+                        val navHostFragment = supportFragmentManager.findFragmentById(R.id.main_host_fragment);
+                        val x = navHostFragment?.childFragmentManager?.fragments?.get(0)
+
+                        if (x !is MainMortgageFragment) {
+                            val ft = supportFragmentManager.beginTransaction()
+                            if(x != null){
+                                ft.detach(x)
+                                ft.attach(x)
+                                ft.commit()
+                            }
+                        }
+                    }
                 } else {
                     uiThread { errorDialog?.setMessage(getString(R.string.error_server_down)) }
                 }
