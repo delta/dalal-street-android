@@ -289,7 +289,6 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
                             TransactionType.ORDER_FILL_TRANSACTION -> { // transaction.total = -(stockTradePrice * stockTradeQty) + reservedCash
                                 if (transaction.stockQuantity > 0) {  // Bid order transaction which means cash was reserved and user gains stocks
                                     model.updateStocksOwned(transaction.stockId, transaction.stockQuantity)
-                                    model.reservedCash -= (transaction.stockQuantity * transaction.price + transaction.total)
 
                                     // It will refresh all 3 worth TextViews
                                     val intent = Intent(REFRESH_WORTH_TEXTVIEW_ACTION)
@@ -298,7 +297,6 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
                                     LocalBroadcastManager.getInstance(this@MainActivity).sendBroadcast(Intent(Constants.REFRESH_OWNED_STOCKS_ACTION))
 
                                 } else { // Ask order transaction which means stocks were reserved and OrderFill made user gain cash
-                                    model.updateReservedStocks(transaction.stockId, Math.abs(transaction.stockQuantity))
                                     val intent = Intent(REFRESH_CASH_ACTION)
                                     intent.putExtra(TOTAL_WORTH_KEY, transaction.total)
                                     LocalBroadcastManager.getInstance(this@MainActivity).sendBroadcast(intent)
@@ -367,6 +365,15 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
                                     model.updateReservedStocks(transaction.stockId, transaction.stockQuantity) // stockQuantity will be positive
                                     model.updateStocksOwned(transaction.stockId, transaction.stockQuantity)
                                     LocalBroadcastManager.getInstance(this@MainActivity).sendBroadcast(Intent(UPDATE_WORTH_VIA_STREAM_ACTION))
+                                }
+                                LocalBroadcastManager.getInstance(this@MainActivity).sendBroadcast(Intent(REFRESH_RESERVED_ASSETS_ACTION))
+                            }
+
+                            TransactionType.RESERVE_UPDATE_TRANSACTION -> {
+                                if (transaction.stockQuantity > 0) {
+                                    model.updateReservedStocks(transaction.stockId, transaction.stockQuantity)
+                                } else {
+                                    model.reservedCash -= transaction.total
                                 }
                                 LocalBroadcastManager.getInstance(this@MainActivity).sendBroadcast(Intent(REFRESH_RESERVED_ASSETS_ACTION))
                             }
