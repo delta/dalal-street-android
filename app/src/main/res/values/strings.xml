@@ -450,6 +450,7 @@
     <string name="stocks_reserved">Stocks Reserved</string>
     <string name="cash_restored">Cash Restored</string>
     <string name="stocks_restored">Stocks Restored</string>
+    <string name="reserved">Reserved</string>
     <string-array name="intervalType">
         <item>1 min</item>
         <item>5 mins</item>

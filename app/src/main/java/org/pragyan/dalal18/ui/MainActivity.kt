@@ -4,7 +4,6 @@ import android.animation.ValueAnimator
 import android.content.*
 import android.os.Bundle
 import android.os.Handler
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -287,7 +286,7 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
                             }
 
                             TransactionType.ORDER_FILL_TRANSACTION -> { // transaction.total = -(stockTradePrice * stockTradeQty) + reservedCash
-                                if(transaction.stockQuantity > 0) {  // Bid order transaction which means cash was reserved and user gains stocks
+                                if (transaction.stockQuantity > 0) {  // Bid order transaction which means cash was reserved and user gains stocks
                                     model.updateStocksOwned(transaction.stockId, transaction.stockQuantity)
                                     model.reservedCash -= (transaction.stockQuantity * transaction.price + transaction.total)
 
@@ -343,7 +342,7 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
                             }
 
                             TransactionType.PLACE_ORDER_TRANSACTION -> {
-                                if(transaction.total != 0L) { // Cash reserved; here transaction.total will be negative as reserveCash is taken from actual cash
+                                if (transaction.total != 0L) { // Cash reserved; here transaction.total will be negative as reserveCash is taken from actual cash
                                     model.reservedCash += Math.abs(transaction.total)
                                     val intent = Intent(REFRESH_CASH_ACTION)
                                     intent.putExtra(TOTAL_WORTH_KEY, transaction.total)
@@ -358,7 +357,7 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
                             }
 
                             TransactionType.CANCEL_ORDER_TRANSACTION -> {
-                                if(transaction.total != 0L) { // Here transaction.total will be positive
+                                if (transaction.total != 0L) { // Here transaction.total will be positive
                                     model.reservedCash -= Math.abs(transaction.total)
                                     val intent = Intent(REFRESH_CASH_ACTION)
                                     intent.putExtra(TOTAL_WORTH_KEY, transaction.total)
@@ -556,7 +555,7 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
     @Synchronized
     private fun animateWorthChange(oldValue: Long, newValue: Long, textView: TextView, indicatorImageView: ImageView) {
 
-        if(newValue == oldValue) return
+        if (newValue == oldValue) return
 
         val formatter = DecimalFormat(Constants.PRICE_FORMAT)
         val valueAnimator = ValueAnimator.ofObject(LongEvaluator(), oldValue, newValue)
@@ -654,7 +653,7 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
     override fun onNetworkDownError(message: String) {
         shouldUnsubscribeAsNetworkDown = false
 
-        errorDialog =  AlertDialog.Builder(this, R.style.AlertDialogTheme)
+        errorDialog = AlertDialog.Builder(this, R.style.AlertDialogTheme)
                 .setMessage(message)
                 .setPositiveButton(getString(R.string.retry), null)
                 .setTitle(getString(R.string.error))

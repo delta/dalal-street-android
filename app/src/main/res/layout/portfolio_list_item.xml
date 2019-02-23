@@ -20,41 +20,41 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:layout_weight="4"
+            android:layout_weight="3"
             android:fontFamily="@font/marcellus_sc"
             android:gravity="center"
             android:textColor="@color/neutral_font_color"
-            android:textSize="20sp" />
+            android:textSize="18sp" />
 
         <TextView
             android:id="@+id/quantity_textView"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="4"
+            android:layout_weight="3"
             android:fontFamily="@font/kreon_light"
             android:gravity="center"
             android:textColor="@color/neutral_font_color"
-            android:textSize="20sp" />
+            android:textSize="18sp" />
 
         <TextView
-            android:id="@+id/price_textView"
+            android:id="@+id/reservedStocksTextView"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="3"
             android:fontFamily="@font/kreon_light"
             android:gravity="center"
-            android:textColor="@color/neutral_font_color"
-            android:textSize="20sp" />
+            android:textColor="@color/neon_green"
+            android:textSize="18sp" />
 
         <TextView
             android:id="@+id/worth_textView"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="3"
+            android:layout_weight="4"
             android:fontFamily="@font/kreon_light"
             android:gravity="center"
             android:textColor="@color/neon_blue"
-            android:textSize="20sp" />
+            android:textSize="18sp" />
 
     </LinearLayout>
 

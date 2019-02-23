@@ -26,13 +26,37 @@
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="4"
+                    android:layout_weight="3"
                     android:fontFamily="@font/kreon_light"
                     android:gravity="center"
                     android:text="@string/company"
                     android:textAllCaps="true"
                     android:textColor="@color/neutral_font_color"
-                    android:textSize="18sp"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="3"
+                    android:fontFamily="@font/kreon_light"
+                    android:gravity="center"
+                    android:text="@string/volume"
+                    android:textAllCaps="true"
+                    android:textColor="@color/neutral_font_color"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="3"
+                    android:fontFamily="@font/kreon_light"
+                    android:gravity="center"
+                    android:text="@string/reserved"
+                    android:textAllCaps="true"
+                    android:textColor="@color/neutral_font_color"
+                    android:textSize="16sp"
                     android:textStyle="bold" />
 
                 <TextView
@@ -41,34 +65,10 @@
                     android:layout_weight="4"
                     android:fontFamily="@font/kreon_light"
                     android:gravity="center"
-                    android:text="@string/quantity"
-                    android:textAllCaps="true"
-                    android:textColor="@color/neutral_font_color"
-                    android:textSize="18sp"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="3"
-                    android:fontFamily="@font/kreon_light"
-                    android:gravity="center"
-                    android:text="@string/price"
-                    android:textAllCaps="true"
-                    android:textColor="@color/neutral_font_color"
-                    android:textSize="18sp"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="3"
-                    android:fontFamily="@font/kreon_light"
-                    android:gravity="center"
                     android:text="@string/worth"
                     android:textAllCaps="true"
                     android:textColor="@color/neutral_font_color"
-                    android:textSize="18sp"
+                    android:textSize="16sp"
                     android:textStyle="bold" />
 
             </LinearLayout>
@@ -88,11 +88,24 @@
                 android:layout_below="@+id/view"
                 android:layout_alignParentStart="true" />
 
+            <TextView
+                android:id="@+id/reservedCashTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/portfolioRecyclerView"
+                android:layout_marginTop="2dp"
+                android:layout_marginBottom="2dp"
+                android:fontFamily="@font/kreon_light"
+                android:gravity="center"
+                android:textColor="@color/neon_orange"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
             <com.github.mikephil.charting.charts.PieChart
                 android:id="@+id/portfolio_piechart"
                 android:layout_width="match_parent"
                 android:layout_height="500dp"
-                android:layout_below="@id/portfolioRecyclerView"
+                android:layout_below="@id/reservedCashTextView"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"

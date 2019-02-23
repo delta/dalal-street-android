@@ -32,6 +32,7 @@ import org.pragyan.dalal18.data.Portfolio
 import org.pragyan.dalal18.data.StockDetails
 import org.pragyan.dalal18.utils.Constants
 import org.pragyan.dalal18.utils.StockUtils
+import java.text.DecimalFormat
 import java.util.ArrayList
 import javax.inject.Inject
 
@@ -52,7 +53,8 @@ class PortfolioFragment : Fragment() {
 
     private val refreshPortfolioDetails = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
-            if (intent.action != null && (intent.action == Constants.REFRESH_STOCK_PRICES_ACTION || intent.action == Constants.REFRESH_OWNED_STOCKS_ACTION)) {
+            if (intent.action != null && (intent.action == Constants.REFRESH_STOCK_PRICES_ACTION
+                            || intent.action == Constants.REFRESH_OWNED_STOCKS_ACTION || intent.action == Constants.REFRESH_RESERVED_ASSETS_ACTION)) {
                 updatePortfolioTable()
             }
         }
@@ -61,7 +63,8 @@ class PortfolioFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
         val rootView = inflater.inflate(R.layout.fragment_portfolio, container, false)
-        model = activity?.run { ViewModelProviders.of(this).get(DalalViewModel::class.java) } ?: throw Exception("Invalid activity")
+        model = activity?.run { ViewModelProviders.of(this).get(DalalViewModel::class.java) }
+                ?: throw Exception("Invalid activity")
         cashWorth = container?.rootView?.findViewById<TextView>(R.id.cashWorthTextView)?.text.toString().replace(",", "").toLong()
         DaggerDalalStreetApplicationComponent.builder().contextModule(ContextModule(context!!)).build().inject(this)
         return rootView
@@ -190,7 +193,7 @@ class PortfolioFragment : Fragment() {
 
         val intentFilter = IntentFilter(Constants.REFRESH_OWNED_STOCKS_ACTION)
         intentFilter.addAction(Constants.REFRESH_STOCK_PRICES_ACTION)
-        intentFilter.addAction(Constants.REFRESH_STOCKS_EXCHANGE_ACTION)
+        intentFilter.addAction(Constants.REFRESH_RESERVED_ASSETS_ACTION)
         LocalBroadcastManager.getInstance(context!!).registerReceiver(refreshPortfolioDetails, intentFilter)
     }
 
@@ -215,17 +218,20 @@ class PortfolioFragment : Fragment() {
 
             if (quantity != 0L) {
                 portfolioList.add(Portfolio(
-                        StockUtils.getShortNameForStockId(stockId)!!,
-                        StockUtils.getCompanyNameFromStockId(stockId),
+                        StockUtils.getShortNameForStockId(stockId),
                         quantity,
-                        currentPrice,
-                        StockUtils.getPreviousDayCloseFromStockId(model.globalStockDetails, stockId)
+                        model.getReservedStocksFromStockId(stockId),
+                        currentPrice * quantity
                 ))
             }
         }
 
         if (portfolioList.size > 0) {
             portfolioRecyclerAdapter.swapData(portfolioList)
+
+            val tempString = "Reserved Cash: " + Constants.RUPEE_SYMBOL + DecimalFormat(Constants.PRICE_FORMAT).format(model.reservedCash)
+            reservedCashTextView.text = tempString
+
             portfolioScrollView.visibility = View.VISIBLE
             emptyPortfolioRelativeLayout.visibility = View.GONE
         } else {

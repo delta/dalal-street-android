@@ -54,4 +54,12 @@ class DalalViewModel : ViewModel() {
 
         ownedStockDetails.add(StockDetails(stockId, quantity)) // It means new stock company added
     }
+
+    fun getReservedStocksFromStockId(stockId: Int): Long {
+        for (currentStock in reservedStockDetails) {
+            if (currentStock.stockId == stockId)
+                return currentStock.quantity
+        }
+        return 0L
+    }
 }
