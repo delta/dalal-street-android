@@ -451,6 +451,7 @@
     <string name="cash_restored">Cash Restored</string>
     <string name="stocks_restored">Stocks Restored</string>
     <string name="reserved">Reserved</string>
+    <string name="swipe_to_refresh">Swipe to refresh</string>
     <string-array name="intervalType">
         <item>1 min</item>
         <item>5 mins</item>
