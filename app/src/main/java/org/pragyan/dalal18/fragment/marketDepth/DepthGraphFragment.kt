@@ -112,11 +112,13 @@ class DepthGraphFragment : Fragment() {
         }
 
         val intervalAdapter = ArrayAdapter(activity!!, R.layout.interval_spinner_item, resources.getStringArray(R.array.intervalType))
+        currentInterval = "30 mins"
         with(graph_time_spinner){
             setAdapter(intervalAdapter)
             isSelected = false
             setOnItemClickListener { _, _, _, _ ->
                 currentInterval = graph_time_spinner.text.toString()
+                hint = "30 mins"
                 stockHistoryList.clear()
                 xVals.clear()
                 yVals.clear()
@@ -129,6 +131,7 @@ class DepthGraphFragment : Fragment() {
                     loadStockHistoryAsynchronously()
                 }
             }
+
         }
     }
 
@@ -243,7 +246,8 @@ class DepthGraphFragment : Fragment() {
                         market_depth_chart.data = data
                         market_depth_chart.invalidate()
                         market_depth_chart.description.text = "($currentInterval)"
-
+                        graph_time_spinner.requestFocus()
+                        graph_company_spinner.requestFocus()
                     }
                 } else {
                     uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_server_down)) }
