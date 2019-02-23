@@ -13,6 +13,7 @@ enum TransactionType {
     TAX_TRANSACTION = 5;
     PLACE_ORDER_TRANSACTION = 6;
     CANCEL_ORDER_TRANSACTION = 7;
+    RESERVE_UPDATE_TRANSACTION = 8;
 }
 
 message Transaction {
