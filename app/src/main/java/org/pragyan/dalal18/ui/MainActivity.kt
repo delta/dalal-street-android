@@ -222,13 +222,8 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
             }
 
             R.id.action_help -> {
-                val builder = AlertDialog.Builder(this)
-                builder
-                        .setCustomTitle(layoutInflater.inflate(R.layout.help_title, null))
-                        .setView(layoutInflater.inflate(R.layout.help_box, null))
-                        .setCancelable(true)
-                        .show()
-                helpDialog = builder.create()
+                val navController = findNavController(R.id.main_host_fragment)
+                navController.navigate(R.id.help_dest, null, NavOptions.Builder().setPopUpTo(R.id.home_dest, false).build())
                 return true
             }
 

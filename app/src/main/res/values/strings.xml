@@ -426,6 +426,49 @@
         <item>Zambia</item>
         <item>Zimbabwe</item>
     </string-array>
+    <string name="getting_started_1a">
+        <b>The Objective</b>\n\nEach player begins the game with ₹2,00,000. Your objective is to use this money to maximise your profit at the end of 7 days.
+    </string>
+    <string name="getting_started_2a"><b>How do I make money?</b>\n\nThese are the two ways to make money :- \nBuying stocks at low prices and selling them at higher prices.\nShort selling stocks and then buying them back for a lower price.\nIf you’re unsure of what short selling means, check out our FAQ section.</string>
+    <string name="getting_started_3a"><b>The Basics</b>\n\nThere are a total of 12 companies trading publicly on the Dalal Street Exchange. To know more about each company, check out the Companies Page. On this page, you’ll find a short description about each company as well as
+        its latest stock price information.\n\nPlease note that the companies on the Dalal Street Exchange are in no way related to any real world companies. The stock prices and news articles released in this game are entirely fictitious and will NOT be affected by real world events.Before
+        the game begins, all stocks will be held by the exchange. As soon as the market opens on Day 1, the stocks will be open for all of the players to buy. Buying stocks from the exchange can be done from the Stock Exchange Page.\n\nWe also recommend that you pay close attention to the News Page. This page will constantly be updated with articles about company news, scandals, rumours, or even political developments. Staying connected with these updates
+        can give you an edge over other players as this is the best way to predict the future performance of a company.</string>
+    <string name="getting_started_4a"><b>Buying and Selling Stocks</b>\n\nThe Market Depth lists all open buy and sell orders. This includes orders issued by all players that have not been filled yet. By observing the Market Depth, you can see the prices at which other players are placing their orders and judge the current mood of the market.\n\nAll trading related tasks are performed in trade fragment. There are 3 different types of orders you can place - Market, Limit and Stoploss. (You can read more about these terms in our FAQ section). Once your orders are placed, we will fill the order based on a best match algorithm.\n\n<b>Open Orders</b> - These are the orders that you have placed but have not been filled yet. After you place an order, the order will appear here until it is successfully filled.\n\n<b>Depth Graph</b> - This shows how the stock price of the selected company has changed over time. You can view the chart with different time intervals by using the dropdown above the chart. This allows you to analyse the data at different levels of detail.
+    \nOnce you’ve bought some stocks, you can view all the stocks you own as well as your Net Worth on the Portfolio Page.\n\nHopefully, this should be enough to get you going and start trading!\nIf you still have some questions, please read our FAQ section where we address some more common doubts that players may have.</string>
+
+    <string name="faq_1a"><b>Help! I don’t know what Market, Limit and Stoploss orders are!</b>\n\nThese are the 3 types of orders that you can place. The type of order you select can change the trade price as well as how soon your order gets filled.
+    \n\n<b>Market Orders : </b>  If your primary concern is to have your order filled ASAP, and you’re not too worried about the price at which the transaction is carried out, you should use a Market Order.
+    Once you place a Market Buy Order for a certain company, we will find the least priced Market Sell Order (for the same company) and execute the transaction. (vice-versa for Market Sell).\n\n<b>Limit Orders : </b>Limit Orders allow you to specify a maximum trade price in case of a Limit Buy, and a minimum trade price in case of a
+    Limit Sell. While these may take more time to be filled than a Market Order, they provide you with more control over the price at which the transaction is executed a.k.a trade price.\n\n<b>Stoploss Orders : </b> Stoploss
+        orders are converted to Market Orders once the price crosses the Stoploss price that you set :-
+    \n\nStopless Buys are converted to Market Buys as soon as the stocks price rises above the Stoploss price that you set.
+    Stopless Sells are converted to Market Sells as soon as the stocks price falls below the Stoploss price that you set.
+        \n\n<b>Pro Tip:</b> Since the market is open 24/7, Stoploss orders can be very useful in case the market fluctuates wildly when you\'re not online! You can use Stopless Buy Orders to jump on a rising trend and
+    you can use Stoploss Sell Orders to lock in a profit/limit your losses.</string>
+    <string name="faq_2a"><b>What exactly is this trade price and how is it determined?</b>\n\nThe trade price is the price at which a transaction is executed. Our algorithm uses a best match approach to match Buy Orders to Sell orders as well as to determine the price at which the trade is executed.
+        \n\nYou can view the trade price of all of your executed transactions on the Transactions Page.</string>
+    <string name="faq_3a"><b>What is Total Worth and how is it calculated?</b>\n\n
+        The player with the highest Total Worth at the end of <b>7 days </b>is the winner. Your Net Worth is split into two parts - Cash In  Hand and Stock Worth. You can view these values on the Portfolio page.</string>
+    <string name="faq_4a"><b>What is this short selling you speak of?</b>\n\nWhile you will buy a company’s stock if you expect its price to go up,  you can short sell a company’s stock if you expect its price to go down. \n\nIn a nutshell, short selling
+        means to sell stocks that you don’t own so that you can buy them back at a lower price.For example, short selling 5 shares of a company XYZ is mathematically equivalent to buying -5 shares of XYZ. When you short sell,
+        your Cash In Hand will increase and your Stock Worth will accordingly decrease such that your
+        Net Worth remains the same(Remember: Net Worth = Cash In Hand + Stock Worth).\n\nAfter you short sell a company, if the stock price dips below the price you sold it for, then you will have made a profit and vice-versa.
+    Note: You can only short sell a maximum of <b>50</b> stocks per company</string>
+    <string name="faq_5a"><b>What is the difference between Stocks in Exchange and Stocks in Market?</b>\n\nIn the Companies Page, you’ll find an entry for Stocks in Exchange as well as an entry for Stocks in Market. Let’s clarify the difference between the two :
+        \n\n<b>Stocks in Exchange</b> - The number of stocks that the Dalal Street Exchange currently holds. This number will be the same as the number found under the Available  column in the Exchange Page.
+        \n\n<b>Stocks in Market</b> - The number of stocks that are currently  held by all of the players in the game.
+    When the game begins, the Stocks in  Market will be zero since all stocks are initially held by the exchange. \n\nAs soon as the market opens on Day 1 and players begin buying from the exchange, the number of
+        Stocks in Market will increase and the number of Stocks in Exchange will decrease.
+    If the number of Stocks in Exchange is zero, it means that all shares of this company are currently in the hands of the players. Therefore, you can no longer buy shares from the exchange and instead,  you\'ll have to place Buy Orders on the Trading Page to buy any stock.</string>
+    <string name="faq_6a"><b>How does mortgaging work?</b>\n\nMortgaging is a great tactic to use if you are in need of cash but are not willing to sell your stocks to  other players. It consists of 2 steps
+        :-\n\n<b>Mortgage</b> - In this step, you will be  selling your stocks to the exchange at the Deposit Rate (80% of the Current Stock Price).
+    \n\n<b>Retrieval</b> - Here, you will be retrieving the stocks you initially mortgaged by paying the exchange at the Retrieval Rate (90% of the Current Stock Price).
+    Note : After you mortgage a stock, it is no longer a part of your portfolio and hence, will not contribute to your stock worth (until you retrieve it).</string>
+    <string name="faq_7a"><b>Can I expect any new companies to pop up over the course of the game?</b>\n\nWhile we don’t expect any more companies to  go public over the course of this game,  existing companies may release more shares in the middle.
+        \n\nIf this happens, then the number of Stocks in Exchange will increase, and you can buy these stocks from the Exchange Page. Stay tuned to the News
+        Page and look out for notifications.\n\n If you still have any queries, please feel free to ask it on our Official Forum
+        and we\'ll try to get back to you as soon as possible.\n\n Happy Trading!</string>
     <string name="notifications">Notifications</string>
     <string name="not_registered_click_here_to_register">Not registered? Click here to register</string>
     <string name="registering">Registering…</string>
@@ -454,6 +497,8 @@
     <string name="swipe_to_refresh">Swipe to refresh</string>
     <string name="_30_mins">30 mins</string>
     <string name="internet_connection_lost">Internet connection lost</string>
+    <string name="forum_link">https://www.allanswered.com/community/s/dalal-street/</string>
+    <string name="forum">Forum</string>
     <string-array name="intervalType">
         <item>1 min</item>
         <item>5 mins</item>

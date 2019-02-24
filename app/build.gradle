@@ -122,4 +122,7 @@ dependencies {
 
     // Lifecycle
     implementation "androidx.lifecycle:lifecycle-extensions:2.0.0"
+
+    //expandable Textview
+    implementation "com.ms-square:expandableTextView:0.1.4"
 }
