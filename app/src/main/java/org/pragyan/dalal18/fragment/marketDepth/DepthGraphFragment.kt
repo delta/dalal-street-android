@@ -201,7 +201,13 @@ class DepthGraphFragment : Fragment() {
                         for (i in 0 until xVals.size) {
                             xValsArray[i] = xVals[i]
                         }
-                        val formatter = IAxisValueFormatter { value, _ -> xValsArray[value.toInt()] }
+                        val formatter = IAxisValueFormatter { value, _ ->
+                            if(value.toInt() < xValsArray.size){
+                                xValsArray[value.toInt()]
+                            } else {
+                                xValsArray[xValsArray.size-1]
+                            }
+                        }
                         val xAxis = market_depth_chart.xAxis
                         with(xAxis){
                             position = XAxis.XAxisPosition.BOTTOM
@@ -210,7 +216,7 @@ class DepthGraphFragment : Fragment() {
                             textSize = 9f
                             textColor = ContextCompat.getColor(this@DepthGraphFragment.context!!, android.R.color.white)
                             setDrawGridLines(true)
-                            granularity = 0f
+                            granularity = 1f
                             labelCount = 3
                             setAvoidFirstLastClipping(true)
                         }
