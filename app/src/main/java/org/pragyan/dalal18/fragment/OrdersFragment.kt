@@ -173,10 +173,10 @@ class OrdersFragment : Fragment(), OrdersRecyclerAdapter.OnOrderClickListener, S
                         }
                     }
                 } else {
-                    uiThread { networkDownHandler?.onNetworkDownError(resources.getString(R.string.error_server_down)) }
+                    uiThread { networkDownHandler?.onNetworkDownError(resources.getString(R.string.error_server_down), R.id.open_orders_dest) }
                 }
             } else {
-                uiThread { networkDownHandler?.onNetworkDownError(resources.getString(R.string.error_check_internet)) }
+                uiThread { networkDownHandler?.onNetworkDownError(resources.getString(R.string.error_check_internet), R.id.open_orders_dest) }
             }
             uiThread { loadingOrdersDialog.dismiss() }
         }
@@ -214,10 +214,10 @@ class OrdersFragment : Fragment(), OrdersRecyclerAdapter.OnOrderClickListener, S
                     }
 
                 } else {
-                    uiThread { networkDownHandler?.onNetworkDownError(resources.getString(R.string.error_server_down)) }
+                    uiThread { networkDownHandler?.onNetworkDownError(resources.getString(R.string.error_server_down), R.id.open_orders_dest) }
                 }
             } else {
-                uiThread { networkDownHandler?.onNetworkDownError(resources.getString(R.string.error_check_internet)) }
+                uiThread { networkDownHandler?.onNetworkDownError(resources.getString(R.string.error_check_internet), R.id.open_orders_dest) }
             }
         }
     }

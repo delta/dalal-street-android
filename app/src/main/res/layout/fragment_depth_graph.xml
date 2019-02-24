@@ -33,6 +33,7 @@
             android:layout_weight="0.3"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
+            android:hint="@string/_30_mins"
             android:fontFamily="@font/kreon_light"
             app:met_baseColor="@color/neon_orange"
             app:met_primaryColor="@color/neon_orange"

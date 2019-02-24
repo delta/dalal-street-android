@@ -156,10 +156,10 @@ class HomeFragment : Fragment(), NewsRecyclerAdapter.NewsItemClickListener, Swip
                         }
                     }
                 } else {
-                    uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_server_down)) }
+                    uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_server_down), R.id.home_dest) }
                 }
             } else {
-                uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_check_internet)) }
+                uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_check_internet), R.id.home_dest) }
             }
         }
     }

@@ -64,13 +64,13 @@
         tools:layout="@layout/fragment_stock_exchange" />
 
     <fragment
-        android:id="@+id/nav_my_orders"
+        android:id="@+id/open_orders_dest"
         android:name="org.pragyan.dalal18.fragment.OrdersFragment"
         android:label="@string/orders_frag_label"
         tools:layout="@layout/fragment_my_orders" />
 
     <fragment
-        android:id="@+id/nav_leaderboard"
+        android:id="@+id/leaderboard_dest"
         android:name="org.pragyan.dalal18.fragment.LeaderboardFragment"
         android:label="@string/leaderboard_frag_label"
         tools:layout="@layout/fragment_leaderboard" />
@@ -94,7 +94,7 @@
         tools:layout="@layout/fragment_trade" />
 
     <fragment
-        android:id="@+id/nav_market_depth"
+        android:id="@+id/market_depth_dest"
         android:name="org.pragyan.dalal18.fragment.marketDepth.MarketDepthFragment"
         android:label="@string/market_depth"
         tools:layout="@layout/fragment_market_depth" />

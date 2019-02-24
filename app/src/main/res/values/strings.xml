@@ -452,6 +452,7 @@
     <string name="stocks_restored">Stocks Restored</string>
     <string name="reserved">Reserved</string>
     <string name="swipe_to_refresh">Swipe to refresh</string>
+    <string name="_30_mins">30 mins</string>
     <string-array name="intervalType">
         <item>1 min</item>
         <item>5 mins</item>

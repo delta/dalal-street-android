@@ -101,7 +101,6 @@ class MortgageFragment : Fragment() {
                         }
                     }
                 }
-
                 val mortgagedString = " :  " + decimalFormat.format(getStocksMortgagedFromStockId(lastStockId))
                 stocksMortgagedTextView.text = mortgagedString
             }
@@ -235,10 +234,10 @@ class MortgageFragment : Fragment() {
                         }
                     }
                 } else {
-                    uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_server_down)) }
+                    uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_server_down), R.id.main_mortgage_dest) }
                 }
             } else {
-                uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_check_internet)) }
+                uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_check_internet), R.id.main_mortgage_dest) }
             }
             uiThread { loadingDialog?.dismiss() }
         }
@@ -268,10 +267,10 @@ class MortgageFragment : Fragment() {
                         }
                     }
                 } else {
-                    uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_server_down)) }
+                    uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_server_down), R.id.main_mortgage_dest) }
                 }
             } else {
-                uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_check_internet)) }
+                uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_check_internet), R.id.main_mortgage_dest) }
             }
             uiThread { loadingDialog?.dismiss() }
         }
