@@ -73,8 +73,6 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
     private var notifIntent: Intent? = null
     private var handler: Handler? = null
 
-    private var shouldUnsubscribeAsNetworkDown = true
-
     private var cashWorth: Long = 0
     private var stockWorth: Long = 0
     private var totalWorth: Long = 0
@@ -86,7 +84,7 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
                 REFRESH_WORTH_TEXTVIEW_ACTION -> {
                     // Passing future value of cash worth TextView beforehand as old cash
                     cashWorth += intent.getLongExtra(TOTAL_WORTH_KEY, 0)
-                    updateStockWorthViaStreamUpdates(cashWorth)
+                    updateStockWorthViaStreamUpdates()
                     changeTextViewValue(cashWorthTextView, cashIndicatorImageView, cashWorth)
                 }
 
@@ -103,7 +101,7 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
                 }
 
                 UPDATE_WORTH_VIA_STREAM_ACTION ->
-                    updateStockWorthViaStreamUpdates(cashWorth)
+                    updateStockWorthViaStreamUpdates()
             }
         }
     }
@@ -488,7 +486,7 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
     // Unsubscribes from all streams
     private fun unsubscribeFromAllStreams() {
         doAsync {
-            if (shouldUnsubscribeAsNetworkDown) {
+            if (ConnectionUtils.getConnectionInfo(this@MainActivity) && ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
                 for (subscriptionId in subscriptionIds) {
                     streamServiceBlockingStub.unsubscribe(UnsubscribeRequest.newBuilder().setSubscriptionId(subscriptionId).build())
                 }
@@ -499,7 +497,7 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
     }
 
     // Method is called when stock price update is received
-    private fun updateStockWorthViaStreamUpdates(oldCash: Long) {
+    private fun updateStockWorthViaStreamUpdates() {
         var netStockWorth = 0L
         var rate = 0L
         for ((stockId, quantity) in model.ownedStockDetails) {
@@ -543,7 +541,7 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
         totalWorth = intent.getLongExtra(TOTAL_WORTH_KEY, -1)
 
         // Updates stockWorthTextView and totalWorthTextView
-        updateStockWorthViaStreamUpdates(cashWorth)
+        updateStockWorthViaStreamUpdates()
     }
 
     // Increases/decreases text view value depending on input parameters
@@ -671,7 +669,6 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
     }
 
     override fun onNetworkDownError(message: String) {
-       // shouldUnsubscribeAsNetworkDown = false
 
         errorDialog = AlertDialog.Builder(this, R.style.AlertDialogTheme)
                 .setMessage(message)
@@ -698,16 +695,18 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
                     uiThread {
                         errorDialog?.dismiss()
 
+                        subscriptionIds.clear()
                         subscribeToStreamsAsynchronously()
 
-                        val navHostFragment = supportFragmentManager.findFragmentById(R.id.main_host_fragment);
-                        val x = navHostFragment?.childFragmentManager?.fragments?.get(0)
+                        val navHostFragment = supportFragmentManager.findFragmentById(R.id.main_host_fragment)
+                        val currentFragment = navHostFragment?.childFragmentManager?.fragments?.get(0)
 
-                        if (x !is MainMortgageFragment) {
+                        //Using view pager has some issues with detaching and attaching fragments. It has to occue in MarketDepth too but for some reason it doesn't
+                        if (currentFragment !is MainMortgageFragment) {
                             val ft = supportFragmentManager.beginTransaction()
-                            if(x != null){
-                                ft.detach(x)
-                                ft.attach(x)
+                            if (currentFragment != null) {
+                                ft.detach(currentFragment)
+                                ft.attach(currentFragment)
                                 ft.commit()
                             }
                         }
