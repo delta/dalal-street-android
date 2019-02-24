@@ -4,6 +4,7 @@ import android.animation.ValueAnimator
 import android.content.*
 import android.os.Bundle
 import android.os.Handler
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -671,7 +672,7 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
     }
 
     override fun onNetworkDownError(message: String) {
-       // shouldUnsubscribeAsNetworkDown = false
+        unsubscribeFromAllStreams()
 
         errorDialog = AlertDialog.Builder(this, R.style.AlertDialogTheme)
                 .setMessage(message)
@@ -701,13 +702,14 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
                         subscribeToStreamsAsynchronously()
 
                         val navHostFragment = supportFragmentManager.findFragmentById(R.id.main_host_fragment);
-                        val x = navHostFragment?.childFragmentManager?.fragments?.get(0)
+                        val currentFragment = navHostFragment?.childFragmentManager?.fragments?.get(0)
 
-                        if (x !is MainMortgageFragment) {
+                        //Using view pager has some issues with detaching and attaching fragments. It has to occue in MarketDepth too but for some reason it doesn't
+                        if (currentFragment !is MainMortgageFragment) {
                             val ft = supportFragmentManager.beginTransaction()
-                            if(x != null){
-                                ft.detach(x)
-                                ft.attach(x)
+                            if(currentFragment != null){
+                                ft.detach(currentFragment)
+                                ft.attach(currentFragment)
                                 ft.commit()
                             }
                         }
