@@ -268,10 +268,10 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
                         finish()
                     }
                 } else {
-                    uiThread { onNetworkDownError(resources.getString(R.string.error_server_down)) }
+                    uiThread { onNetworkDownError(resources.getString(R.string.error_server_down), R.id.home_dest) }
                 }
             } else {
-                uiThread { onNetworkDownError(resources.getString(R.string.error_check_internet)) }
+                uiThread { onNetworkDownError(resources.getString(R.string.error_check_internet), R.id.home_dest) }
             }
         }
     }
@@ -660,15 +660,15 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
                     }
 
                 } else {
-                    onNetworkDownError(resources.getString(R.string.error_server_down))
+                    onNetworkDownError(resources.getString(R.string.error_server_down), R.id.home_dest)
                 }
             } else {
-                onNetworkDownError(resources.getString(R.string.error_check_internet))
+                onNetworkDownError(resources.getString(R.string.error_check_internet), R.id.home_dest)
             }
         }
     }
 
-    override fun onNetworkDownError(message: String) {
+    override fun onNetworkDownError(message: String, fragment: Int) {
 
         errorDialog = AlertDialog.Builder(this, R.style.AlertDialogTheme)
                 .setMessage(message)
@@ -680,36 +680,24 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
         errorDialog?.setOnShowListener {
             val positiveButton = errorDialog?.getButton(AlertDialog.BUTTON_POSITIVE)
             positiveButton?.setOnClickListener {
-                cancelDialogOnNoError()
+                cancelDialogOnNoError(fragment)
             }
         }
         errorDialog?.show()
-
-
     }
 
-    private fun cancelDialogOnNoError() {
+    private fun cancelDialogOnNoError(fragment: Int) {
+        errorDialog?.getButton(AlertDialog.BUTTON_POSITIVE)?.isEnabled = false
         doAsync {
             if (ConnectionUtils.getConnectionInfo(this@MainActivity)) {
                 if (ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
                     uiThread {
+                        unsubscribeFromAllStreams()
                         errorDialog?.dismiss()
-
-                        subscriptionIds.clear()
                         subscribeToStreamsAsynchronously()
 
-                        val navHostFragment = supportFragmentManager.findFragmentById(R.id.main_host_fragment)
-                        val currentFragment = navHostFragment?.childFragmentManager?.fragments?.get(0)
-
-                        //Using view pager has some issues with detaching and attaching fragments. It has to occue in MarketDepth too but for some reason it doesn't
-                        if (currentFragment !is MainMortgageFragment) {
-                            val ft = supportFragmentManager.beginTransaction()
-                            if (currentFragment != null) {
-                                ft.detach(currentFragment)
-                                ft.attach(currentFragment)
-                                ft.commit()
-                            }
-                        }
+                        val navController = findNavController(R.id.main_host_fragment)
+                        navController.navigate(fragment, null, NavOptions.Builder().setPopUpTo(R.id.home_dest, false).build())
                     }
                 } else {
                     uiThread { errorDialog?.setMessage(getString(R.string.error_server_down)) }
@@ -717,6 +705,7 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
             } else {
                 uiThread { errorDialog?.setMessage(getString(R.string.error_check_internet)) }
             }
+            uiThread { errorDialog?.getButton(AlertDialog.BUTTON_POSITIVE)?.isEnabled = true }
         }
     }
 

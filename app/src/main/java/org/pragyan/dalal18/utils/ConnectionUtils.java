@@ -34,6 +34,6 @@ public class ConnectionUtils {
     }
 
     public interface OnNetworkDownHandler {
-        void onNetworkDownError(String message);
+        void onNetworkDownError(String message, int fragment);
     }
 }

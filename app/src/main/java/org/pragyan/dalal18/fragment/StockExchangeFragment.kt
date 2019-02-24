@@ -127,10 +127,10 @@ class StockExchangeFragment : Fragment() {
                                     context?.toast(response.statusMessage)
                             }
                         } else {
-                            uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_server_down)) }
+                            uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_server_down), R.id.exchange_dest) }
                         }
                     } else {
-                        uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_check_internet)) }
+                        uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_check_internet), R.id.exchange_dest) }
                     }
                 }
             } else {
@@ -177,10 +177,10 @@ class StockExchangeFragment : Fragment() {
                         stocksInExchange_textView.text = temporaryTextViewString
                     }
                 } else {
-                    uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_server_down)) }
+                    uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_server_down), R.id.exchange_dest) }
                 }
             } else {
-                uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_check_internet)) }
+                uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_check_internet), R.id.exchange_dest) }
             }
             uiThread { loadingDialog?.dismiss() }
         }

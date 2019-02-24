@@ -28,7 +28,7 @@
             android:title="@string/stock_exchange" />
 
         <item
-            android:id="@+id/nav_market_depth"
+            android:id="@+id/market_depth_dest"
             android:icon="@drawable/market_depth_icon"
             android:title="@string/market_depth" />
 
@@ -52,12 +52,12 @@
             android:title="@string/news" />
         
         <item
-            android:id="@+id/nav_leaderboard"
+            android:id="@+id/leaderboard_dest"
             android:icon="@drawable/trophy_icon"
             android:title="@string/leaderboard" />
 
         <item
-            android:id="@+id/nav_my_orders"
+            android:id="@+id/open_orders_dest"
             android:icon="@drawable/orders_icon"
             android:title="@string/my_orders" />
 
