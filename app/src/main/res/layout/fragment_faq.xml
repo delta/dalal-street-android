@@ -9,6 +9,7 @@
     android:paddingTop="8dp"
     android:paddingEnd="2dp"
     android:paddingBottom="8dp">
+
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -35,7 +36,7 @@
                     android:layout_gravity="top|end"
                     android:background="@android:color/transparent"
                     android:paddingStart="20dp"
-                    android:paddingEnd="16dp"/>
+                    android:paddingEnd="16dp" />
 
                 <TextView
                     android:id="@id/expandable_text"
@@ -46,12 +47,20 @@
                     android:layout_marginRight="10dp"
                     android:fontFamily="@font/kreon_light"
                     android:lineSpacingExtra="2dp"
+                    android:paddingStart="0dp"
                     android:paddingEnd="40dp"
                     android:textColor="#FFFFFF"
-                    android:textSize="16sp"/>
+                    android:textSize="16sp" />
 
 
             </com.ms.square.android.expandabletextview.ExpandableTextView>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginStart="4dp"
+                android:layout_marginEnd="4dp"
+                android:background="@color/neon_orange" />
 
             <com.ms.square.android.expandabletextview.ExpandableTextView
                 android:id="@+id/expand_text_view_faq2"
@@ -70,7 +79,8 @@
                     android:layout_gravity="top|end"
                     android:background="@android:color/transparent"
                     android:paddingStart="20dp"
-                    android:paddingEnd="16dp"/>
+                    android:paddingEnd="16dp" />
+
                 <TextView
                     android:id="@id/expandable_text"
                     android:layout_width="match_parent"
@@ -80,12 +90,20 @@
                     android:layout_marginRight="10dp"
                     android:fontFamily="@font/kreon_light"
                     android:lineSpacingExtra="2dp"
+                    android:paddingStart="0dp"
                     android:paddingEnd="40dp"
                     android:textColor="#FFFFFF"
                     android:textSize="16sp" />
 
 
             </com.ms.square.android.expandabletextview.ExpandableTextView>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginStart="4dp"
+                android:layout_marginEnd="4dp"
+                android:background="@color/neon_orange" />
 
             <com.ms.square.android.expandabletextview.ExpandableTextView
                 android:id="@+id/expand_text_view_faq3"
@@ -104,7 +122,8 @@
                     android:layout_gravity="top|end"
                     android:background="@android:color/transparent"
                     android:paddingStart="20dp"
-                    android:paddingEnd="16dp"/>
+                    android:paddingEnd="16dp" />
+
                 <TextView
                     android:id="@id/expandable_text"
                     android:layout_width="match_parent"
@@ -114,10 +133,18 @@
                     android:layout_marginRight="10dp"
                     android:fontFamily="@font/kreon_light"
                     android:lineSpacingExtra="2dp"
+                    android:paddingStart="0dp"
                     android:paddingEnd="40dp"
                     android:textColor="#FFFFFF"
                     android:textSize="16sp" />
             </com.ms.square.android.expandabletextview.ExpandableTextView>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginStart="4dp"
+                android:layout_marginEnd="4dp"
+                android:background="@color/neon_orange" />
 
             <com.ms.square.android.expandabletextview.ExpandableTextView
                 android:id="@+id/expand_text_view_faq4"
@@ -136,7 +163,8 @@
                     android:layout_gravity="top|end"
                     android:background="@android:color/transparent"
                     android:paddingStart="20dp"
-                    android:paddingEnd="16dp"/>
+                    android:paddingEnd="16dp" />
+
                 <TextView
                     android:id="@id/expandable_text"
                     android:layout_width="match_parent"
@@ -146,11 +174,19 @@
                     android:layout_marginRight="10dp"
                     android:fontFamily="@font/kreon_light"
                     android:lineSpacingExtra="2dp"
+                    android:paddingStart="0dp"
                     android:paddingEnd="40dp"
                     android:textColor="#FFFFFF"
                     android:textSize="16sp" />
 
             </com.ms.square.android.expandabletextview.ExpandableTextView>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginStart="4dp"
+                android:layout_marginEnd="4dp"
+                android:background="@color/neon_orange" />
 
             <com.ms.square.android.expandabletextview.ExpandableTextView
                 android:id="@+id/expand_text_view_faq5"
@@ -169,7 +205,8 @@
                     android:layout_gravity="top|end"
                     android:background="@android:color/transparent"
                     android:paddingStart="20dp"
-                    android:paddingEnd="16dp"/>
+                    android:paddingEnd="16dp" />
+
                 <TextView
                     android:id="@id/expandable_text"
                     android:layout_width="match_parent"
@@ -179,11 +216,19 @@
                     android:layout_marginRight="10dp"
                     android:fontFamily="@font/kreon_light"
                     android:lineSpacingExtra="2dp"
+                    android:paddingStart="0dp"
                     android:paddingEnd="40dp"
                     android:textColor="#FFFFFF"
                     android:textSize="16sp" />
 
             </com.ms.square.android.expandabletextview.ExpandableTextView>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginStart="4dp"
+                android:layout_marginEnd="4dp"
+                android:background="@color/neon_orange" />
 
             <com.ms.square.android.expandabletextview.ExpandableTextView
                 android:id="@+id/expand_text_view_faq6"
@@ -202,7 +247,8 @@
                     android:layout_gravity="top|end"
                     android:background="@android:color/transparent"
                     android:paddingStart="20dp"
-                    android:paddingEnd="16dp"/>
+                    android:paddingEnd="16dp" />
+
                 <TextView
                     android:id="@id/expandable_text"
                     android:layout_width="match_parent"
@@ -212,11 +258,19 @@
                     android:layout_marginRight="10dp"
                     android:fontFamily="@font/kreon_light"
                     android:lineSpacingExtra="2dp"
+                    android:paddingStart="0dp"
                     android:paddingEnd="40dp"
                     android:textColor="#FFFFFF"
                     android:textSize="16sp" />
 
             </com.ms.square.android.expandabletextview.ExpandableTextView>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginStart="4dp"
+                android:layout_marginEnd="4dp"
+                android:background="@color/neon_orange" />
 
             <com.ms.square.android.expandabletextview.ExpandableTextView
                 android:id="@+id/expand_text_view_faq7"
@@ -235,7 +289,8 @@
                     android:layout_gravity="top|end"
                     android:background="@android:color/transparent"
                     android:paddingStart="20dp"
-                    android:paddingEnd="16dp"/>
+                    android:paddingEnd="16dp" />
+
                 <TextView
                     android:id="@id/expandable_text"
                     android:layout_width="match_parent"
@@ -245,11 +300,19 @@
                     android:layout_marginRight="10dp"
                     android:fontFamily="@font/kreon_light"
                     android:lineSpacingExtra="2dp"
+                    android:paddingStart="0dp"
                     android:paddingEnd="40dp"
                     android:textColor="#FFFFFF"
                     android:textSize="16sp" />
 
             </com.ms.square.android.expandabletextview.ExpandableTextView>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginStart="4dp"
+                android:layout_marginEnd="4dp"
+                android:background="@color/neon_orange" />
 
             <TextView
                 android:layout_width="match_parent"
@@ -259,7 +322,7 @@
                 android:gravity="center"
                 android:text="@string/forum"
                 android:textColor="@color/neutral_font_color"
-                android:textSize="16sp"/>
+                android:textSize="16sp" />
 
             <TextView
                 android:id="@+id/forumTextView"
@@ -270,7 +333,7 @@
                 android:gravity="center"
                 android:text="@string/forum_link"
                 android:textColor="@color/colorAccent"
-                android:textSize="16sp"/>
+                android:textSize="16sp" />
 
         </LinearLayout>
 

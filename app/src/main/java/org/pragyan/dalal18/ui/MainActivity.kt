@@ -498,7 +498,7 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
                 subscriptionIds.clear()
 
                 uiThread {
-                    if(shouldSubscribeAgain){
+                    if (shouldSubscribeAgain) {
                         subscribeToStreamsAsynchronously()
                     }
                 }
@@ -553,6 +553,7 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
         // Updates stockWorthTextView and totalWorthTextView
         updateStockWorthViaStreamUpdates()
     }
+
     // Creates a new networkCallback object
     private fun createNetworkCallbackObject() {
         networkCallback = object : ConnectivityManager.NetworkCallback() {
@@ -564,9 +565,7 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
                         uiThread {
                             unsubscribeFromAllStreams(true)
                             errorDialog?.dismiss()
-
-                            val navController = findNavController(R.id.main_host_fragment)
-                            navController.navigate(lastOpenFragmentId, null, NavOptions.Builder().setPopUpTo(R.id.home_dest, false).build())
+                            navigateToLastOpenFragment()
                         }
                     } else {
                         uiThread { errorDialog?.setMessage(getString(R.string.error_server_down)) }
@@ -577,7 +576,8 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
             override fun onLost(network: Network?) {
                 super.onLost(network)
                 toast(getString(R.string.internet_connection_lost))
-                lastOpenFragmentId = findNavController(R.id.main_host_fragment).currentDestination?.id ?: R.id.home_dest
+                lastOpenFragmentId = findNavController(R.id.main_host_fragment).currentDestination?.id
+                        ?: R.id.home_dest
             }
         }
     }
@@ -660,6 +660,8 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
         super.onPause()
 
         unsubscribeFromAllStreams(false)
+        lastOpenFragmentId = findNavController(R.id.main_host_fragment).currentDestination?.id
+                ?: R.id.home_dest
 
         preferences.edit().remove(LAST_TRANSACTION_ID).remove(LAST_NOTIFICATION_ID).apply()
         LocalBroadcastManager.getInstance(this).unregisterReceiver(refreshCashStockReceiver)
@@ -740,9 +742,7 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
                     uiThread {
                         unsubscribeFromAllStreams(true)
                         errorDialog?.dismiss()
-
-                        val navController = findNavController(R.id.main_host_fragment)
-                        navController.navigate(lastOpenFragmentId, null, NavOptions.Builder().setPopUpTo(R.id.home_dest, false).build())
+                        navigateToLastOpenFragment()
                     }
                 } else {
                     uiThread { errorDialog?.setMessage(getString(R.string.error_server_down)) }
@@ -752,6 +752,15 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
             }
             uiThread { errorDialog?.getButton(AlertDialog.BUTTON_POSITIVE)?.isEnabled = true }
         }
+    }
+
+    private fun navigateToLastOpenFragment() {
+        val navController = findNavController(R.id.main_host_fragment)
+        when (lastOpenFragmentId) { // Otherwise it crashes as these details fragment require arguments to be passed
+            R.id.nav_news_details -> lastOpenFragmentId = R.id.news_dest
+            R.id.company_description_dest -> lastOpenFragmentId = R.id.home_dest
+        }
+        navController.navigate(lastOpenFragmentId, null, NavOptions.Builder().setPopUpTo(R.id.home_dest, false).build())
     }
 
     companion object {

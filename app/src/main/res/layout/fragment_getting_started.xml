@@ -53,6 +53,13 @@
 
             </com.ms.square.android.expandabletextview.ExpandableTextView>
 
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginStart="4dp"
+                android:layout_marginEnd="4dp"
+                android:background="@color/neon_orange" />
+
             <com.ms.square.android.expandabletextview.ExpandableTextView
                 android:id="@+id/expand_text_view2"
                 android:layout_width="match_parent"
@@ -87,6 +94,13 @@
 
             </com.ms.square.android.expandabletextview.ExpandableTextView>
 
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginStart="4dp"
+                android:layout_marginEnd="4dp"
+                android:background="@color/neon_orange" />
+
             <com.ms.square.android.expandabletextview.ExpandableTextView
                 android:id="@+id/expand_text_view3"
                 android:layout_width="match_parent"
@@ -118,6 +132,13 @@
                     android:textColor="#FFFFFF"
                     android:textSize="16sp" />
             </com.ms.square.android.expandabletextview.ExpandableTextView>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginStart="4dp"
+                android:layout_marginEnd="4dp"
+                android:background="@color/neon_orange" />
 
             <com.ms.square.android.expandabletextview.ExpandableTextView
                 android:id="@+id/expand_text_view4"
@@ -151,7 +172,16 @@
                     android:textSize="16sp" />
 
             </com.ms.square.android.expandabletextview.ExpandableTextView>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginStart="4dp"
+                android:layout_marginEnd="4dp"
+                android:background="@color/neon_orange" />
+
         </LinearLayout>
+
     </ScrollView>
 
 </LinearLayout>
