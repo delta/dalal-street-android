@@ -2,6 +2,9 @@ package org.pragyan.dalal18.ui
 
 import android.animation.ValueAnimator
 import android.content.*
+import android.net.ConnectivityManager
+import android.net.Network
+import android.net.NetworkRequest
 import android.os.Bundle
 import android.os.Handler
 import android.view.Menu
@@ -28,15 +31,11 @@ import dalalstreet.api.datastreams.*
 import dalalstreet.api.models.TransactionType
 import io.grpc.stub.StreamObserver
 import kotlinx.android.synthetic.main.activity_main.*
-import org.jetbrains.anko.contentView
-import org.jetbrains.anko.doAsync
-import org.jetbrains.anko.find
-import org.jetbrains.anko.uiThread
+import org.jetbrains.anko.*
 import org.pragyan.dalal18.R
 import org.pragyan.dalal18.dagger.ContextModule
 import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent
 import org.pragyan.dalal18.data.DalalViewModel
-import org.pragyan.dalal18.fragment.mortgage.MainMortgageFragment
 import org.pragyan.dalal18.fragment.mortgage.MortgageFragment
 import org.pragyan.dalal18.notifications.NotificationService
 import org.pragyan.dalal18.utils.*
@@ -60,6 +59,12 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
     lateinit var streamServiceBlockingStub: DalalStreamServiceGrpc.DalalStreamServiceBlockingStub
 
     @Inject
+    lateinit var connectivityManager: ConnectivityManager
+
+    @Inject
+    lateinit var networkRequest: NetworkRequest
+
+    @Inject
     lateinit var preferences: SharedPreferences
 
     lateinit var model: DalalViewModel
@@ -76,7 +81,9 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
     private var cashWorth: Long = 0
     private var stockWorth: Long = 0
     private var totalWorth: Long = 0
+    private var lastOpenFragmentId = R.id.home_dest
 
+    private lateinit var networkCallback: ConnectivityManager.NetworkCallback
 
     private val refreshCashStockReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
@@ -132,6 +139,8 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
         setupWorthTextViews()
 
         startMakingButtonsTransparent()
+
+        createNetworkCallbackObject()
 
         if (!intent.getBooleanExtra(SplashActivity.MARKET_OPEN_KEY, false)) {
             AlertDialog.Builder(this, R.style.AlertDialogTheme)
@@ -543,6 +552,36 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
         // Updates stockWorthTextView and totalWorthTextView
         updateStockWorthViaStreamUpdates()
     }
+    // Creates a new networkCallback object
+    private fun createNetworkCallbackObject() {
+        networkCallback = object : ConnectivityManager.NetworkCallback() {
+
+            override fun onAvailable(network: Network) {
+                super.onAvailable(network)
+                doAsync {
+                    if (ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
+                        uiThread {
+                            unsubscribeFromAllStreams()
+                            errorDialog?.dismiss()
+                            subscribeToStreamsAsynchronously()
+
+                            val navController = findNavController(R.id.main_host_fragment)
+                            navController.navigate(lastOpenFragmentId, null, NavOptions.Builder().setPopUpTo(R.id.home_dest, false).build())
+                        }
+                    } else {
+                        uiThread { errorDialog?.setMessage(getString(R.string.error_server_down)) }
+                    }
+                }
+            }
+
+            override fun onLost(network: Network?) {
+                super.onLost(network)
+                toast(getString(R.string.internet_connection_lost))
+                lastOpenFragmentId = findNavController(R.id.main_host_fragment).currentDestination?.id ?: R.id.home_dest
+            }
+        }
+    }
+
 
     // Increases/decreases text view value depending on input parameters
     private fun changeTextViewValue(textView: TextView, indicatorImageView: ImageView, newValue: Long) {
@@ -611,6 +650,8 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
         intentFilter.addAction(REFRESH_CASH_ACTION)
         LocalBroadcastManager.getInstance(this).registerReceiver(refreshCashStockReceiver, IntentFilter(intentFilter))
 
+        connectivityManager.registerNetworkCallback(networkRequest, networkCallback)
+
         notifIntent = Intent(this, NotificationService::class.java)
         startService(notifIntent)
     }
@@ -624,6 +665,8 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
         LocalBroadcastManager.getInstance(this).unregisterReceiver(refreshCashStockReceiver)
         helpDialog?.dismiss()
         logoutDialog?.dismiss()
+
+        connectivityManager.unregisterNetworkCallback(networkCallback)
 
         stopService(notifIntent)
         preferences.edit().remove(LAST_TRANSACTION_ID).remove(LAST_NOTIFICATION_ID).apply()
@@ -670,6 +713,8 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
 
     override fun onNetworkDownError(message: String, fragment: Int) {
 
+        lastOpenFragmentId = fragment
+
         errorDialog = AlertDialog.Builder(this, R.style.AlertDialogTheme)
                 .setMessage(message)
                 .setPositiveButton(getString(R.string.retry), null)
@@ -680,13 +725,14 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
         errorDialog?.setOnShowListener {
             val positiveButton = errorDialog?.getButton(AlertDialog.BUTTON_POSITIVE)
             positiveButton?.setOnClickListener {
-                cancelDialogOnNoError(fragment)
+                onRetryButtonDialogClick()
             }
         }
         errorDialog?.show()
+        contentView?.hideKeyboard()
     }
 
-    private fun cancelDialogOnNoError(fragment: Int) {
+    private fun onRetryButtonDialogClick() {
         errorDialog?.getButton(AlertDialog.BUTTON_POSITIVE)?.isEnabled = false
         doAsync {
             if (ConnectionUtils.getConnectionInfo(this@MainActivity)) {
@@ -697,7 +743,7 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
                         subscribeToStreamsAsynchronously()
 
                         val navController = findNavController(R.id.main_host_fragment)
-                        navController.navigate(fragment, null, NavOptions.Builder().setPopUpTo(R.id.home_dest, false).build())
+                        navController.navigate(lastOpenFragmentId, null, NavOptions.Builder().setPopUpTo(R.id.home_dest, false).build())
                     }
                 } else {
                     uiThread { errorDialog?.setMessage(getString(R.string.error_server_down)) }

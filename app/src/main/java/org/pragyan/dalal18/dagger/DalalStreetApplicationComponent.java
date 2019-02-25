@@ -22,7 +22,7 @@ import org.pragyan.dalal18.ui.SplashActivity;
 import dagger.Component;
 
 @DalalStreetApplicationScope
-@Component(modules = { ChannelModule.class, ContextModule.class, StubModule.class, AdapterModule.class, SharedPreferencesModule.class } )
+@Component(modules = { ChannelModule.class, ContextModule.class, StubModule.class, AdapterModule.class, SharedPreferencesModule.class, ConnectivityModule.class } )
 
 public interface DalalStreetApplicationComponent {
 
