@@ -252,7 +252,7 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
 
     fun logout() {
 
-        unsubscribeFromAllStreams()
+        unsubscribeFromAllStreams(false)
 
         doAsync {
             if (ConnectionUtils.getConnectionInfo(this@MainActivity)) {
@@ -488,7 +488,7 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
     }
 
     // Unsubscribes from all streams
-    private fun unsubscribeFromAllStreams() {
+    private fun unsubscribeFromAllStreams(shouldSubscribeAgain: Boolean) {
         doAsync {
             if (ConnectionUtils.getConnectionInfo(this@MainActivity) && ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
                 for (subscriptionId in subscriptionIds) {
@@ -496,6 +496,12 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
                 }
 
                 subscriptionIds.clear()
+
+                uiThread {
+                    if(shouldSubscribeAgain){
+                        subscribeToStreamsAsynchronously()
+                    }
+                }
             }
         }
     }
@@ -556,9 +562,8 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
                 doAsync {
                     if (ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
                         uiThread {
-                            unsubscribeFromAllStreams()
+                            unsubscribeFromAllStreams(true)
                             errorDialog?.dismiss()
-                            subscribeToStreamsAsynchronously()
 
                             val navController = findNavController(R.id.main_host_fragment)
                             navController.navigate(lastOpenFragmentId, null, NavOptions.Builder().setPopUpTo(R.id.home_dest, false).build())
@@ -654,7 +659,7 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
     public override fun onPause() {
         super.onPause()
 
-        unsubscribeFromAllStreams()
+        unsubscribeFromAllStreams(false)
 
         preferences.edit().remove(LAST_TRANSACTION_ID).remove(LAST_NOTIFICATION_ID).apply()
         LocalBroadcastManager.getInstance(this).unregisterReceiver(refreshCashStockReceiver)
@@ -733,9 +738,8 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
             if (ConnectionUtils.getConnectionInfo(this@MainActivity)) {
                 if (ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
                     uiThread {
-                        unsubscribeFromAllStreams()
+                        unsubscribeFromAllStreams(true)
                         errorDialog?.dismiss()
-                        subscribeToStreamsAsynchronously()
 
                         val navController = findNavController(R.id.main_host_fragment)
                         navController.navigate(lastOpenFragmentId, null, NavOptions.Builder().setPopUpTo(R.id.home_dest, false).build())

@@ -209,14 +209,6 @@ class TradeFragment : Fragment() {
             context?.toast("Select order type")
         } else if (order_price_input.visibility == View.VISIBLE && orderPriceEditText.text.toString().trim { it <= ' ' }.isEmpty()) {
             context?.toast("Enter the order price")
-        } else if (radioGroupStock.checkedRadioButtonId == R.id.askRadioButton) {
-            val validQuantity = getQuantityOwnedFromCompanyName(model.ownedStockDetails, companySpinner.selectedItem.toString())
-            val askingQuantity = (noOfStocksEditText.text.toString()).toLong()
-            if (askingQuantity > validQuantity) {
-                context?.toast("You don't have sufficient stocks")
-            } else {
-                tradeAsynchronously()
-            }
         } else {
             tradeAsynchronously()
         }
