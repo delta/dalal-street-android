@@ -32,7 +32,7 @@ class FaqFragment : Fragment() {
     }
 
     private fun openForumWebPage() {
-        val forumIntent = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.allanswered.com/community/s/dalal-street/"))
+        val forumIntent = Intent(Intent.ACTION_VIEW, Uri.parse("https://forum.pragyan.org/c/dalal-street"))
         startActivity(forumIntent)
     }
 }

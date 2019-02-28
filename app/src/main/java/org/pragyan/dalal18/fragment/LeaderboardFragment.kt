@@ -1,6 +1,7 @@
 package org.pragyan.dalal18.fragment
 
 import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -34,7 +35,8 @@ class LeaderboardFragment : Fragment() {
     @Inject
     lateinit var actionServiceBlockingStub: DalalActionServiceGrpc.DalalActionServiceBlockingStub
 
-    private val LEADERBOARD_SIZE = 15
+    @Inject
+    lateinit var preferences: SharedPreferences
 
     private val leaderBoardDetailsList = ArrayList<LeaderBoardDetails>()
 
@@ -82,6 +84,8 @@ class LeaderboardFragment : Fragment() {
             setHasFixedSize(false)
             adapter = leaderBoardRecyclerAdapter
         }
+
+        showLeaderBoardInformation()
     }
 
     private fun getRankListAsynchronously() {
@@ -92,7 +96,7 @@ class LeaderboardFragment : Fragment() {
             if (ConnectionUtils.getConnectionInfo(context)) {
                 if (ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
                     val rankListResponse = actionServiceBlockingStub.getLeaderboard(GetLeaderboardRequest.newBuilder()
-                            .setCount(LEADERBOARD_SIZE).setStartingId(1).build())
+                            .setCount(LEADER_BOARD_SIZE).setStartingId(1).build())
 
                     uiThread {
 
@@ -120,8 +124,26 @@ class LeaderboardFragment : Fragment() {
         }
     }
 
+    private fun showLeaderBoardInformation() {
+        if (preferences.getBoolean(LEADER_BOARD_FIRST_TIME, true)) {
+            AlertDialog.Builder(context!!, R.style.AlertDialogTheme)
+                    .setMessage("Total worth shown in leaderboard does not include reserved assets. Reserved assets worth will be added to total worth automatically when the event ends.")
+                    .setPositiveButton("Got It!") { dI, _ -> dI.dismiss() }
+                    .setTitle("Alert")
+                    .setCancelable(true)
+                    .show()
+
+            preferences.edit().putBoolean(LEADER_BOARD_FIRST_TIME, false).apply()
+        }
+    }
+
     override fun onPause() {
         super.onPause()
         leaderBoardDetailsList.clear()
+    }
+
+    companion object {
+        private const val LEADER_BOARD_FIRST_TIME = "leaderboard-first-time"
+        private const val LEADER_BOARD_SIZE = 15
     }
 }

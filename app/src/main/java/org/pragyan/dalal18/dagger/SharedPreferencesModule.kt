@@ -7,10 +7,10 @@ import android.preference.PreferenceManager
 import dagger.Module
 import dagger.Provides
 
-@Module(includes = arrayOf(ContextModule::class))
+@Module
 class SharedPreferencesModule {
 
     @Provides
     @DalalStreetApplicationScope
-    fun getSharedPreferences(context: Context) = PreferenceManager.getDefaultSharedPreferences(context)
+    fun getSharedPreferences(context: Context): SharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
 }

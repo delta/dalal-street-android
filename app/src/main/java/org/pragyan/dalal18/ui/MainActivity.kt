@@ -39,8 +39,7 @@ import org.pragyan.dalal18.data.DalalViewModel
 import org.pragyan.dalal18.fragment.mortgage.MortgageFragment
 import org.pragyan.dalal18.notifications.NotificationService
 import org.pragyan.dalal18.utils.*
-import org.pragyan.dalal18.utils.Constants.REFRESH_OWNED_STOCKS_ACTION
-import org.pragyan.dalal18.utils.Constants.REFRESH_RESERVED_ASSETS_ACTION
+import org.pragyan.dalal18.utils.Constants.*
 import org.pragyan.dalal18.utils.MiscellaneousUtils.getNumberOfPlayersOnline
 import java.text.DecimalFormat
 import java.util.*
@@ -197,7 +196,7 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
         handler = Handler()
         handler?.post(object : Runnable {
             override fun run() {
-                val tempString = "Players Online: " + getNumberOfPlayersOnline(System.currentTimeMillis(), 20, 24)
+                val tempString = "Players Online: " + getNumberOfPlayersOnline(System.currentTimeMillis(), EVENT_START_TIME, EVENT_END_TIME)
                 header.find<TextView>(R.id.numberOfPlayersOnlineTextView).text = tempString
                 handler?.postDelayed(this, 60000L)
             }
