@@ -89,7 +89,7 @@ class RegistrationActivity : AppCompatActivity() {
                             .build())
 
                     val message = when {
-                        response.statusCode == RegisterResponse.StatusCode.OK -> "Successfully Registered !"
+                        response.statusCode == RegisterResponse.StatusCode.OK -> "Successfully Registered! Please check your inbox to verify email."
                         response.statusCode == RegisterResponse.StatusCode.AlreadyRegisteredError -> "You have already registered."
                         else -> "Internal server error."
                     }

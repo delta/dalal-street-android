@@ -141,8 +141,7 @@ class SplashActivity : AppCompatActivity() {
                                                 currentStockDetails.stocksInExchange,
                                                 currentStockDetails.previousDayClose,
                                                 if (currentStockDetails.upOrDown) 1 else 0,
-                                                resources.getStringArray(R.array.image_links)[q - 1]))
-                                        //Constants.COMPANY_IMAGES_BASE_URL + currentStockDetails.shortName.toUpperCase() + ".png"))
+                                                Constants.COMPANY_IMAGES_BASE_URL + currentStockDetails.shortName.toUpperCase() + ".png"))
                                     }
                                 }
 

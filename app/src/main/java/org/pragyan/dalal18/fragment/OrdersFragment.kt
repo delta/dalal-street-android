@@ -105,7 +105,6 @@ class OrdersFragment : Fragment(), OrdersRecyclerAdapter.OnOrderClickListener, S
     private fun subscribeToMyOrdersStream(subscriptionId: SubscriptionId) {
         streamServiceStub.getMyOrderUpdates(subscriptionId, object : StreamObserver<MyOrderUpdate> {
             override fun onNext(orderUpdate: MyOrderUpdate) {
-                // TODO : Check if LocalBroadcast implementation is required because flipVisibilities() changes UI
                 val empty = ordersRecyclerAdapter?.updateOrder(orderUpdate)
                 flipVisibilities(empty)
             }

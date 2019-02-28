@@ -2,13 +2,15 @@ package org.pragyan.dalal18.utils;
 
 public class Constants {
 
+    // TODO (Release): Change server IP and Port
     // wss://159.65.148.150:8000/ws
-    public static final String HOST = "159.65.148.150";
-    public static final int PORT = 8000;
+    public static final String HOST = "dalal.pragyan.org";
+    public static final int PORT = 7000;
 
     public static final int EVENT_START_TIME = 20;
     public static final int EVENT_END_TIME = 24;
 
+    // TODO (Release): Change company image base URL and how is built
     public static final String COMPANY_IMAGES_BASE_URL = "https://dalal.pragyan.org/public/src/images/companies/";
 
     public static final int NUMBER_OF_COMPANIES = 30;

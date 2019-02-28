@@ -4,7 +4,6 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.graphics.Color
 import android.os.Bundle
-import android.os.Handler
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
@@ -200,8 +199,7 @@ class LoginActivity : AppCompatActivity() {
                                         currentStockDetails.stocksInExchange,
                                         currentStockDetails.previousDayClose,
                                         if (currentStockDetails.upOrDown) 1 else 0,
-                                        resources.getStringArray(R.array.image_links)[q - 1]))
-                                //Constants.COMPANY_IMAGES_BASE_URL + currentStockDetails.shortName.toUpperCase() + ".png"))
+                                        Constants.COMPANY_IMAGES_BASE_URL + currentStockDetails.shortName.toUpperCase() + ".png"))
                             }
                         }
 
@@ -220,7 +218,7 @@ class LoginActivity : AppCompatActivity() {
                             when (key) {
                                 "MORTGAGE_DEPOSIT_RATE" -> Constants.MORTGAGE_DEPOSIT_RATE = value.toDouble()
                                 "MORTGAGE_RETRIEVE_RATE" -> Constants.MORTGAGE_RETRIEVE_RATE = value.toDouble()
-                                "ORDER_FEE_PERCENT" -> Constants.ORDER_FEE_RATE = (value.toDouble()/100)
+                                "ORDER_FEE_PERCENT" -> Constants.ORDER_FEE_RATE = (value.toDouble() / 100)
                                 "ORDER_PRICE_WINDOW" -> Constants.ORDER_PRICE_WINDOW = value
                             }
                         }
