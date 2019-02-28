@@ -108,6 +108,6 @@ public class MiscellaneousUtils {
             "23R1ivf8vmYzsQLJxhJAsgluohKgIl0BdqkjJ0Gi1TnmFxQksfHyxQH8y6jqB1rT\n" +
             "9ZwfH95QNgv7S916dAGIAzHEG8Uv+5T1zrHn9OT4gQLODuwvTz+39dTat75kTxWh\n" +
             "v5bTWiCJ6Kt0iOuIke6rnyYF9BqIn772NLEhYY7qS5wy/r2FZu7qhMh/aA==\n" +
-            "-----END CERTIFICATE----";
+            "-----END CERTIFICATE-----";
 
 }
