@@ -11,6 +11,7 @@ import androidx.core.content.ContextCompat
 import com.google.android.material.snackbar.Snackbar
 import dalalstreet.api.DalalActionServiceGrpc
 import dalalstreet.api.actions.LoginRequest
+import dalalstreet.api.actions.LoginResponse
 import io.grpc.ManagedChannel
 import kotlinx.android.synthetic.main.activity_login.*
 import org.jetbrains.anko.contentView
@@ -149,7 +150,7 @@ class LoginActivity : AppCompatActivity() {
 
                     signingInAlertDialog?.dismiss()
 
-                    if (loginResponse.statusCode.number == 0) {
+                    if (loginResponse.statusCode == LoginResponse.StatusCode.OK) {
 
                         MiscellaneousUtils.sessionId = loginResponse.sessionId
 
@@ -231,7 +232,7 @@ class LoginActivity : AppCompatActivity() {
                         startActivity(intent)
                         finish()
                     } else {
-                        toast("Invalid Credentials")
+                        toast(loginResponse.statusMessage)
                         passwordEditText.setText("")
                     }
                 }

@@ -179,7 +179,7 @@ class SplashActivity : AppCompatActivity() {
                                 finish()
 
                             } else {
-                                toast("Please login again")
+                                toast(loginResponse.statusMessage)
                                 preferences.edit().putString(EMAIL_KEY, null).putString(PASSWORD_KEY, null).apply()
                                 startActivity(Intent(this@SplashActivity, LoginActivity::class.java))
                                 finish()
