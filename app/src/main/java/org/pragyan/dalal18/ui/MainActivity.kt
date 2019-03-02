@@ -81,6 +81,7 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
     private var stockWorth: Long = 0
     private var totalWorth: Long = 0
     private var lastOpenFragmentId = R.id.home_dest
+    private var lostonce = false
 
     private lateinit var networkCallback: ConnectivityManager.NetworkCallback
 
@@ -562,7 +563,10 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
                 doAsync {
                     if (ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
                         uiThread {
-                            unsubscribeFromAllStreams(true)
+                            if(lostonce){
+                                subscribeToStreamsAsynchronously()
+                            }
+
                             errorDialog?.dismiss()
                             navigateToLastOpenFragment()
                         }
@@ -575,6 +579,7 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
             override fun onLost(network: Network?) {
                 super.onLost(network)
                 toast(getString(R.string.internet_connection_lost))
+                lostonce = true
                 lastOpenFragmentId = findNavController(R.id.main_host_fragment).currentDestination?.id
                         ?: R.id.home_dest
             }
@@ -739,7 +744,7 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
             if (ConnectionUtils.getConnectionInfo(this@MainActivity)) {
                 if (ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
                     uiThread {
-                        unsubscribeFromAllStreams(true)
+                       
                         errorDialog?.dismiss()
                         navigateToLastOpenFragment()
                     }
