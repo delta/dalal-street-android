@@ -18,8 +18,6 @@ public class MiscellaneousUtils {
         try {
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(inputFormat.parse(time));
-            calendar.add(Calendar.HOUR_OF_DAY, 5);
-            calendar.add(Calendar.MINUTE, 30);
             str = outputFormat.format(calendar.getTime());
         } catch (ParseException e) {
             e.printStackTrace();
