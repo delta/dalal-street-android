@@ -9,7 +9,7 @@
     <ImageView
         android:id="@+id/company_imageView"
         android:layout_width="match_parent"
-        android:layout_height="168dp"
+        android:layout_height="180dp"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:contentDescription="@string/company_image_description"
         android:scaleType="centerCrop" />

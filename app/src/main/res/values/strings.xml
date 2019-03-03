@@ -15,92 +15,7 @@
         <item>Stoploss Order</item>
     </string-array>
 
-    <string name="help">
-        <b><u>   Welcome to Dalal Street !!</u></b>
-
-        \n\n<b><u>The Objective</u></b>
-        \n  Each player begins the game with ₹2,00,000. Your objective is to use this money to maximise your profit at the end of 7 days.
-
-        \n\n<b><u>How do I make money?</u></b>
-        \n These are the two ways to make money :-
-        \nBuying stocks at low prices and selling them at higher prices.
-        \nShort selling stocks and then buying them back for a lower price.
-
-        \n The following is a guide explaining the structure of the game and what each feature of the game mean :-
-
-         \n\n<b><u>Notifications</u></b>
-        \n   This tab shows the recent notifications regarding market open , market close and etc..
-
-        \n\n<b><u>Home</u></b>
-        \n   This tab shows breaking news, company\'s stock price and previous day close.
-
-        \n\n<b><u>Portfolio</u></b>
-        \n   Here you can view your profile, total stocks worth and the number of stocks owned by you for each the company.
-
-          \n\n<b><u>Market depth</u></b>
-        \n  The Market Depth lists all open buy and sell orders belonging to each company. It contains two
-    tables for a given company, one for Bid depth and other one for Ask depth.  By observing the Market Depth,
-    you can see the prices at which other players are placing their orders and judge the current mood of the market.
-        \nThe chart shows how the stock price of the selected company has changed over time.
-
-        \n\n<b><u>Companies</u></b>
-        \n   This tab shows current price of each stock at a glance and show percentage change in price compared to
-        previous day close.
-
-        \n\n<b><u>News</u></b>
-        \n   This tab will constantly be updated with articles about company news, scandals, rumours,
-        or even political developments. Staying connected with story developments could give you an edge over other
-        players as this is the best way to predict the future performance of a company. Please note that these events
-    are purely fictional and are nowhere related to the real market conditions.
-
-        \n\n<b><u>Stock Exchange</u></b>
-        \n This tab allows you to buy stocks directly from the exchange. You’ll find an entry for Stocks in Exchange as
-        well as an entry for Stocks in Market.
-    \n<b><u>Stocks in Exchange</u></b> : The number of stocks that the Dalal Street Exchange currently holds.
-    \n<b><u>Stocks in Market</u></b> - The number of stocks that are currently held by all of the players in the game.
-
-
-    \n\n<b><u>Trade</u></b>
-    \n   You can buy or sell stocks to other players. You can ask for a particular number
-    of stocks at any price fixed by you. If someone is willing to sell their stocks at your price,
-    order is filled and transaction details are issued. Equivalent amount will be deducted/added to your cash.\n\nThere are 3 types of Orders :\n\n
-    <b><u>Stoploss Order</u></b>
-    \n   Stopless Buy Orders are used to jump on a rising trend and Stoploss Sell Orders are used to lock in
-    a profit/limit your losses.  They are converted to Market Orders once the price crosses the Stoploss price that you set. In case of a Stoploss Buy, your order will be converted to a Market Buy as soon as the stock’s price rises above the Stoploss price that you set. Similarly, in case of a Stoploss Sell,
-    your order will be converted to a Market Sell as soon as the stock’s price falls below the Stoploss price that you set.
-
-    \n\n<b><u>Market Order</u></b>
-    \n  If your primary concern is to have your order filled ASAP, and you’re not too worried about the price at which the
-    transaction is carried out, you should use a Market Order. However, make sure that you keep an eye on the Market Depth
-    before issuing one of these transactions to ensure that you don’t get ripped off! A Market Buy Order will find the best
-    matching Sell Order for the same company, and execute the transaction. Similarly, a Market Sell Order will
-    find the best matching Buy Order for the same company, and execute the transaction
-
-    \n\n<b><u>Limit Order</u></b>
-    \n   Limit Orders allow you to specify a maximum trade price in case of a Limit Buy, and a minimum trade
-    price in case of a Limit Sell. A Limit Buy Order will find the best matching Sell Order whose trade price is below the limit that you have specified, and execute the transaction. Similary, A Limit Sell Order will find the best matching Buy Order whose trade price is above the limit that you have specified, and execute the transaction.
-
-    \n\n<b><u>Bank Mortgage</u></b>
-        \n   Bank Mortgage can be used to mortgage stocks at the current price of the stocks in exchange and
-        equivalent cash will be added to your account. The mortgaged stocks can be can be bought back from the bank
-        anytime later.
-
-    \n\n<b><u>My Orders</u></b>
-    \n   Here you can see all your open orders which might be fully or partially filled. You can click the cancel
-    button to cancel the order that are yet to be filled anytime.
-
-    \n\n<b><u>Transactions</u></b>
-    \n   This tab shows all your successful transactions.
-
-            \n\n<b><u>Short selling :</u></b>
-        \n  While you will buy a company’s stock if you expect its price to go up, you can short sell a company’s stock if you
-        expect its price to go down. In a nutshell, short selling means to sell stocks that you don’t own so that you can
-        buy them back at a lower price. You can only short sell a maximum of 50 stocks per company
-
-    \n\n<b><u>Do not hesitate to contact us if you face any problems.</u></b>
-        \nHave fun filled Pragyan 2018!
-
-    </string>
+    <string name="help">Help</string>
     <string name="username">Username</string>
     <string name="cash_worth">Cash In Hand</string>
     <string name="pick_a_company">Pick a Company</string>
@@ -499,6 +414,7 @@
     <string name="forum_link">https://www.allanswered.com/community/s/dalal-street/</string>
     <string name="forum">Forum</string>
     <string name="owned">Owned</string>
+    <string name="unread_background_circle">Unread background circle</string>
     <string-array name="intervalType">
         <item>1 min</item>
         <item>5 mins</item>

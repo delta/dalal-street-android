@@ -2,6 +2,7 @@ package org.pragyan.dalal18.ui
 
 import android.animation.ValueAnimator
 import android.content.*
+import android.graphics.drawable.Drawable
 import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkRequest
@@ -37,9 +38,9 @@ import org.pragyan.dalal18.dagger.ContextModule
 import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent
 import org.pragyan.dalal18.data.DalalViewModel
 import org.pragyan.dalal18.fragment.mortgage.MortgageFragment
-import org.pragyan.dalal18.notifications.NotificationService
 import org.pragyan.dalal18.utils.*
 import org.pragyan.dalal18.utils.Constants.*
+import org.pragyan.dalal18.utils.CountDrawable.buildCounterDrawable
 import org.pragyan.dalal18.utils.MiscellaneousUtils.getNumberOfPlayersOnline
 import java.text.DecimalFormat
 import java.util.*
@@ -74,12 +75,12 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
     private var logoutDialog: AlertDialog? = null
     private var errorDialog: AlertDialog? = null
 
-    private var notifIntent: Intent? = null
     private var handler: Handler? = null
 
     private var cashWorth: Long = 0
     private var stockWorth: Long = 0
     private var totalWorth: Long = 0
+    private var unreadNotificationsCount = 0
     private var lastOpenFragmentId = R.id.home_dest
     private var lostonce = false
 
@@ -109,6 +110,12 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
 
                 UPDATE_WORTH_VIA_STREAM_ACTION ->
                     updateStockWorthViaStreamUpdates()
+
+                REFRESH_UNREAD_NOTIFICATIONS_COUNT -> {
+                    if(findNavController(R.id.main_host_fragment).currentDestination?.id == R.id.notifications_dest)
+                        unreadNotificationsCount = 0
+                    invalidateOptionsMenu()
+                }
             }
         }
     }
@@ -145,7 +152,7 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
         if (!intent.getBooleanExtra(SplashActivity.MARKET_OPEN_KEY, false)) {
             AlertDialog.Builder(this, R.style.AlertDialogTheme)
                     .setTitle("Market Closed")
-                    .setMessage("Please check notifications for market opening time. Sorry for the inconvenience.")
+                    .setMessage("Please check notifications for market opening time. You can still browse through the app.")
                     .setCancelable(true)
                     .setPositiveButton("CLOSE") { dI, _ -> dI.dismiss() }
                     .show()
@@ -206,6 +213,12 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.main_menu, menu)
+
+        val menuItem = menu.findItem(R.id.action_notifications)
+        val drawable: Drawable? = buildCounterDrawable(this, unreadNotificationsCount, R.drawable.notification_icon)
+        if(drawable != null)
+            menuItem.icon = drawable
+
         return true
     }
 
@@ -217,6 +230,8 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
         when (id) {
             R.id.action_notifications -> {
                 val navController = findNavController(R.id.main_host_fragment)
+                unreadNotificationsCount = 0
+                invalidateOptionsMenu()
                 navController.navigate(R.id.notifications_dest, null, NavOptions.Builder().setPopUpTo(R.id.home_dest, false).build())
                 return true
             }
@@ -487,6 +502,25 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
                 })
     }
 
+    // Subscribes to notifications stream and gets updates (TESTED)
+    private fun subscribeToNotificationsStream(notificationsSubscriptionId: SubscriptionId) {
+
+        streamServiceStub.getNotificationUpdates(notificationsSubscriptionId,
+                object : StreamObserver<NotificationUpdate> {
+                    override fun onNext(value: NotificationUpdate?) {
+                        unreadNotificationsCount++
+                        LocalBroadcastManager.getInstance(this@MainActivity).sendBroadcast(Intent(REFRESH_UNREAD_NOTIFICATIONS_COUNT))
+                    }
+
+                    override fun onError(t: Throwable?) {
+                    }
+
+                    override fun onCompleted() {
+                    }
+
+                })
+    }
+
     // Unsubscribes from all streams
     private fun unsubscribeFromAllStreams(shouldSubscribeAgain: Boolean) {
         doAsync {
@@ -586,7 +620,6 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
         }
     }
 
-
     // Increases/decreases text view value depending on input parameters
     private fun changeTextViewValue(textView: TextView, indicatorImageView: ImageView, newValue: Long) {
         val oldValue = textView.text.toString().replace(",", "").toLong()
@@ -653,12 +686,10 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
         intentFilter.addAction(REFRESH_WORTH_TEXTVIEW_ACTION)
         intentFilter.addAction(UPDATE_WORTH_VIA_STREAM_ACTION)
         intentFilter.addAction(REFRESH_CASH_ACTION)
+        intentFilter.addAction(REFRESH_UNREAD_NOTIFICATIONS_COUNT)
         LocalBroadcastManager.getInstance(this).registerReceiver(refreshCashStockReceiver, IntentFilter(intentFilter))
 
         connectivityManager.registerNetworkCallback(networkRequest, networkCallback)
-
-        notifIntent = Intent(this, NotificationService::class.java)
-        startService(notifIntent)
     }
 
     public override fun onPause() {
@@ -668,15 +699,14 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
         lastOpenFragmentId = findNavController(R.id.main_host_fragment).currentDestination?.id
                 ?: R.id.home_dest
 
-        preferences.edit().remove(LAST_TRANSACTION_ID).remove(LAST_NOTIFICATION_ID).apply()
+        preferences.edit().remove(LAST_TRANSACTION_ID).apply()
         LocalBroadcastManager.getInstance(this).unregisterReceiver(refreshCashStockReceiver)
         helpDialog?.dismiss()
         logoutDialog?.dismiss()
 
         connectivityManager.unregisterNetworkCallback(networkCallback)
 
-        stopService(notifIntent)
-        preferences.edit().remove(LAST_TRANSACTION_ID).remove(LAST_NOTIFICATION_ID).apply()
+        preferences.edit().remove(LAST_TRANSACTION_ID).apply()
     }
 
     private fun subscribeToStreamsAsynchronously() {
@@ -707,6 +737,12 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
                     uiThread {
                         subscriptionIds.add(response.subscriptionId)
                         subscribeToTransactionsStream(response.subscriptionId)
+                    }
+
+                    response = streamServiceBlockingStub.subscribe(SubscribeRequest.newBuilder().setDataStreamType(DataStreamType.NOTIFICATIONS).setDataStreamId("").build())
+                    uiThread {
+                        subscriptionIds.add(response.subscriptionId)
+                        subscribeToNotificationsStream(response.subscriptionId)
                     }
 
                 } else {
@@ -771,7 +807,6 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
     companion object {
 
         private const val LAST_TRANSACTION_ID = "last_transaction_id"
-        private const val LAST_NOTIFICATION_ID = "last_notification_id"
 
         const val CASH_WORTH_KEY = "cash-worth-key"
         const val TOTAL_WORTH_KEY = "total-worth-key"
@@ -784,5 +819,6 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
         private const val REFRESH_CASH_ACTION = "refresh-hard-cash-action-textview"
         private const val REFRESH_CASH_AND_TOTAL_ACTION = "refresh-cash-and-total-worth-textview"
         private const val UPDATE_WORTH_VIA_STREAM_ACTION = "refresh-worth-via-stream-action"
+        private const val REFRESH_UNREAD_NOTIFICATIONS_COUNT = "refresh-unread-notifications-count"
     }
 }

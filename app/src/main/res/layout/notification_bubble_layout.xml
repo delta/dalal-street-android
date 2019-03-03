@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+    android:id="@+id/counterValuePanel"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <ImageView
+        android:id="@+id/counterBackground"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:background="@drawable/unread_background"
+        android:contentDescription="@string/unread_background_circle" />
+
+    <TextView
+        android:id="@+id/count"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/counterBackground"
+        android:layout_alignTop="@+id/counterBackground"
+        android:layout_alignEnd="@+id/counterBackground"
+        android:layout_alignBottom="@+id/counterBackground"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="1dp"
+        android:textColor="#FFFFFF"
+        android:textSize="8sp" />
+
+</RelativeLayout>

@@ -4,7 +4,7 @@
 
     <item
         android:id="@+id/action_notifications"
-        android:icon="@drawable/notifications_icon"
+        android:icon="@drawable/notification_icon"
         android:orderInCategory="1"
         android:title="@string/notifications"
         app:showAsAction="ifRoom" />
