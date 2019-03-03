@@ -11,39 +11,52 @@
         android:layout_alignParentTop="true"
         android:layout_marginTop="4dp"
         android:orientation="horizontal"
-        android:padding="8dp">
+        android:padding="4dp">
 
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1.2"
+            android:ellipsize="marquee"
             android:fontFamily="@font/kreon_light"
             android:gravity="center"
+            android:singleLine="true"
             android:text="@string/rank"
             android:textColor="@color/neutral_font_color"
-            android:textSize="20sp"
+            android:textSize="16sp"
             android:textStyle="bold" />
 
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="2"
+            android:layout_weight="3.5"
             android:fontFamily="@font/kreon_light"
             android:gravity="center"
             android:text="@string/name"
             android:textColor="@color/neutral_font_color"
-            android:textSize="20sp"
+            android:textSize="16sp"
             android:textStyle="bold" />
 
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1.5"
+            android:layout_weight="3"
+            android:fontFamily="@font/kreon_light"
+            android:gravity="center"
+            android:text="@string/stocks"
+            android:textColor="@color/neutral_font_color"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="3"
             android:fontFamily="@font/kreon_light"
             android:gravity="center"
             android:text="@string/wealth"
             android:textColor="@color/neutral_font_color"
-            android:textSize="20sp"
+            android:textSize="16sp"
             android:textStyle="bold" />
 
     </LinearLayout>
@@ -53,8 +66,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@id/leaderboard_cardview"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/leaderboard_linearLayout" />
+        android:layout_below="@+id/leaderboard_linearLayout"
+        android:layout_alignParentStart="true" />
 
     <androidx.cardview.widget.CardView
         android:id="@+id/leaderboard_cardview"
@@ -68,8 +81,8 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingBottom="10dp"
-            android:paddingTop="10dp">
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp">
 
             <TextView
                 android:id="@+id/personal_rank_textView"
@@ -80,7 +93,7 @@
                 android:gravity="center"
                 android:text="@string/rank"
                 android:textColor="@color/neon_blue"
-                android:textSize="20sp"
+                android:textSize="18sp"
                 android:textStyle="bold" />
 
             <TextView
@@ -88,6 +101,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="2"
+                android:ellipsize="marquee"
                 android:fontFamily="@font/kreon_light"
                 android:gravity="center"
                 android:text="@string/name"

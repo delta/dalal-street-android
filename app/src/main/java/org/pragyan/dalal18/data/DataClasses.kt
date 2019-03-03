@@ -15,7 +15,7 @@ data class GlobalStockDetails(var fullName: String?, var shortName: String?, var
                               var quantityInMarket: Long, var quantityInExchange: Long, var previousDayClose: Long,
                               var up: Int, val imagePath: String) : Parcelable
 
-data class LeaderBoardDetails(var rank: Int, var name: String?, var wealth: Long)
+data class LeaderBoardDetails(var rank: Int, var name: String?, var stockWorth: Long, var wealth: Long)
 
 data class MarketDepth(var price: Long, var volume: Long)
 

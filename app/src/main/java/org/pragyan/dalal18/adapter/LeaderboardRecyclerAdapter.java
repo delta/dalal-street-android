@@ -44,6 +44,7 @@ public class LeaderboardRecyclerAdapter extends RecyclerView.Adapter<Leaderboard
         holder.rankTextView.setText(String.valueOf(currentLeaderBoardDetails.getRank()));
         holder.nameTextView.setText(currentLeaderBoardDetails.getName());
         holder.wealthTextView.setText(String.valueOf(new DecimalFormat(Constants.PRICE_FORMAT).format(currentLeaderBoardDetails.getWealth())));
+        holder.stockWorthTextView.setText(String.valueOf(new DecimalFormat(Constants.PRICE_FORMAT).format(currentLeaderBoardDetails.getStockWorth())));
 
         if (position == 0) {
             holder.nameTextView.setTextColor(ContextCompat.getColor(context, R.color.gold_medal));
@@ -77,13 +78,14 @@ public class LeaderboardRecyclerAdapter extends RecyclerView.Adapter<Leaderboard
 
     class MyViewHolder extends RecyclerView.ViewHolder {
 
-        TextView rankTextView, nameTextView, wealthTextView;
+        TextView rankTextView, nameTextView, wealthTextView, stockWorthTextView;
 
         MyViewHolder(View view) {
             super(view);
 
             rankTextView = view.findViewById(R.id.rank_textView);
             nameTextView = view.findViewById(R.id.name_textView);
+            stockWorthTextView = view.findViewById(R.id.stockWorth_textView);
             wealthTextView = view.findViewById(R.id.wealth_textView);
         }
     }

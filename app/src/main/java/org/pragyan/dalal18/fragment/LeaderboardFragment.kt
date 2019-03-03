@@ -95,24 +95,30 @@ class LeaderboardFragment : Fragment() {
         doAsync {
             if (ConnectionUtils.getConnectionInfo(context)) {
                 if (ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
-                    val rankListResponse = actionServiceBlockingStub.getLeaderboard(GetLeaderboardRequest.newBuilder()
-                            .setCount(LEADER_BOARD_SIZE).setStartingId(1).build())
+                    val rankListResponses = mutableListOf<GetLeaderboardResponse>()
+
+                    for(i in 1..LEADER_BOARD_SIZE step 10) {
+                        rankListResponses.add(actionServiceBlockingStub.getLeaderboard(GetLeaderboardRequest.newBuilder().setStartingId(i).build()))
+                    }
 
                     uiThread {
 
-                        if (rankListResponse.statusCode == GetLeaderboardResponse.StatusCode.OK) {
-                            personal_rank_textView.text = rankListResponse.myRank.toString()
-                            personal_wealth_textView.text = totalWorthTextView.text.toString()
-                            personal_name_textView.text = MiscellaneousUtils.username
-                            for (i in 0 until rankListResponse.rankListCount) {
-                                val currentRow = rankListResponse.getRankList(i)
-                                leaderBoardDetailsList.add(LeaderBoardDetails(currentRow.rank, currentRow.userName, currentRow.totalWorth))
+                        for(rankListResponse in rankListResponses) {
+                            if (rankListResponse.statusCode == GetLeaderboardResponse.StatusCode.OK) {
+                                personal_rank_textView.text = rankListResponse.myRank.toString()
+                                personal_wealth_textView.text = totalWorthTextView.text.toString()
+                                personal_name_textView.text = MiscellaneousUtils.username
+                                for (currentRow in rankListResponse.rankListList) {
+                                    leaderBoardDetailsList.add(LeaderBoardDetails(currentRow.rank, currentRow.userName, currentRow.stockWorth, currentRow.totalWorth))
+                                }
+                                leaderboard_recyclerView.visibility = View.VISIBLE
+                            } else {
+                                context?.longToast("Server internal error")
+                                return@uiThread
                             }
-                            leaderBoardRecyclerAdapter.swapData(leaderBoardDetailsList)
-                            leaderboard_recyclerView.visibility = View.VISIBLE
-                        } else {
-                            context?.longToast("Server internal error")
                         }
+
+                        leaderBoardRecyclerAdapter.swapData(leaderBoardDetailsList)
                     }
                 } else {
                     uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_server_down), R.id.leaderboard_dest) }
@@ -144,6 +150,6 @@ class LeaderboardFragment : Fragment() {
 
     companion object {
         private const val LEADER_BOARD_FIRST_TIME = "leaderboard-first-time"
-        private const val LEADER_BOARD_SIZE = 15
+        private const val LEADER_BOARD_SIZE = 100
     }
 }

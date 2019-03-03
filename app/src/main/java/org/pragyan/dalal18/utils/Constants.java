@@ -4,7 +4,7 @@ public class Constants {
 
     // TODO (Release): Change server IP and Port
     // wss://159.65.148.150:8000/ws
-    public static final String HOST = "159.65.148.150";
+    public static final String HOST = "dalal.pragyan.org";
     public static final int PORT = 8080;
 
     public static final int EVENT_START_TIME = 20;
