@@ -7,7 +7,6 @@ import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkRequest
 import android.os.Bundle
-import android.os.Handler
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -39,9 +38,9 @@ import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent
 import org.pragyan.dalal18.data.DalalViewModel
 import org.pragyan.dalal18.fragment.mortgage.MortgageFragment
 import org.pragyan.dalal18.utils.*
-import org.pragyan.dalal18.utils.Constants.*
+import org.pragyan.dalal18.utils.Constants.REFRESH_OWNED_STOCKS_ACTION
+import org.pragyan.dalal18.utils.Constants.REFRESH_RESERVED_ASSETS_ACTION
 import org.pragyan.dalal18.utils.CountDrawable.buildCounterDrawable
-import org.pragyan.dalal18.utils.MiscellaneousUtils.getNumberOfPlayersOnline
 import java.text.DecimalFormat
 import java.util.*
 import javax.inject.Inject
@@ -75,14 +74,12 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
     private var logoutDialog: AlertDialog? = null
     private var errorDialog: AlertDialog? = null
 
-    private var handler: Handler? = null
-
     private var cashWorth: Long = 0
     private var stockWorth: Long = 0
     private var totalWorth: Long = 0
     private var unreadNotificationsCount = 0
     private var lastOpenFragmentId = R.id.home_dest
-    private var lostonce = false
+    private var lostOnce = false
 
     private lateinit var networkCallback: ConnectivityManager.NetworkCallback
 
@@ -112,7 +109,7 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
                     updateStockWorthViaStreamUpdates()
 
                 REFRESH_UNREAD_NOTIFICATIONS_COUNT -> {
-                    if(findNavController(R.id.main_host_fragment).currentDestination?.id == R.id.notifications_dest)
+                    if (findNavController(R.id.main_host_fragment).currentDestination?.id == R.id.notifications_dest)
                         unreadNotificationsCount = 0
                     invalidateOptionsMenu()
                 }
@@ -199,16 +196,6 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
                 contentView?.hideKeyboard()
             }
         })
-
-        // Refresh every 1 min
-        handler = Handler()
-        handler?.post(object : Runnable {
-            override fun run() {
-                val tempString = "Players Online: " + getNumberOfPlayersOnline(System.currentTimeMillis(), EVENT_START_TIME, EVENT_END_TIME)
-                header.find<TextView>(R.id.numberOfPlayersOnlineTextView).text = tempString
-                handler?.postDelayed(this, 60000L)
-            }
-        })
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -216,7 +203,7 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
 
         val menuItem = menu.findItem(R.id.action_notifications)
         val drawable: Drawable? = buildCounterDrawable(this, unreadNotificationsCount, R.drawable.notification_icon)
-        if(drawable != null)
+        if (drawable != null)
             menuItem.icon = drawable
 
         return true
@@ -597,7 +584,7 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
                 doAsync {
                     if (ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
                         uiThread {
-                            if (lostonce) {
+                            if (lostOnce) {
                                 subscribeToStreamsAsynchronously()
                             }
 
@@ -613,7 +600,7 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
             override fun onLost(network: Network?) {
                 super.onLost(network)
                 toast(getString(R.string.internet_connection_lost))
-                lostonce = true
+                lostOnce = true
                 lastOpenFragmentId = findNavController(R.id.main_host_fragment).currentDestination?.id
                         ?: R.id.home_dest
             }
@@ -679,7 +666,7 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
     public override fun onResume() {
         super.onResume()
 
-        lostonce = false
+        lostOnce = false
         subscribeToStreamsAsynchronously()
 
         val intentFilter = IntentFilter(REFRESH_CASH_AND_TOTAL_ACTION)
