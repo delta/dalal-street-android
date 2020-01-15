@@ -266,7 +266,6 @@ class LoginActivity : AppCompatActivity() {
                                 .putString(Constants.MARKET_OPEN_TEXT_KEY, loginResponse.marketIsOpenHackyNotif)
                                 .putString(Constants.MARKET_CLOSED_TEXT_KEY, loginResponse.marketIsClosedHackyNotif)
                                 .apply()
-
                         startActivity(intent)
                         finish()
                     } else {

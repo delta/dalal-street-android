@@ -1,10 +1,6 @@
 package org.pragyan.dalal18.fragment
 
-
-import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
+import android.content.*
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -18,13 +14,21 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.fragment_companies.*
 import org.pragyan.dalal18.R
 import org.pragyan.dalal18.adapter.CompanyRecyclerAdapter
+import org.pragyan.dalal18.dagger.ContextModule
+import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent
 import org.pragyan.dalal18.data.CompanyDetails
 import org.pragyan.dalal18.data.DalalViewModel
 import org.pragyan.dalal18.utils.Constants
+import org.pragyan.dalal18.utils.Constants.PREF_COMP
+import org.pragyan.dalal18.utils.DalalTourUtils
 import org.pragyan.dalal18.utils.StockUtils
 import java.util.*
+import javax.inject.Inject
 
 class CompanyFragment : Fragment(), CompanyRecyclerAdapter.OnCompanyClickListener {
+
+    @Inject
+    lateinit var preferences: SharedPreferences
 
     private val companiesList = ArrayList<CompanyDetails>()
     private lateinit var adapter: CompanyRecyclerAdapter
@@ -40,7 +44,7 @@ class CompanyFragment : Fragment(), CompanyRecyclerAdapter.OnCompanyClickListene
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View =
-        inflater.inflate(R.layout.fragment_companies, container, false)
+            inflater.inflate(R.layout.fragment_companies, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -48,12 +52,19 @@ class CompanyFragment : Fragment(), CompanyRecyclerAdapter.OnCompanyClickListene
 
         adapter = CompanyRecyclerAdapter(context, null, this)
 
-        model = activity?.run { ViewModelProviders.of(this).get(DalalViewModel::class.java) } ?: throw Exception("Invalid activity")
+        model = activity?.run { ViewModelProviders.of(this).get(DalalViewModel::class.java) }
+                ?: throw Exception("Invalid activity")
 
+        DaggerDalalStreetApplicationComponent.builder().contextModule(ContextModule(context!!)).build().inject(this)
         updateValues()
         portfolioRecyclerView.setHasFixedSize(false)
         portfolioRecyclerView.adapter = adapter
         portfolioRecyclerView.layoutManager = LinearLayoutManager(context)
+
+        if (preferences.getBoolean(PREF_COMP, true)) {
+            preferences.edit().putBoolean(PREF_COMP, false).apply()
+            DalalTourUtils.genericViewTour(activity as AppCompatActivity, percentageChangeTextView, 100, getString(R.string.percentchange_tour))
+        }
     }
 
     fun updateValues() {
