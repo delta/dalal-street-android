@@ -49,6 +49,7 @@ class LoginActivity : AppCompatActivity() {
     lateinit var preferences: SharedPreferences
 
     private var signingInAlertDialog: AlertDialog? = null
+    private val PREF_NAME = "MAINACTIVITY_TOUR"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -265,6 +266,7 @@ class LoginActivity : AppCompatActivity() {
                         preferences.edit()
                                 .putString(Constants.MARKET_OPEN_TEXT_KEY, loginResponse.marketIsOpenHackyNotif)
                                 .putString(Constants.MARKET_CLOSED_TEXT_KEY, loginResponse.marketIsClosedHackyNotif)
+                                .putBoolean(PREF_NAME,true) //app tour
                                 .apply()
                         startActivity(intent)
                         finish()

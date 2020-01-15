@@ -3,9 +3,9 @@ package org.pragyan.dalal18.utils;
 public class Constants {
 
     // TODO (Release): Change server IP and Port
-
-    public static final String HOST = "10.2.66.196";
-    public static final int PORT = 8000;
+    // wss://159.65.148.150:8000/ws
+    public static final String HOST = "dalal.pragyan.org";
+    public static final int PORT = 8080;
 
     public static final int EVENT_START_TIME = 20;
     public static final int EVENT_END_TIME = 24;

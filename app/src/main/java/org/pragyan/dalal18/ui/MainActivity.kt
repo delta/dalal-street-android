@@ -132,7 +132,6 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
         mainToolbar.inflateMenu(R.menu.main_menu)
 
         setSupportActionBar(mainToolbar)
-
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setHomeAsUpIndicator(ContextCompat.getDrawable(this, R.drawable.hamburger_icon))
 
@@ -167,21 +166,13 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
             navController.navigate(R.id.portfolio_dest, null, NavOptions.Builder().setPopUpTo(R.id.home_dest, false).build())
         }
 
-        if (preferences.getBoolean(PREF_MAIN, true)) {
-            preferences.edit()
-                    .putBoolean(PREF_MAIN, false)
-                    .putBoolean(PREF_COMP, true)
-                    .apply()
-            DalalTourUtils.toolbarTour(mainToolbar, this, 40, getString(R.string.notification_tour))
-        }
-
         // Tried to use single view didn't work; It took up toolbar space also
+        totalInHandTextView.setOnClickListener(worthViewClickListener)
+        totalWorthTextView.setOnClickListener(worthViewClickListener)
         cashInHandTextView.setOnClickListener(worthViewClickListener)
         cashWorthTextView.setOnClickListener(worthViewClickListener)
         stocksInHandTextView.setOnClickListener(worthViewClickListener)
         stockWorthTextView.setOnClickListener(worthViewClickListener)
-        totalInHandTextView.setOnClickListener(worthViewClickListener)
-        totalWorthTextView.setOnClickListener(worthViewClickListener)
     }
 
     // Adding and setting up Navigation drawer
