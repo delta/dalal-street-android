@@ -1,5 +1,6 @@
 package org.pragyan.dalal18.dagger;
 
+import org.pragyan.dalal18.fragment.CompanyFragment;
 import org.pragyan.dalal18.fragment.HomeFragment;
 import org.pragyan.dalal18.fragment.LeaderboardFragment;
 import org.pragyan.dalal18.fragment.mortgage.MortgageFragment;
@@ -46,6 +47,7 @@ public interface DalalStreetApplicationComponent {
     void inject(OrdersFragment ordersFragment);
     void inject(PortfolioFragment portfolioFragment);
     void inject(NotificationFragment notificationFragment);
+    void inject(CompanyFragment companyFragment);
 
     void inject(NotificationService notificationService);
 }

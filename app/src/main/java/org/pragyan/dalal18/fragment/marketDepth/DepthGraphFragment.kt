@@ -131,7 +131,6 @@ class DepthGraphFragment : Fragment() {
                     loadStockHistoryAsynchronously()
                 }
             }
-
         }
     }
 

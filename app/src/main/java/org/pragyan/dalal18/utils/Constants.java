@@ -55,6 +55,13 @@ public class Constants {
 
     public static final String LAST_NOTIFICATION_ID = "last_notification_id";
     public static final String LAST_TRANSACTION_ID = "last_transaction_id";
+    public static final String PREF_MAIN = "MAINACTIVITY_TOUR";
+    public static final String TAG ="IS LOGIN FIRST TIME" ;
+    public static final String PREF_COMP="COMPANYFRAG_TOUR";
+    public static final String PREF_MKT="MARKET_TOUR";
+    public static final String PREF_TRADE="TRADE_TOUR";
+    public static final String PREF_MRTG="MORTGAGE_TOUR";
+    public static final String PREF_GPH="MARKET_GRAPH_TOUR";
 }
 
 /*  Login response : Constants

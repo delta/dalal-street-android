@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
@@ -119,6 +120,8 @@ class DepthTableFragment : Fragment() {
 
         bidDepthAdapter = MarketDepthRecyclerAdapter(context, bidArrayList)
         askDepthAdapter = MarketDepthRecyclerAdapter(context, askArrayList)
+        val X = view.findViewById<LinearLayout>(R.id.bid_depth_layout)
+        val Y = view.findViewById<LinearLayout>(R.id.ask_depth_layout)
 
         with(bid_depth_rv) {
             layoutManager = LinearLayoutManager(context)
@@ -367,3 +370,6 @@ class DepthTableFragment : Fragment() {
         LocalBroadcastManager.getInstance(context!!).unregisterReceiver(refreshMarketDepth)
     }
 }
+
+
+

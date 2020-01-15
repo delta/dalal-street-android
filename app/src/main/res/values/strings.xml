@@ -93,6 +93,13 @@
     <string name="leaderboard_frag_label">LeaderBoard</string>
     <string name="news_details_frag_label">NewsDetails</string>
     <string name="dalal">Dalal Street</string>
+    <string name="notification_tour">Watch out for all notifications related to market here</string>
+    <string name="newsrecycler_tour">News will be updated here in the app </string>
+    <string name="percentchange_tour">See how stock prices are fluctuating here</string>
+    <string name="ordertype_tour">Switch between different types of Orders here</string>
+    <string name="deptgfraph_tour">Graph for Market Depth</string>
+    <string name="bidepth_tour">Bid Depth </string>
+    <string name="askdepth_tour">Ask Depth</string>
 
     <string name="up_arrow">&#8593;</string>
     <string name="down_arrow">&#8595;</string>

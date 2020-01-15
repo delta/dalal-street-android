@@ -38,12 +38,12 @@ import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent
 import org.pragyan.dalal18.data.DalalViewModel
 import org.pragyan.dalal18.fragment.mortgage.MortgageFragment
 import org.pragyan.dalal18.utils.*
-import org.pragyan.dalal18.utils.Constants.REFRESH_OWNED_STOCKS_ACTION
-import org.pragyan.dalal18.utils.Constants.REFRESH_RESERVED_ASSETS_ACTION
+import org.pragyan.dalal18.utils.Constants.*
 import org.pragyan.dalal18.utils.CountDrawable.buildCounterDrawable
 import java.text.DecimalFormat
 import java.util.*
 import javax.inject.Inject
+import kotlin.math.abs
 
 /* Subscribes to Transactions, Exchange, StockPrices and MarketEvents stream*/
 class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
@@ -124,11 +124,15 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
         model = ViewModelProviders.of(this).get(DalalViewModel::class.java)
 
         val tinyDB = TinyDB(this)
-        tinyDB.remove(Constants.NOTIFICATION_SHARED_PREF)
-        tinyDB.remove(Constants.NOTIFICATION_NEWS_SHARED_PREF)
+        tinyDB.remove(NOTIFICATION_SHARED_PREF)
+        tinyDB.remove(NOTIFICATION_NEWS_SHARED_PREF)
         DaggerDalalStreetApplicationComponent.builder().contextModule(ContextModule(this)).build().inject(this)
 
+        val mainToolbar: androidx.appcompat.widget.Toolbar = findViewById(R.id.mainToolbar)
+        mainToolbar.inflateMenu(R.menu.main_menu)
+
         setSupportActionBar(mainToolbar)
+
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setHomeAsUpIndicator(ContextCompat.getDrawable(this, R.drawable.hamburger_icon))
 
@@ -163,13 +167,21 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
             navController.navigate(R.id.portfolio_dest, null, NavOptions.Builder().setPopUpTo(R.id.home_dest, false).build())
         }
 
+        if (preferences.getBoolean(PREF_MAIN, true)) {
+            preferences.edit()
+                    .putBoolean(PREF_MAIN, false)
+                    .putBoolean(PREF_COMP, true)
+                    .apply()
+            DalalTourUtils.toolbarTour(mainToolbar, this, 40, getString(R.string.notification_tour))
+        }
+
         // Tried to use single view didn't work; It took up toolbar space also
-        totalInHandTextView.setOnClickListener(worthViewClickListener)
-        totalWorthTextView.setOnClickListener(worthViewClickListener)
         cashInHandTextView.setOnClickListener(worthViewClickListener)
         cashWorthTextView.setOnClickListener(worthViewClickListener)
         stocksInHandTextView.setOnClickListener(worthViewClickListener)
         stockWorthTextView.setOnClickListener(worthViewClickListener)
+        totalInHandTextView.setOnClickListener(worthViewClickListener)
+        totalWorthTextView.setOnClickListener(worthViewClickListener)
     }
 
     // Adding and setting up Navigation drawer
@@ -178,7 +190,7 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
         val host = supportFragmentManager.findFragmentById(R.id.main_host_fragment) as NavHostFragment
         navigationViewLeft.setupWithNavController(host.navController)
 
-        MiscellaneousUtils.username = intent.getStringExtra(Constants.USERNAME_KEY)
+        MiscellaneousUtils.username = intent.getStringExtra(USERNAME_KEY)
         val header = navigationViewLeft.getHeaderView(0)
         header.find<TextView>(R.id.usernameTextView).text = MiscellaneousUtils.username
 
@@ -258,16 +270,16 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
 
         doAsync {
             if (ConnectionUtils.getConnectionInfo(this@MainActivity)) {
-                if (ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
+                if (ConnectionUtils.isReachableByTcp(HOST, PORT)) {
                     val logoutResponse = actionServiceBlockingStub.logout(LogoutRequest.newBuilder().build())
 
                     uiThread {
                         if (logoutResponse.statusCode == LogoutResponse.StatusCode.OK) {
 
-                            val stopNotificationIntent = Intent(Constants.STOP_NOTIFICATION_ACTION)
+                            val stopNotificationIntent = Intent(STOP_NOTIFICATION_ACTION)
                             LocalBroadcastManager.getInstance(this@MainActivity).sendBroadcast(stopNotificationIntent)
 
-                            preferences.edit().putString(Constants.EMAIL_KEY, null).putString(Constants.PASSWORD_KEY, null).putString(Constants.SESSION_KEY, null).apply()
+                            preferences.edit().putString(EMAIL_KEY, null).putString(PASSWORD_KEY, null).putString(SESSION_KEY, null).apply()
                         }
 
                         startActivity(Intent(this@MainActivity, LoginActivity::class.java))
@@ -306,7 +318,7 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
                                     val intent = Intent(REFRESH_WORTH_TEXTVIEW_ACTION)
                                     intent.putExtra(TOTAL_WORTH_KEY, transaction.total)
                                     LocalBroadcastManager.getInstance(this@MainActivity).sendBroadcast(intent)
-                                    LocalBroadcastManager.getInstance(this@MainActivity).sendBroadcast(Intent(Constants.REFRESH_OWNED_STOCKS_ACTION))
+                                    LocalBroadcastManager.getInstance(this@MainActivity).sendBroadcast(Intent(REFRESH_OWNED_STOCKS_ACTION))
 
                                 } else { // Ask order transaction which means stocks were reserved and OrderFill made user gain cash
                                     val intent = Intent(REFRESH_CASH_ACTION)
@@ -333,7 +345,7 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
                                 intent.putExtra(TOTAL_WORTH_KEY, transaction.total)
                                 LocalBroadcastManager.getInstance(this@MainActivity).sendBroadcast(intent)
 
-                                intent = Intent(Constants.REFRESH_MORTGAGE_UPDATE_ACTION)
+                                intent = Intent(REFRESH_MORTGAGE_UPDATE_ACTION)
                                 intent.putExtra(MortgageFragment.STOCKS_ID_KEY, transaction.stockId)
                                 intent.putExtra(MortgageFragment.STOCKS_PRICE_KEY, transaction.price)
                                 intent.putExtra(MortgageFragment.STOCKS_QUANTITY_KEY, transaction.stockQuantity)
@@ -369,7 +381,7 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
 
                             TransactionType.CANCEL_ORDER_TRANSACTION -> {
                                 if (transaction.total != 0L) { // Here transaction.total will be positive
-                                    model.reservedCash -= Math.abs(transaction.total)
+                                    model.reservedCash -= abs(transaction.total)
                                     val intent = Intent(REFRESH_CASH_AND_TOTAL_ACTION) //  Since now TotalWorth = CashWorth + StockWorth
                                     intent.putExtra(TOTAL_WORTH_KEY, transaction.total)
                                     LocalBroadcastManager.getInstance(this@MainActivity).sendBroadcast(intent)
@@ -412,7 +424,7 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
         streamServiceStub.getMarketEventUpdates(marketEventsSubscriptionId,
                 object : StreamObserver<MarketEventUpdate> {
                     override fun onNext(value: MarketEventUpdate) {
-                        val refreshNewsIntent = Intent(Constants.REFRESH_NEWS_ACTION)
+                        val refreshNewsIntent = Intent(REFRESH_NEWS_ACTION)
                         LocalBroadcastManager.getInstance(this@MainActivity).sendBroadcast(refreshNewsIntent)
                     }
 
@@ -431,11 +443,11 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
         streamServiceStub.getStockPricesUpdates(stockPricesSubscriptionId,
                 object : StreamObserver<StockPricesUpdate> {
                     override fun onNext(value: StockPricesUpdate) {
-                        for (i in 1..Constants.NUMBER_OF_COMPANIES) {
+                        for (i in 1..NUMBER_OF_COMPANIES) {
                             if (value.pricesMap.containsKey(i)) {
                                 model.updateGlobalStockPrice(i, value.pricesMap[i] ?: 0)
-                                LocalBroadcastManager.getInstance(this@MainActivity).sendBroadcast(Intent(Constants.REFRESH_PRICE_TICKER_ACTION))
-                                LocalBroadcastManager.getInstance(this@MainActivity).sendBroadcast(Intent(Constants.REFRESH_STOCK_PRICES_ACTION))
+                                LocalBroadcastManager.getInstance(this@MainActivity).sendBroadcast(Intent(REFRESH_PRICE_TICKER_ACTION))
+                                LocalBroadcastManager.getInstance(this@MainActivity).sendBroadcast(Intent(REFRESH_STOCK_PRICES_ACTION))
                                 LocalBroadcastManager.getInstance(this@MainActivity).sendBroadcast(Intent(UPDATE_WORTH_VIA_STREAM_ACTION))
                             }
                         }
@@ -460,7 +472,7 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
                         val stockExchangeDataPointMap = value.stocksInExchangeMap
                         val tempGlobalStocks = model.globalStockDetails
 
-                        for (x in 1..Constants.NUMBER_OF_COMPANIES) {
+                        for (x in 1..NUMBER_OF_COMPANIES) {
                             if (stockExchangeDataPointMap.containsKey(x)) {
                                 val currentDataPoint = value.stocksInExchangeMap[x]
 
@@ -473,7 +485,7 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
                                 }
 
                                 model.updateGlobalStock(position, currentDataPoint!!.price, currentDataPoint.stocksInMarket, currentDataPoint.stocksInExchange)
-                                LocalBroadcastManager.getInstance(this@MainActivity).sendBroadcast(Intent(Constants.REFRESH_STOCKS_EXCHANGE_ACTION))
+                                LocalBroadcastManager.getInstance(this@MainActivity).sendBroadcast(Intent(REFRESH_STOCKS_EXCHANGE_ACTION))
                                 LocalBroadcastManager.getInstance(this@MainActivity).sendBroadcast(Intent(UPDATE_WORTH_VIA_STREAM_ACTION))
                             }
                         }
@@ -511,7 +523,7 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
     // Unsubscribes from all streams
     private fun unsubscribeFromAllStreams(shouldSubscribeAgain: Boolean) {
         doAsync {
-            if (ConnectionUtils.getConnectionInfo(this@MainActivity) && ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
+            if (ConnectionUtils.getConnectionInfo(this@MainActivity) && ConnectionUtils.isReachableByTcp(HOST, PORT)) {
                 for (subscriptionId in subscriptionIds) {
                     streamServiceBlockingStub.unsubscribe(UnsubscribeRequest.newBuilder().setSubscriptionId(subscriptionId).build())
                 }
@@ -582,7 +594,7 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
             override fun onAvailable(network: Network) {
                 super.onAvailable(network)
                 doAsync {
-                    if (ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
+                    if (ConnectionUtils.isReachableByTcp(HOST, PORT)) {
                         uiThread {
                             if (lostOnce) {
                                 subscribeToStreamsAsynchronously()
@@ -621,14 +633,12 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
 
                 while (drawerEdgeButton!!.alpha > 0.70) {
                     try {
-                        Thread.sleep(175)
+                        sleep(175)
                         runOnUiThread { drawerEdgeButton!!.alpha = (drawerEdgeButton!!.alpha - 0.01).toFloat() }
                     } catch (e: InterruptedException) {
                         e.printStackTrace()
                     }
-
                 }
-
             }
         }.start()
     }
@@ -638,7 +648,7 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
 
         if (newValue == oldValue) return
 
-        val formatter = DecimalFormat(Constants.PRICE_FORMAT)
+        val formatter = DecimalFormat(PRICE_FORMAT)
         val valueAnimator = ValueAnimator.ofObject(LongEvaluator(), oldValue, newValue)
         valueAnimator.duration = 450
         valueAnimator.addUpdateListener {
@@ -700,7 +710,7 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
         doAsync {
             if (ConnectionUtils.getConnectionInfo(this@MainActivity)) {
 
-                if (ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
+                if (ConnectionUtils.isReachableByTcp(HOST, PORT)) {
 
                     var response: SubscribeResponse = streamServiceBlockingStub.subscribe(SubscribeRequest.newBuilder().setDataStreamType(DataStreamType.STOCK_EXCHANGE).setDataStreamId("").build())
                     uiThread {
@@ -766,7 +776,7 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
         errorDialog?.getButton(AlertDialog.BUTTON_POSITIVE)?.isEnabled = false
         doAsync {
             if (ConnectionUtils.getConnectionInfo(this@MainActivity)) {
-                if (ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
+                if (ConnectionUtils.isReachableByTcp(HOST, PORT)) {
                     uiThread {
                         errorDialog?.dismiss()
                         navigateToLastOpenFragment()
