@@ -1,0 +1,91 @@
+package org.pragyan.dalal18.ui
+
+import android.content.Intent
+import android.content.SharedPreferences
+import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
+import androidx.lifecycle.lifecycleScope
+import dalalstreet.api.DalalActionServiceGrpc
+import dalalstreet.api.actions.ChangePasswordRequest
+import dalalstreet.api.actions.ChangePasswordResponse
+import io.grpc.ManagedChannel
+import kotlinx.android.synthetic.main.activity_reset_password.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import org.jetbrains.anko.contentView
+import org.jetbrains.anko.longToast
+import org.jetbrains.anko.toast
+import org.pragyan.dalal18.R
+import org.pragyan.dalal18.dagger.ContextModule
+import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent
+import org.pragyan.dalal18.utils.ConnectionUtils
+import org.pragyan.dalal18.utils.Constants
+import org.pragyan.dalal18.utils.hideKeyboard
+import javax.inject.Inject
+
+class ResetPasswordActivity : AppCompatActivity() {
+
+    @Inject
+    lateinit var channel: ManagedChannel
+
+    @Inject
+    lateinit var preferences: SharedPreferences
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_reset_password)
+
+        DaggerDalalStreetApplicationComponent.builder().contextModule(ContextModule(this)).build().inject(this)
+
+        val toolbar = findViewById<Toolbar>(R.id.resetPasswordToolBar)
+        setSupportActionBar(toolbar)
+        title = getString(R.string.app_name)
+
+        resetPasswordButton.setOnClickListener { onResetPasswordButtonClick() }
+
+        if(preferences.getString(Constants.EMAIL_KEY, null) != null) {
+            longToast("User already logged in")
+            finish()
+        }
+    }
+
+    private fun onResetPasswordButtonClick() {
+        if (temporaryPasswordEditText.text.toString().isBlank() || temporaryPasswordEditText.text.toString().isEmpty()) {
+            toast("Enter temporary password from email")
+        } else if (newPasswordEditText.text.toString().isBlank() || newPasswordEditText.text.toString().isEmpty()) {
+            toast("Enter new password")
+        } else if (confirmPasswordEditText.text.toString().isBlank() || confirmPasswordEditText.text.toString().isEmpty() ||
+                confirmPasswordEditText.text.toString() != newPasswordEditText.text.toString()) {
+            toast("Confirm password failed")
+        } else {
+            sendChangePasswordRequestAsynchronously(temporaryPasswordEditText.text.toString(), newPasswordEditText.text.toString())
+        }
+    }
+
+    private fun sendChangePasswordRequestAsynchronously(tempPassword: String, newPassword: String) = lifecycleScope.launch {
+
+        if (withContext(Dispatchers.IO) { ConnectionUtils.getConnectionInfo(this@ResetPasswordActivity) }) {
+            val changePasswordRequest = ChangePasswordRequest.newBuilder().setTempPassword(tempPassword).setNewPassword(newPassword).build()
+            val changePasswordResponse = withContext(Dispatchers.IO) { DalalActionServiceGrpc.newBlockingStub(channel).changePassword(changePasswordRequest) }
+
+            toast(changePasswordResponse.statusMessage)
+
+            if (changePasswordResponse.statusCode == ChangePasswordResponse.StatusCode.OK) {
+                startActivity(Intent(this@ResetPasswordActivity, LoginActivity::class.java))
+                finish()
+            }
+
+        } else {
+            contentView?.hideKeyboard()
+            toast("Server Unreachable")
+        }
+    }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        startActivity(Intent(this@ResetPasswordActivity, LoginActivity::class.java))
+        finish()
+    }
+}
