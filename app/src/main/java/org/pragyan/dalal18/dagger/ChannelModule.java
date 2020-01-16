@@ -27,7 +27,6 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
-import javax.net.ssl.X509TrustManager;
 
 import dagger.Module;
 import dagger.Provides;
@@ -41,46 +40,44 @@ class ChannelModule {
     @DalalStreetApplicationScope
     ManagedChannel getManagedChannel(Context context) {
 
-        return OkHttpChannelBuilder
+        try {
+            return OkHttpChannelBuilder
                     .forAddress(Constants.HOST, Constants.PORT)
-                    .sslSocketFactory(getSocketFactory())
+                    .sslSocketFactory(getSocketFactory(context))
                     .connectionSpec(ConnectionSpec.MODERN_TLS)
                     .hostnameVerifier((hostname, session) -> true)
                     .build();
+        } catch (KeyStoreException | CertificateException | IOException | NoSuchAlgorithmException | UnrecoverableKeyException |
+                KeyManagementException | GooglePlayServicesRepairableException | GooglePlayServicesNotAvailableException e) {
+            e.printStackTrace();
+        }
 
+        return null;
     }
 
-    private SSLSocketFactory getSocketFactory() {
+    private SSLSocketFactory getSocketFactory(Context context) throws KeyStoreException, CertificateException, NoSuchAlgorithmException, IOException, KeyManagementException, UnrecoverableKeyException, GooglePlayServicesNotAvailableException, GooglePlayServicesRepairableException {
 
-        try {
-            // Create a trust manager that does not validate certificate chains
-            final TrustManager[] trustAllCerts = new TrustManager[] {
-                    new X509TrustManager() {
-                        @Override
-                        public void checkClientTrusted(java.security.cert.X509Certificate[] chain, String authType) throws CertificateException {
-                        }
+        byte[] der = MiscellaneousUtils.SERVER_CERT.getBytes();
+        ByteArrayInputStream crtInputStream = new ByteArrayInputStream(der);
 
-                        @Override
-                        public void checkServerTrusted(java.security.cert.X509Certificate[] chain, String authType) throws CertificateException {
-                        }
+        KeyStore trustStore = KeyStore.getInstance(KeyStore.getDefaultType());
+        trustStore.load(null);
 
-                        @Override
-                        public java.security.cert.X509Certificate[] getAcceptedIssuers() {
-                            // returns array of certificate which are trusted
-                            return new java.security.cert.X509Certificate[]{};
-                        }
-                    }
-            };
+        CertificateFactory cert_factory = CertificateFactory.getInstance("X509");
+        Certificate cert = cert_factory.generateCertificate(crtInputStream);
+        trustStore.setCertificateEntry("cert", cert);
 
-            // Install the all-trusting trust manager
-            final SSLContext tlsContext = SSLContext.getInstance("TLS");
-            tlsContext.init(null, trustAllCerts, new java.security.SecureRandom());
-            // Create an ssl socket factory with our all-trusting manager
+        TrustManagerFactory trust_manager_factory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());trust_manager_factory.init(trustStore);
+        TrustManager[] trust_manager = trust_manager_factory.getTrustManagers();
 
-            return tlsContext.getSocketFactory();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
+        KeyManagerFactory kmf = KeyManagerFactory.getInstance("X509");
+        kmf.init(trustStore, null);
+        KeyManager[] keyManagers = kmf.getKeyManagers();
+
+        ProviderInstaller.installIfNeeded(context);
+        SSLContext tlsContext = SSLContext.getInstance("TLS");
+        tlsContext.init(keyManagers, trust_manager, null);
+
+        return tlsContext.getSocketFactory();
     }
 }

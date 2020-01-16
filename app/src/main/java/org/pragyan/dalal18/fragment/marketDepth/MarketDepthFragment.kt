@@ -10,11 +10,15 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.viewpager.widget.ViewPager
 import com.google.android.material.tabs.TabLayout
+import kotlinx.android.synthetic.main.fragment_company_description.*
 import org.pragyan.dalal18.R
 import org.pragyan.dalal18.adapter.DepthPagerAdapter
+import org.pragyan.dalal18.fragment.CompanyDescriptionFragment
+import org.pragyan.dalal18.utils.StockUtils
 
 class MarketDepthFragment : Fragment() {
 
+    private lateinit var companyName: String
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         val customView = inflater.inflate(R.layout.fragment_market_depth, container, false)
@@ -40,5 +44,12 @@ class MarketDepthFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         (activity as AppCompatActivity).supportActionBar?.title = resources.getString(R.string.market_depth)
+
+        val companyName = arguments?.getString(COMPANY_NAME) ?: "NOPE"
+        System.out.println("companyName: "+ companyName)
+    }
+
+    companion object {
+        const val COMPANY_NAME=""
     }
 }

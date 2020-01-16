@@ -180,13 +180,13 @@
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/no_of_stocks_input"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
         android:textColorHint="@color/neutral_font_color"
         app:layout_constraintBottom_toTopOf="@+id/order_price_input"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toEndOf="@id/guideline"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/orderFeeText">
@@ -195,7 +195,6 @@
             android:id="@+id/noOfStocksEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="48dp"
             android:ems="10"
             android:hint="@string/enter_the_number_of_stocks"
             android:inputType="number"
@@ -206,7 +205,7 @@
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/order_price_input"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_below="@+id/no_of_stocks_input"
         android:layout_alignStart="@+id/no_of_stocks_input"
@@ -215,7 +214,7 @@
         android:textColorHint="@color/neutral_font_color"
         android:visibility="visible"
         app:layout_constraintBottom_toTopOf="@+id/orderPriceWindowTextView"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toEndOf="@id/guideline"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/no_of_stocks_input">
 
@@ -230,6 +229,23 @@
             android:textColor="@color/neutral_font_color" />
 
     </com.google.android.material.textfield.TextInputLayout>
+
+    <Button
+        android:id="@+id/btn_market_depth"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/black_white_rounded_button"
+        android:fontFamily="@font/marcellus_sc"
+        android:padding="12dp"
+        android:text="@string/market_depth_trade_frag"
+        android:textColor="@color/neutral_font_color"
+        android:textSize="22sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/no_of_stocks_input"
+        app:layout_constraintTop_toBottomOf="@+id/no_of_stocks_input"
+        app:layout_constraintBottom_toTopOf="@id/order_price_input"
+        />
+
 
     <TextView
         android:id="@+id/orderPriceWindowTextView"
@@ -270,6 +286,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.6" />
+        app:layout_constraintGuide_percent="0.5" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
