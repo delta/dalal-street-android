@@ -1,19 +1,29 @@
 package org.pragyan.dalal18.ui
 
+import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.graphics.Color
 import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.inputmethod.InputMethodManager
+import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.lifecycleScope
 import com.google.android.material.snackbar.Snackbar
 import dalalstreet.api.DalalActionServiceGrpc
+import dalalstreet.api.actions.ForgotPasswordRequest
+import dalalstreet.api.actions.ForgotPasswordResponse
 import dalalstreet.api.actions.LoginRequest
 import dalalstreet.api.actions.LoginResponse
 import io.grpc.ManagedChannel
 import kotlinx.android.synthetic.main.activity_login.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.jetbrains.anko.contentView
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.toast
@@ -63,6 +73,7 @@ class LoginActivity : AppCompatActivity() {
 
         clickRegisterTextView.setOnClickListener { onRegisterButtonClick() }
         play_button.setOnClickListener { onLoginButtonClick() }
+        forgotPasswordTextView.setOnClickListener { onForgotPasswordClick() }
 
         startLoginProcess(false)
     }
@@ -90,7 +101,7 @@ class LoginActivity : AppCompatActivity() {
         doAsync {
             if (ConnectionUtils.getConnectionInfo(this@LoginActivity)) {
                 uiThread {
-                    if (validateEmail() && validatePassword()) {
+                    if (validateEmail(emailEditText) && validatePassword()) {
                         val email = emailEditText.text.toString()
                         val password = passwordEditText.text.toString()
                         signingInAlertDialog?.show()
@@ -107,7 +118,34 @@ class LoginActivity : AppCompatActivity() {
         startActivity(Intent(this, RegistrationActivity::class.java))
     }
 
-    private fun validateEmail(): Boolean {
+    private fun onForgotPasswordClick() {
+        val changePasswordView = LayoutInflater.from(this@LoginActivity).inflate(R.layout.change_password, null);
+        val emailEditText = changePasswordView.findViewById(R.id.changePasswordEmailEditText) as EditText
+
+        val changePasswordDialog = AlertDialog.Builder(this, R.style.AlertDialogTheme)
+                .setView(changePasswordView)
+                .setNegativeButton("Cancel") { dialog, _ ->
+                    emailEditText.hideKeyboard()
+                    dialog.dismiss()
+                }
+                .setCancelable(false)
+                .setPositiveButton("Reset") { dI, _ ->
+                    if (emailEditText.text.toString().isEmpty() || emailEditText.text.toString().isBlank() || !validateEmail(emailEditText)) {
+                        toast("Enter a valid Email ID")
+                        onForgotPasswordClick()
+                    } else {
+                        sendForgotPasswordRequestAsynchronously(emailEditText.text.toString())
+                        dI.dismiss()
+                    }
+                }
+                .create()
+
+        changePasswordDialog.show()
+        (getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager).toggleSoftInput(InputMethodManager.SHOW_FORCED, 0)
+        emailEditText.requestFocus()
+    }
+
+    private fun validateEmail(emailEditText: EditText): Boolean {
 
         if (emailEditText.text.toString().trim { it <= ' ' }.isEmpty()) {
             emailEditText.error = "Email is required"
@@ -154,7 +192,7 @@ class LoginActivity : AppCompatActivity() {
 
                         MiscellaneousUtils.sessionId = loginResponse.sessionId
 
-                        if (passwordEditText.text.toString() != "" || !passwordEditText.text.toString().isEmpty())
+                        if (passwordEditText.text.toString() != "" || passwordEditText.text.toString().isNotEmpty())
                             preferences.edit()
                                     .putString(Constants.EMAIL_KEY, loginResponse.user.email)
                                     .putString(Constants.PASSWORD_KEY, passwordEditText.text.toString())
@@ -243,6 +281,24 @@ class LoginActivity : AppCompatActivity() {
                     showSnackBar("Server Unreachable")
                 }
             }
+        }
+    }
+
+    private fun sendForgotPasswordRequestAsynchronously(email: String) = lifecycleScope.launch {
+
+        if (withContext(Dispatchers.IO) { ConnectionUtils.getConnectionInfo(this@LoginActivity) }) {
+            val forgotPasswordRequest = ForgotPasswordRequest.newBuilder().setEmail(email).build()
+            val forgotPasswordResponse = withContext(Dispatchers.IO) { DalalActionServiceGrpc.newBlockingStub(channel).forgotPassword(forgotPasswordRequest) }
+
+            toast(forgotPasswordResponse.statusMessage)
+
+            if (forgotPasswordResponse.statusCode == ForgotPasswordResponse.StatusCode.InvalidCredentialsError) {
+                onForgotPasswordClick()
+            }
+
+        } else {
+            contentView?.hideKeyboard()
+            toast("Server Unreachable")
         }
     }
 

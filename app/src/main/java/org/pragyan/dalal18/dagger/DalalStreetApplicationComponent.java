@@ -17,6 +17,7 @@ import org.pragyan.dalal18.notifications.NotificationService;
 import org.pragyan.dalal18.ui.LoginActivity;
 import org.pragyan.dalal18.ui.MainActivity;
 import org.pragyan.dalal18.ui.RegistrationActivity;
+import org.pragyan.dalal18.ui.ResetPasswordActivity;
 import org.pragyan.dalal18.ui.SplashActivity;
 
 import dagger.Component;
@@ -30,6 +31,7 @@ public interface DalalStreetApplicationComponent {
     void inject(MainActivity mainActivity);
     void inject(SplashActivity splashActivity);
     void inject(RegistrationActivity registrationActivity);
+    void inject(ResetPasswordActivity resetPasswordActivity);
 
     void inject(DepthTableFragment depthTableFragment);
     void inject(DepthGraphFragment depthGraphFragment);

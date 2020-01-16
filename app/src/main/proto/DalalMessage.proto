@@ -23,6 +23,8 @@ import "actions/GetMortgageDetails.proto";
 import "actions/GetLeaderboard.proto";
 import "actions/GetStockHistory.proto";
 import "actions/Register.proto";
+import "actions/ForgotPassword.proto";
+import "actions/ChangePassword.proto";
 
 import "datastreams/Subscribe.proto";
 import "datastreams/MarketDepth.proto";
@@ -132,20 +134,22 @@ service DalalActionService {
 	rpc GetLeaderboard(actions.GetLeaderboardRequest)					returns (actions.GetLeaderboardResponse);
 	rpc GetMarketEvents(actions.GetMarketEventsRequest)     			returns (actions.GetMarketEventsResponse);
 	rpc GetNotifications(actions.GetNotificationsRequest)   			returns (actions.GetNotificationsResponse);
-	rpc GetStockHistory(actions.GetStockHistoryRequest)					returns (actions.GetStockHistoryResponse);
+	rpc GetStockHistory(actions.GetStockHistoryRequest)						returns (actions.GetStockHistoryResponse);
 
 	// Auth
 	rpc Login(actions.LoginRequest) 									returns (actions.LoginResponse);
 	rpc Logout(actions.LogoutRequest) 									returns (actions.LogoutResponse);
 	rpc Register(actions.RegisterRequest)								returns (actions.RegisterResponse);
+	rpc ForgotPassword(actions.ForgotPasswordRequest)                   returns (actions.ForgotPasswordResponse);
+	rpc ChangePassword(actions.ChangePasswordRequest)                   returns (actions.ChangePasswordResponse);
 
 	//Bots
 	rpc GetPortfolio(actions.GetPortfolioRequest)						returns (actions.GetPortfolioResponse);
-	rpc CreateBot(actions.CreateBotRequest)							    returns (actions.CreateBotResponse);
+	rpc CreateBot(actions.CreateBotRequest)							returns (actions.CreateBotResponse);
 
 	//Admin
 	rpc SendNews(actions.SendNewsRequest)								returns (actions.SendNewsResponse);
-    rpc SendDividends(actions.SendDividendsRequest)     			    returns (actions.SendDividendsResponse);
+  rpc SendDividends(actions.SendDividendsRequest)     returns (actions.SendDividendsResponse);
 
 }
 
