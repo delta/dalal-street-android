@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -12,20 +12,26 @@
         android:background="?colorPrimary"
         android:elevation="8dp"
         android:orientation="horizontal"
-        android:theme="@style/Base.ThemeOverlay.AppCompat.Dark" />
+        android:theme="@style/Base.ThemeOverlay.AppCompat.Dark"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.cardview.widget.CardView
         android:id="@+id/login_cardView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:layout_margin="10dp"
+        android:layout_margin="8dp"
         android:clickable="true"
         android:elevation="10dp"
         android:focusable="true"
-        app:cardCornerRadius="12dp">
+        app:cardCornerRadius="12dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-        <RelativeLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_below="@id/login_toolbar"
@@ -36,12 +42,15 @@
                 android:id="@+id/login_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
                 android:layout_marginTop="12dp"
                 android:fontFamily="@font/marcellus_sc"
                 android:text="@string/login_text"
                 android:textColor="@color/neutral_font_color"
-                android:textSize="40sp" />
+                android:textSize="40sp"
+                app:layout_constraintBottom_toTopOf="@id/email_input"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/email_input"
@@ -49,8 +58,12 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/login_text"
                 android:layout_marginTop="12dp"
-                android:padding="12dp"
-                android:textColorHint="@color/neutral_font_color">
+                android:padding="8dp"
+                android:textColorHint="@color/neutral_font_color"
+                app:layout_constraintBottom_toTopOf="@id/password_input"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/login_text">
 
                 <EditText
                     android:id="@+id/emailEditText"
@@ -72,8 +85,12 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/email_input"
                 android:layout_marginTop="12dp"
-                android:padding="12dp"
+                android:padding="8dp"
                 android:textColorHint="@color/neutral_font_color"
+                app:layout_constraintBottom_toTopOf="@id/forgotPasswordTextView"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/email_input"
                 app:passwordToggleEnabled="true"
                 app:passwordToggleTint="@color/neutral_font_color">
 
@@ -91,6 +108,20 @@
 
             </com.google.android.material.textfield.TextInputLayout>
 
+            <TextView
+                android:id="@+id/forgotPasswordTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/password_input"
+                android:layout_alignStart="@id/password_input"
+                android:layout_marginStart="12dp"
+                android:text="@string/forgot_password_click_here"
+                android:textColor="@color/neon_orange"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toTopOf="@id/play_button"
+                app:layout_constraintStart_toStartOf="@id/password_input"
+                app:layout_constraintTop_toBottomOf="@id/password_input" />
+
             <Button
                 android:id="@+id/play_button"
                 android:layout_width="match_parent"
@@ -104,22 +135,29 @@
                 android:background="@drawable/black_green_rounded_button"
                 android:text="@string/play"
                 android:textColor="@color/neutral_font_color"
-                android:textSize="22sp" />
+                android:textSize="22sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/forgotPasswordTextView" />
 
-        </RelativeLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.cardview.widget.CardView>
 
     <TextView
         android:id="@+id/clickRegisterTextView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/login_cardView"
+        android:layout_height="0dp"
         android:fontFamily="@font/kreon_light"
         android:gravity="center"
         android:text="@string/not_registered_click_here_to_register"
         android:textColor="@color/neon_blue"
         android:textSize="18sp"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/login_cardView" />
 
-</RelativeLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

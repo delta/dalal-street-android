@@ -9,6 +9,8 @@ import "actions/Logout.proto";
 import "actions/MortgageStocks.proto";
 import "actions/PlaceOrder.proto";
 import "actions/RetrieveMortgageStocks.proto";
+import "actions/SendNews.proto";
+import "actions/SendDividends.proto";
 
 import "actions/GetPortfolio.proto";
 import "actions/CreateBot.proto";
@@ -130,7 +132,7 @@ service DalalActionService {
 	rpc GetLeaderboard(actions.GetLeaderboardRequest)					returns (actions.GetLeaderboardResponse);
 	rpc GetMarketEvents(actions.GetMarketEventsRequest)     			returns (actions.GetMarketEventsResponse);
 	rpc GetNotifications(actions.GetNotificationsRequest)   			returns (actions.GetNotificationsResponse);
-	rpc GetStockHistory(actions.GetStockHistoryRequest)						returns (actions.GetStockHistoryResponse);
+	rpc GetStockHistory(actions.GetStockHistoryRequest)					returns (actions.GetStockHistoryResponse);
 
 	// Auth
 	rpc Login(actions.LoginRequest) 									returns (actions.LoginResponse);
@@ -139,7 +141,11 @@ service DalalActionService {
 
 	//Bots
 	rpc GetPortfolio(actions.GetPortfolioRequest)						returns (actions.GetPortfolioResponse);
-	rpc CreateBot(actions.CreateBotRequest)							returns (actions.CreateBotResponse);
+	rpc CreateBot(actions.CreateBotRequest)							    returns (actions.CreateBotResponse);
+
+	//Admin
+	rpc SendNews(actions.SendNewsRequest)								returns (actions.SendNewsResponse);
+    rpc SendDividends(actions.SendDividendsRequest)     			    returns (actions.SendDividendsResponse);
 
 }
 
