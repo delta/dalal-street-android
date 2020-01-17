@@ -9,11 +9,26 @@ import org.pragyan.dalal18.fragment.marketDepth.DepthTableFragment
 
 class DepthPagerAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm) {
 
+    private var companyName = "Not Known"
+
+    fun setCompanyName(name: String) {
+        companyName=name
+    }
+
     override fun getItem(position: Int): Fragment {
 
+        if(companyName=="Not Known")
         return when (position) {
             0 -> DepthTableFragment()
             else -> DepthGraphFragment()
+        }
+        else {
+            val a = DepthTableFragment()
+            a.setCompany(companyName)
+            return when (position) {
+                0 -> a
+                else -> DepthGraphFragment()
+            }
         }
     }
 

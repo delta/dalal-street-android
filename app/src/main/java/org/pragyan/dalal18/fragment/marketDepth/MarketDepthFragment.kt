@@ -27,8 +27,15 @@ class MarketDepthFragment : Fragment() {
         val viewPager = customView.findViewById<ViewPager>(R.id.content_viewPager)
         val tabLayout = customView.findViewById<TabLayout>(R.id.tab_headings)
 
+        val depthPagerAdapter = DepthPagerAdapter(childFragmentManager)
+
+        val companyName = arguments?.getString(COMPANY_NAME) ?: "No Company"
+        if(companyName!="No Company") {
+            depthPagerAdapter.setCompanyName(companyName)
+        }
+
         // Set adapter to viewpager and custom colors to tabLayout
-        viewPager.adapter = DepthPagerAdapter(childFragmentManager)
+        viewPager.adapter = depthPagerAdapter
         tabLayout.setupWithViewPager(viewPager)
 
         if (context != null) {
@@ -44,9 +51,6 @@ class MarketDepthFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         (activity as AppCompatActivity).supportActionBar?.title = resources.getString(R.string.market_depth)
-
-        val companyName = arguments?.getString(COMPANY_NAME) ?: "NOPE"
-        System.out.println("companyName: "+ companyName)
     }
 
     companion object {

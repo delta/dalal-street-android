@@ -56,6 +56,7 @@ class DepthTableFragment : Fragment() {
     private var subscriptionId: SubscriptionId? = null
     private var prevSubscriptionId: SubscriptionId? = null
 
+    private var companyNameSelected = ""
 
     private val refreshMarketDepth = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
@@ -83,6 +84,10 @@ class DepthTableFragment : Fragment() {
                 loadingDialog?.dismiss()
             }
         }
+    }
+
+    fun setCompany(companyName: String) {
+        this.companyNameSelected=companyName
     }
 
     override fun onAttach(context: Context) {
@@ -128,17 +133,30 @@ class DepthTableFragment : Fragment() {
         }
 
         val arrayAdapter = ArrayAdapter(activity!!, R.layout.company_spinner_item, StockUtils.getCompanyNamesArray())
+
+        if(companyNameSelected!="") {
+            companySpinner.hint = companyNameSelected
+            bidArrayList.clear()
+            askArrayList.clear()
+            getValues(companyNameSelected)
+            unsubscribe(prevSubscriptionId)
+
+            if (activity != null && isAdded) {
+                loadingDialog?.show()
+                getCompanyProfileAsynchronously(companyNameSelected)
+            }
+        }
+
         with(companySpinner) {
             setAdapter(arrayAdapter)
             setOnItemClickListener { _, _, _, _ ->
                 val currentCompany = companySpinner.text.toString()
+
                 bidArrayList.clear()
                 askArrayList.clear()
                 getValues(currentCompany)
                 unsubscribe(prevSubscriptionId)
-                current_stock_price_layout.visibility = View.INVISIBLE
-                ask_depth_layout.visibility = View.INVISIBLE
-                bid_depth_layout.visibility = View.INVISIBLE
+
                 if (activity != null && isAdded) {
                     loadingDialog?.show()
                     getCompanyProfileAsynchronously(currentCompany)
