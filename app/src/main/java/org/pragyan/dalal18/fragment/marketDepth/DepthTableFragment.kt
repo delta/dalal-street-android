@@ -9,11 +9,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
+import android.widget.Spinner
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner
 import dalalstreet.api.DalalActionServiceGrpc
 import dalalstreet.api.DalalStreamServiceGrpc
 import dalalstreet.api.actions.GetCompanyProfileRequest
@@ -353,7 +355,6 @@ class DepthTableFragment : Fragment() {
 
         if(companyNameSelected!=null) {
             val currentCompany = companyNameSelected
-            companySpinner.hint= currentCompany
 
             bidArrayList.clear()
             askArrayList.clear()
@@ -363,6 +364,7 @@ class DepthTableFragment : Fragment() {
             if (activity != null && isAdded) {
                 loadingDialog?.show()
                 getCompanyProfileAsynchronously(currentCompany)
+                companySpinner.hint = currentCompany
             }
         }
 

@@ -301,7 +301,6 @@ class DepthGraphFragment : Fragment() {
 
         if(companyNameSelected!=null) {
             currentCompany = companyNameSelected
-            graph_company_spinner.hint= companyNameSelected
 
             stockHistoryList.clear()
             xVals.clear()
@@ -313,6 +312,7 @@ class DepthGraphFragment : Fragment() {
             market_depth_chart.clearFocus()
             if (activity != null && isAdded) {
                 loadStockHistoryAsynchronously()
+                graph_company_spinner.hint = companyNameSelected
             }
         }
     }
