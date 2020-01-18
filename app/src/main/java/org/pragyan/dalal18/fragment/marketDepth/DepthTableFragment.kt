@@ -59,6 +59,7 @@ class DepthTableFragment : Fragment() {
     private var subscriptionId: SubscriptionId? = null
     private var prevSubscriptionId: SubscriptionId? = null
 
+
     private val refreshMarketDepth = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             if (activity != null && isAdded) {
