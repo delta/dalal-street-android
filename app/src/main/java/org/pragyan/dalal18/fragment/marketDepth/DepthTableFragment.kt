@@ -136,19 +136,6 @@ class DepthTableFragment : Fragment() {
 
         val arrayAdapter = ArrayAdapter(activity!!, R.layout.company_spinner_item, StockUtils.getCompanyNamesArray())
 
-        if(companyNameSelected!=null) {
-            companySpinner.hint = companyNameSelected
-            bidArrayList.clear()
-            askArrayList.clear()
-            getValues(companyNameSelected!!)
-            unsubscribe(prevSubscriptionId)
-
-            if (activity != null && isAdded) {
-                loadingDialog?.show()
-                getCompanyProfileAsynchronously(companyNameSelected!!)
-            }
-        }
-
         with(companySpinner) {
             setAdapter(arrayAdapter)
             setOnItemClickListener { _, _, _, _ ->
@@ -366,6 +353,8 @@ class DepthTableFragment : Fragment() {
                 loadingDialog?.show()
                 getCompanyProfileAsynchronously(currentCompany)
                 companySpinner.hint = currentCompany
+                companySpinner.setText(companyNameSelected)
+                System.out.println("called and new data added table"+ companyNameSelected)
             }
         }
 

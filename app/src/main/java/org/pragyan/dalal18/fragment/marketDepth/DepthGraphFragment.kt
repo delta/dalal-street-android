@@ -103,12 +103,6 @@ class DepthGraphFragment : Fragment() {
             setAdapter(arrayAdapter)
             isSelected = false
 
-            if(companyNameSelected!=null)
-            {
-                graph_company_spinner.setHint(companyNameSelected)
-                currentCompany=companyNameSelected
-            }
-
             setOnItemClickListener { _, _, _, _ ->
                 currentCompany = graph_company_spinner.text.toString()
 
@@ -312,7 +306,9 @@ class DepthGraphFragment : Fragment() {
             market_depth_chart.clearFocus()
             if (activity != null && isAdded) {
                 loadStockHistoryAsynchronously()
-                graph_company_spinner.hint = companyNameSelected
+                graph_company_spinner.setText(companyNameSelected)
+
+                System.out.println("called and new data added graph"+ companyNameSelected)
             }
         }
     }
