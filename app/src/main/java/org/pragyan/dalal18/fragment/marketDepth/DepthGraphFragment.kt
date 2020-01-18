@@ -1,6 +1,7 @@
 package org.pragyan.dalal18.fragment.marketDepth
 
 import android.content.Context
+import android.content.SharedPreferences
 import android.graphics.Color
 import android.graphics.Paint
 import android.os.Bundle
@@ -33,6 +34,8 @@ import org.pragyan.dalal18.data.DalalViewModel
 import org.pragyan.dalal18.data.StockHistory
 import org.pragyan.dalal18.utils.ConnectionUtils
 import org.pragyan.dalal18.utils.Constants
+import org.pragyan.dalal18.utils.Constants.PREF_GPH
+import org.pragyan.dalal18.utils.Constants.PREF_MKT
 import org.pragyan.dalal18.utils.MiscellaneousUtils.parseDate
 import java.text.ParseException
 import java.text.SimpleDateFormat
@@ -45,6 +48,9 @@ class DepthGraphFragment : Fragment() {
     @Inject
     lateinit var actionServiceBlockingStub: DalalActionServiceGrpc.DalalActionServiceBlockingStub
 
+    @Inject
+    lateinit var preferences: SharedPreferences
+
     private lateinit var model: DalalViewModel
 
     private var xVals = ArrayList<String>()
@@ -56,6 +62,7 @@ class DepthGraphFragment : Fragment() {
 
     private var currentCompany: String? = null
     private var currentInterval: String? = null
+
 
     override fun onAttach(context: Context) {
         super.onAttach(context)

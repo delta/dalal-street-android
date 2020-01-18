@@ -33,6 +33,10 @@ import org.pragyan.dalal18.data.DalalViewModel
 import org.pragyan.dalal18.data.MarketDepth
 import org.pragyan.dalal18.utils.ConnectionUtils
 import org.pragyan.dalal18.utils.Constants
+import org.pragyan.dalal18.utils.Constants.PREF_GPH
+import org.pragyan.dalal18.utils.Constants.PREF_MKT
+import org.pragyan.dalal18.utils.StockUtils
+import org.pragyan.dalal18.utils.StockUtils.getStockIdFromCompanyName
 import java.text.DecimalFormat
 import java.util.*
 import javax.inject.Inject
@@ -45,6 +49,9 @@ class DepthTableFragment : Fragment() {
     @Inject
     lateinit var streamServiceStub: DalalStreamServiceGrpc.DalalStreamServiceStub
     private lateinit var model: DalalViewModel
+
+    @Inject
+    lateinit var preferences: SharedPreferences
 
     private var bidArrayList = mutableListOf<MarketDepth>()
     private var askArrayList = mutableListOf<MarketDepth>()
