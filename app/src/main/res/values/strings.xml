@@ -416,6 +416,13 @@
     <string name="owned">Owned</string>
     <string name="unread_background_circle">Unread background circle</string>
     <string name="stocks">STOCKS(₹)</string>
+    <string name="forgot_password_click_here">Forgot Password? Click here</string>
+    <string name="enter_your_email_id">Enter your email ID</string>
+    <string name="filter_dalal_reset_password">Dalal Street</string>
+    <string name="change_password">Change Password</string>
+    <string name="temporary_password">Temporary Password</string>
+    <string name="new_password">New Password</string>
+    <string name="reset">Reset</string>
     <string name="market_depth_trade_frag">MARKET\nDEPTH</string>
     <string-array name="intervalType">
         <item>1 min</item>
