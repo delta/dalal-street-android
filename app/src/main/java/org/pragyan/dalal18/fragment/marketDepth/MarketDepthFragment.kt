@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.viewpager.widget.ViewPager
 import com.google.android.material.tabs.TabLayout
 import kotlinx.android.synthetic.main.fragment_company_description.*
@@ -27,11 +28,32 @@ class MarketDepthFragment : Fragment() {
         val viewPager = customView.findViewById<ViewPager>(R.id.content_viewPager)
         val tabLayout = customView.findViewById<TabLayout>(R.id.tab_headings)
 
-        val depthPagerAdapter = DepthPagerAdapter(childFragmentManager)
+        tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+            override fun onTabReselected(tab: TabLayout.Tab?) {
+
+            }
+
+            override fun onTabUnselected(tab: TabLayout.Tab?) {
+            }
+
+            override fun onTabSelected(tab: TabLayout.Tab?) {
+                if(tab?.position ?:1 ==1)
+                {
+
+                }
+                else {
+
+                }
+            }
+
+        })
+
+        val depthPagerAdapter = DepthPagerAdapter(childFragmentManager, FragmentStatePagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT)
 
         val companyName = arguments?.getString(COMPANY_NAME) ?: "No Company"
+
         if(companyName!="No Company") {
-            depthPagerAdapter.setCompanyName(companyName)
+            DepthPagerAdapter.companyName = companyName
         }
 
         // Set adapter to viewpager and custom colors to tabLayout

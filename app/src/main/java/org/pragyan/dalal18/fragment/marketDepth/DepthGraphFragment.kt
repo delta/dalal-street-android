@@ -21,10 +21,12 @@ import dalalstreet.api.DalalActionServiceGrpc
 import dalalstreet.api.actions.GetStockHistoryRequest
 import dalalstreet.api.actions.StockHistoryResolution
 import kotlinx.android.synthetic.main.fragment_depth_graph.*
+import kotlinx.android.synthetic.main.fragment_depth_table.*
 import org.jetbrains.anko.backgroundColor
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
 import org.pragyan.dalal18.R
+import org.pragyan.dalal18.adapter.DepthPagerAdapter
 import org.pragyan.dalal18.dagger.ContextModule
 import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent
 import org.pragyan.dalal18.data.StockHistory
@@ -53,6 +55,10 @@ class DepthGraphFragment : Fragment() {
 
     private var currentCompany: String? =  null
     private var currentInterval : String? = null
+
+    fun setCompany(companyName: String) {
+        companyNameSelected=companyName
+    }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -89,14 +95,23 @@ class DepthGraphFragment : Fragment() {
             setPinchZoom(true)
             setDrawGridBackground(false)
             legend.isEnabled = false
+
         }
 
         val arrayAdapter = ArrayAdapter(activity!!, R.layout.company_spinner_item, StockUtils.getCompanyNamesArray())
         with(graph_company_spinner) {
             setAdapter(arrayAdapter)
             isSelected = false
+
+            if(companyNameSelected!=null)
+            {
+                graph_company_spinner.setHint(companyNameSelected)
+                currentCompany=companyNameSelected
+            }
+
             setOnItemClickListener { _, _, _, _ ->
                 currentCompany = graph_company_spinner.text.toString()
+
                 stockHistoryList.clear()
                 xVals.clear()
                 yVals.clear()
@@ -108,6 +123,7 @@ class DepthGraphFragment : Fragment() {
                 if (activity != null && isAdded) {
                     loadStockHistoryAsynchronously()
                 }
+                DepthTableFragment.companyNameSelected = currentCompany
             }
         }
 
@@ -127,11 +143,10 @@ class DepthGraphFragment : Fragment() {
                     market_depth_chart.clear()
                 }
                 market_depth_chart.clearFocus()
-                if (activity != null && isAdded) {
-                    loadStockHistoryAsynchronously()
-                }
             }
-
+            if (activity != null && isAdded) {
+                loadStockHistoryAsynchronously()
+            }
         }
     }
 
@@ -279,5 +294,30 @@ class DepthGraphFragment : Fragment() {
     private fun convertToString(date: Date?): String {
         val df = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.ENGLISH)
         return df.format(date)
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        if(companyNameSelected!=null) {
+            currentCompany = companyNameSelected
+            graph_company_spinner.hint= companyNameSelected
+
+            stockHistoryList.clear()
+            xVals.clear()
+            yVals.clear()
+            if (!market_depth_chart.isEmpty) {
+                market_depth_chart.invalidate()
+                market_depth_chart.clear()
+            }
+            market_depth_chart.clearFocus()
+            if (activity != null && isAdded) {
+                loadStockHistoryAsynchronously()
+            }
+        }
+    }
+
+    companion object {
+        public var companyNameSelected: String? = null
     }
 }

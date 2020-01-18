@@ -24,6 +24,7 @@ import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.toast
 import org.jetbrains.anko.uiThread
 import org.pragyan.dalal18.R
+import org.pragyan.dalal18.adapter.DepthPagerAdapter
 import org.pragyan.dalal18.adapter.MarketDepthRecyclerAdapter
 import org.pragyan.dalal18.dagger.ContextModule
 import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent
@@ -56,8 +57,6 @@ class DepthTableFragment : Fragment() {
     private var subscriptionId: SubscriptionId? = null
     private var prevSubscriptionId: SubscriptionId? = null
 
-    private var companyNameSelected = ""
-
     private val refreshMarketDepth = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             if (activity != null && isAdded) {
@@ -87,7 +86,7 @@ class DepthTableFragment : Fragment() {
     }
 
     fun setCompany(companyName: String) {
-        this.companyNameSelected=companyName
+        companyNameSelected=companyName
     }
 
     override fun onAttach(context: Context) {
@@ -134,16 +133,16 @@ class DepthTableFragment : Fragment() {
 
         val arrayAdapter = ArrayAdapter(activity!!, R.layout.company_spinner_item, StockUtils.getCompanyNamesArray())
 
-        if(companyNameSelected!="") {
+        if(companyNameSelected!=null) {
             companySpinner.hint = companyNameSelected
             bidArrayList.clear()
             askArrayList.clear()
-            getValues(companyNameSelected)
+            getValues(companyNameSelected!!)
             unsubscribe(prevSubscriptionId)
 
             if (activity != null && isAdded) {
                 loadingDialog?.show()
-                getCompanyProfileAsynchronously(companyNameSelected)
+                getCompanyProfileAsynchronously(companyNameSelected!!)
             }
         }
 
@@ -151,6 +150,7 @@ class DepthTableFragment : Fragment() {
             setAdapter(arrayAdapter)
             setOnItemClickListener { _, _, _, _ ->
                 val currentCompany = companySpinner.text.toString()
+                DepthGraphFragment.companyNameSelected = currentCompany
 
                 bidArrayList.clear()
                 askArrayList.clear()
@@ -350,12 +350,33 @@ class DepthTableFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         val intentFilter = IntentFilter()
+
+        if(companyNameSelected!=null) {
+            val currentCompany = companyNameSelected
+            companySpinner.hint= currentCompany
+
+            bidArrayList.clear()
+            askArrayList.clear()
+            getValues(currentCompany!!)
+            unsubscribe(prevSubscriptionId)
+
+            if (activity != null && isAdded) {
+                loadingDialog?.show()
+                getCompanyProfileAsynchronously(currentCompany)
+            }
+        }
+
         intentFilter.addAction(Constants.REFRESH_MARKET_DEPTH)
         LocalBroadcastManager.getInstance(context!!).registerReceiver(refreshMarketDepth, intentFilter)
+
     }
 
     override fun onPause() {
         super.onPause()
         LocalBroadcastManager.getInstance(context!!).unregisterReceiver(refreshMarketDepth)
+    }
+
+    companion object {
+        public var companyNameSelected: String? = null
     }
 }
