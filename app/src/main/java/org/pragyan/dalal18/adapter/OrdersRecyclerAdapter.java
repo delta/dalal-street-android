@@ -155,10 +155,10 @@ public class OrdersRecyclerAdapter extends RecyclerView.Adapter<OrdersRecyclerAd
 
         return openOrdersList.size() <= 0;
     }
-    public int getOrderIdfromposition(int pos){
+    public int getOrderIdFromPosition(int pos){
         return openOrdersList.get(pos).getOrderId();
     }
-    public boolean gettypefromposition(int pos){
+    public boolean getTypeFromPosition(int pos){
         return openOrdersList.get(pos).isBid();
     }
     public void swipedata(int id,boolean bid){

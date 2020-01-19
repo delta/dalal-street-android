@@ -2,8 +2,6 @@ package org.pragyan.dalal18.fragment
 
 
 import android.content.Context
-import android.graphics.*
-import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -14,7 +12,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -39,6 +36,7 @@ import org.pragyan.dalal18.data.DalalViewModel
 import org.pragyan.dalal18.data.Order
 import org.pragyan.dalal18.utils.ConnectionUtils
 import org.pragyan.dalal18.utils.Constants
+import org.pragyan.dalal18.utils.swipeToDeleteCallBack
 import javax.inject.Inject
 
 class OrdersFragment : Fragment(), OrdersRecyclerAdapter.OnOrderClickListener, SwipeRefreshLayout.OnRefreshListener {
@@ -104,7 +102,10 @@ class OrdersFragment : Fragment(), OrdersRecyclerAdapter.OnOrderClickListener, S
 
         }
 
-        applySwipeFeature()
+        val recyclerView = view.findViewById<RecyclerView>(R.id.orders_recyclerView)
+        val  callback = swipeToDeleteCallBack(context!!,ordersRecyclerAdapter!!,recyclerView)
+        callback.attach()
+
 
     }
 
@@ -264,66 +265,4 @@ class OrdersFragment : Fragment(), OrdersRecyclerAdapter.OnOrderClickListener, S
     }
 
     override fun onRefresh() = getOpenOrdersAsynchronously()
-
-    fun applySwipeFeature(){
-
-
-        val itemTouchHelperCallback =object : ItemTouchHelper.SimpleCallback(0,ItemTouchHelper.LEFT  or ItemTouchHelper.RIGHT){
-
-            val mBackground : ColorDrawable ?=null
-            override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder): Boolean {
-                return false
-            }
-
-            override fun onChildDraw(c: Canvas, recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, dX: Float, dY: Float, actionState: Int, isCurrentlyActive: Boolean) {
-                super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
-                val itemView =viewHolder.itemView
-                val itemHeight =itemView.height
-                val deleteDrawable =resources.getDrawable(R.drawable.delete_order)
-                val intrinsicWidth = deleteDrawable.intrinsicWidth
-                val intrinsicHeight =deleteDrawable.intrinsicHeight
-                var  mClearPaint  =Paint()
-                mClearPaint.setXfermode( PorterDuffXfermode(PorterDuff.Mode.CLEAR))
-                // mClearPaint.color=  resources.getColor(R.color.neon_orange)
-
-                val isCancelled= dX==0f && ! isCurrentlyActive
-                if(isCancelled){
-                    c.drawRect(itemView.right.toFloat()+dX, itemView.top.toFloat() ,itemView.right.toFloat(),itemView.bottom.toFloat(),mClearPaint)
-                    return
-                }
-                mBackground?.color = resources.getColor(R.color.neon_green)
-                mBackground?.setBounds(itemView.right + dX.toInt() ,itemView.top, itemView.right,itemView.bottom)
-                mBackground?.draw(c)
-
-                val deleteIconTop =itemView.top + (itemHeight - intrinsicHeight) / 2
-                val deleteIconMargin = ((itemHeight - intrinsicHeight) / 2)
-                val deleteIconLeft = itemView.right - deleteIconMargin - intrinsicWidth
-                val deleteIconRight =  itemView.right - deleteIconMargin
-                val deleteIconBottom = deleteIconTop + intrinsicHeight
-                deleteDrawable.level=0
-                deleteDrawable.setBounds(deleteIconLeft, deleteIconTop, deleteIconRight, deleteIconBottom)
-                deleteDrawable.draw(c)
-                super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
-
-            }
-
-            override fun getSwipeThreshold(viewHolder: RecyclerView.ViewHolder): Float {
-                return 0.7f
-            }
-
-            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-
-                val position = viewHolder.adapterPosition
-                val orderid = ordersRecyclerAdapter!!.getOrderIdfromposition(position)
-                val isbid=ordersRecyclerAdapter!!.gettypefromposition(position)
-                ordersRecyclerAdapter!!.swipedata(orderid,isbid)
-                ordersRecyclerAdapter!!.notifyItemRemoved(position)
-
-            }
-
-        }
-        val itemTouchHelper =ItemTouchHelper(itemTouchHelperCallback)
-        itemTouchHelper.attachToRecyclerView(orders_recyclerView)
-    }
-
 }
