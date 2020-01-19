@@ -155,6 +155,15 @@ public class OrdersRecyclerAdapter extends RecyclerView.Adapter<OrdersRecyclerAd
 
         return openOrdersList.size() <= 0;
     }
+    public int getOrderIdfromposition(int pos){
+        return openOrdersList.get(pos).getOrderId();
+    }
+    public boolean gettypefromposition(int pos){
+        return openOrdersList.get(pos).isBid();
+    }
+    public void swipedata(int id,boolean bid){
+        listener.onCancelOrderClick(id,bid);
+    }
 
     class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
