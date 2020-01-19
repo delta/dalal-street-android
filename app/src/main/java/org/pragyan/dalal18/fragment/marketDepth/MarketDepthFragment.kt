@@ -19,7 +19,6 @@ import org.pragyan.dalal18.utils.StockUtils
 
 class MarketDepthFragment : Fragment() {
 
-    private lateinit var companyName: String
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         val customView = inflater.inflate(R.layout.fragment_market_depth, container, false)
@@ -29,12 +28,6 @@ class MarketDepthFragment : Fragment() {
         val tabLayout = customView.findViewById<TabLayout>(R.id.tab_headings)
 
         val depthPagerAdapter = DepthPagerAdapter(childFragmentManager, FragmentStatePagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT)
-
-        /*val companyName = arguments?.getString(COMPANY_NAME) ?: "No Company"
-
-        if(companyName!="No Company") {
-            DepthPagerAdapter.companyName = companyName
-        }*/
 
         // Set adapter to viewpager and custom colors to tabLayout
         viewPager.adapter = depthPagerAdapter
@@ -53,9 +46,5 @@ class MarketDepthFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         (activity as AppCompatActivity).supportActionBar?.title = resources.getString(R.string.market_depth)
-    }
-
-    companion object {
-        const val COMPANY_NAME=""
     }
 }
