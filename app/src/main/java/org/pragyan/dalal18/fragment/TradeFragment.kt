@@ -29,7 +29,7 @@ import org.pragyan.dalal18.R
 import org.pragyan.dalal18.dagger.ContextModule
 import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent
 import org.pragyan.dalal18.data.DalalViewModel
-import org.pragyan.dalal18.fragment.marketDepth.CompanyNameViewModel
+import org.pragyan.dalal18.data.CompanyNameViewModel
 import org.pragyan.dalal18.utils.ConnectionUtils
 import org.pragyan.dalal18.utils.Constants
 import org.pragyan.dalal18.utils.Constants.ORDER_FEE_RATE

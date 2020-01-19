@@ -28,6 +28,7 @@ import org.pragyan.dalal18.R
 import org.pragyan.dalal18.adapter.MarketDepthRecyclerAdapter
 import org.pragyan.dalal18.dagger.ContextModule
 import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent
+import org.pragyan.dalal18.data.CompanyNameViewModel
 import org.pragyan.dalal18.data.MarketDepth
 import org.pragyan.dalal18.utils.ConnectionUtils
 import org.pragyan.dalal18.utils.Constants

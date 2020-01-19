@@ -1,4 +1,4 @@
-package org.pragyan.dalal18.fragment.marketDepth
+package org.pragyan.dalal18.data
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
