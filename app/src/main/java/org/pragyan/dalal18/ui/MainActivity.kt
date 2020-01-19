@@ -768,7 +768,6 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
             if (ConnectionUtils.getConnectionInfo(this@MainActivity)) {
                 if (ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
                     uiThread {
-
                         errorDialog?.dismiss()
                         navigateToLastOpenFragment()
                     }

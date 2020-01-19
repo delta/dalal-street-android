@@ -13,6 +13,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.FragmentNavigator
@@ -20,10 +21,12 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import dalalstreet.api.DalalActionServiceGrpc
 import dalalstreet.api.actions.GetMarketEventsRequest
+import dalalstreet.api.actions.GetMarketEventsResponse
 import kotlinx.android.synthetic.main.fragment_news.*
-import org.jetbrains.anko.doAsync
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.jetbrains.anko.toast
-import org.jetbrains.anko.uiThread
 import org.pragyan.dalal18.R
 import org.pragyan.dalal18.adapter.NewsRecyclerAdapter
 import org.pragyan.dalal18.dagger.ContextModule
@@ -51,52 +54,51 @@ class NewsFragment : Fragment(), NewsRecyclerAdapter.NewsItemClickListener, Swip
         override fun onReceive(context: Context, intent: Intent) {
             if (intent.action != null && intent.action.equals(Constants.REFRESH_NEWS_ACTION, ignoreCase = true))
                 getNewsAsynchronously()
-                loadingNewsDialog?.show()
         }
     }
 
-    private fun getNewsAsynchronously() {
+    private fun getNewsAsynchronously() = lifecycleScope.launch {
 
-        doAsync {
-            if (ConnectionUtils.getConnectionInfo(context!!)) {
-                if (ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
+        loadingNewsDialog?.show()
 
-                    val marketEventsResponse = actionServiceBlockingStub.getMarketEvents(
-                            GetMarketEventsRequest.newBuilder().setCount(0).setLastEventId(0).build())
+        if (withContext(Dispatchers.IO) { ConnectionUtils.getConnectionInfo(context!!) }) {
 
-                    uiThread {
-                        newsSwipeRefreshLayout?.isRefreshing = false
+            if (withContext(Dispatchers.IO) { ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT) }) {
 
-                        if (marketEventsResponse.statusCode.number == 0) {
+                val marketEventsResponse = withContext(Dispatchers.IO) {
+                    actionServiceBlockingStub.getMarketEvents(GetMarketEventsRequest.newBuilder().setCount(0).setLastEventId(0).build())
+                }
 
-                            newsDetailsList.clear()
+                newsSwipeRefreshLayout?.isRefreshing = false
 
-                            for (currentMarketEvent in marketEventsResponse.marketEventsList) {
-                                newsDetailsList.add(NewsDetails(currentMarketEvent.createdAt, currentMarketEvent.headline,
-                                        currentMarketEvent.text, currentMarketEvent.imagePath))
-                            }
+                if (marketEventsResponse.statusCode == GetMarketEventsResponse.StatusCode.OK) {
 
-                            if (newsDetailsList.size != 0) {
-                                newsRecyclerAdapter?.swapData(newsDetailsList)
-                                noNewsTextView?.visibility = View.GONE
-                                newsRecyclerView?.visibility = View.VISIBLE
-                            } else {
-                                noNewsTextView.visibility = View.VISIBLE
-                                newsRecyclerView.visibility = View.GONE
-                            }
+                    newsDetailsList.clear()
 
-                        } else {
-                            context?.toast("Server internal error")
-                        }
+                    for (currentMarketEvent in marketEventsResponse.marketEventsList) {
+                        newsDetailsList.add(NewsDetails(currentMarketEvent.createdAt, currentMarketEvent.headline, currentMarketEvent.text, currentMarketEvent.imagePath))
                     }
+
+                    if (newsDetailsList.size != 0) {
+                        newsRecyclerAdapter?.swapData(newsDetailsList)
+                        noNewsTextView?.visibility = View.GONE
+                        newsRecyclerView?.visibility = View.VISIBLE
+                    } else {
+                        noNewsTextView.visibility = View.VISIBLE
+                        newsRecyclerView.visibility = View.GONE
+                    }
+
                 } else {
-                    uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_server_down), R.id.news_dest) }
+                    context?.toast("Server internal error")
                 }
             } else {
-                uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_check_internet), R.id.news_dest) }
+                networkDownHandler.onNetworkDownError(resources.getString(R.string.error_server_down), R.id.news_dest)
             }
-            uiThread { loadingNewsDialog?.dismiss() }
+        } else {
+            networkDownHandler.onNetworkDownError(resources.getString(R.string.error_check_internet), R.id.news_dest)
         }
+
+        loadingNewsDialog?.dismiss()
     }
 
     override fun onAttach(context: Context) {
@@ -104,7 +106,7 @@ class NewsFragment : Fragment(), NewsRecyclerAdapter.NewsItemClickListener, Swip
         try {
             networkDownHandler = context as ConnectionUtils.OnNetworkDownHandler
         } catch (classCastException: ClassCastException) {
-            throw ClassCastException(context.toString() + " must implement network down handler.")
+            throw ClassCastException("$context must implement network down handler.")
         }
     }
 
@@ -133,7 +135,6 @@ class NewsFragment : Fragment(), NewsRecyclerAdapter.NewsItemClickListener, Swip
         loadingNewsDialog = AlertDialog.Builder(context!!).setView(dialogView).setCancelable(false).create()
 
         getNewsAsynchronously()
-        loadingNewsDialog?.show()
     }
 
     override fun onResume() {
@@ -146,18 +147,20 @@ class NewsFragment : Fragment(), NewsRecyclerAdapter.NewsItemClickListener, Swip
         LocalBroadcastManager.getInstance(context!!).unregisterReceiver(refreshNewsListListener)
     }
 
-    override fun onRefresh() = getNewsAsynchronously()
+    override fun onRefresh() {
+        getNewsAsynchronously()
+    }
 
-    override fun onNewsClicked(layout: View, position: Int, headlinesTextView : View, contentTextView : View, createdAtTextView : View) {
+    override fun onNewsClicked(layout: View, position: Int, headlinesTextView: View, contentTextView: View, createdAtTextView: View) {
         val headTransition = "head$position"
         val contentTransition = "content$position"
         val createdAtTransition = "created$position"
 
         val bundle = Bundle()
-        bundle.putString(Constants.NEWS_CREATED_AT_KEY,newsDetailsList[position].createdAt)
-        bundle.putString(Constants.NEWS_CONTENT_KEY,newsDetailsList[position].content)
-        bundle.putString(Constants.NEWS_HEAD_KEY,newsDetailsList[position].headlines)
-        bundle.putString(Constants.NEWS_IMAGE_PATH_KEY,newsDetailsList[position].imagePath)
+        bundle.putString(Constants.NEWS_CREATED_AT_KEY, newsDetailsList[position].createdAt)
+        bundle.putString(Constants.NEWS_CONTENT_KEY, newsDetailsList[position].content)
+        bundle.putString(Constants.NEWS_HEAD_KEY, newsDetailsList[position].headlines)
+        bundle.putString(Constants.NEWS_IMAGE_PATH_KEY, newsDetailsList[position].imagePath)
         bundle.putString(Constants.HEAD_TRANSITION_KEY, headTransition)
         bundle.putString(Constants.CONTENT_TRANSITION_KEY, contentTransition)
         bundle.putString(Constants.CREATED_AT_TRANSITION_KEY, createdAtTransition)
