@@ -29,7 +29,7 @@ import org.pragyan.dalal18.R
 import org.pragyan.dalal18.dagger.ContextModule
 import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent
 import org.pragyan.dalal18.data.DalalViewModel
-import org.pragyan.dalal18.fragment.marketDepth.MarketDepthFragment
+import org.pragyan.dalal18.fragment.marketDepth.CompanyNameViewModel
 import org.pragyan.dalal18.utils.ConnectionUtils
 import org.pragyan.dalal18.utils.Constants
 import org.pragyan.dalal18.utils.Constants.ORDER_FEE_RATE
@@ -45,11 +45,13 @@ class TradeFragment : Fragment() {
     lateinit var actionServiceBlockingStub: DalalActionServiceGrpc.DalalActionServiceBlockingStub
 
     private lateinit var model: DalalViewModel
+    private lateinit var companyModel: CompanyNameViewModel
+
     private var decimalFormat = DecimalFormat(Constants.PRICE_FORMAT)
 
     private var loadingDialog: AlertDialog? = null
     lateinit var networkDownHandler: ConnectionUtils.OnNetworkDownHandler
-    lateinit var selectedCompany: String
+    var selectedCompany: String? = null
 
     private val refreshOwnedStockDetails = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
@@ -79,6 +81,12 @@ class TradeFragment : Fragment() {
         val rootView = inflater.inflate(R.layout.fragment_trade, container, false)
         model = activity?.run { ViewModelProviders.of(this).get(DalalViewModel::class.java) }
                 ?: throw Exception("Invalid activity")
+
+        // company model which has the company name data, and is commonly used for trade fragment and market depth fragment.
+        companyModel = activity?.run {
+            ViewModelProviders.of(this)[CompanyNameViewModel::class.java]
+        } ?: throw Exception("Invalid Activity")
+
         DaggerDalalStreetApplicationComponent.builder().contextModule(ContextModule(context!!)).build().inject(this)
         return rootView
     }
@@ -88,10 +96,10 @@ class TradeFragment : Fragment() {
         (activity as AppCompatActivity).supportActionBar?.title = resources.getString(R.string.trade)
         val companiesAdapter = ArrayAdapter(context!!, R.layout.order_spinner_item, StockUtils.getCompanyNamesArray())
         val orderSelectAdapter = ArrayAdapter(context!!, R.layout.order_spinner_item, resources.getStringArray(R.array.orderType))
-        selectedCompany = companySpinner.firstVisiblePosition.toString()
 
         with(order_select_spinner) {
             adapter = orderSelectAdapter
+
             onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
                 override fun onNothingSelected(parent: AdapterView<*>?) {
 
@@ -113,6 +121,7 @@ class TradeFragment : Fragment() {
 
         with(companySpinner) {
             adapter = companiesAdapter
+
             onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
 
                 override fun onNothingSelected(parent: AdapterView<*>?) {
@@ -120,6 +129,9 @@ class TradeFragment : Fragment() {
 
                 override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                     selectedCompany=companySpinner.selectedItem.toString()
+
+                    companyModel.updateCompanySelectedMarketDepth(selectedCompany!!)
+
                     val stocksOwned = StockUtils.getQuantityOwnedFromCompanyName(model.ownedStockDetails, selectedCompany)
                     var tempString = " : $stocksOwned"
                     stocksOwnedTextView.text = tempString
@@ -130,6 +142,13 @@ class TradeFragment : Fragment() {
                     calculateOrderFee()
                     setOrderPriceWindow()
                 }
+            }
+
+            selectedCompany = companyModel.companyName.value
+            // to update company so that market depth fragment gets synced with currently selected company.
+            // condition to prevent the case of trade fragment opened directly and spinner adapter by default opens first item.
+            if(selectedCompany!=null) {
+                companyModel.updateCompanySelectedMarketDepth(selectedCompany!!)
             }
         }
 
@@ -175,10 +194,7 @@ class TradeFragment : Fragment() {
     }
 
     private fun onMarketDepthButtonPressed() {
-        val bundle = Bundle()
-        bundle.putString(MarketDepthFragment.COMPANY_NAME, selectedCompany)
-      //  System.out.println("selected company is - "+selectedCompany)
-        findNavController().navigate(R.id.market_depth_dest,bundle)
+        findNavController().navigate(R.id.market_depth_dest)
     }
 
     private fun calculateOrderFee() {
@@ -269,9 +285,27 @@ class TradeFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
+
+        // to manually select the element after trade fragment is opened by pressing back key from market depth frag.
+        if(selectedCompany!=null) {
+            companySpinner.setSelection(getIndex(selectedCompany!!))
+        }
+
         val intentFilter = IntentFilter(Constants.REFRESH_OWNED_STOCKS_ACTION)
         intentFilter.addAction(Constants.REFRESH_STOCK_PRICES_ACTION)
         LocalBroadcastManager.getInstance(context!!).registerReceiver(refreshOwnedStockDetails, intentFilter)
+    }
+
+    // to get the index of element to be manually selected after trade fragment is opened by pressing back key from market depth frag.
+    private fun getIndex(company: String): Int {
+        var i=0
+        while(i<StockUtils.getCompanyNamesArray().size)
+        {
+            if(company == StockUtils.getCompanyNamesArray().get(i))
+                break
+            i++
+        }
+        return i
     }
 
     override fun onPause() {

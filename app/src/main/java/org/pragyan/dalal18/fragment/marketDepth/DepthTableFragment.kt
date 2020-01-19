@@ -9,13 +9,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
-import android.widget.Spinner
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProviders
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner
 import dalalstreet.api.DalalActionServiceGrpc
 import dalalstreet.api.DalalStreamServiceGrpc
 import dalalstreet.api.actions.GetCompanyProfileRequest
@@ -26,7 +25,6 @@ import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.toast
 import org.jetbrains.anko.uiThread
 import org.pragyan.dalal18.R
-import org.pragyan.dalal18.adapter.DepthPagerAdapter
 import org.pragyan.dalal18.adapter.MarketDepthRecyclerAdapter
 import org.pragyan.dalal18.dagger.ContextModule
 import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent
@@ -46,6 +44,7 @@ class DepthTableFragment : Fragment() {
 
     @Inject
     lateinit var streamServiceStub: DalalStreamServiceGrpc.DalalStreamServiceStub
+    private lateinit var companyModel: CompanyNameViewModel
 
     private var bidArrayList = mutableListOf<MarketDepth>()
     private var askArrayList = mutableListOf<MarketDepth>()
@@ -88,10 +87,6 @@ class DepthTableFragment : Fragment() {
         }
     }
 
-    fun setCompany(companyName: String) {
-        companyNameSelected=companyName
-    }
-
     override fun onAttach(context: Context) {
         super.onAttach(context)
         try {
@@ -103,6 +98,10 @@ class DepthTableFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val rootView = inflater.inflate(R.layout.fragment_depth_table, container, false)
+        companyModel = activity?.run {
+            ViewModelProviders.of(this)[CompanyNameViewModel::class.java]
+        } ?: throw Exception("Invalid Activity")
+
         DaggerDalalStreetApplicationComponent.builder().contextModule(ContextModule(context!!)).build().inject(this)
         return rootView
     }
@@ -140,7 +139,8 @@ class DepthTableFragment : Fragment() {
             setAdapter(arrayAdapter)
             setOnItemClickListener { _, _, _, _ ->
                 val currentCompany = companySpinner.text.toString()
-                DepthGraphFragment.companyNameSelected = currentCompany
+                //DepthGraphFragment.companyNameSelected = currentCompany
+                companyModel.updateCompanySelectedMarketDepth(currentCompany)
 
                 bidArrayList.clear()
                 askArrayList.clear()
@@ -341,22 +341,25 @@ class DepthTableFragment : Fragment() {
         super.onResume()
         val intentFilter = IntentFilter()
 
-        if(companyNameSelected!=null) {
-            val currentCompany = companyNameSelected
 
+            var currentCompany= String()
+
+            // observing the companySelected value
+            companyModel.companyName.observe(this, androidx.lifecycle.Observer { company ->
+                currentCompany = company
+            })
+
+            // setting up the fragment with company name
             bidArrayList.clear()
             askArrayList.clear()
-            getValues(currentCompany!!)
+            getValues(currentCompany)
             unsubscribe(prevSubscriptionId)
 
             if (activity != null && isAdded) {
                 loadingDialog?.show()
                 getCompanyProfileAsynchronously(currentCompany)
-                companySpinner.hint = currentCompany
-                companySpinner.setText(companyNameSelected)
-                System.out.println("called and new data added table"+ companyNameSelected)
+                companySpinner.setText(currentCompany)
             }
-        }
 
         intentFilter.addAction(Constants.REFRESH_MARKET_DEPTH)
         LocalBroadcastManager.getInstance(context!!).registerReceiver(refreshMarketDepth, intentFilter)
@@ -366,9 +369,5 @@ class DepthTableFragment : Fragment() {
     override fun onPause() {
         super.onPause()
         LocalBroadcastManager.getInstance(context!!).unregisterReceiver(refreshMarketDepth)
-    }
-
-    companion object {
-        public var companyNameSelected: String? = null
     }
 }

@@ -12,6 +12,7 @@ import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProviders
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.CandleData
 import com.github.mikephil.charting.data.CandleDataSet
@@ -21,12 +22,10 @@ import dalalstreet.api.DalalActionServiceGrpc
 import dalalstreet.api.actions.GetStockHistoryRequest
 import dalalstreet.api.actions.StockHistoryResolution
 import kotlinx.android.synthetic.main.fragment_depth_graph.*
-import kotlinx.android.synthetic.main.fragment_depth_table.*
 import org.jetbrains.anko.backgroundColor
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
 import org.pragyan.dalal18.R
-import org.pragyan.dalal18.adapter.DepthPagerAdapter
 import org.pragyan.dalal18.dagger.ContextModule
 import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent
 import org.pragyan.dalal18.data.StockHistory
@@ -52,13 +51,11 @@ class DepthGraphFragment : Fragment() {
 
     private var loadingDialog: AlertDialog? = null
     lateinit var networkDownHandler: ConnectionUtils.OnNetworkDownHandler
+    private lateinit var companyModel: CompanyNameViewModel
 
     private var currentCompany: String? =  null
     private var currentInterval : String? = null
 
-    fun setCompany(companyName: String) {
-        companyNameSelected=companyName
-    }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -71,6 +68,10 @@ class DepthGraphFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val rootView = inflater.inflate(R.layout.fragment_depth_graph, container, false)
+        companyModel = activity?.run {
+            ViewModelProviders.of(this)[CompanyNameViewModel::class.java]
+        } ?: throw Exception("Invalid Activity")
+
         DaggerDalalStreetApplicationComponent.builder().contextModule(ContextModule(context!!)).build().inject(this)
         return rootView
     }
@@ -117,7 +118,8 @@ class DepthGraphFragment : Fragment() {
                 if (activity != null && isAdded) {
                     loadStockHistoryAsynchronously()
                 }
-                DepthTableFragment.companyNameSelected = currentCompany
+                //DepthTableFragment.companyNameSelected = currentCompany
+                companyModel.updateCompanySelectedMarketDepth(currentCompany!!)
             }
         }
 
@@ -293,9 +295,12 @@ class DepthGraphFragment : Fragment() {
     override fun onResume() {
         super.onResume()
 
-        if(companyNameSelected!=null) {
-            currentCompany = companyNameSelected
+            // observing the companyName value
+            companyModel.companyName.observe(this, androidx.lifecycle.Observer { company ->
+                currentCompany = company
+            })
 
+            // setting up the fragment with company name
             stockHistoryList.clear()
             xVals.clear()
             yVals.clear()
@@ -306,14 +311,7 @@ class DepthGraphFragment : Fragment() {
             market_depth_chart.clearFocus()
             if (activity != null && isAdded) {
                 loadStockHistoryAsynchronously()
-                graph_company_spinner.setText(companyNameSelected)
-
-                System.out.println("called and new data added graph"+ companyNameSelected)
+                graph_company_spinner.setText(currentCompany)
             }
-        }
-    }
-
-    companion object {
-        public var companyNameSelected: String? = null
     }
 }
