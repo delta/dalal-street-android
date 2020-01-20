@@ -275,23 +275,12 @@ class TradeFragment : Fragment() {
 
         // to manually select the element after trade fragment is opened by pressing back key from market depth frag.
         if (model.companyName.value != null) {
-            companySpinner.setSelection(getIndex(model.companyName.value!!))
+            companySpinner.setSelection(StockUtils.getIndexByCompanyName(model.companyName.value!!))
         }
 
         val intentFilter = IntentFilter(Constants.REFRESH_OWNED_STOCKS_ACTION)
         intentFilter.addAction(Constants.REFRESH_STOCK_PRICES_ACTION)
         LocalBroadcastManager.getInstance(context!!).registerReceiver(refreshOwnedStockDetails, intentFilter)
-    }
-
-    // to get the index of element to be manually selected after trade fragment is opened by pressing back key from market depth frag.
-    private fun getIndex(company: String): Int {
-        var i = 0
-        while (i < StockUtils.getCompanyNamesArray().size) {
-            if (company == StockUtils.getCompanyNamesArray().get(i))
-                break
-            i++
-        }
-        return i
     }
 
     override fun onPause() {

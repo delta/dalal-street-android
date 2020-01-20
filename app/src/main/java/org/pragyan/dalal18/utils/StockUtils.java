@@ -165,4 +165,20 @@ public class StockUtils {
         }
         return 0;
     }
+
+    /**
+     * To get the index of element by company name.
+     * Used in spinner in the trade fragment to manually selected an item on it.
+     */
+    public static int getIndexByCompanyName(String company) {
+        int i = 0;
+        // simple while loop breaking when company name is matched.
+        while (i < StockUtils.getCompanyNamesArray().length) {
+            if (company.equals(StockUtils.getCompanyNamesArray()[i]))
+                break;
+            i++;
+        }
+        return i;
+    }
+
 }
