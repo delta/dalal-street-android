@@ -77,13 +77,10 @@ class TradeFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val rootView = inflater.inflate(R.layout.fragment_trade, container, false)
-        model = activity?.run { ViewModelProviders.of(this).get(DalalViewModel::class.java) }
-                ?: throw Exception("Invalid activity")
 
         // company model which has the company name data, and is commonly used for trade fragment and market depth fragment.
-        /*companyModel = activity?.run {
-            ViewModelProviders.of(this)[DalalViewModel::class.java]
-        } ?: throw Exception("Invalid Activity")*/
+        model = activity?.run { ViewModelProviders.of(this).get(DalalViewModel::class.java) }
+                ?: throw Exception("Invalid activity")
 
         DaggerDalalStreetApplicationComponent.builder().contextModule(ContextModule(context!!)).build().inject(this)
         return rootView
@@ -128,6 +125,7 @@ class TradeFragment : Fragment() {
                 override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                     selectedCompany=companySpinner.selectedItem.toString()
 
+                    if(selectedCompany!=null)
                     model.updateCompanySelectedMarketDepth(selectedCompany!!)
 
                     val stocksOwned = StockUtils.getQuantityOwnedFromCompanyName(model.ownedStockDetails, selectedCompany)
