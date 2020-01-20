@@ -28,7 +28,7 @@ import org.pragyan.dalal18.R
 import org.pragyan.dalal18.adapter.MarketDepthRecyclerAdapter
 import org.pragyan.dalal18.dagger.ContextModule
 import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent
-import org.pragyan.dalal18.data.CompanyNameViewModel
+import org.pragyan.dalal18.data.DalalViewModel
 import org.pragyan.dalal18.data.MarketDepth
 import org.pragyan.dalal18.utils.ConnectionUtils
 import org.pragyan.dalal18.utils.Constants
@@ -45,7 +45,7 @@ class DepthTableFragment : Fragment() {
 
     @Inject
     lateinit var streamServiceStub: DalalStreamServiceGrpc.DalalStreamServiceStub
-    private lateinit var companyModel: CompanyNameViewModel
+    private lateinit var model: DalalViewModel
 
     private var bidArrayList = mutableListOf<MarketDepth>()
     private var askArrayList = mutableListOf<MarketDepth>()
@@ -99,8 +99,8 @@ class DepthTableFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val rootView = inflater.inflate(R.layout.fragment_depth_table, container, false)
-        companyModel = activity?.run {
-            ViewModelProviders.of(this)[CompanyNameViewModel::class.java]
+        model = activity?.run {
+            ViewModelProviders.of(this)[DalalViewModel::class.java]
         } ?: throw Exception("Invalid Activity")
 
         DaggerDalalStreetApplicationComponent.builder().contextModule(ContextModule(context!!)).build().inject(this)
@@ -141,7 +141,7 @@ class DepthTableFragment : Fragment() {
             setOnItemClickListener { _, _, _, _ ->
                 val currentCompany = companySpinner.text.toString()
                 //DepthGraphFragment.companyNameSelected = currentCompany
-                companyModel.updateCompanySelectedMarketDepth(currentCompany)
+                model.updateCompanySelectedMarketDepth(currentCompany)
 
                 bidArrayList.clear()
                 askArrayList.clear()
@@ -346,7 +346,7 @@ class DepthTableFragment : Fragment() {
             var currentCompany= String()
 
             // observing the companySelected value
-            companyModel.companyName.observe(this, androidx.lifecycle.Observer { company ->
+            model.companyName.observe(this, androidx.lifecycle.Observer { company ->
                 currentCompany = company
             })
 

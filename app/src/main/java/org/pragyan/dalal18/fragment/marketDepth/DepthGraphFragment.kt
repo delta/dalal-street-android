@@ -28,7 +28,7 @@ import org.jetbrains.anko.uiThread
 import org.pragyan.dalal18.R
 import org.pragyan.dalal18.dagger.ContextModule
 import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent
-import org.pragyan.dalal18.data.CompanyNameViewModel
+import org.pragyan.dalal18.data.DalalViewModel
 import org.pragyan.dalal18.data.StockHistory
 import org.pragyan.dalal18.utils.ConnectionUtils
 import org.pragyan.dalal18.utils.Constants
@@ -52,7 +52,7 @@ class DepthGraphFragment : Fragment() {
 
     private var loadingDialog: AlertDialog? = null
     lateinit var networkDownHandler: ConnectionUtils.OnNetworkDownHandler
-    private lateinit var companyModel: CompanyNameViewModel
+    private lateinit var model: DalalViewModel
 
     private var currentCompany: String? = null
     private var currentInterval: String? = null
@@ -69,8 +69,8 @@ class DepthGraphFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val rootView = inflater.inflate(R.layout.fragment_depth_graph, container, false)
-        companyModel = activity?.run {
-            ViewModelProviders.of(this)[CompanyNameViewModel::class.java]
+        model = activity?.run {
+            ViewModelProviders.of(this)[DalalViewModel::class.java]
         } ?: throw Exception("Invalid Activity")
 
         DaggerDalalStreetApplicationComponent.builder().contextModule(ContextModule(context!!)).build().inject(this)
@@ -111,7 +111,7 @@ class DepthGraphFragment : Fragment() {
                 setupFragmentGraphData()
 
                 if (currentCompany!=null)
-                companyModel.updateCompanySelectedMarketDepth(currentCompany!!)
+                model.updateCompanySelectedMarketDepth(currentCompany!!)
             }
         }
 
@@ -288,7 +288,7 @@ class DepthGraphFragment : Fragment() {
         super.onResume()
 
         // observing the companyName value
-        companyModel.companyName.observe(this, androidx.lifecycle.Observer { company ->
+        model.companyName.observe(this, androidx.lifecycle.Observer { company ->
             currentCompany = company
         })
         setupFragmentGraphData()

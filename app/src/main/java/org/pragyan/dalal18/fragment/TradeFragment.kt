@@ -29,7 +29,6 @@ import org.pragyan.dalal18.R
 import org.pragyan.dalal18.dagger.ContextModule
 import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent
 import org.pragyan.dalal18.data.DalalViewModel
-import org.pragyan.dalal18.data.CompanyNameViewModel
 import org.pragyan.dalal18.utils.ConnectionUtils
 import org.pragyan.dalal18.utils.Constants
 import org.pragyan.dalal18.utils.Constants.ORDER_FEE_RATE
@@ -45,7 +44,6 @@ class TradeFragment : Fragment() {
     lateinit var actionServiceBlockingStub: DalalActionServiceGrpc.DalalActionServiceBlockingStub
 
     private lateinit var model: DalalViewModel
-    private lateinit var companyModel: CompanyNameViewModel
 
     private var decimalFormat = DecimalFormat(Constants.PRICE_FORMAT)
 
@@ -83,9 +81,9 @@ class TradeFragment : Fragment() {
                 ?: throw Exception("Invalid activity")
 
         // company model which has the company name data, and is commonly used for trade fragment and market depth fragment.
-        companyModel = activity?.run {
-            ViewModelProviders.of(this)[CompanyNameViewModel::class.java]
-        } ?: throw Exception("Invalid Activity")
+        /*companyModel = activity?.run {
+            ViewModelProviders.of(this)[DalalViewModel::class.java]
+        } ?: throw Exception("Invalid Activity")*/
 
         DaggerDalalStreetApplicationComponent.builder().contextModule(ContextModule(context!!)).build().inject(this)
         return rootView
@@ -130,7 +128,7 @@ class TradeFragment : Fragment() {
                 override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                     selectedCompany=companySpinner.selectedItem.toString()
 
-                    companyModel.updateCompanySelectedMarketDepth(selectedCompany!!)
+                    model.updateCompanySelectedMarketDepth(selectedCompany!!)
 
                     val stocksOwned = StockUtils.getQuantityOwnedFromCompanyName(model.ownedStockDetails, selectedCompany)
                     var tempString = " : $stocksOwned"
@@ -144,11 +142,11 @@ class TradeFragment : Fragment() {
                 }
             }
 
-            selectedCompany = companyModel.companyName.value
+            selectedCompany = model.companyName.value
             // to update company so that market depth fragment gets synced with currently selected company.
             // condition to prevent the case of trade fragment opened directly and spinner adapter by default opens first item.
             if(selectedCompany!=null) {
-                companyModel.updateCompanySelectedMarketDepth(selectedCompany!!)
+                model.updateCompanySelectedMarketDepth(selectedCompany!!)
             }
         }
 
