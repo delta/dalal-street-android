@@ -110,8 +110,8 @@ class DepthGraphFragment : Fragment() {
 
                 setupFragmentGraphData()
 
-                if (currentCompany!=null)
-                model.updateCompanySelectedMarketDepth(currentCompany!!)
+                if (currentCompany != null)
+                    model.updateCompanySelectedMarketDepth(currentCompany!!)
             }
         }
 

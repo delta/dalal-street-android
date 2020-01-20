@@ -33,7 +33,8 @@ import org.pragyan.dalal18.utils.ConnectionUtils
 import org.pragyan.dalal18.utils.Constants
 import org.pragyan.dalal18.utils.Constants.ORDER_FEE_RATE
 import org.pragyan.dalal18.utils.StockUtils
-import org.pragyan.dalal18.utils.StockUtils.*
+import org.pragyan.dalal18.utils.StockUtils.getOrderTypeFromName
+import org.pragyan.dalal18.utils.StockUtils.getStockIdFromCompanyName
 import org.pragyan.dalal18.utils.hideKeyboard
 import java.text.DecimalFormat
 import javax.inject.Inject
@@ -123,10 +124,10 @@ class TradeFragment : Fragment() {
                 }
 
                 override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                    selectedCompany=companySpinner.selectedItem.toString()
+                    selectedCompany = companySpinner.selectedItem.toString()
 
-                    if(selectedCompany!=null)
-                    model.updateCompanySelectedMarketDepth(selectedCompany!!)
+                    if (selectedCompany != null)
+                        model.updateCompanySelectedMarketDepth(selectedCompany!!)
 
                     val stocksOwned = StockUtils.getQuantityOwnedFromCompanyName(model.ownedStockDetails, selectedCompany)
                     var tempString = " : $stocksOwned"
@@ -143,7 +144,7 @@ class TradeFragment : Fragment() {
             selectedCompany = model.companyName.value
             // to update company so that market depth fragment gets synced with currently selected company.
             // condition to prevent the case of trade fragment opened directly and spinner adapter by default opens first item.
-            if(selectedCompany!=null) {
+            if (selectedCompany != null) {
                 model.updateCompanySelectedMarketDepth(selectedCompany!!)
             }
         }
@@ -283,7 +284,7 @@ class TradeFragment : Fragment() {
         super.onResume()
 
         // to manually select the element after trade fragment is opened by pressing back key from market depth frag.
-        if(selectedCompany!=null) {
+        if (selectedCompany != null) {
             companySpinner.setSelection(getIndex(selectedCompany!!))
         }
 
@@ -294,10 +295,9 @@ class TradeFragment : Fragment() {
 
     // to get the index of element to be manually selected after trade fragment is opened by pressing back key from market depth frag.
     private fun getIndex(company: String): Int {
-        var i=0
-        while(i<StockUtils.getCompanyNamesArray().size)
-        {
-            if(company == StockUtils.getCompanyNamesArray().get(i))
+        var i = 0
+        while (i < StockUtils.getCompanyNamesArray().size) {
+            if (company == StockUtils.getCompanyNamesArray().get(i))
                 break
             i++
         }

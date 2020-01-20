@@ -343,24 +343,24 @@ class DepthTableFragment : Fragment() {
         val intentFilter = IntentFilter()
 
 
-            var currentCompany= String()
+        var currentCompany = String()
 
-            // observing the companySelected value
-            model.companyName.observe(this, androidx.lifecycle.Observer { company ->
-                currentCompany = company
-            })
+        // observing the companySelected value
+        model.companyName.observe(this, androidx.lifecycle.Observer { company ->
+            currentCompany = company
+        })
 
-            // setting up the fragment with company name
-            bidArrayList.clear()
-            askArrayList.clear()
-            getValues(currentCompany)
-            unsubscribe(prevSubscriptionId)
+        // setting up the fragment with company name
+        bidArrayList.clear()
+        askArrayList.clear()
+        getValues(currentCompany)
+        unsubscribe(prevSubscriptionId)
 
-            if (activity != null && isAdded) {
-                loadingDialog?.show()
-                getCompanyProfileAsynchronously(currentCompany)
-                companySpinner.setText(currentCompany)
-            }
+        if (activity != null && isAdded) {
+            loadingDialog?.show()
+            getCompanyProfileAsynchronously(currentCompany)
+            companySpinner.setText(currentCompany)
+        }
 
         intentFilter.addAction(Constants.REFRESH_MARKET_DEPTH)
         LocalBroadcastManager.getInstance(context!!).registerReceiver(refreshMarketDepth, intentFilter)
