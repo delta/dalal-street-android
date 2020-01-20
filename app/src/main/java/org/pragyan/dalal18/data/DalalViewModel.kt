@@ -26,7 +26,7 @@ class DalalViewModel : ViewModel() {
     }
 
     fun updateGlobalStockPrice(pos: Int, price: Long) {
-        globalStockDetails[pos-1].price = price
+        globalStockDetails[pos - 1].price = price
     }
 
     fun createCompanyArrayFromGlobalStockDetails() {

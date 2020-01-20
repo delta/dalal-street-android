@@ -50,7 +50,6 @@ class TradeFragment : Fragment() {
 
     private var loadingDialog: AlertDialog? = null
     lateinit var networkDownHandler: ConnectionUtils.OnNetworkDownHandler
-    var selectedCompany: String? = null
 
     private val refreshOwnedStockDetails = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
@@ -124,10 +123,8 @@ class TradeFragment : Fragment() {
                 }
 
                 override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                    selectedCompany = companySpinner.selectedItem.toString()
-
-                    if (selectedCompany != null)
-                        model.updateCompanySelectedMarketDepth(selectedCompany!!)
+                    val selectedCompany = companySpinner.selectedItem.toString()
+                    model.updateCompanySelectedMarketDepth(selectedCompany)
 
                     val stocksOwned = StockUtils.getQuantityOwnedFromCompanyName(model.ownedStockDetails, selectedCompany)
                     var tempString = " : $stocksOwned"
@@ -139,13 +136,6 @@ class TradeFragment : Fragment() {
                     calculateOrderFee()
                     setOrderPriceWindow()
                 }
-            }
-
-            selectedCompany = model.companyName.value
-            // to update company so that market depth fragment gets synced with currently selected company.
-            // condition to prevent the case of trade fragment opened directly and spinner adapter by default opens first item.
-            if (selectedCompany != null) {
-                model.updateCompanySelectedMarketDepth(selectedCompany!!)
             }
         }
 
@@ -186,7 +176,7 @@ class TradeFragment : Fragment() {
         })
 
         bidAskButton.setOnClickListener { onBidAskButtonClick() }
-        btn_market_depth.setOnClickListener { onMarketDepthButtonPressed() }
+        btnMarketDepth.setOnClickListener { onMarketDepthButtonPressed() }
 
     }
 
@@ -284,8 +274,8 @@ class TradeFragment : Fragment() {
         super.onResume()
 
         // to manually select the element after trade fragment is opened by pressing back key from market depth frag.
-        if (selectedCompany != null) {
-            companySpinner.setSelection(getIndex(selectedCompany!!))
+        if (model.companyName.value != null) {
+            companySpinner.setSelection(getIndex(model.companyName.value!!))
         }
 
         val intentFilter = IntentFilter(Constants.REFRESH_OWNED_STOCKS_ACTION)

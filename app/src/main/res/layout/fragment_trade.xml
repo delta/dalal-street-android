@@ -231,7 +231,7 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <Button
-        android:id="@+id/btn_market_depth"
+        android:id="@+id/btnMarketDepth"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@drawable/grey_white_rounded_button"
@@ -240,11 +240,10 @@
         android:text="@string/market_depth_trade_frag"
         android:textColor="#FFFFFF"
         android:textSize="16sp"
+        app:layout_constraintBottom_toTopOf="@id/order_price_input"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/no_of_stocks_input"
-        app:layout_constraintTop_toBottomOf="@+id/no_of_stocks_input"
-        app:layout_constraintBottom_toTopOf="@id/order_price_input"
-        />
+        app:layout_constraintTop_toBottomOf="@+id/no_of_stocks_input" />
 
 
     <TextView

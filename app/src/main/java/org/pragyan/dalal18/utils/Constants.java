@@ -21,7 +21,7 @@ public class Constants {
     public static final String REFRESH_STOCKS_EXCHANGE_ACTION = "refresh-stock-exchange-action";
     public static final String REFRESH_OWNED_STOCKS_ACTION = "refresh-owned-stocks-action";
     public static final String REFRESH_RESERVED_ASSETS_ACTION = "refresh-reserved-stocks-action";
-    public static final String REFRESH_MARKET_DEPTH= "refresh_market_depth";
+    public static final String REFRESH_MARKET_DEPTH = "refresh_market_depth";
     public static final String STOP_NOTIFICATION_ACTION = "stop-notification-action";
     public static final String REFRESH_MORTGAGE_UPDATE_ACTION = "refresh-mortgage-update-action";
     public static final String PRICE_FORMAT = "##,##,##,###";
@@ -40,18 +40,18 @@ public class Constants {
     public static final String NOTIFICATION_NEWS_SHARED_PREF = "notification_news_pref";
 
     public static final String USERNAME_KEY = "username-key";
-    public static final String  EMAIL_KEY = "email-key";
-    public static final String  SESSION_KEY = "session-key";
-    public static final String  MARKET_OPEN_KEY = "market-open-key";
-    public static final String  PASSWORD_KEY = "password-key";
+    public static final String EMAIL_KEY = "email-key";
+    public static final String SESSION_KEY = "session-key";
+    public static final String MARKET_OPEN_KEY = "market-open-key";
+    public static final String PASSWORD_KEY = "password-key";
 
-    public static final String  NEWS_HEAD_KEY = "news-head-key";
-    public static final String  NEWS_CONTENT_KEY = "news-content-key";
-    public static final String  NEWS_CREATED_AT_KEY = "news-created-at-key";
-    public static final String  NEWS_IMAGE_PATH_KEY = "news-image-path-key";
-    public static final String  HEAD_TRANSITION_KEY = "head-transition";
-    public static final String  CONTENT_TRANSITION_KEY = "content-transition";
-    public static final String  CREATED_AT_TRANSITION_KEY = "created-at-transition";
+    public static final String NEWS_HEAD_KEY = "news-head-key";
+    public static final String NEWS_CONTENT_KEY = "news-content-key";
+    public static final String NEWS_CREATED_AT_KEY = "news-created-at-key";
+    public static final String NEWS_IMAGE_PATH_KEY = "news-image-path-key";
+    public static final String HEAD_TRANSITION_KEY = "head-transition";
+    public static final String CONTENT_TRANSITION_KEY = "content-transition";
+    public static final String CREATED_AT_TRANSITION_KEY = "created-at-transition";
 
     public static final String LAST_NOTIFICATION_ID = "last_notification_id";
     public static final String LAST_TRANSACTION_ID = "last_transaction_id";

@@ -12,12 +12,15 @@
         <shape android:shape="rectangle">
             <solid android:color="#33334d" />
 
-            <corners android:bottomRightRadius="8dp"
+            <corners
                 android:bottomLeftRadius="8dp"
-                android:topRightRadius="8dp"
-                android:topLeftRadius="8dp"/>
+                android:bottomRightRadius="8dp"
+                android:topLeftRadius="8dp"
+                android:topRightRadius="8dp" />
 
-            <stroke android:width="2dp" android:color="#060613"/>
+            <stroke
+                android:width="2dp"
+                android:color="#060613" />
         </shape>
     </item>
 </ripple>
