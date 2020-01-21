@@ -12,7 +12,6 @@ import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProviders
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.CandleData
 import com.github.mikephil.charting.data.CandleDataSet
@@ -28,7 +27,6 @@ import org.jetbrains.anko.uiThread
 import org.pragyan.dalal18.R
 import org.pragyan.dalal18.dagger.ContextModule
 import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent
-import org.pragyan.dalal18.data.DalalViewModel
 import org.pragyan.dalal18.data.StockHistory
 import org.pragyan.dalal18.utils.ConnectionUtils
 import org.pragyan.dalal18.utils.Constants
@@ -52,11 +50,9 @@ class DepthGraphFragment : Fragment() {
 
     private var loadingDialog: AlertDialog? = null
     lateinit var networkDownHandler: ConnectionUtils.OnNetworkDownHandler
-    private lateinit var model: DalalViewModel
 
     private var currentCompany: String? = null
     private var currentInterval: String? = null
-
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -69,10 +65,6 @@ class DepthGraphFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val rootView = inflater.inflate(R.layout.fragment_depth_graph, container, false)
-        model = activity?.run {
-            ViewModelProviders.of(this)[DalalViewModel::class.java]
-        } ?: throw Exception("Invalid Activity")
-
         DaggerDalalStreetApplicationComponent.builder().contextModule(ContextModule(context!!)).build().inject(this)
         return rootView
     }
@@ -97,21 +89,25 @@ class DepthGraphFragment : Fragment() {
             setPinchZoom(true)
             setDrawGridBackground(false)
             legend.isEnabled = false
-
         }
 
         val arrayAdapter = ArrayAdapter(activity!!, R.layout.company_spinner_item, StockUtils.getCompanyNamesArray())
         with(graph_company_spinner) {
             setAdapter(arrayAdapter)
             isSelected = false
-
             setOnItemClickListener { _, _, _, _ ->
                 currentCompany = graph_company_spinner.text.toString()
-
-                setupFragmentGraphData()
-
-                if (currentCompany != null)
-                    model.updateCompanySelectedMarketDepth(currentCompany!!)
+                stockHistoryList.clear()
+                xVals.clear()
+                yVals.clear()
+                if (!market_depth_chart.isEmpty) {
+                    market_depth_chart.invalidate()
+                    market_depth_chart.clear()
+                }
+                market_depth_chart.clearFocus()
+                if (activity != null && isAdded) {
+                    loadStockHistoryAsynchronously()
+                }
             }
         }
 
@@ -131,10 +127,11 @@ class DepthGraphFragment : Fragment() {
                     market_depth_chart.clear()
                 }
                 market_depth_chart.clearFocus()
+                if (activity != null && isAdded) {
+                    loadStockHistoryAsynchronously()
+                }
             }
-            if (activity != null && isAdded) {
-                loadStockHistoryAsynchronously()
-            }
+
         }
     }
 
@@ -282,31 +279,5 @@ class DepthGraphFragment : Fragment() {
     private fun convertToString(date: Date?): String {
         val df = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.ENGLISH)
         return df.format(date)
-    }
-
-    override fun onResume() {
-        super.onResume()
-
-        // observing the companyName value
-        model.companyName.observe(this, androidx.lifecycle.Observer { company ->
-            currentCompany = company
-        })
-        setupFragmentGraphData()
-    }
-
-    // setting up the fragment with company name
-    private fun setupFragmentGraphData() {
-        stockHistoryList.clear()
-        xVals.clear()
-        yVals.clear()
-        if (!market_depth_chart.isEmpty) {
-            market_depth_chart.invalidate()
-            market_depth_chart.clear()
-        }
-        market_depth_chart.clearFocus()
-        if (activity != null && isAdded) {
-            loadStockHistoryAsynchronously()
-            graph_company_spinner.setText(currentCompany)
-        }
     }
 }

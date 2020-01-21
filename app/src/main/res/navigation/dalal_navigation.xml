@@ -110,11 +110,9 @@
         android:name="org.pragyan.dalal18.fragment.CompanyDescriptionFragment"
         android:label="@string/company_description"
         tools:layout="@layout/fragment_company_description" />
-
     <fragment
         android:id="@+id/help_dest"
         android:name="org.pragyan.dalal18.fragment.help.HelpMainFragment"
         android:label="@string/help_title"
-        tools:layout="@layout/fragment_main_help"/>
-
+        tools:layout="@layout/fragment_main_help" />
 </navigation>
