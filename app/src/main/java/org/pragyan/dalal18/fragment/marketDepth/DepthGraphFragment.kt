@@ -46,20 +46,20 @@ class DepthGraphFragment : Fragment() {
 
     private var xVals = ArrayList<String>()
     private var yVals = ArrayList<CandleEntry>()
-    private lateinit var stockHistoryList : ArrayList<StockHistory>
+    private lateinit var stockHistoryList: ArrayList<StockHistory>
 
     private var loadingDialog: AlertDialog? = null
     lateinit var networkDownHandler: ConnectionUtils.OnNetworkDownHandler
 
-    private var currentCompany: String? =  null
-    private var currentInterval : String? = null
+    private var currentCompany: String? = null
+    private var currentInterval: String? = null
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
         try {
             networkDownHandler = context as ConnectionUtils.OnNetworkDownHandler
         } catch (classCastException: ClassCastException) {
-            throw ClassCastException(context.toString() + " must implement network down handler.")
+            throw ClassCastException("$context must implement network down handler.")
         }
     }
 
@@ -113,7 +113,7 @@ class DepthGraphFragment : Fragment() {
 
         val intervalAdapter = ArrayAdapter(activity!!, R.layout.interval_spinner_item, resources.getStringArray(R.array.intervalType))
         currentInterval = "30 mins"
-        with(graph_time_spinner){
+        with(graph_time_spinner) {
             setAdapter(intervalAdapter)
             isSelected = false
             setOnItemClickListener { _, _, _, _ ->
@@ -137,12 +137,12 @@ class DepthGraphFragment : Fragment() {
 
     private fun loadStockHistoryAsynchronously() {
 
-        if(currentCompany == null || currentInterval == null){
+        if (currentCompany == null || currentInterval == null) {
             return
         }
 
-        lateinit var resolution : StockHistoryResolution
-        when(currentInterval) {
+        lateinit var resolution: StockHistoryResolution
+        when (currentInterval) {
 
             "1 min" -> {
                 resolution = StockHistoryResolution.OneMinute
@@ -171,7 +171,7 @@ class DepthGraphFragment : Fragment() {
         loadingDialog?.show()
         doAsync {
 
-            if(ConnectionUtils.getConnectionInfo(context)){
+            if (ConnectionUtils.getConnectionInfo(context)) {
                 if (ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
                     val stockHistoryResponse = actionServiceBlockingStub.getStockHistory(GetStockHistoryRequest
                             .newBuilder()
@@ -182,7 +182,7 @@ class DepthGraphFragment : Fragment() {
                     uiThread {
 
                         for (map in stockHistoryResponse.stockHistoryMapMap.entries) {
-                            val tempStockHistory = StockHistory(convertToDate(map.key),map.value.high, map.value.low,map.value.open, map.value.close)
+                            val tempStockHistory = StockHistory(convertToDate(map.key), map.value.high, map.value.low, map.value.open, map.value.close)
                             stockHistoryList.add(tempStockHistory)
                         }
                         stockHistoryList.sortWith(kotlin.Comparator { (date1), (date2) -> date1!!.compareTo(date2) })
@@ -190,8 +190,8 @@ class DepthGraphFragment : Fragment() {
                         var highestClose = 0f
                         for (i in stockHistoryList.indices) {
                             xVals.add(parseDate(convertToString(stockHistoryList[i].stockDate)))
-                            yVals.add(CandleEntry(i.toFloat(), stockHistoryList[i].stockHigh.toFloat(),stockHistoryList[i].stockLow.toFloat(),
-                                    stockHistoryList[i].stockOpen.toFloat(),stockHistoryList[i].stockClose.toFloat()))
+                            yVals.add(CandleEntry(i.toFloat(), stockHistoryList[i].stockHigh.toFloat(), stockHistoryList[i].stockLow.toFloat(),
+                                    stockHistoryList[i].stockOpen.toFloat(), stockHistoryList[i].stockClose.toFloat()))
                             if (highestClose <= stockHistoryList[i].stockClose.toFloat()) {
                                 highestClose = stockHistoryList[i].stockClose.toFloat()
                             }
@@ -202,14 +202,14 @@ class DepthGraphFragment : Fragment() {
                             xValsArray[i] = xVals[i]
                         }
                         val formatter = IAxisValueFormatter { value, _ ->
-                            if(value.toInt() < xValsArray.size){
+                            if (value.toInt() < xValsArray.size) {
                                 xValsArray[value.toInt()]
                             } else {
-                                xValsArray[xValsArray.size-1]
+                                xValsArray[xValsArray.size - 1]
                             }
                         }
                         val xAxis = market_depth_chart.xAxis
-                        with(xAxis){
+                        with(xAxis) {
                             position = XAxis.XAxisPosition.BOTTOM
                             setDrawGridLines(false)
                             valueFormatter = formatter
@@ -224,7 +224,7 @@ class DepthGraphFragment : Fragment() {
                         val leftAxis = market_depth_chart.axisLeft
                         leftAxis.isEnabled = false
                         val yAxis = market_depth_chart.axisRight
-                        with(yAxis){
+                        with(yAxis) {
                             setLabelCount(7, false)
                             setDrawGridLines(false)
                             setDrawAxisLine(true)
@@ -236,7 +236,7 @@ class DepthGraphFragment : Fragment() {
                         }
 
                         val set1 = CandleDataSet(yVals, "Stock Price")
-                        with(set1){
+                        with(set1) {
                             color = Color.rgb(80, 80, 80)
                             shadowColor = ContextCompat.getColor(context!!, android.R.color.white)
                             shadowWidth = 0.5f
@@ -244,7 +244,7 @@ class DepthGraphFragment : Fragment() {
                             decreasingPaintStyle = Paint.Style.FILL
                             increasingColor = ContextCompat.getColor(context!!, R.color.neon_green)
                             increasingPaintStyle = Paint.Style.FILL
-                            neutralColor = ContextCompat.getColor(context!!,  R.color.neon_yellow)
+                            neutralColor = ContextCompat.getColor(context!!, R.color.neon_yellow)
                             setDrawValues(false)
                         }
 

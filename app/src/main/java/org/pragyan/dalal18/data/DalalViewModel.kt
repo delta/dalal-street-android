@@ -1,5 +1,6 @@
 package org.pragyan.dalal18.data
 
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import org.pragyan.dalal18.utils.StockUtils.StockIdCompanyName
 import org.pragyan.dalal18.utils.StockUtils.stockIdCompanyNameList
@@ -10,6 +11,7 @@ class DalalViewModel : ViewModel() {
     lateinit var ownedStockDetails: MutableList<StockDetails>
     lateinit var globalStockDetails: MutableList<GlobalStockDetails>
     lateinit var reservedStockDetails: MutableList<StockDetails>
+    var companyName: String? = null
 
     var reservedCash = 0L
 
@@ -20,7 +22,7 @@ class DalalViewModel : ViewModel() {
     }
 
     fun updateGlobalStockPrice(pos: Int, price: Long) {
-        globalStockDetails[pos-1].price = price
+        globalStockDetails[pos - 1].price = price
     }
 
     fun createCompanyArrayFromGlobalStockDetails() {
@@ -59,5 +61,9 @@ class DalalViewModel : ViewModel() {
                 return currentStock.quantity
         }
         return 0L
+    }
+
+    fun updateCompanySelectedMarketDepth(company: String) {
+        companyName = company
     }
 }

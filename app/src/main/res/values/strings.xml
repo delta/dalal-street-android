@@ -24,7 +24,7 @@
     <string name="order_price">Order price</string>
     <string name="retrieve_stocks">Retrieve Stocks</string>
     <string name="mortgage_stocks">Mortgage Stocks</string>
-    <string name="enter_the_number_of_stocks">Enter the number of stocks</string>
+    <string name="enter_the_number_of_stocks">Number of stocks</string>
     <string name="logout">Logout</string>
     <string name="stock_details">Stock Details</string>
     <string name="market_depth">Market Depth</string>
@@ -423,6 +423,7 @@
     <string name="temporary_password">Temporary Password</string>
     <string name="new_password">New Password</string>
     <string name="reset">Reset</string>
+    <string name="market_depth_trade_frag">MARKET\nDEPTH</string>
     <string-array name="intervalType">
         <item>1 min</item>
         <item>5 mins</item>

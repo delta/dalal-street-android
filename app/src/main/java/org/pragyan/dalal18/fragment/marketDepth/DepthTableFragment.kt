@@ -12,6 +12,7 @@ import android.widget.ArrayAdapter
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProviders
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import dalalstreet.api.DalalActionServiceGrpc
@@ -27,6 +28,7 @@ import org.pragyan.dalal18.R
 import org.pragyan.dalal18.adapter.MarketDepthRecyclerAdapter
 import org.pragyan.dalal18.dagger.ContextModule
 import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent
+import org.pragyan.dalal18.data.DalalViewModel
 import org.pragyan.dalal18.data.MarketDepth
 import org.pragyan.dalal18.utils.ConnectionUtils
 import org.pragyan.dalal18.utils.Constants
@@ -43,6 +45,7 @@ class DepthTableFragment : Fragment() {
 
     @Inject
     lateinit var streamServiceStub: DalalStreamServiceGrpc.DalalStreamServiceStub
+    private lateinit var model: DalalViewModel
 
     private var bidArrayList = mutableListOf<MarketDepth>()
     private var askArrayList = mutableListOf<MarketDepth>()
@@ -90,12 +93,16 @@ class DepthTableFragment : Fragment() {
         try {
             networkDownHandler = context as ConnectionUtils.OnNetworkDownHandler
         } catch (classCastException: ClassCastException) {
-            throw ClassCastException(context.toString() + " must implement network down handler.")
+            throw ClassCastException("$context must implement network down handler.")
         }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val rootView = inflater.inflate(R.layout.fragment_depth_table, container, false)
+        model = activity?.run {
+            ViewModelProviders.of(this)[DalalViewModel::class.java]
+        } ?: throw Exception("Invalid Activity")
+
         DaggerDalalStreetApplicationComponent.builder().contextModule(ContextModule(context!!)).build().inject(this)
         return rootView
     }
@@ -128,17 +135,19 @@ class DepthTableFragment : Fragment() {
         }
 
         val arrayAdapter = ArrayAdapter(activity!!, R.layout.company_spinner_item, StockUtils.getCompanyNamesArray())
+
         with(companySpinner) {
             setAdapter(arrayAdapter)
             setOnItemClickListener { _, _, _, _ ->
                 val currentCompany = companySpinner.text.toString()
+                //DepthGraphFragment.companyNameSelected = currentCompany
+                model.updateCompanySelectedMarketDepth(currentCompany)
+
                 bidArrayList.clear()
                 askArrayList.clear()
-                getValues(currentCompany)
+                getMarketDepthSubscriptionId(currentCompany)
                 unsubscribe(prevSubscriptionId)
-                current_stock_price_layout.visibility = View.INVISIBLE
-                ask_depth_layout.visibility = View.INVISIBLE
-                bid_depth_layout.visibility = View.INVISIBLE
+
                 if (activity != null && isAdded) {
                     loadingDialog?.show()
                     getCompanyProfileAsynchronously(currentCompany)
@@ -147,7 +156,7 @@ class DepthTableFragment : Fragment() {
         }
     }
 
-    private fun getValues(currentCompany: String) {
+    private fun getMarketDepthSubscriptionId(currentCompany: String) {
 
         prevSubscriptionId = subscriptionId
         doAsync {
@@ -332,6 +341,23 @@ class DepthTableFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         val intentFilter = IntentFilter()
+
+        val currentCompany = model.companyName
+
+        if (currentCompany != null) {
+            bidArrayList.clear()
+            askArrayList.clear()
+
+            loadingDialog?.show()
+            getMarketDepthSubscriptionId(currentCompany)
+            unsubscribe(prevSubscriptionId)
+
+            if (activity != null && isAdded) {
+                getCompanyProfileAsynchronously(currentCompany)
+                companySpinner.setText(currentCompany)
+            }
+        }
+
         intentFilter.addAction(Constants.REFRESH_MARKET_DEPTH)
         LocalBroadcastManager.getInstance(context!!).registerReceiver(refreshMarketDepth, intentFilter)
     }

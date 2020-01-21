@@ -18,6 +18,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import androidx.navigation.fragment.findNavController
 import dalalstreet.api.DalalActionServiceGrpc
 import dalalstreet.api.actions.PlaceOrderRequest
 import kotlinx.android.synthetic.main.fragment_trade.*
@@ -32,7 +33,8 @@ import org.pragyan.dalal18.utils.ConnectionUtils
 import org.pragyan.dalal18.utils.Constants
 import org.pragyan.dalal18.utils.Constants.ORDER_FEE_RATE
 import org.pragyan.dalal18.utils.StockUtils
-import org.pragyan.dalal18.utils.StockUtils.*
+import org.pragyan.dalal18.utils.StockUtils.getOrderTypeFromName
+import org.pragyan.dalal18.utils.StockUtils.getStockIdFromCompanyName
 import org.pragyan.dalal18.utils.hideKeyboard
 import java.text.DecimalFormat
 import javax.inject.Inject
@@ -43,6 +45,7 @@ class TradeFragment : Fragment() {
     lateinit var actionServiceBlockingStub: DalalActionServiceGrpc.DalalActionServiceBlockingStub
 
     private lateinit var model: DalalViewModel
+
     private var decimalFormat = DecimalFormat(Constants.PRICE_FORMAT)
 
     private var loadingDialog: AlertDialog? = null
@@ -52,7 +55,7 @@ class TradeFragment : Fragment() {
         override fun onReceive(context: Context, intent: Intent) {
             if (intent.action != null && (intent.action == Constants.REFRESH_OWNED_STOCKS_ACTION || intent.action == Constants.REFRESH_STOCK_PRICES_ACTION)) {
                 val stocksOwned = StockUtils.getQuantityOwnedFromCompanyName(model.ownedStockDetails, companySpinner.selectedItem.toString())
-                var tempString = " :  " + decimalFormat.format(stocksOwned).toString()
+                var tempString = " :" + decimalFormat.format(stocksOwned).toString()
                 stocksOwnedTextView.text = tempString
 
                 tempString = " : " + Constants.RUPEE_SYMBOL + " " + decimalFormat.format(StockUtils.getPriceFromStockId(model.globalStockDetails, StockUtils.getStockIdFromCompanyName(companySpinner.selectedItem.toString()))).toString()
@@ -74,8 +77,11 @@ class TradeFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val rootView = inflater.inflate(R.layout.fragment_trade, container, false)
+
+        // company model which has the company name data, and is commonly used for trade fragment and market depth fragment.
         model = activity?.run { ViewModelProviders.of(this).get(DalalViewModel::class.java) }
                 ?: throw Exception("Invalid activity")
+
         DaggerDalalStreetApplicationComponent.builder().contextModule(ContextModule(context!!)).build().inject(this)
         return rootView
     }
@@ -88,6 +94,7 @@ class TradeFragment : Fragment() {
 
         with(order_select_spinner) {
             adapter = orderSelectAdapter
+
             onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
                 override fun onNothingSelected(parent: AdapterView<*>?) {
 
@@ -109,14 +116,18 @@ class TradeFragment : Fragment() {
 
         with(companySpinner) {
             adapter = companiesAdapter
+
             onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
 
                 override fun onNothingSelected(parent: AdapterView<*>?) {
                 }
 
                 override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                    val stocksOwned = StockUtils.getQuantityOwnedFromCompanyName(model.ownedStockDetails, companySpinner.selectedItem.toString())
-                    var tempString = " :  $stocksOwned"
+                    val selectedCompany = companySpinner.selectedItem.toString()
+                    model.updateCompanySelectedMarketDepth(selectedCompany)
+
+                    val stocksOwned = StockUtils.getQuantityOwnedFromCompanyName(model.ownedStockDetails, selectedCompany)
+                    var tempString = " : $stocksOwned"
                     stocksOwnedTextView.text = tempString
 
                     tempString = " : " + Constants.RUPEE_SYMBOL + " " + decimalFormat.format(StockUtils.getPriceFromStockId(model.globalStockDetails, StockUtils.getStockIdFromCompanyName(companySpinner.selectedItem.toString()))).toString()
@@ -165,6 +176,12 @@ class TradeFragment : Fragment() {
         })
 
         bidAskButton.setOnClickListener { onBidAskButtonClick() }
+        btnMarketDepth.setOnClickListener { onMarketDepthButtonPressed() }
+
+    }
+
+    private fun onMarketDepthButtonPressed() {
+        findNavController().navigate(R.id.market_depth_dest)
     }
 
     private fun calculateOrderFee() {
@@ -255,6 +272,12 @@ class TradeFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
+
+        // to manually select the element after trade fragment is opened by pressing back key from market depth frag.
+        if (model.companyName != null) {
+            companySpinner.setSelection(StockUtils.getIndexByCompanyName(model.companyName))
+        }
+
         val intentFilter = IntentFilter(Constants.REFRESH_OWNED_STOCKS_ACTION)
         intentFilter.addAction(Constants.REFRESH_STOCK_PRICES_ACTION)
         LocalBroadcastManager.getInstance(context!!).registerReceiver(refreshOwnedStockDetails, intentFilter)

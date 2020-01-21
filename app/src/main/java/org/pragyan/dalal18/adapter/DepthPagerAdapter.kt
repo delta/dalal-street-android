@@ -7,7 +7,7 @@ import androidx.fragment.app.FragmentPagerAdapter
 import org.pragyan.dalal18.fragment.marketDepth.DepthGraphFragment
 import org.pragyan.dalal18.fragment.marketDepth.DepthTableFragment
 
-class DepthPagerAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm) {
+class DepthPagerAdapter(fm: FragmentManager, behavior: Int) : FragmentPagerAdapter(fm, behavior) {
 
     override fun getItem(position: Int): Fragment {
 

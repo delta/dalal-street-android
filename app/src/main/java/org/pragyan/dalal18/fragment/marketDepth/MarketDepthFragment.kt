@@ -2,12 +2,13 @@ package org.pragyan.dalal18.fragment.marketDepth
 
 import android.graphics.Color
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.viewpager.widget.ViewPager
 import com.google.android.material.tabs.TabLayout
 import org.pragyan.dalal18.R
@@ -23,8 +24,10 @@ class MarketDepthFragment : Fragment() {
         val viewPager = customView.findViewById<ViewPager>(R.id.content_viewPager)
         val tabLayout = customView.findViewById<TabLayout>(R.id.tab_headings)
 
+        val depthPagerAdapter = DepthPagerAdapter(childFragmentManager, FragmentStatePagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT)
+
         // Set adapter to viewpager and custom colors to tabLayout
-        viewPager.adapter = DepthPagerAdapter(childFragmentManager)
+        viewPager.adapter = depthPagerAdapter
         tabLayout.setupWithViewPager(viewPager)
 
         if (context != null) {
