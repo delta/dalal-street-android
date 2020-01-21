@@ -11,13 +11,9 @@ class DalalViewModel : ViewModel() {
     lateinit var ownedStockDetails: MutableList<StockDetails>
     lateinit var globalStockDetails: MutableList<GlobalStockDetails>
     lateinit var reservedStockDetails: MutableList<StockDetails>
-    val companyName = MutableLiveData<String>()
+    var companyName: String? = null
 
     var reservedCash = 0L
-
-    fun updateCompanySelectedMarketDepth(company: String) {
-        companyName.value = company
-    }
 
     fun updateGlobalStock(position: Int, price: Long, quantityInMarket: Long, quantityInExchange: Long) {
         globalStockDetails[position].price = price
@@ -65,5 +61,9 @@ class DalalViewModel : ViewModel() {
                 return currentStock.quantity
         }
         return 0L
+    }
+
+    fun updateCompanySelectedMarketDepth(company: String) {
+        companyName = company
     }
 }

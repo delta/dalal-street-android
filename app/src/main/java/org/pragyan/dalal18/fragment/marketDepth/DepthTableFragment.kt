@@ -93,7 +93,7 @@ class DepthTableFragment : Fragment() {
         try {
             networkDownHandler = context as ConnectionUtils.OnNetworkDownHandler
         } catch (classCastException: ClassCastException) {
-            throw ClassCastException(context.toString() + " must implement network down handler.")
+            throw ClassCastException("$context must implement network down handler.")
         }
     }
 
@@ -145,7 +145,7 @@ class DepthTableFragment : Fragment() {
 
                 bidArrayList.clear()
                 askArrayList.clear()
-                getValues(currentCompany)
+                getMarketDepthSubscriptionId(currentCompany)
                 unsubscribe(prevSubscriptionId)
 
                 if (activity != null && isAdded) {
@@ -156,7 +156,7 @@ class DepthTableFragment : Fragment() {
         }
     }
 
-    private fun getValues(currentCompany: String) {
+    private fun getMarketDepthSubscriptionId(currentCompany: String) {
 
         prevSubscriptionId = subscriptionId
         doAsync {
@@ -342,29 +342,24 @@ class DepthTableFragment : Fragment() {
         super.onResume()
         val intentFilter = IntentFilter()
 
+        val currentCompany = model.companyName
 
-        var currentCompany = String()
+        if (currentCompany != null) {
+            bidArrayList.clear()
+            askArrayList.clear()
 
-        // observing the companySelected value
-        model.companyName.observe(this, androidx.lifecycle.Observer { company ->
-            currentCompany = company
-        })
-
-        // setting up the fragment with company name
-        bidArrayList.clear()
-        askArrayList.clear()
-        getValues(currentCompany)
-        unsubscribe(prevSubscriptionId)
-
-        if (activity != null && isAdded) {
             loadingDialog?.show()
-            getCompanyProfileAsynchronously(currentCompany)
-            companySpinner.setText(currentCompany)
+            getMarketDepthSubscriptionId(currentCompany)
+            unsubscribe(prevSubscriptionId)
+
+            if (activity != null && isAdded) {
+                getCompanyProfileAsynchronously(currentCompany)
+                companySpinner.setText(currentCompany)
+            }
         }
 
         intentFilter.addAction(Constants.REFRESH_MARKET_DEPTH)
         LocalBroadcastManager.getInstance(context!!).registerReceiver(refreshMarketDepth, intentFilter)
-
     }
 
     override fun onPause() {

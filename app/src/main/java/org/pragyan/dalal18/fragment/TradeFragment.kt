@@ -274,8 +274,8 @@ class TradeFragment : Fragment() {
         super.onResume()
 
         // to manually select the element after trade fragment is opened by pressing back key from market depth frag.
-        if (model.companyName.value != null) {
-            companySpinner.setSelection(StockUtils.getIndexByCompanyName(model.companyName.value!!))
+        if (model.companyName != null) {
+            companySpinner.setSelection(StockUtils.getIndexByCompanyName(model.companyName))
         }
 
         val intentFilter = IntentFilter(Constants.REFRESH_OWNED_STOCKS_ACTION)
