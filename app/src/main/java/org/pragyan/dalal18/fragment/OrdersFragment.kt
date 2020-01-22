@@ -13,6 +13,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import dalalstreet.api.DalalActionServiceGrpc
 import dalalstreet.api.DalalStreamServiceGrpc
@@ -35,6 +36,7 @@ import org.pragyan.dalal18.data.DalalViewModel
 import org.pragyan.dalal18.data.Order
 import org.pragyan.dalal18.utils.ConnectionUtils
 import org.pragyan.dalal18.utils.Constants
+import org.pragyan.dalal18.utils.swipeToDeleteCallBack
 import javax.inject.Inject
 
 class OrdersFragment : Fragment(), OrdersRecyclerAdapter.OnOrderClickListener, SwipeRefreshLayout.OnRefreshListener {
@@ -98,6 +100,9 @@ class OrdersFragment : Fragment(), OrdersRecyclerAdapter.OnOrderClickListener, S
         tradeFloatingActionButton.setOnClickListener {
             findNavController().navigate(R.id.trade_dest)
         }
+        val recyclerView = view.findViewById<RecyclerView>(R.id.orders_recyclerView)
+        val  callback = swipeToDeleteCallBack(context!!,ordersRecyclerAdapter!!,recyclerView)
+        callback.attach()
     }
 
     private fun getMyOrdersSubscriptionId() {

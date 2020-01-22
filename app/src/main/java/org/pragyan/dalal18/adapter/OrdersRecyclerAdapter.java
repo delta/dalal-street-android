@@ -88,6 +88,15 @@ public class OrdersRecyclerAdapter extends RecyclerView.Adapter<OrdersRecyclerAd
         if (openOrdersList == null || openOrdersList.size() == 0) return 0;
         return openOrdersList.size();
     }
+    public int getOrderIdFromPosition(int pos){
+        return openOrdersList.get(pos).getOrderId();
+    }
+    public boolean getTypeFromPosition(int pos){
+        return openOrdersList.get(pos).isBid();
+    }
+    public void swipedata(int id,boolean bid){
+        listener.onCancelOrderClick(id,bid);
+    }
 
     // Returns true if openOrdersList is empty
     public boolean swapData(List<Order> list) {
