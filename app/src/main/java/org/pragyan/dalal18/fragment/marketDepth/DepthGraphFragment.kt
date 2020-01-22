@@ -12,6 +12,7 @@ import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProviders
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.CandleData
 import com.github.mikephil.charting.data.CandleDataSet
@@ -27,12 +28,11 @@ import org.jetbrains.anko.uiThread
 import org.pragyan.dalal18.R
 import org.pragyan.dalal18.dagger.ContextModule
 import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent
+import org.pragyan.dalal18.data.DalalViewModel
 import org.pragyan.dalal18.data.StockHistory
 import org.pragyan.dalal18.utils.ConnectionUtils
 import org.pragyan.dalal18.utils.Constants
 import org.pragyan.dalal18.utils.MiscellaneousUtils.parseDate
-import org.pragyan.dalal18.utils.StockUtils
-import org.pragyan.dalal18.utils.StockUtils.getStockIdFromCompanyName
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
@@ -43,6 +43,8 @@ class DepthGraphFragment : Fragment() {
 
     @Inject
     lateinit var actionServiceBlockingStub: DalalActionServiceGrpc.DalalActionServiceBlockingStub
+
+    private lateinit var model: DalalViewModel
 
     private var xVals = ArrayList<String>()
     private var yVals = ArrayList<CandleEntry>()
@@ -66,6 +68,10 @@ class DepthGraphFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val rootView = inflater.inflate(R.layout.fragment_depth_graph, container, false)
         DaggerDalalStreetApplicationComponent.builder().contextModule(ContextModule(context!!)).build().inject(this)
+
+        model = activity?.run { ViewModelProviders.of(this).get(DalalViewModel::class.java) }
+                ?: throw Exception("Invalid activity")
+
         return rootView
     }
 
@@ -91,7 +97,7 @@ class DepthGraphFragment : Fragment() {
             legend.isEnabled = false
         }
 
-        val arrayAdapter = ArrayAdapter(activity!!, R.layout.company_spinner_item, StockUtils.getCompanyNamesArray())
+        val arrayAdapter = ArrayAdapter(activity!!, R.layout.company_spinner_item, model.getCompanyNamesArray())
         with(graph_company_spinner) {
             setAdapter(arrayAdapter)
             isSelected = false
@@ -174,7 +180,7 @@ class DepthGraphFragment : Fragment() {
                 if (ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
                     val stockHistoryResponse = actionServiceBlockingStub.getStockHistory(GetStockHistoryRequest
                             .newBuilder()
-                            .setStockId(getStockIdFromCompanyName(currentCompany))
+                            .setStockId(model.getStockIdFromCompanyName(currentCompany))
                             .setResolution(resolution)
                             .build())
 

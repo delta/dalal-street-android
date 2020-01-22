@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProviders
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -26,6 +27,7 @@ import org.pragyan.dalal18.R
 import org.pragyan.dalal18.adapter.RetrieveRecyclerAdapter
 import org.pragyan.dalal18.dagger.ContextModule
 import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent
+import org.pragyan.dalal18.data.DalalViewModel
 import org.pragyan.dalal18.data.MortgageDetails
 import org.pragyan.dalal18.utils.ConnectionUtils
 import org.pragyan.dalal18.utils.Constants
@@ -38,6 +40,8 @@ class RetrieveFragment : Fragment(), RetrieveRecyclerAdapter.OnRetrieveButtonCli
     lateinit var actionServiceBlockingStub: DalalActionServiceGrpc.DalalActionServiceBlockingStub
 
     lateinit var networkDownHandler: ConnectionUtils.OnNetworkDownHandler
+
+    private lateinit var model: DalalViewModel
 
     private val mortgageDetailsList = mutableListOf<MortgageDetails>()
     private lateinit var retrieveAdapter: RetrieveRecyclerAdapter
@@ -60,7 +64,7 @@ class RetrieveFragment : Fragment(), RetrieveRecyclerAdapter.OnRetrieveButtonCli
                         }
                     }
 
-                    mortgageDetailsList.add(MortgageDetails(stockId, -quantity, price))
+                    mortgageDetailsList.add(MortgageDetails(stockId, model.getCompanyNameFromStockId(stockId), -quantity, price))
                     retrieveAdapter.addSingleItem(mortgageDetailsList, mortgageDetailsList.size - 1)
                     if (mortgageDetailsList.size > 0) flipVisibilities(false)
 
@@ -98,7 +102,7 @@ class RetrieveFragment : Fragment(), RetrieveRecyclerAdapter.OnRetrieveButtonCli
         try {
             networkDownHandler = context as ConnectionUtils.OnNetworkDownHandler
         } catch (classCastException: ClassCastException) {
-            throw ClassCastException(context.toString() + " must implement network down handler.")
+            throw ClassCastException("$context must implement network down handler.")
         }
     }
 
@@ -109,6 +113,8 @@ class RetrieveFragment : Fragment(), RetrieveRecyclerAdapter.OnRetrieveButtonCli
         DaggerDalalStreetApplicationComponent.builder().contextModule(ContextModule(context!!)).build().inject(this)
         retrieveAdapter = RetrieveRecyclerAdapter(context, null, this)
 
+        model = activity?.run { ViewModelProviders.of(this).get(DalalViewModel::class.java) }
+                ?: throw Exception("Invalid activity")
         return rootView
     }
 
@@ -144,7 +150,8 @@ class RetrieveFragment : Fragment(), RetrieveRecyclerAdapter.OnRetrieveButtonCli
 
                             mortgageDetailsList.clear()
                             for (currentDetails in response.mortgageDetailsList) {
-                                mortgageDetailsList.add(MortgageDetails(currentDetails.stockId, currentDetails.stocksInBank, currentDetails.mortgagePrice))
+                                mortgageDetailsList.add(MortgageDetails(currentDetails.stockId, model.getCompanyNameFromStockId(currentDetails.stockId),
+                                        currentDetails.stocksInBank, currentDetails.mortgagePrice))
                             }
 
                             if (mortgageDetailsList.size == 0) {

@@ -7,18 +7,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.RecyclerView;
+
 import org.pragyan.dalal18.R;
 import org.pragyan.dalal18.data.Transaction;
 import org.pragyan.dalal18.utils.Constants;
 
 import java.util.List;
 
-import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
-import androidx.recyclerview.widget.RecyclerView;
-
 import static org.pragyan.dalal18.utils.MiscellaneousUtils.parseDate;
-import static org.pragyan.dalal18.utils.StockUtils.getCompanyNameFromStockId;
 
 public class TransactionRecyclerAdapter extends RecyclerView.Adapter<TransactionRecyclerAdapter.MyViewHolder> {
 
@@ -81,7 +80,7 @@ public class TransactionRecyclerAdapter extends RecyclerView.Adapter<Transaction
                 break;
         }
 
-        tempAssigningString = getCompanyNameFromStockId(currentTransaction.getStockId());
+        tempAssigningString = currentTransaction.getCompanyName();
         holder.companyTextView.setText(tempAssigningString);
 
         tempAssigningString = parseDate(currentTransaction.getTime());
@@ -91,7 +90,7 @@ public class TransactionRecyclerAdapter extends RecyclerView.Adapter<Transaction
         switch (currentTransaction.getType()) {
             case "TAX_TRANSACTION":
             case "ORDER_FEE_TRANSACTION":
-                tempAssigningString = Constants.RUPEE_SYMBOL + " " + String.valueOf(-currentTransaction.getTotalMoney());
+                tempAssigningString = Constants.RUPEE_SYMBOL + " " + -currentTransaction.getTotalMoney();
                 holder.noOfStocksTextView.setText(tempAssigningString);
                 break;
             case "PLACE_ORDER_TRANSACTION":
@@ -117,8 +116,8 @@ public class TransactionRecyclerAdapter extends RecyclerView.Adapter<Transaction
                 }
                 break;
             default:
-                tempAssigningString = String.valueOf(Math.abs(currentTransaction.getNoOfStocks()))
-                        + " stocks @ " + Constants.RUPEE_SYMBOL + " " + String.valueOf(Math.abs(currentTransaction.getStockPrice()));
+                tempAssigningString = Math.abs(currentTransaction.getNoOfStocks())
+                        + " stocks @ " + Constants.RUPEE_SYMBOL + " " + Math.abs(currentTransaction.getStockPrice());
                 holder.noOfStocksTextView.setText(tempAssigningString);
                 break;
         }

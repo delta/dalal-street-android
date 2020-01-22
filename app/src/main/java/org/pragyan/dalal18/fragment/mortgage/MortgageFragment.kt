@@ -33,8 +33,6 @@ import org.pragyan.dalal18.data.DalalViewModel
 import org.pragyan.dalal18.data.MortgageDetails
 import org.pragyan.dalal18.utils.ConnectionUtils
 import org.pragyan.dalal18.utils.Constants
-import org.pragyan.dalal18.utils.StockUtils
-import org.pragyan.dalal18.utils.StockUtils.*
 import org.pragyan.dalal18.utils.hideKeyboard
 import java.text.DecimalFormat
 import javax.inject.Inject
@@ -49,7 +47,6 @@ class MortgageFragment : Fragment() {
     lateinit var actionServiceBlockingStub: DalalActionServiceGrpc.DalalActionServiceBlockingStub
 
     private var lastStockId = 1
-    private var companiesArray = StockUtils.getCompanyNamesArray()
     private val decimalFormat = DecimalFormat(Constants.PRICE_FORMAT)
     private lateinit var model: DalalViewModel
 
@@ -63,7 +60,7 @@ class MortgageFragment : Fragment() {
 
             if (intent.action.equals(Constants.REFRESH_STOCK_PRICES_ACTION, ignoreCase = true)) {
                 val currentPriceText = " :  " + Constants.RUPEE_SYMBOL +
-                        decimalFormat.format(getPriceFromStockId(model.globalStockDetails, lastStockId)).toString()
+                        decimalFormat.format(model.getPriceFromStockId(lastStockId)).toString()
                 currentPriceTextView.text = currentPriceText
 
             } else if (intent.action.equals(Constants.REFRESH_MORTGAGE_UPDATE_ACTION, ignoreCase = true)) {
@@ -72,13 +69,13 @@ class MortgageFragment : Fragment() {
                 val stockId = intent.getIntExtra(STOCKS_ID_KEY, 0)
                 val price = intent.getLongExtra(STOCKS_PRICE_KEY, 0)
 
-                val ownedString = " :  " + decimalFormat.format(getQuantityOwnedFromStockId(model.ownedStockDetails, stockId)).toString()
+                val ownedString = " :  " + decimalFormat.format(model.getQuantityOwnedFromStockId(stockId)).toString()
                 stocksOwnedTextView.text = ownedString
 
                 if (quantity < 0) /* Mortgage Action */ {
                     var newStockMortgaged = true
 
-                    for(mortgageDetails in mortgageDetailsList) {
+                    for (mortgageDetails in mortgageDetailsList) {
                         if (mortgageDetails.stockId == stockId && mortgageDetails.mortgagePrice == price) {
                             mortgageDetails.stockQuantity -= quantity
                             newStockMortgaged = false
@@ -86,10 +83,10 @@ class MortgageFragment : Fragment() {
                         }
                     }
 
-                    if(newStockMortgaged) mortgageDetailsList.add(MortgageDetails(stockId, -quantity, price))
+                    if (newStockMortgaged) mortgageDetailsList.add(MortgageDetails(stockId, model.getCompanyNameFromStockId(stockId), -quantity, price))
 
                 } else /* Retrieve Action */ {
-                    for(mortgageDetails in mortgageDetailsList) {
+                    for (mortgageDetails in mortgageDetailsList) {
                         if (mortgageDetails.stockId == stockId && mortgageDetails.mortgagePrice == price) {
                             if (mortgageDetails.stockQuantity == quantity) {
                                 mortgageDetailsList.remove(mortgageDetails)
@@ -112,7 +109,7 @@ class MortgageFragment : Fragment() {
         try {
             networkDownHandler = context as ConnectionUtils.OnNetworkDownHandler
         } catch (classCastException: ClassCastException) {
-            throw ClassCastException(context.toString() + " must implement network down handler.")
+            throw ClassCastException("$context must implement network down handler.")
         }
     }
 
@@ -120,7 +117,8 @@ class MortgageFragment : Fragment() {
 
         val rootView = inflater.inflate(R.layout.fragment_mortgage, container, false)
 
-        model = activity?.run { ViewModelProviders.of(this).get(DalalViewModel::class.java) } ?: throw Exception("Invalid activity")
+        model = activity?.run { ViewModelProviders.of(this).get(DalalViewModel::class.java) }
+                ?: throw Exception("Invalid activity")
         DaggerDalalStreetApplicationComponent.builder().contextModule(ContextModule(context!!)).build().inject(this)
 
         return rootView
@@ -139,22 +137,22 @@ class MortgageFragment : Fragment() {
         getMortgageDetailsAsynchronously()
 
         with(mortgage_companies_spinner) {
+            val companiesArray = model.getCompanyNamesArray()
             adapter = ArrayAdapter(context!!, R.layout.company_spinner_item, companiesArray)
 
             onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
                 override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
 
-                    lastStockId = getStockIdFromCompanyName(companiesArray[position])
-                    val ownedString = " :  " + decimalFormat.format(getQuantityOwnedFromStockId(model.ownedStockDetails, lastStockId)).toString()
+                    lastStockId = model.getStockIdFromCompanyName(companiesArray[position])
+                    val ownedString = " :  " + decimalFormat.format(model.getQuantityOwnedFromStockId(lastStockId)).toString()
                     stocksOwnedTextView.text = ownedString
 
-                    if(mortgageDetailsList.size > 0) {
+                    if (mortgageDetailsList.size > 0) {
                         val mortgageString = " :  " + decimalFormat.format(getStocksMortgagedFromStockId(lastStockId))
                         stocksMortgagedTextView.text = mortgageString
                     }
 
-                    val currentPriceText = " :  " + Constants.RUPEE_SYMBOL +
-                            decimalFormat.format(getPriceFromStockId(model.globalStockDetails, lastStockId)).toString()
+                    val currentPriceText = " :  " + Constants.RUPEE_SYMBOL + decimalFormat.format(model.getPriceFromStockId(lastStockId)).toString()
                     currentPriceTextView.text = currentPriceText
                 }
 
@@ -193,7 +191,7 @@ class MortgageFragment : Fragment() {
 
         val stocksTransaction = (stocks_editText.text.toString().trim { it <= ' ' }).toLong()
 
-        if (stocksTransaction <= getQuantityOwnedFromCompanyName(model.ownedStockDetails, getCompanyNameFromStockId(lastStockId))) {
+        if (stocksTransaction <= model.getQuantityOwnedFromCompanyName(model.getCompanyNameFromStockId(lastStockId))) {
             mortgageStocksAsynchronously(stocksTransaction)
         } else {
             context?.toast("Insufficient Stocks")
@@ -217,13 +215,14 @@ class MortgageFragment : Fragment() {
 
                             mortgageDetailsList.clear()
                             for (currentDetails in response.mortgageDetailsList) {
-                                mortgageDetailsList.add(MortgageDetails(currentDetails.stockId, currentDetails.stocksInBank, currentDetails.mortgagePrice))
+                                mortgageDetailsList.add(MortgageDetails(currentDetails.stockId, model.getCompanyNameFromStockId(currentDetails.stockId),
+                                        currentDetails.stocksInBank, currentDetails.mortgagePrice))
                             }
 
-                            val ownedString = " :  " + decimalFormat.format(getQuantityOwnedFromCompanyName(model.ownedStockDetails, getCompanyNameFromStockId(lastStockId))).toString()
+                            val ownedString = " :  " + decimalFormat.format(model.getQuantityOwnedFromCompanyName(model.getCompanyNameFromStockId(lastStockId))).toString()
                             stocksOwnedTextView.text = ownedString
 
-                            val tempString = " :  " + Constants.RUPEE_SYMBOL + " " + decimalFormat.format(StockUtils.getPriceFromStockId(model.globalStockDetails, lastStockId)).toString()
+                            val tempString = " :  " + Constants.RUPEE_SYMBOL + " " + decimalFormat.format(model.getPriceFromStockId(lastStockId)).toString()
                             currentPriceTextView.text = tempString
 
                             val mortgagedString = " :  " + decimalFormat.format(getStocksMortgagedFromStockId(lastStockId))
@@ -280,8 +279,8 @@ class MortgageFragment : Fragment() {
 
         var totalCount = 0L
 
-        for(mortgageDetail in mortgageDetailsList) {
-            if(mortgageDetail.stockId == stockId)
+        for (mortgageDetail in mortgageDetailsList) {
+            if (mortgageDetail.stockId == stockId)
                 totalCount += mortgageDetail.stockQuantity
         }
 

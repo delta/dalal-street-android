@@ -10,8 +10,6 @@ import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.fragment_company_description.*
 import org.pragyan.dalal18.R
 import org.pragyan.dalal18.data.DalalViewModel
-import org.pragyan.dalal18.utils.StockUtils.getDescriptionFromCompanyName
-import org.pragyan.dalal18.utils.StockUtils.getImageUrlFromCompanyName
 
 class CompanyDescriptionFragment : Fragment() {
 
@@ -24,11 +22,12 @@ class CompanyDescriptionFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        model = activity?.run { ViewModelProviders.of(this).get(DalalViewModel::class.java) } ?: throw Exception("Invalid activity")
+        model = activity?.run { ViewModelProviders.of(this).get(DalalViewModel::class.java) }
+                ?: throw Exception("Invalid activity")
 
-        Picasso.with(context).load(getImageUrlFromCompanyName(model.globalStockDetails, arguments?.getString(COMPANY_NAME_KEY))).into(companyImageView)
+        Picasso.with(context).load(model.getImageUrlFromCompanyName(arguments?.getString(COMPANY_NAME_KEY))).into(companyImageView)
         companyNameTextView.text = arguments?.getString(COMPANY_NAME_KEY)
-        companyDescriptionTextView.text = getDescriptionFromCompanyName(model.globalStockDetails, arguments?.getString(COMPANY_NAME_KEY))
+        companyDescriptionTextView.text = model.getDescriptionFromCompanyName(arguments?.getString(COMPANY_NAME_KEY))
     }
 
     companion object {

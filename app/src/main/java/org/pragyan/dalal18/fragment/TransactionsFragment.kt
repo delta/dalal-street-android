@@ -10,6 +10,7 @@ import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import dalalstreet.api.DalalActionServiceGrpc
@@ -21,6 +22,7 @@ import org.pragyan.dalal18.R
 import org.pragyan.dalal18.adapter.TransactionRecyclerAdapter
 import org.pragyan.dalal18.dagger.ContextModule
 import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent
+import org.pragyan.dalal18.data.DalalViewModel
 import org.pragyan.dalal18.data.Transaction
 import org.pragyan.dalal18.utils.ConnectionUtils
 import org.pragyan.dalal18.utils.Constants
@@ -34,6 +36,8 @@ class TransactionsFragment : Fragment() {
 
     @Inject
     lateinit var preferences: SharedPreferences
+
+    private lateinit var model: DalalViewModel
 
     private val transactionList = ArrayList<Transaction>()
     private var transactionsAdapter: TransactionRecyclerAdapter? = null
@@ -56,6 +60,9 @@ class TransactionsFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val rootView = inflater.inflate(R.layout.fragment_transactions, container, false)
         DaggerDalalStreetApplicationComponent.builder().contextModule(ContextModule(context!!)).build().inject(this)
+
+        model = activity?.run { ViewModelProviders.of(this).get(DalalViewModel::class.java) }
+                ?: throw Exception("Invalid activity")
         return rootView
     }
 
@@ -108,6 +115,7 @@ class TransactionsFragment : Fragment() {
                             transactionList.add(Transaction(
                                     currentTransaction.type.name,
                                     currentTransaction.stockId,
+                                    model.getCompanyNameFromStockId(currentTransaction.stockId),
                                     currentTransaction.stockQuantity,
                                     currentTransaction.price,
                                     currentTransaction.createdAt,

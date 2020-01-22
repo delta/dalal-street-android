@@ -11,7 +11,6 @@ import android.widget.TextView;
 import org.pragyan.dalal18.R;
 import org.pragyan.dalal18.data.MortgageDetails;
 import org.pragyan.dalal18.utils.Constants;
-import org.pragyan.dalal18.utils.StockUtils;
 
 import java.text.DecimalFormat;
 import java.util.List;
@@ -44,7 +43,7 @@ public class RetrieveRecyclerAdapter extends RecyclerView.Adapter<RetrieveRecycl
     public void onBindViewHolder(@NonNull RetrieveViewHolder holder, int position) {
 
         MortgageDetails currentDetails = mortgageDetailsList.get(position);
-        holder.companyNameTextView.setText(StockUtils.getShortNameForStockId(currentDetails.getStockId()));
+        holder.companyNameTextView.setText(currentDetails.getCompanyName());
         holder.mortgagePriceTextView.setText(String.valueOf(new DecimalFormat(Constants.PRICE_FORMAT).format(currentDetails.getMortgagePrice())));
         holder.stockQuantityTextView.setText(String.valueOf(currentDetails.getStockQuantity()));
         holder.retrieveQuantityEditText.setText("");

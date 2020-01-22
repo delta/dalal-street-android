@@ -8,8 +8,6 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.viewpager.widget.ViewPager
-import com.google.android.material.tabs.TabLayout
 import kotlinx.android.synthetic.main.fragment_main_mortgage.*
 import org.pragyan.dalal18.R
 import org.pragyan.dalal18.adapter.MortgagePagerAdapter
@@ -17,8 +15,7 @@ import org.pragyan.dalal18.adapter.MortgagePagerAdapter
 class MainMortgageFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val customView = inflater.inflate(R.layout.fragment_main_mortgage, container, false)
-        return customView
+        return inflater.inflate(R.layout.fragment_main_mortgage, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

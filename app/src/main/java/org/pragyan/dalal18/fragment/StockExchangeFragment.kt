@@ -14,6 +14,7 @@ import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProviders
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import dalalstreet.api.DalalActionServiceGrpc
 import dalalstreet.api.actions.BuyStocksFromExchangeRequest
@@ -27,9 +28,9 @@ import org.jetbrains.anko.uiThread
 import org.pragyan.dalal18.R
 import org.pragyan.dalal18.dagger.ContextModule
 import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent
+import org.pragyan.dalal18.data.DalalViewModel
 import org.pragyan.dalal18.utils.ConnectionUtils
 import org.pragyan.dalal18.utils.Constants
-import org.pragyan.dalal18.utils.StockUtils
 import org.pragyan.dalal18.utils.hideKeyboard
 import java.text.DecimalFormat
 import javax.inject.Inject
@@ -39,13 +40,14 @@ class StockExchangeFragment : Fragment() {
     @Inject
     lateinit var actionServiceBlockingStub: DalalActionServiceGrpc.DalalActionServiceBlockingStub
 
+    private lateinit var model: DalalViewModel
+
     private var currentStock: Stock? = null
     private var lastSelectedStockId: Int = 0
-    lateinit var companiesArray: Array<String>
+    lateinit var companiesArray: MutableList<String>
     private var loadingDialog: AlertDialog? = null
     private var decimalFormat = DecimalFormat(Constants.PRICE_FORMAT)
     lateinit var networkDownHandler: ConnectionUtils.OnNetworkDownHandler
-
 
     private val refreshStockPricesReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
@@ -62,12 +64,15 @@ class StockExchangeFragment : Fragment() {
         } catch (classCastException: ClassCastException) {
             throw ClassCastException("$context must implement network down handler.")
         }
-
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val rootView = inflater.inflate(R.layout.fragment_stock_exchange, container, false)
         DaggerDalalStreetApplicationComponent.builder().contextModule(ContextModule(context!!)).build().inject(this)
+
+        model = activity?.run { ViewModelProviders.of(this).get(DalalViewModel::class.java) }
+                ?: throw Exception("Invalid activity")
+
         return rootView
     }
 
@@ -82,7 +87,7 @@ class StockExchangeFragment : Fragment() {
                 .setCancelable(false)
                 .create()
 
-        companiesArray = StockUtils.getCompanyNamesArray()
+        companiesArray = model.getCompanyNamesArray()
         val arrayAdapter = ArrayAdapter<String>(activity!!, R.layout.company_spinner_item, companiesArray)
         with(companySpinner) {
             adapter = arrayAdapter
@@ -92,7 +97,7 @@ class StockExchangeFragment : Fragment() {
                 }
 
                 override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                    val stockId = StockUtils.getStockIdFromCompanyName(companiesArray[position])
+                    val stockId = model.getStockIdFromCompanyName(companiesArray[position])
                     lastSelectedStockId = stockId
                     getCompanyProfileAsynchronously(lastSelectedStockId)
                 }
@@ -106,7 +111,7 @@ class StockExchangeFragment : Fragment() {
 
         if (noOfStocksEditText.text.toString().trim { it <= ' ' }.isEmpty()) {
             context?.toast("Enter the number of Stocks")
-        } else if (currentStock != null && !dailyHigh_textView.text.isEmpty()) {
+        } else if (currentStock != null && dailyHigh_textView.text.isNotEmpty()) {
             if ((noOfStocksEditText.text.toString().trim { it <= ' ' }).toLong() <= currentStock!!.stocksInExchange) {
                 doAsync {
                     if (ConnectionUtils.getConnectionInfo(context!!)) {
@@ -122,8 +127,7 @@ class StockExchangeFragment : Fragment() {
                                     noOfStocksEditText.setText("")
                                     getCompanyProfileAsynchronously(lastSelectedStockId)
                                     view?.hideKeyboard()
-                                }
-                                else
+                                } else
                                     context?.toast(response.statusMessage)
                             }
                         } else {

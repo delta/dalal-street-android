@@ -6,16 +6,15 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.graphics.Typeface
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-
-import androidx.lifecycle.ViewModelProviders
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProviders
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.github.mikephil.charting.data.PieData
@@ -31,9 +30,8 @@ import org.pragyan.dalal18.data.DalalViewModel
 import org.pragyan.dalal18.data.Portfolio
 import org.pragyan.dalal18.data.StockDetails
 import org.pragyan.dalal18.utils.Constants
-import org.pragyan.dalal18.utils.StockUtils
 import java.text.DecimalFormat
-import java.util.ArrayList
+import java.util.*
 import javax.inject.Inject
 
 
@@ -147,7 +145,7 @@ class PortfolioFragment : Fragment() {
         var others = 0L
         for (i in 0 until stocks.size) {
             if ((stocks[i].quantity * currentPriceList[i]) > (.02 * totalWorth)) {
-                entries.add(PieEntry((stocks[i].quantity * currentPriceList[i]).toFloat(), StockUtils.getCompanyNameFromStockId(stocks[i].stockId)))
+                entries.add(PieEntry((stocks[i].quantity * currentPriceList[i]).toFloat(), model.getCompanyNameFromStockId(stocks[i].stockId)))
             } else {
                 others += stocks[i].quantity * currentPriceList[i]
             }
@@ -218,7 +216,7 @@ class PortfolioFragment : Fragment() {
 
             if (quantity != 0L) {
                 portfolioList.add(Portfolio(
-                        StockUtils.getShortNameForStockId(stockId),
+                        model.getShortNameForStockId(stockId),
                         quantity,
                         model.getReservedStocksFromStockId(stockId),
                         currentPrice * quantity

@@ -8,18 +8,19 @@ import android.widget.Button;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.RecyclerView;
+
 import org.pragyan.dalal18.R;
 import org.pragyan.dalal18.data.Order;
 import org.pragyan.dalal18.utils.Constants;
-import org.pragyan.dalal18.utils.StockUtils;
+import org.pragyan.dalal18.utils.OrderTypeUtils;
 
 import java.text.DecimalFormat;
 import java.util.Collections;
 import java.util.List;
 
-import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
-import androidx.recyclerview.widget.RecyclerView;
 import dalalstreet.api.datastreams.MyOrderUpdate;
 import dalalstreet.api.models.OrderType;
 
@@ -53,7 +54,7 @@ public class OrdersRecyclerAdapter extends RecyclerView.Adapter<OrdersRecyclerAd
         Order order = openOrdersList.get(position);
         String tempString;
 
-        tempString = (order.isBid() ? "BID - " : "ASK - ") + StockUtils.getOrderTypeFromType(order.getOrderType());
+        tempString = (order.isBid() ? "BID - " : "ASK - ") + OrderTypeUtils.getOrderTypeFromType(order.getOrderType());
         holder.typeTextView.setText(tempString);
 
         if (holder.typeTextView.getText().toString().substring(0, 3).equals("BID"))
@@ -61,7 +62,7 @@ public class OrdersRecyclerAdapter extends RecyclerView.Adapter<OrdersRecyclerAd
         else
             holder.typeTextView.setTextColor(ContextCompat.getColor(context, R.color.neon_blue));
 
-        tempString = StockUtils.getCompanyNameFromStockId(order.getStockId());
+        tempString = order.getCompanyName();
         holder.companyNameTextView.setText(tempString);
 
         tempString = String.valueOf(order.getStockQuantityFulfilled()) + " / " + String.valueOf(order.getStockQuantity());
@@ -108,11 +109,11 @@ public class OrdersRecyclerAdapter extends RecyclerView.Adapter<OrdersRecyclerAd
     }
 
     // Returns true if openOrdersList is empty
-    public boolean updateOrder(MyOrderUpdate order) {
+    public boolean updateOrder(MyOrderUpdate order, String companyName) {
 
         if (order.getIsNewOrder()) {
             openOrdersList.add(new Order(order.getId(), !order.getIsAsk(), order.getIsClosed(), order.getOrderPrice(), order.getStockId(),
-                    order.getOrderType(), Math.abs(order.getStockQuantity()), 0));
+                    companyName, order.getOrderType(), Math.abs(order.getStockQuantity()), 0));
             notifyItemInserted(openOrdersList.size() - 1);
         } else {
             int position = -1;

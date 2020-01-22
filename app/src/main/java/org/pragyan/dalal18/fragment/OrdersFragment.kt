@@ -10,6 +10,7 @@ import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -30,6 +31,7 @@ import org.pragyan.dalal18.R
 import org.pragyan.dalal18.adapter.OrdersRecyclerAdapter
 import org.pragyan.dalal18.dagger.ContextModule
 import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent
+import org.pragyan.dalal18.data.DalalViewModel
 import org.pragyan.dalal18.data.Order
 import org.pragyan.dalal18.utils.ConnectionUtils
 import org.pragyan.dalal18.utils.Constants
@@ -45,6 +47,8 @@ class OrdersFragment : Fragment(), OrdersRecyclerAdapter.OnOrderClickListener, S
 
     @Inject
     lateinit var streamServiceBlockingStub: DalalStreamServiceGrpc.DalalStreamServiceBlockingStub
+
+    private lateinit var model: DalalViewModel
 
     private var ordersRecyclerAdapter: OrdersRecyclerAdapter? = null
     private var orderSubscriptionId: SubscriptionId? = null
@@ -66,6 +70,9 @@ class OrdersFragment : Fragment(), OrdersRecyclerAdapter.OnOrderClickListener, S
         val rootView = inflater.inflate(R.layout.fragment_my_orders, container, false)
 
         DaggerDalalStreetApplicationComponent.builder().contextModule(ContextModule(context!!)).build().inject(this)
+
+        model = activity?.run { ViewModelProviders.of(this).get(DalalViewModel::class.java) }
+                ?: throw Exception("Invalid activity")
 
         return rootView
     }
@@ -105,7 +112,7 @@ class OrdersFragment : Fragment(), OrdersRecyclerAdapter.OnOrderClickListener, S
     private fun subscribeToMyOrdersStream(subscriptionId: SubscriptionId) {
         streamServiceStub.getMyOrderUpdates(subscriptionId, object : StreamObserver<MyOrderUpdate> {
             override fun onNext(orderUpdate: MyOrderUpdate) {
-                val empty = ordersRecyclerAdapter?.updateOrder(orderUpdate)
+                val empty = ordersRecyclerAdapter?.updateOrder(orderUpdate, model.getCompanyNameFromStockId(orderUpdate.stockId))
                 flipVisibilities(empty)
             }
 
@@ -142,6 +149,7 @@ class OrdersFragment : Fragment(), OrdersRecyclerAdapter.OnOrderClickListener, S
                                             false,
                                             currentAskOrder.price,
                                             currentAskOrder.stockId,
+                                            model.getCompanyNameFromStockId(currentAskOrder.stockId),
                                             currentAskOrder.orderType,
                                             currentAskOrder.stockQuantity,
                                             currentAskOrder.stockQuantityFulfilled
@@ -157,6 +165,7 @@ class OrdersFragment : Fragment(), OrdersRecyclerAdapter.OnOrderClickListener, S
                                             false,
                                             currentBidOrder.price,
                                             currentBidOrder.stockId,
+                                            model.getCompanyNameFromStockId(currentBidOrder.stockId),
                                             currentBidOrder.orderType,
                                             currentBidOrder.stockQuantity,
                                             currentBidOrder.stockQuantityFulfilled

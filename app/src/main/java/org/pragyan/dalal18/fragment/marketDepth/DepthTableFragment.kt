@@ -33,8 +33,6 @@ import org.pragyan.dalal18.data.DalalViewModel
 import org.pragyan.dalal18.data.MarketDepth
 import org.pragyan.dalal18.utils.ConnectionUtils
 import org.pragyan.dalal18.utils.Constants
-import org.pragyan.dalal18.utils.StockUtils
-import org.pragyan.dalal18.utils.StockUtils.getStockIdFromCompanyName
 import java.text.DecimalFormat
 import java.util.*
 import javax.inject.Inject
@@ -137,7 +135,7 @@ class DepthTableFragment : Fragment() {
             isNestedScrollingEnabled = false
         }
 
-        val arrayAdapter = ArrayAdapter(activity!!, R.layout.company_spinner_item, StockUtils.getCompanyNamesArray())
+        val arrayAdapter = ArrayAdapter(activity!!, R.layout.company_spinner_item, model.getCompanyNamesArray())
 
         with(companySpinner) {
             setAdapter(arrayAdapter)
@@ -167,7 +165,7 @@ class DepthTableFragment : Fragment() {
                     SubscribeRequest
                             .newBuilder()
                             .setDataStreamType(DataStreamType.MARKET_DEPTH)
-                            .setDataStreamId(getStockIdFromCompanyName(currentCompany).toString())
+                            .setDataStreamId(model.getStockIdFromCompanyName(currentCompany).toString())
                             .build(),
                     object : StreamObserver<SubscribeResponse> {
                         override fun onNext(value: SubscribeResponse) {
@@ -285,7 +283,7 @@ class DepthTableFragment : Fragment() {
             if (ConnectionUtils.getConnectionInfo(context)) {
                 if (ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
                     val companyProfileResponse = actionServiceBlockingStub.getCompanyProfile(
-                            GetCompanyProfileRequest.newBuilder().setStockId(getStockIdFromCompanyName(currentCompany)).build())
+                            GetCompanyProfileRequest.newBuilder().setStockId(model.getStockIdFromCompanyName(currentCompany)).build())
                     uiThread {
                         if (activity != null && isAdded) {
                             val currentStock = companyProfileResponse.stockDetails

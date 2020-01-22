@@ -21,7 +21,6 @@ import org.pragyan.dalal18.data.DalalViewModel
 import org.pragyan.dalal18.utils.Constants
 import org.pragyan.dalal18.utils.Constants.PREF_COMP
 import org.pragyan.dalal18.utils.DalalTourUtils
-import org.pragyan.dalal18.utils.StockUtils
 import java.util.*
 import javax.inject.Inject
 
@@ -80,7 +79,7 @@ class CompanyFragment : Fragment(), CompanyRecyclerAdapter.OnCompanyClickListene
 
     override fun onCompanyClick(view: View, position: Int) {
         val bundle = Bundle()
-        bundle.putString(CompanyDescriptionFragment.COMPANY_NAME_KEY, StockUtils.getCompanyNameFromShortName(companiesList[position].shortName))
+        bundle.putString(CompanyDescriptionFragment.COMPANY_NAME_KEY, model.getCompanyNameFromShortName(companiesList[position].shortName))
         view.findNavController().navigate(R.id.action_company_ticker_to_details, bundle)
     }
 
