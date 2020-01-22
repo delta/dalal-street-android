@@ -154,6 +154,8 @@ class MortgageFragment : Fragment() {
 
                     val currentPriceText = " :  " + Constants.RUPEE_SYMBOL + decimalFormat.format(model.getPriceFromStockId(lastStockId)).toString()
                     currentPriceTextView.text = currentPriceText
+
+                    model.updateFavouriteCompanyName(companiesArray[position])
                 }
 
                 override fun onNothingSelected(parent: AdapterView<*>) {
@@ -289,6 +291,11 @@ class MortgageFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
+
+        if(model.companyName!=null) {
+            mortgage_companies_spinner.setSelection(model.getIndexForFavoriteCompany())
+        }
+
         val intentFilter = IntentFilter(Constants.REFRESH_STOCK_PRICES_ACTION)
         intentFilter.addAction(Constants.REFRESH_MORTGAGE_UPDATE_ACTION)
         LocalBroadcastManager.getInstance(context!!).registerReceiver(refreshStockPricesReceiver, intentFilter)

@@ -61,7 +61,7 @@ class DalalViewModel : ViewModel() {
         return 0L
     }
 
-    fun updateCompanySelectedMarketDepth(company: String) {
+    fun updateFavouriteCompanyName(company: String) {
         companyName = company
     }
 

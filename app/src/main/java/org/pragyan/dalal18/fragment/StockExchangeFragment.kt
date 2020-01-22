@@ -99,6 +99,7 @@ class StockExchangeFragment : Fragment() {
                 override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                     val stockId = model.getStockIdFromCompanyName(companiesArray[position])
                     lastSelectedStockId = stockId
+                    model.updateFavouriteCompanyName(companiesArray[position])
                     getCompanyProfileAsynchronously(lastSelectedStockId)
                 }
             }
@@ -192,6 +193,9 @@ class StockExchangeFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
+
+        companySpinner.setSelection(model.getIndexForFavoriteCompany())
+
         LocalBroadcastManager.getInstance(context!!).registerReceiver(refreshStockPricesReceiver, IntentFilter(Constants.REFRESH_STOCK_PRICES_ACTION))
     }
 
