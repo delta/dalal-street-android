@@ -142,7 +142,7 @@ class DepthTableFragment : Fragment() {
             setOnItemClickListener { _, _, _, _ ->
                 val currentCompany = companySpinner.text.toString()
                 //DepthGraphFragment.companyNameSelected = currentCompany
-                model.updateCompanySelectedMarketDepth(currentCompany)
+                model.updateFavouriteCompanyName(currentCompany)
 
                 bidArrayList.clear()
                 askArrayList.clear()

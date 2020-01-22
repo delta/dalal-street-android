@@ -120,7 +120,7 @@ class TradeFragment : Fragment() {
 
                 override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                     val selectedCompany = companySpinner.selectedItem.toString()
-                    model.updateCompanySelectedMarketDepth(selectedCompany)
+                    model.updateFavouriteCompanyName(selectedCompany)
 
                     val stocksOwned = model.getQuantityOwnedFromCompanyName(selectedCompany)
                     var tempString = " : $stocksOwned"
