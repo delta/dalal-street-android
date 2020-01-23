@@ -12,7 +12,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import dalalstreet.api.DalalActionServiceGrpc
 import dalalstreet.api.DalalStreamServiceGrpc
@@ -35,9 +37,10 @@ import org.pragyan.dalal18.data.DalalViewModel
 import org.pragyan.dalal18.data.Order
 import org.pragyan.dalal18.utils.ConnectionUtils
 import org.pragyan.dalal18.utils.Constants
+import org.pragyan.dalal18.utils.OrderItemTouchHelper
 import javax.inject.Inject
 
-class OrdersFragment : Fragment(), OrdersRecyclerAdapter.OnOrderClickListener, SwipeRefreshLayout.OnRefreshListener {
+class OrdersFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, OrderItemTouchHelper.BusItemTouchHelperListener {
 
     @Inject
     lateinit var actionServiceBlockingStub: DalalActionServiceGrpc.DalalActionServiceBlockingStub
@@ -80,13 +83,17 @@ class OrdersFragment : Fragment(), OrdersRecyclerAdapter.OnOrderClickListener, S
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         (activity as AppCompatActivity).supportActionBar?.title = resources.getString(R.string.orders_frag_label)
-        ordersRecyclerAdapter = OrdersRecyclerAdapter(context, null, this)
+        ordersRecyclerAdapter = OrdersRecyclerAdapter(context, null)
         ordersRecycler_swipeRefreshLayout.setOnRefreshListener(this)
 
         with(orders_recyclerView) {
             setHasFixedSize(false)
             adapter = ordersRecyclerAdapter
             layoutManager = LinearLayoutManager(context)
+
+            val itemTouchHelper =
+                    ItemTouchHelper(OrderItemTouchHelper(0, ItemTouchHelper.LEFT, this@OrdersFragment))
+            itemTouchHelper.attachToRecyclerView(this)
         }
 
         val dialogView = LayoutInflater.from(context).inflate(R.layout.progress_dialog, null)
@@ -190,15 +197,23 @@ class OrdersFragment : Fragment(), OrdersRecyclerAdapter.OnOrderClickListener, S
         }
     }
 
-    override fun onCancelOrderClick(orderId: Int, bid: Boolean) {
+    override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int, position: Int) {
+
+        val orderId = ordersRecyclerAdapter?.getOrderIdFromPosition(position) ?: -1
+        val isBid = ordersRecyclerAdapter?.getIsBidFromPosition(position) ?: false
+
+        if (orderId == -1) context?.toast("Order does not exist")
 
         if (context != null) {
             val builder = AlertDialog.Builder(context!!, R.style.AlertDialogTheme)
                     .setTitle("Cancel Confirm")
                     .setCancelable(true)
                     .setMessage("Do you want to cancel this order ?")
-                    .setPositiveButton("Yes") { _, _ -> cancelOrder(orderId, bid) }
-                    .setNegativeButton("No") { dialogInterface, _ -> dialogInterface.dismiss() }
+                    .setPositiveButton("Yes") { _, _ -> cancelOrder(orderId, isBid) }
+                    .setNegativeButton("No") { dialogInterface, _ ->
+                        dialogInterface.dismiss()
+                        ordersRecyclerAdapter?.notifyItemChanged(position)
+                    }
             builder.show()
         }
     }

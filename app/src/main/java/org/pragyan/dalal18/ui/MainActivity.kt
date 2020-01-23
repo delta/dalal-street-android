@@ -597,11 +597,11 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
                     if (ConnectionUtils.isReachableByTcp(HOST, PORT)) {
                         uiThread {
                             if (lostOnce) {
+                                navigateToLastOpenFragment()
                                 subscribeToStreamsAsynchronously()
                             }
 
                             errorDialog?.dismiss()
-                            navigateToLastOpenFragment()
                         }
                     } else {
                         uiThread { errorDialog?.setMessage(getString(R.string.error_server_down)) }

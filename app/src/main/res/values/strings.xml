@@ -431,6 +431,8 @@
     <string name="new_password">New Password</string>
     <string name="reset">Reset</string>
     <string name="market_depth_trade_frag">MARKET\nDEPTH</string>
+    <string name="delete_icon">Delete Icon</string>
+    <string name="cancel_order">Cancel order</string>
     <string-array name="intervalType">
         <item>1 min</item>
         <item>5 mins</item>

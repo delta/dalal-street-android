@@ -9,6 +9,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -24,32 +25,26 @@ import java.util.List;
 import dalalstreet.api.datastreams.MyOrderUpdate;
 import dalalstreet.api.models.OrderType;
 
-public class OrdersRecyclerAdapter extends RecyclerView.Adapter<OrdersRecyclerAdapter.MyViewHolder> {
+public class OrdersRecyclerAdapter extends RecyclerView.Adapter<OrdersRecyclerAdapter.OrderViewHolder> {
 
     private Context context;
     private List<Order> openOrdersList;
-    private OnOrderClickListener listener;
 
-    public interface OnOrderClickListener {
-        void onCancelOrderClick(int orderId, boolean bid);
-    }
-
-    public OrdersRecyclerAdapter(Context context, List<Order> orderList, OnOrderClickListener listener) {
+    public OrdersRecyclerAdapter(Context context, List<Order> orderList) {
         this.context = context;
         this.openOrdersList = orderList;
-        this.listener = listener;
     }
 
     @NonNull
     @Override
-    public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public OrderViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
         View itemView = LayoutInflater.from(context).inflate(R.layout.order_list_item, parent, false);
-        return new OrdersRecyclerAdapter.MyViewHolder(itemView);
+        return new OrderViewHolder(itemView);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull OrderViewHolder holder, int position) {
 
         Order order = openOrdersList.get(position);
         String tempString;
@@ -156,13 +151,22 @@ public class OrdersRecyclerAdapter extends RecyclerView.Adapter<OrdersRecyclerAd
         return openOrdersList.size() <= 0;
     }
 
-    class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public int getOrderIdFromPosition(int position) {
+        return openOrdersList.get(position).getOrderId();
+    }
+
+    public boolean getIsBidFromPosition(int position) {
+        return openOrdersList.get(position).isBid();
+    }
+
+    public class OrderViewHolder extends RecyclerView.ViewHolder {
 
         TextView typeTextView, priceTextView, quantityTextView, companyNameTextView;
         Button cancelButton;
         SeekBar quantitySeekbar;
+        public ConstraintLayout orderViewForeground;
 
-        MyViewHolder(View view) {
+        OrderViewHolder(View view) {
             super(view);
 
             typeTextView = view.findViewById(R.id.orderType_textView);
@@ -171,13 +175,7 @@ public class OrdersRecyclerAdapter extends RecyclerView.Adapter<OrdersRecyclerAd
             companyNameTextView = view.findViewById(R.id.company_textView);
             cancelButton = view.findViewById(R.id.cancel_button);
             quantitySeekbar = view.findViewById(R.id.stockDisplay_seekBar);
-
-            cancelButton.setOnClickListener(this);
-        }
-
-        @Override
-        public void onClick(View view) {
-            listener.onCancelOrderClick(openOrdersList.get(getAdapterPosition()).getOrderId(), openOrdersList.get(getAdapterPosition()).isBid());
+            orderViewForeground = view.findViewById(R.id.orderViewForeground);
         }
     }
 }

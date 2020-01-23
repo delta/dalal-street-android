@@ -19,9 +19,7 @@
         <item name="colorAccent">@color/colorAccent</item>
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
-
     </style>
-
 
     <style name="TabHeadingStyle" parent="@android:style/TextAppearance.Widget.TabWidget">
         <item name="android:textSize">18sp</item>
