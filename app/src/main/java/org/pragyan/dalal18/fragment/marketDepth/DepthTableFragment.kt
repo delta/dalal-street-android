@@ -219,13 +219,13 @@ class DepthTableFragment : Fragment() {
                             if (price == 0L) {
                                 price = Long.MAX_VALUE
                             }
-                            if (!containsBid(price, volume) && price > 0) {
+                            if (!containsBid(price, volume) && price > 0 && volume>=0) {
                                 bidArrayList.add(MarketDepth(price, volume))
                             }
                         }
 
                         for ((price, volume) in value.askDepthDiffMap) {
-                            if (!containsAsk(price, volume) && price > 0) {
+                            if (!containsAsk(price, volume) && price > 0 && volume>=0) {
                                 askArrayList.add(MarketDepth(price, volume))
                             }
                         }
