@@ -18,6 +18,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.lifecycleScope
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.navigation.NavOptions
 import androidx.navigation.findNavController
@@ -31,6 +32,9 @@ import dalalstreet.api.datastreams.*
 import dalalstreet.api.models.TransactionType
 import io.grpc.stub.StreamObserver
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.jetbrains.anko.*
 import org.pragyan.dalal18.R
 import org.pragyan.dalal18.dagger.ContextModule
@@ -266,7 +270,7 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
 
     fun logout() {
 
-        unsubscribeFromAllStreams(false)
+        unsubscribeFromAllStreams()
 
         doAsync {
             if (ConnectionUtils.getConnectionInfo(this@MainActivity)) {
@@ -521,20 +525,15 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
     }
 
     // Unsubscribes from all streams
-    private fun unsubscribeFromAllStreams(shouldSubscribeAgain: Boolean) {
+    private fun unsubscribeFromAllStreams() {
         doAsync {
             if (ConnectionUtils.getConnectionInfo(this@MainActivity) && ConnectionUtils.isReachableByTcp(HOST, PORT)) {
                 for (subscriptionId in subscriptionIds) {
-                    streamServiceBlockingStub.unsubscribe(UnsubscribeRequest.newBuilder().setSubscriptionId(subscriptionId).build())
+                    val unsubscribeResponse =
+                            streamServiceBlockingStub.unsubscribe(UnsubscribeRequest.newBuilder().setSubscriptionId(subscriptionId).build())
                 }
 
                 subscriptionIds.clear()
-
-                uiThread {
-                    if (shouldSubscribeAgain) {
-                        subscribeToStreamsAsynchronously()
-                    }
-                }
             }
         }
     }
@@ -692,7 +691,7 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
     public override fun onPause() {
         super.onPause()
 
-        unsubscribeFromAllStreams(false)
+        unsubscribeFromAllStreams()
         lastOpenFragmentId = findNavController(R.id.main_host_fragment).currentDestination?.id
                 ?: R.id.home_dest
 
@@ -706,48 +705,46 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
         preferences.edit().remove(LAST_TRANSACTION_ID).apply()
     }
 
-    private fun subscribeToStreamsAsynchronously() {
-        doAsync {
-            if (ConnectionUtils.getConnectionInfo(this@MainActivity)) {
+    private fun subscribeToStreamsAsynchronously() = lifecycleScope.launch {
+        if (withContext(Dispatchers.IO) { ConnectionUtils.getConnectionInfo(this@MainActivity) }) {
 
-                if (ConnectionUtils.isReachableByTcp(HOST, PORT)) {
+            if (withContext(Dispatchers.IO) { ConnectionUtils.isReachableByTcp(HOST, PORT) }) {
 
-                    var response: SubscribeResponse = streamServiceBlockingStub.subscribe(SubscribeRequest.newBuilder().setDataStreamType(DataStreamType.STOCK_EXCHANGE).setDataStreamId("").build())
-                    uiThread {
-                        subscriptionIds.add(response.subscriptionId)
-                        subscribeToStockExchangeStream(response.subscriptionId)
-                    }
-
-                    response = streamServiceBlockingStub.subscribe(SubscribeRequest.newBuilder().setDataStreamType(DataStreamType.STOCK_PRICES).setDataStreamId("").build())
-                    uiThread {
-                        subscriptionIds.add(response.subscriptionId)
-                        subscribeToStockPricesStream(response.subscriptionId)
-                    }
-
-                    response = streamServiceBlockingStub.subscribe(SubscribeRequest.newBuilder().setDataStreamType(DataStreamType.MARKET_EVENTS).setDataStreamId("").build())
-                    uiThread {
-                        subscriptionIds.add(response.subscriptionId)
-                        subscribeToMarketEventsUpdateStream(response.subscriptionId)
-                    }
-
-                    response = streamServiceBlockingStub.subscribe(SubscribeRequest.newBuilder().setDataStreamType(DataStreamType.TRANSACTIONS).setDataStreamId("").build())
-                    uiThread {
-                        subscriptionIds.add(response.subscriptionId)
-                        subscribeToTransactionsStream(response.subscriptionId)
-                    }
-
-                    response = streamServiceBlockingStub.subscribe(SubscribeRequest.newBuilder().setDataStreamType(DataStreamType.NOTIFICATIONS).setDataStreamId("").build())
-                    uiThread {
-                        subscriptionIds.add(response.subscriptionId)
-                        subscribeToNotificationsStream(response.subscriptionId)
-                    }
-
-                } else {
-                    onNetworkDownError(resources.getString(R.string.error_server_down), R.id.home_dest)
+                val stockExchangeResponse: SubscribeResponse = withContext(Dispatchers.IO) {
+                    streamServiceBlockingStub.subscribe(SubscribeRequest.newBuilder().setDataStreamType(DataStreamType.STOCK_EXCHANGE).setDataStreamId("").build())
                 }
+                subscriptionIds.add(stockExchangeResponse.subscriptionId)
+                subscribeToStockExchangeStream(stockExchangeResponse.subscriptionId)
+
+                val stockPricesResponse = withContext(Dispatchers.IO) {
+                    streamServiceBlockingStub.subscribe(SubscribeRequest.newBuilder().setDataStreamType(DataStreamType.STOCK_PRICES).setDataStreamId("").build())
+                }
+                subscriptionIds.add(stockPricesResponse.subscriptionId)
+                subscribeToStockPricesStream(stockPricesResponse.subscriptionId)
+
+                val marketEventsResponse = withContext(Dispatchers.IO) {
+                    streamServiceBlockingStub.subscribe(SubscribeRequest.newBuilder().setDataStreamType(DataStreamType.MARKET_EVENTS).setDataStreamId("").build())
+                }
+                subscriptionIds.add(marketEventsResponse.subscriptionId)
+                subscribeToMarketEventsUpdateStream(marketEventsResponse.subscriptionId)
+
+                val notificationsResponse = withContext(Dispatchers.IO) {
+                    streamServiceBlockingStub.subscribe(SubscribeRequest.newBuilder().setDataStreamType(DataStreamType.NOTIFICATIONS).setDataStreamId("").build())
+                }
+                subscriptionIds.add(notificationsResponse.subscriptionId)
+                subscribeToNotificationsStream(notificationsResponse.subscriptionId)
+
+                val transactionsResponse = withContext(Dispatchers.IO) {
+                    streamServiceBlockingStub.subscribe(SubscribeRequest.newBuilder().setDataStreamType(DataStreamType.TRANSACTIONS).setDataStreamId("").build())
+                }
+                subscriptionIds.add(transactionsResponse.subscriptionId)
+                subscribeToTransactionsStream(transactionsResponse.subscriptionId)
+
             } else {
-                onNetworkDownError(resources.getString(R.string.error_check_internet), R.id.home_dest)
+                onNetworkDownError(resources.getString(R.string.error_server_down), R.id.home_dest)
             }
+        } else {
+            onNetworkDownError(resources.getString(R.string.error_check_internet), R.id.home_dest)
         }
     }
 

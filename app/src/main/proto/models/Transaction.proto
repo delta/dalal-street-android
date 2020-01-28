@@ -21,8 +21,10 @@ message Transaction {
   uint32 user_id = 2;
   uint32 stock_id = 3;
   TransactionType type = 4;
-  int64 stock_quantity = 5;
-  uint64 price = 6;
-  int64 total = 7;
-  string created_at = 8;
+  int64 reserved_stock_quantity = 5;
+  int64 stock_quantity = 6;
+  uint64 price = 7;
+  int64 reserved_cash_total = 8;
+  int64 total = 9;
+  string created_at = 10;
 }

@@ -88,9 +88,9 @@ class RegistrationActivity : AppCompatActivity() {
                             .setUserName(nameEditText.text.toString())
                             .build())
 
-                    val message = when {
-                        response.statusCode == RegisterResponse.StatusCode.OK -> "Successfully Registered! Please check your inbox to verify email."
-                        response.statusCode == RegisterResponse.StatusCode.AlreadyRegisteredError -> "You have already registered."
+                    val message = when (response.statusCode) {
+                        RegisterResponse.StatusCode.OK -> "Successfully Registered! Please check your inbox to verify email."
+                        RegisterResponse.StatusCode.AlreadyRegisteredError -> "You have already registered."
                         else -> response.statusMessage
                     }
 

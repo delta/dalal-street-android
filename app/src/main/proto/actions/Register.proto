@@ -10,7 +10,6 @@ message RegisterRequest{
     string user_name = 3;
     string full_name = 4;
     string country = 5;
-    string fingerprint = 6;
 }
 message RegisterResponse{
     enum StatusCode {
@@ -18,7 +17,6 @@ message RegisterResponse{
         InternalServerError = 1;
     AlreadyRegisteredError = 2;
     UnverifiedUserError = 3;
-    FingerprintExistsError = 4;
     }
     StatusCode status_code = 1;
     string     status_message = 2;
