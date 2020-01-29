@@ -13,7 +13,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import dalalstreet.api.DalalActionServiceGrpc
@@ -58,7 +58,6 @@ class DepthTableFragment : Fragment() {
     private var subscriptionId: SubscriptionId? = null
     private var prevSubscriptionId: SubscriptionId? = null
 
-
     private val refreshMarketDepth = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             if (activity != null && isAdded) {
@@ -99,7 +98,7 @@ class DepthTableFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val rootView = inflater.inflate(R.layout.fragment_depth_table, container, false)
         model = activity?.run {
-            ViewModelProviders.of(this)[DalalViewModel::class.java]
+            ViewModelProvider(this)[DalalViewModel::class.java]
         } ?: throw Exception("Invalid Activity")
 
         DaggerDalalStreetApplicationComponent.builder().contextModule(ContextModule(context!!)).build().inject(this)
@@ -118,8 +117,6 @@ class DepthTableFragment : Fragment() {
 
         bidDepthAdapter = MarketDepthRecyclerAdapter(context, bidArrayList)
         askDepthAdapter = MarketDepthRecyclerAdapter(context, askArrayList)
-        val X = view.findViewById<LinearLayout>(R.id.bid_depth_layout)
-        val Y = view.findViewById<LinearLayout>(R.id.ask_depth_layout)
 
         with(bid_depth_rv) {
             layoutManager = LinearLayoutManager(context)
@@ -219,13 +216,13 @@ class DepthTableFragment : Fragment() {
                             if (price == 0L) {
                                 price = Long.MAX_VALUE
                             }
-                            if (!containsBid(price, volume) && price > 0 && volume>=0) {
+                            if (!containsBid(price, volume) && price > 0 && volume >= 0) {
                                 bidArrayList.add(MarketDepth(price, volume))
                             }
                         }
 
                         for ((price, volume) in value.askDepthDiffMap) {
-                            if (!containsAsk(price, volume) && price > 0 && volume>=0) {
+                            if (!containsAsk(price, volume) && price > 0 && volume >= 0) {
                                 askArrayList.add(MarketDepth(price, volume))
                             }
                         }

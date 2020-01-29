@@ -12,7 +12,7 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.FragmentNavigator
@@ -85,7 +85,8 @@ class HomeFragment : Fragment(), NewsRecyclerAdapter.NewsItemClickListener, Swip
 
         val rootView = inflater.inflate(R.layout.fragment_home, container, false)
 
-        model = activity?.run { ViewModelProviders.of(this).get(DalalViewModel::class.java) } ?: throw Exception("Invalid activity")
+        model = activity?.run { ViewModelProvider(this).get(DalalViewModel::class.java) }
+                ?: throw Exception("Invalid activity")
         DaggerDalalStreetApplicationComponent.builder().contextModule(ContextModule(context!!)).build().inject(this)
 
         return rootView
@@ -188,7 +189,7 @@ class HomeFragment : Fragment(), NewsRecyclerAdapter.NewsItemClickListener, Swip
         companyTickerDetailsList.clear()
 
         for ((fullName, _, _, _, price, _, _, _, up, imagePath) in model.globalStockDetails) {
-            companyTickerDetailsList.add(CompanyTickerDetails(fullName!!, imagePath, price, up == 1))
+            companyTickerDetailsList.add(CompanyTickerDetails(fullName, imagePath, price, up == 1))
         }
 
         if (companyTickerDetailsList.size != 0) {

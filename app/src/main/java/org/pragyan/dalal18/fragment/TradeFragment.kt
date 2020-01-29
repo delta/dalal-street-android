@@ -14,7 +14,7 @@ import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.navigation.fragment.findNavController
 import dalalstreet.api.DalalActionServiceGrpc
@@ -75,7 +75,7 @@ class TradeFragment : Fragment() {
         val rootView = inflater.inflate(R.layout.fragment_trade, container, false)
 
         // company model which has the company name data, and is commonly used for trade fragment and market depth fragment.
-        model = activity?.run { ViewModelProviders.of(this).get(DalalViewModel::class.java) }
+        model = activity?.run { ViewModelProvider(this).get(DalalViewModel::class.java) }
                 ?: throw Exception("Invalid activity")
 
         DaggerDalalStreetApplicationComponent.builder().contextModule(ContextModule(context!!)).build().inject(this)

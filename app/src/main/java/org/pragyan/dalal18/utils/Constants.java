@@ -11,7 +11,7 @@ public class Constants {
     public static final int EVENT_END_TIME = 24;
 
     // TODO (Release): Change company image base URL and how is built
-    public static final String COMPANY_IMAGES_BASE_URL = "https://dalal.pragyan.org/public/src/images/companies/";
+    public static final String COMPANY_IMAGES_BASE_URL = "https://currents.nitt.edu/images/";
 
     public static final int NUMBER_OF_COMPANIES = 30;
 

@@ -5,7 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.fragment_company_description.*
 import org.pragyan.dalal18.R
@@ -22,10 +22,10 @@ class CompanyDescriptionFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        model = activity?.run { ViewModelProviders.of(this).get(DalalViewModel::class.java) }
+        model = activity?.run { ViewModelProvider(this).get(DalalViewModel::class.java) }
                 ?: throw Exception("Invalid activity")
 
-        Picasso.with(context).load(model.getImageUrlFromCompanyName(arguments?.getString(COMPANY_NAME_KEY))).into(companyImageView)
+        Picasso.get().load(model.getImageUrlFromCompanyName(arguments?.getString(COMPANY_NAME_KEY))).into(companyImageView)
         companyNameTextView.text = arguments?.getString(COMPANY_NAME_KEY)
         companyDescriptionTextView.text = model.getDescriptionFromCompanyName(arguments?.getString(COMPANY_NAME_KEY))
     }

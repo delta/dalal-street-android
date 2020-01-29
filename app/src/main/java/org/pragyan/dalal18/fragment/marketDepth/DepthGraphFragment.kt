@@ -12,12 +12,13 @@ import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
+import com.github.mikephil.charting.components.AxisBase
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.CandleData
 import com.github.mikephil.charting.data.CandleDataSet
 import com.github.mikephil.charting.data.CandleEntry
-import com.github.mikephil.charting.formatter.IAxisValueFormatter
+import com.github.mikephil.charting.formatter.ValueFormatter
 import dalalstreet.api.DalalActionServiceGrpc
 import dalalstreet.api.actions.GetStockHistoryRequest
 import dalalstreet.api.actions.StockHistoryResolution
@@ -69,7 +70,7 @@ class DepthGraphFragment : Fragment() {
         val rootView = inflater.inflate(R.layout.fragment_depth_graph, container, false)
         DaggerDalalStreetApplicationComponent.builder().contextModule(ContextModule(context!!)).build().inject(this)
 
-        model = activity?.run { ViewModelProviders.of(this).get(DalalViewModel::class.java) }
+        model = activity?.run { ViewModelProvider(this).get(DalalViewModel::class.java) }
                 ?: throw Exception("Invalid activity")
 
         return rootView
@@ -206,11 +207,13 @@ class DepthGraphFragment : Fragment() {
                         for (i in 0 until xVals.size) {
                             xValsArray[i] = xVals[i]
                         }
-                        val formatter = IAxisValueFormatter { value, _ ->
-                            if (value.toInt() < xValsArray.size) {
-                                xValsArray[value.toInt()]
-                            } else {
-                                xValsArray[xValsArray.size - 1]
+                        val formatter = object : ValueFormatter() {
+                            override fun getFormattedValue(value: Float, axis: AxisBase?): String {
+                                return if (value.toInt() < xValsArray.size) {
+                                    xValsArray[value.toInt()] ?: ""
+                                } else {
+                                    xValsArray[xValsArray.size - 1] ?: ""
+                                }
                             }
                         }
                         val xAxis = market_depth_chart.xAxis
