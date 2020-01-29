@@ -1,5 +1,6 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/black_background"
@@ -185,8 +186,8 @@
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/stocks_exchange_input"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_width="322dp"
+        android:layout_height="53dp"
         android:layout_above="@+id/buyExchangeButton"
         android:layout_alignParentStart="true"
         android:layout_marginStart="8dp"
@@ -194,7 +195,7 @@
         android:textColorHint="@color/neutral_font_color"
         app:layout_constraintBottom_toTopOf="@+id/buyExchangeButton"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/stocksInExchangeText">
 
@@ -236,4 +237,39 @@
         android:orientation="vertical"
         app:layout_constraintGuide_percent="0.6" />
 
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="left"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toTopOf="@+id/buyExchangeButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.826"
+        app:layout_constraintStart_toStartOf="@+id/stocks_exchange_input"
+        app:layout_constraintTop_toBottomOf="@+id/stocksInExchange_textView">
+
+        <Button
+            android:id="@+id/stockIncrementButton"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:layout_marginTop="40dp"
+            android:background="@drawable/increment_arrow"
+            app:layout_constraintBottom_toTopOf="@+id/stockDecrementButton"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.955"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/stocksInExchange_textView" />
+
+        <Button
+            android:id="@+id/stockDecrementButton"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:layout_marginBottom="20dp"
+            android:background="@drawable/decrement_arrow"
+            app:layout_constraintBottom_toTopOf="@+id/buyExchangeButton"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.944"
+            app:layout_constraintStart_toStartOf="parent" />
+
+    </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -5,6 +5,8 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.Bundle
+import android.util.DisplayMetrics
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -25,6 +27,7 @@ import kotlinx.android.synthetic.main.fragment_stock_exchange.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.toast
 import org.jetbrains.anko.uiThread
+import org.jetbrains.anko.windowManager
 import org.pragyan.dalal18.R
 import org.pragyan.dalal18.dagger.ContextModule
 import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent
@@ -48,6 +51,7 @@ class StockExchangeFragment : Fragment() {
     private var loadingDialog: AlertDialog? = null
     private var decimalFormat = DecimalFormat(Constants.PRICE_FORMAT)
     lateinit var networkDownHandler: ConnectionUtils.OnNetworkDownHandler
+    private var stocks : Int =5
 
     private val refreshStockPricesReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
@@ -105,7 +109,31 @@ class StockExchangeFragment : Fragment() {
             }
         }
 
+        setStockButtonMeasurement()
+        noOfStocksEditText.setText(stocks.toString())
         buyExchangeButton.setOnClickListener { buyStocksFromExchange() }
+        stockIncrementButton.setOnClickListener { incrementButtonListener() }
+        stockDecrementButton.setOnClickListener { decrementbuttonListener() }
+    }
+
+    private fun incrementButtonListener(){
+
+        if (noOfStocksEditText.text.toString().toInt()<=48) {
+            var noOfStocks = noOfStocksEditText.text.toString().toInt()
+            noOfStocks += stocks
+            noOfStocksEditText.setText(noOfStocks.toString())
+        }
+        //Log.d("INCREASING",noOfStocksEditText.text.toString())
+    }
+
+    private fun decrementbuttonListener(){
+
+        if (noOfStocksEditText.text.toString().toInt()>=2) {
+            var noOfStocks = noOfStocksEditText.text.toString().toInt()
+            noOfStocks -= stocks
+            noOfStocksEditText.setText(noOfStocks.toString())
+        }
+        //Log.d("DECREASING",noOfStocksEditText.text.toString())
     }
 
     private fun buyStocksFromExchange() {
@@ -202,5 +230,23 @@ class StockExchangeFragment : Fragment() {
     override fun onPause() {
         super.onPause()
         LocalBroadcastManager.getInstance(context!!).unregisterReceiver(refreshStockPricesReceiver)
+    }
+    private fun getDeviceMeasurement( ) :Pair<Int,Int>{
+         var displayMetrics = DisplayMetrics()
+        activity!!.windowManager.defaultDisplay.getMetrics(displayMetrics)
+
+        val  width = displayMetrics.widthPixels
+        val height = displayMetrics.heightPixels
+        return Pair(width,height)
+    }
+    private fun setStockButtonMeasurement(){
+        val (width,height) = getDeviceMeasurement()
+Log.d(width.toString(),height.toString())
+        //set all these measurements relative to my device so will be set accordingly to any device
+        stockDecrementButton.height=height/62
+        stockDecrementButton.width=width/31
+        stockIncrementButton.height=height/62
+        stockIncrementButton.width=width/31
+
     }
 }
