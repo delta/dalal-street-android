@@ -1,0 +1,4 @@
+[submodule "app/src/main/dalal-street-proto"]
+	path = app/src/main/proto
+	url = https://github.com/delta/dalal-street-proto.git
+	branch = master
