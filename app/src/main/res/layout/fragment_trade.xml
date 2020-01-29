@@ -240,9 +240,9 @@
         android:text="@string/market_depth_trade_frag"
         android:textColor="#FFFFFF"
         android:textSize="16sp"
+        android:layout_marginEnd="12dp"
         app:layout_constraintBottom_toTopOf="@id/order_price_input"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/no_of_stocks_input"
         app:layout_constraintTop_toBottomOf="@+id/no_of_stocks_input" />
 
 
@@ -267,7 +267,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
+        android:layout_marginBottom="24dp"
         android:background="@drawable/black_white_rounded_button"
         android:fontFamily="@font/marcellus_sc"
         android:padding="12dp"
@@ -278,7 +278,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/orderPriceWindowTextView" />
+        />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline"

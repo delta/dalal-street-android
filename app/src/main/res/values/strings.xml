@@ -433,6 +433,12 @@
     <string name="market_depth_trade_frag">MARKET\nDEPTH</string>
     <string name="delete_icon">Delete Icon</string>
     <string name="cancel_order">Cancel order</string>
+    <string name="mobile_number">Mobile Number</string>
+    <string name="verify_otp">VERIFY</string>
+    <string name="phone_number">Phone Number</string>
+    <string name="otp">OTP</string>
+    <string name="enter_otp">Enter OTP</string>
+    <string name="resend_otp">RESEND</string>
     <string-array name="intervalType">
         <item>1 min</item>
         <item>5 mins</item>
