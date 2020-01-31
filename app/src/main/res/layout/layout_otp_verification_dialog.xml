@@ -24,7 +24,8 @@
 
         <TextView
             android:id="@+id/tv_phone_no"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
+            android:gravity="center"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:fontFamily="@font/marcellus_sc"
@@ -37,6 +38,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:backgroundTint="@color/neutral_font_color"
+            android:id="@+id/enter_otp_mobno_edit_text"
             android:fontFamily="@font/kreon_light"
             android:hint="@string/mobile_number"
             android:focusable="false"
@@ -51,6 +53,8 @@
             android:id="@+id/et_otp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
             android:cursorVisible="false"
             android:digits="1234567890"
             android:inputType="number"
@@ -77,6 +81,7 @@
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:id="@+id/btnVerifyOtp"
                 android:text="@string/verify_otp"
                 android:textColor="@color/neutral_font_color"
                 android:background="@drawable/black_white_rounded_button"
@@ -86,6 +91,7 @@
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:id="@+id/btnResendOtp"
                 android:text="@string/resend_otp"
                 android:textColor="@color/neutral_font_color"
                 android:background="@drawable/black_white_rounded_button"
