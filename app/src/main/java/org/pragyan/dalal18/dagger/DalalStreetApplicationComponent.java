@@ -3,7 +3,7 @@ package org.pragyan.dalal18.dagger;
 import org.pragyan.dalal18.fragment.CompanyFragment;
 import org.pragyan.dalal18.fragment.HomeFragment;
 import org.pragyan.dalal18.fragment.LeaderboardFragment;
-import org.pragyan.dalal18.fragment.OTPVerficationDialogFragment;
+import org.pragyan.dalal18.fragment.OTPVerificationDialogFragment;
 import org.pragyan.dalal18.fragment.mortgage.MortgageFragment;
 import org.pragyan.dalal18.fragment.NewsFragment;
 import org.pragyan.dalal18.fragment.OrdersFragment;
@@ -53,5 +53,5 @@ public interface DalalStreetApplicationComponent {
 
     void inject(NotificationService notificationService);
     void inject(VerifyPhoneActivity verifyPhoneActivity);
-    void inject(OTPVerficationDialogFragment otpVerficationDialogFragment);
+    void inject(OTPVerificationDialogFragment otpVerficationDialogFragment);
 }

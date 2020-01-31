@@ -36,6 +36,7 @@ import org.pragyan.dalal18.data.StockDetails
 import org.pragyan.dalal18.utils.ConnectionUtils
 import org.pragyan.dalal18.utils.Constants
 import org.pragyan.dalal18.utils.MiscellaneousUtils
+import org.pragyan.dalal18.dagger.DalalStreetApplicationComponent
 import org.pragyan.dalal18.utils.hideKeyboard
 import java.util.*
 import javax.inject.Inject
@@ -242,32 +243,44 @@ class LoginActivity : AppCompatActivity() {
                             }
                         }
 
-                        val intent = Intent(this@LoginActivity, MainActivity::class.java)
-                        intent.putExtra(Constants.USERNAME_KEY, loginResponse.user.name)
-                        intent.putExtra(MainActivity.CASH_WORTH_KEY, loginResponse.user.cash)
-                        intent.putExtra(MainActivity.TOTAL_WORTH_KEY, loginResponse.user.total)
-                        intent.putExtra(MainActivity.RESERVED_CASH_KEY, loginResponse.user.reservedCash)
-                        intent.putExtra(Constants.MARKET_OPEN_KEY, loginResponse.isMarketOpen)
+                        lateinit var intent: Intent
+                        if(loginResponse.user.isPhoneVerified) {
+                        intent = Intent(this@LoginActivity, MainActivity::class.java)
 
-                        intent.putParcelableArrayListExtra(MainActivity.STOCKS_OWNED_KEY, stocksOwnedList)
-                        intent.putParcelableArrayListExtra(MainActivity.GLOBAL_STOCKS_KEY, globalStockList)
-                        intent.putParcelableArrayListExtra(MainActivity.RESERVED_STOCKS_KEY, reservedStocksList)
+                            intent.putExtra(Constants.USERNAME_KEY, loginResponse.user.name)
+                            intent.putExtra(MainActivity.CASH_WORTH_KEY, loginResponse.user.cash)
+                            intent.putExtra(MainActivity.TOTAL_WORTH_KEY, loginResponse.user.total)
+                            intent.putExtra(MainActivity.RESERVED_CASH_KEY, loginResponse.user.reservedCash)
+                            intent.putExtra(Constants.MARKET_OPEN_KEY, loginResponse.isMarketOpen)
 
-                        for ((key, value) in loginResponse.constantsMap) {
-                            when (key) {
-                                "MORTGAGE_DEPOSIT_RATE" -> Constants.MORTGAGE_DEPOSIT_RATE = value.toDouble()
-                                "MORTGAGE_RETRIEVE_RATE" -> Constants.MORTGAGE_RETRIEVE_RATE = value.toDouble()
-                                "ORDER_FEE_PERCENT" -> Constants.ORDER_FEE_RATE = (value.toDouble() / 100)
-                                "ORDER_PRICE_WINDOW" -> Constants.ORDER_PRICE_WINDOW = value
+                            intent.putParcelableArrayListExtra(MainActivity.STOCKS_OWNED_KEY, stocksOwnedList)
+                            intent.putParcelableArrayListExtra(MainActivity.GLOBAL_STOCKS_KEY, globalStockList)
+                            intent.putParcelableArrayListExtra(MainActivity.RESERVED_STOCKS_KEY, reservedStocksList)
+
+                            for ((key, value) in loginResponse.constantsMap) {
+                                when (key) {
+                                    "MORTGAGE_DEPOSIT_RATE" -> Constants.MORTGAGE_DEPOSIT_RATE = value.toDouble()
+                                    "MORTGAGE_RETRIEVE_RATE" -> Constants.MORTGAGE_RETRIEVE_RATE = value.toDouble()
+                                    "ORDER_FEE_PERCENT" -> Constants.ORDER_FEE_RATE = (value.toDouble() / 100)
+                                    "ORDER_PRICE_WINDOW" -> Constants.ORDER_PRICE_WINDOW = value
+                                }
                             }
-                        }
 
-                        preferences.edit()
-                                .putString(Constants.MARKET_OPEN_TEXT_KEY, loginResponse.marketIsOpenHackyNotif)
-                                .putString(Constants.MARKET_CLOSED_TEXT_KEY, loginResponse.marketIsClosedHackyNotif)
-                                .apply()
-                        startActivity(intent)
-                        finish()
+                            preferences.edit()
+                                    .putString(Constants.MARKET_OPEN_TEXT_KEY, loginResponse.marketIsOpenHackyNotif)
+                                    .putString(Constants.MARKET_CLOSED_TEXT_KEY, loginResponse.marketIsClosedHackyNotif)
+                                    .apply()
+                            startActivity(intent)
+                            finish()
+                        }
+                        else
+                        {
+                            intent = Intent(this@LoginActivity,VerifyPhoneActivity::class.java)
+                            intent.putExtra(userEmailAddress,email)
+                            intent.putExtra(userPassword,password)
+                            startActivity(intent)
+                            finish()
+                        }
                     } else {
                         toast(loginResponse.statusMessage)
                         passwordEditText.setText("")
@@ -308,5 +321,11 @@ class LoginActivity : AppCompatActivity() {
         snackBar.setActionTextColor(ContextCompat.getColor(this, R.color.neon_green))
         snackBar.view.setBackgroundColor(Color.parseColor("#20202C"))
         snackBar.show()
+    }
+
+    // for sending as intent if mob not verified
+    companion object {
+        var userEmailAddress : String? = "userEmailAddress"
+        var userPassword : String? = "userPassword"
     }
 }

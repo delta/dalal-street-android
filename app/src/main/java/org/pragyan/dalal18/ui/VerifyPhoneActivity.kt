@@ -1,25 +1,33 @@
 package org.pragyan.dalal18.ui
 
-import android.content.Context
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import dalalstreet.api.DalalActionServiceGrpc
 import dalalstreet.api.actions.AddPhoneRequest
 import dalalstreet.api.actions.AddPhoneResponse
-import dalalstreet.api.actions.ForgotPasswordResponse
 import io.grpc.ManagedChannel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import org.jetbrains.anko.toast
 import org.pragyan.dalal18.R
 import org.pragyan.dalal18.dagger.ContextModule
 import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent
-import org.pragyan.dalal18.fragment.OTPVerficationDialogFragment
-import java.time.Duration
+import org.pragyan.dalal18.fragment.OTPVerificationDialogFragment
+import org.pragyan.dalal18.ui.LoginActivity.Companion.userEmailAddress
+import org.pragyan.dalal18.ui.LoginActivity.Companion.userPassword
+import org.pragyan.dalal18.utils.ConnectionUtils
 import javax.inject.Inject
 
 class VerifyPhoneActivity: AppCompatActivity() {
+
+    var email : String? = String()
+    var password : String? = String()
 
     @Inject
     lateinit var channel: ManagedChannel
@@ -33,44 +41,49 @@ class VerifyPhoneActivity: AppCompatActivity() {
 
         DaggerDalalStreetApplicationComponent.builder().contextModule(ContextModule(this)).build().inject(this)
 
+        var intent = intent
+
+        email = intent.getStringExtra(userEmailAddress)
+        password = intent.getStringExtra(userPassword)
+
         verifyButton = findViewById(R.id.btnVerify)
         mobNoEditText = findViewById(R.id.etMobNo)
 
         verifyButton.setOnClickListener(object : View.OnClickListener {
             override fun onClick(v: View?) {
-                onVerifyButtonClicked()
+                if(mobNoEditText.text.toString() != "" && mobNoEditText.text.toString().length==10)
+                onVerifyButtonClicked(mobNoEditText.text.toString())
+                else
+                    toast("Enter valid mobile number.")
             }
 
         })
     }
 
-    private fun onVerifyButtonClicked() {
-        var phone: String? = null
+    private fun onVerifyButtonClicked(phone: String) = lifecycleScope.launch {
 
-        if(mobNoEditText.text.toString()!="") {
-            phone = mobNoEditText.text.toString()
+        if (withContext(Dispatchers.IO) { ConnectionUtils.getConnectionInfo(this@VerifyPhoneActivity) }) {
 
-            val request = AddPhoneRequest
-                    .newBuilder()
-                    .setPhoneNumber(phone)
-                    .build()
+                val phoneRequest = AddPhoneRequest
+                        .newBuilder()
+                        .setPhoneNumber(phone)
+                        .build()
 
-            val phoneResponse = DalalActionServiceGrpc.newBlockingStub(channel).addPhone(request)
+                val phoneResponse = withContext(Dispatchers.IO) { DalalActionServiceGrpc.newBlockingStub(channel).addPhone(phoneRequest) }
 
-            if (phoneResponse.statusCode == AddPhoneResponse.StatusCode.OK) {
-                // send sms here.
-                val dialog = OTPVerficationDialogFragment.newInstance(phone)
-                dialog.show(supportFragmentManager,"otp_dialog")
+                toast(phoneResponse.statusMessage)
 
+                if (phoneResponse.statusCode == AddPhoneResponse.StatusCode.OK) {
+                    // sms sent.
+                    val dialog = OTPVerificationDialogFragment.newInstance(phone,email,password)
+                    dialog.show(supportFragmentManager, "otp_dialog")
+
+                } else {
+                    // report error.
+                    toast("Server Error.")
+                }
+            } else {
+                toast("Server Unreachable.")
             }
-            else {
-                // report error.
-                Toast.makeText(applicationContext,"Server Error",Toast.LENGTH_SHORT).show()
-            }
-        }
-        else {
-            Toast.makeText(applicationContext,"Enter valid mobile number.",Toast.LENGTH_SHORT).show()
-        }
     }
-
 }
