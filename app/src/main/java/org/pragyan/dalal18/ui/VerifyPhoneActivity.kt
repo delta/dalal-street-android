@@ -16,6 +16,7 @@ import org.pragyan.dalal18.R
 import org.pragyan.dalal18.dagger.ContextModule
 import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent
 import org.pragyan.dalal18.fragment.OTPVerficationDialogFragment
+import java.time.Duration
 import javax.inject.Inject
 
 class VerifyPhoneActivity: AppCompatActivity() {
@@ -58,13 +59,13 @@ class VerifyPhoneActivity: AppCompatActivity() {
 
             if (phoneResponse.statusCode == AddPhoneResponse.StatusCode.OK) {
                 // send sms here.
-
                 val dialog = OTPVerficationDialogFragment.newInstance(phone)
                 dialog.show(supportFragmentManager,"otp_dialog")
 
             }
             else {
-                // report server error.
+                // report error.
+                Toast.makeText(applicationContext,"Server Error",Toast.LENGTH_SHORT).show()
             }
         }
         else {

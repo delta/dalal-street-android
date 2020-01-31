@@ -94,7 +94,7 @@ public class OTPVerficationDialogFragment extends DialogFragment {
         VerifyOTPResponse response = stub.verifyOTP(request);
 
         if(response.getStatusCode() == VerifyOTPResponse.StatusCode.OK) {
-            // go to main
+            // go to main with all intent values
         }
         else {
             Toast.makeText(getContext(),"Wrong OTP.",Toast.LENGTH_SHORT).show();
