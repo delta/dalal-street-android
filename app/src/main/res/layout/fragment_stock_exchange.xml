@@ -186,15 +186,15 @@
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/stocks_exchange_input"
-        android:layout_width="322dp"
-        android:layout_height="53dp"
+        android:layout_width="199dp"
+        android:layout_height="56dp"
         android:layout_above="@+id/buyExchangeButton"
         android:layout_alignParentStart="true"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
         android:textColorHint="@color/neutral_font_color"
         app:layout_constraintBottom_toTopOf="@+id/buyExchangeButton"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toEndOf="@id/guideline"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/stocksInExchangeText">
@@ -235,41 +235,42 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.6" />
+        app:layout_constraintGuide_begin="226dp" />
 
-    <LinearLayout
+
+    <Button
+        android:id="@+id/stockIncrementButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:gravity="left"
-        android:orientation="vertical"
+        android:layout_marginTop="40dp"
+        android:background="@drawable/black_white_rounded_button"
+        android:elevation="4dp"
+        android:text="@string/incrementFive"
+        android:textColor="@color/neon_yellow"
+        android:textSize="@dimen/buttonTextSize"
+        android:layout_marginBottom="@dimen/normalMargin"
+        app:layout_constraintBottom_toTopOf="@+id/stockDecrementButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.086"
+        app:layout_constraintStart_toStartOf="@+id/guideline"
+        app:layout_constraintTop_toBottomOf="@+id/stocksInExchange_textView"
+        app:layout_constraintVertical_bias="1.0" />
+
+    <Button
+        android:id="@+id/stockDecrementButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="40dp"
+        android:background="@drawable/black_white_rounded_button"
+        android:elevation="4dp"
+        android:text="@string/decrementFive"
+        android:textColor="@color/neon_yellow"
+        android:textSize="@dimen/buttonTextSize"
+        android:layout_marginTop="@dimen/normalMargin"
         app:layout_constraintBottom_toTopOf="@+id/buyExchangeButton"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.826"
-        app:layout_constraintStart_toStartOf="@+id/stocks_exchange_input"
-        app:layout_constraintTop_toBottomOf="@+id/stocksInExchange_textView">
+        app:layout_constraintHorizontal_bias="0.086"
+        app:layout_constraintStart_toStartOf="@+id/guideline" />
 
-        <Button
-            android:id="@+id/stockIncrementButton"
-            android:layout_width="35dp"
-            android:layout_height="35dp"
-            android:layout_marginTop="40dp"
-            android:background="@drawable/increment_arrow"
-            app:layout_constraintBottom_toTopOf="@+id/stockDecrementButton"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.955"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/stocksInExchange_textView" />
 
-        <Button
-            android:id="@+id/stockDecrementButton"
-            android:layout_width="35dp"
-            android:layout_height="35dp"
-            android:layout_marginBottom="20dp"
-            android:background="@drawable/decrement_arrow"
-            app:layout_constraintBottom_toTopOf="@+id/buyExchangeButton"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.944"
-            app:layout_constraintStart_toStartOf="parent" />
-
-    </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

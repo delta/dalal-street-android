@@ -109,7 +109,6 @@ class StockExchangeFragment : Fragment() {
             }
         }
 
-        setStockButtonMeasurement()
         noOfStocksEditText.setText(stocks.toString())
         buyExchangeButton.setOnClickListener { buyStocksFromExchange() }
         stockIncrementButton.setOnClickListener { incrementButtonListener() }
@@ -230,23 +229,5 @@ class StockExchangeFragment : Fragment() {
     override fun onPause() {
         super.onPause()
         LocalBroadcastManager.getInstance(context!!).unregisterReceiver(refreshStockPricesReceiver)
-    }
-    private fun getDeviceMeasurement( ) :Pair<Int,Int>{
-         var displayMetrics = DisplayMetrics()
-        activity!!.windowManager.defaultDisplay.getMetrics(displayMetrics)
-
-        val  width = displayMetrics.widthPixels
-        val height = displayMetrics.heightPixels
-        return Pair(width,height)
-    }
-    private fun setStockButtonMeasurement(){
-        val (width,height) = getDeviceMeasurement()
-Log.d(width.toString(),height.toString())
-        //set all these measurements relative to my device so will be set accordingly to any device
-        stockDecrementButton.height=height/62
-        stockDecrementButton.width=width/31
-        stockIncrementButton.height=height/62
-        stockIncrementButton.width=width/31
-
     }
 }
