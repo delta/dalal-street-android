@@ -51,7 +51,9 @@ class StockExchangeFragment : Fragment() {
     private var loadingDialog: AlertDialog? = null
     private var decimalFormat = DecimalFormat(Constants.PRICE_FORMAT)
     lateinit var networkDownHandler: ConnectionUtils.OnNetworkDownHandler
-    private var stocks : Int =5
+    private var initialStocks : Int =0
+    private var increment : Int = 5;
+    private var decrement : Int= 1;
 
     private val refreshStockPricesReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
@@ -109,7 +111,7 @@ class StockExchangeFragment : Fragment() {
             }
         }
 
-        noOfStocksEditText.setText(stocks.toString())
+        noOfStocksEditText.setText(initialStocks.toString())
         buyExchangeButton.setOnClickListener { buyStocksFromExchange() }
         stockIncrementButton.setOnClickListener { incrementButtonListener() }
         stockDecrementButton.setOnClickListener { decrementbuttonListener() }
@@ -119,7 +121,7 @@ class StockExchangeFragment : Fragment() {
 
         if (noOfStocksEditText.text.toString().toInt()<=48) {
             var noOfStocks = noOfStocksEditText.text.toString().toInt()
-            noOfStocks += stocks
+            noOfStocks += increment
             noOfStocksEditText.setText(noOfStocks.toString())
         }
         //Log.d("INCREASING",noOfStocksEditText.text.toString())
@@ -129,7 +131,7 @@ class StockExchangeFragment : Fragment() {
 
         if (noOfStocksEditText.text.toString().toInt()>=2) {
             var noOfStocks = noOfStocksEditText.text.toString().toInt()
-            noOfStocks -= stocks
+            noOfStocks += decrement
             noOfStocksEditText.setText(noOfStocks.toString())
         }
         //Log.d("DECREASING",noOfStocksEditText.text.toString())
