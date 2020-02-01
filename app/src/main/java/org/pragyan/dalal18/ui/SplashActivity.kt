@@ -26,8 +26,6 @@ import org.pragyan.dalal18.dagger.ContextModule
 import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent
 import org.pragyan.dalal18.data.GlobalStockDetails
 import org.pragyan.dalal18.data.StockDetails
-import org.pragyan.dalal18.ui.LoginActivity.Companion.userEmailAddress
-import org.pragyan.dalal18.ui.LoginActivity.Companion.userPassword
 import org.pragyan.dalal18.utils.ConnectionUtils
 import org.pragyan.dalal18.utils.Constants
 import org.pragyan.dalal18.utils.MiscellaneousUtils
@@ -147,7 +145,13 @@ class SplashActivity : AppCompatActivity() {
                                     }
                                 }
 
-                                var intent = Intent(this@SplashActivity, MainActivity::class.java)
+                                lateinit var intent: Intent
+
+                                if(loginResponse.user.isPhoneVerified)
+                                intent = Intent(this@SplashActivity, MainActivity::class.java)
+                                else
+                                    intent = Intent(this@SplashActivity, VerifyPhoneActivity::class.java)
+
 
                                 if(loginResponse.user.isPhoneVerified) {
                                     with(intent) {
@@ -181,14 +185,6 @@ class SplashActivity : AppCompatActivity() {
                                     startActivity(intent)
                                     finish()
                                 }
-                                else {
-                                    intent = Intent(this@SplashActivity, VerifyPhoneActivity::class.java)
-                                    intent.putExtra(userEmailAddress,email)
-                                    intent.putExtra(userPassword,password)
-                                    startActivity(intent)
-                                    finish()
-                                }
-
                             } else {
                                 toast(loginResponse.statusMessage)
                                 preferences.edit().putString(EMAIL_KEY, null).putString(PASSWORD_KEY, null).apply()

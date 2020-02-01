@@ -50,14 +50,6 @@ class OTPVerificationDialogFragment : DialogFragment() {
     @Inject
     lateinit var channel: ManagedChannel
 
-    @Inject
-    lateinit var preferences: SharedPreferences
-
-    var email : String? = String()
-    var password : String? = String()
-
-    private var signingInAlertDialog: AlertDialog? = null
-
     lateinit var mobNumber: String
     lateinit var phoneNumberEditText: EditText
     lateinit var resendOtp: Button
@@ -65,12 +57,10 @@ class OTPVerificationDialogFragment : DialogFragment() {
     lateinit var otpEditText: OtpEditText
 
     companion object {
-        fun newInstance(phNum: String, UID: String?, pass: String?) : OTPVerificationDialogFragment  {
+        fun newInstance(phNum: String) : OTPVerificationDialogFragment  {
 
             val f = OTPVerificationDialogFragment()
             f.mobNumber = phNum
-            f.email = UID
-            f.password = pass
 
             return f
         }
@@ -80,7 +70,6 @@ class OTPVerificationDialogFragment : DialogFragment() {
         super.onCreate(savedInstanceState)
 
         DaggerDalalStreetApplicationComponent.builder().contextModule(ContextModule(context!!)).build().inject(this)
-        signingInAlertDialog = AlertDialog.Builder(context!!).setView(R.layout.progress_dialog).setCancelable(false).create()
 
     }
 
@@ -122,9 +111,9 @@ class OTPVerificationDialogFragment : DialogFragment() {
 
             if (verifyOTPResponse.statusCode == VerifyOTPResponse.StatusCode.OK) {
                 // go to main with all intent values
-                signingInAlertDialog?.show()
-
-
+                val intent = Intent(activity,MainActivity::class.java)
+                startActivity(intent)
+                activity?.finish()
 
             } else {
                 Toast.makeText(context, "Wrong OTP.", Toast.LENGTH_SHORT).show()
@@ -138,122 +127,5 @@ class OTPVerificationDialogFragment : DialogFragment() {
     private fun sendOtpAgain() {
         // will go back to last activity and when button clicked, a new otp will be sent.
         dismiss()
-    }
-
-    private fun loginAsynchronously(email: String, password: String) {
-
-        val loginRequest = LoginRequest
-                .newBuilder()
-                .setEmail(email)
-                .setPassword(password)
-                .build()
-
-        val stub = DalalActionServiceGrpc.newBlockingStub(channel)
-
-        doAsync {
-
-            if (ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
-
-                val loginResponse = stub.login(loginRequest)
-
-                uiThread {
-
-                    signingInAlertDialog?.dismiss()
-
-                    if (loginResponse.statusCode == LoginResponse.StatusCode.OK) {
-
-                        MiscellaneousUtils.sessionId = loginResponse.sessionId
-
-                        if (passwordEditText.text.toString() != "" || passwordEditText.text.toString().isNotEmpty())
-                            preferences.edit()
-                                    .putString(Constants.EMAIL_KEY, loginResponse.user.email)
-                                    .putString(Constants.PASSWORD_KEY, passwordEditText.text.toString())
-                                    .putString(Constants.SESSION_KEY, loginResponse.sessionId)
-                                    .apply()
-
-                        // Adding user's stock details
-                        val stocksOwnedList = ArrayList<StockDetails>(30)
-                        val stocksOwnedMap = loginResponse.stocksOwnedMap.orEmpty()
-
-                        for (i in 1..Constants.NUMBER_OF_COMPANIES) {
-                            if (stocksOwnedMap.containsKey(i)) {
-                                stocksOwnedList.add(StockDetails(i, stocksOwnedMap.getValue(i)))
-                            }
-                        }
-
-                        // Adding user's reserved assets details
-                        val reservedStocksList = ArrayList<StockDetails>(30)
-                        val reservedStocksMap = loginResponse.reservedStocksOwnedMap.orEmpty()
-
-                        for (i in 1..Constants.NUMBER_OF_COMPANIES) {
-                            if (reservedStocksMap.containsKey(i)) {
-                                reservedStocksList.add(StockDetails(i, reservedStocksMap.getValue(i)))
-                            }
-                        }
-
-                        // Adding global stock details
-                        val globalStockList = ArrayList<GlobalStockDetails>()
-                        val globalStockMap = loginResponse.stockListMap
-
-                        for (q in 1..globalStockMap.size) {
-
-                            val currentStockDetails = globalStockMap[q]
-
-                            if (currentStockDetails != null) {
-                                globalStockList.add(GlobalStockDetails(
-                                        currentStockDetails.fullName,
-                                        currentStockDetails.shortName,
-                                        q,
-                                        currentStockDetails.description,
-                                        currentStockDetails.currentPrice,
-                                        currentStockDetails.stocksInMarket,
-                                        currentStockDetails.stocksInExchange,
-                                        currentStockDetails.previousDayClose,
-                                        if (currentStockDetails.upOrDown) 1 else 0,
-                                        Constants.COMPANY_IMAGES_BASE_URL + currentStockDetails.shortName.toUpperCase() + ".png"))
-                            }
-                        }
-
-                        var intent = Intent(activity, MainActivity::class.java)
-                        //  if(loginResponse.user.isPhoneVerified)
-
-                        intent.putExtra(Constants.USERNAME_KEY, loginResponse.user.name)
-                            intent.putExtra(MainActivity.CASH_WORTH_KEY, loginResponse.user.cash)
-                            intent.putExtra(MainActivity.TOTAL_WORTH_KEY, loginResponse.user.total)
-                            intent.putExtra(MainActivity.RESERVED_CASH_KEY, loginResponse.user.reservedCash)
-                            intent.putExtra(Constants.MARKET_OPEN_KEY, loginResponse.isMarketOpen)
-
-                            intent.putParcelableArrayListExtra(MainActivity.STOCKS_OWNED_KEY, stocksOwnedList)
-                            intent.putParcelableArrayListExtra(MainActivity.GLOBAL_STOCKS_KEY, globalStockList)
-                            intent.putParcelableArrayListExtra(MainActivity.RESERVED_STOCKS_KEY, reservedStocksList)
-
-                            for ((key, value) in loginResponse.constantsMap) {
-                                when (key) {
-                                    "MORTGAGE_DEPOSIT_RATE" -> Constants.MORTGAGE_DEPOSIT_RATE = value.toDouble()
-                                    "MORTGAGE_RETRIEVE_RATE" -> Constants.MORTGAGE_RETRIEVE_RATE = value.toDouble()
-                                    "ORDER_FEE_PERCENT" -> Constants.ORDER_FEE_RATE = (value.toDouble() / 100)
-                                    "ORDER_PRICE_WINDOW" -> Constants.ORDER_PRICE_WINDOW = value
-                                }
-                            }
-
-                            preferences.edit()
-                                    .putString(Constants.MARKET_OPEN_TEXT_KEY, loginResponse.marketIsOpenHackyNotif)
-                                    .putString(Constants.MARKET_CLOSED_TEXT_KEY, loginResponse.marketIsClosedHackyNotif)
-                                    .apply()
-                            startActivity(intent)
-                        activity?.finish()
-
-                    } else {
-                        Toast.makeText(context,loginResponse.statusMessage,Toast.LENGTH_SHORT).show()
-                        passwordEditText.setText("")
-                    }
-                }
-            } else {
-                uiThread {
-                    signingInAlertDialog?.dismiss()
-                    Toast.makeText(context,"Server Unreachable.",Toast.LENGTH_SHORT).show()
-                }
-            }
-        }
     }
 }

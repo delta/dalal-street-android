@@ -245,8 +245,12 @@ class LoginActivity : AppCompatActivity() {
 
                         lateinit var intent: Intent
                         if(loginResponse.user.isPhoneVerified) {
-                        intent = Intent(this@LoginActivity, MainActivity::class.java)
-
+                            intent = Intent(this@LoginActivity, MainActivity::class.java)
+                        }
+                        else
+                        {
+                            intent = Intent(this@LoginActivity,VerifyPhoneActivity::class.java)
+                        }
                             intent.putExtra(Constants.USERNAME_KEY, loginResponse.user.name)
                             intent.putExtra(MainActivity.CASH_WORTH_KEY, loginResponse.user.cash)
                             intent.putExtra(MainActivity.TOTAL_WORTH_KEY, loginResponse.user.total)
@@ -272,15 +276,6 @@ class LoginActivity : AppCompatActivity() {
                                     .apply()
                             startActivity(intent)
                             finish()
-                        }
-                        else
-                        {
-                            intent = Intent(this@LoginActivity,VerifyPhoneActivity::class.java)
-                            intent.putExtra(userEmailAddress,email)
-                            intent.putExtra(userPassword,password)
-                            startActivity(intent)
-                            finish()
-                        }
                     } else {
                         toast(loginResponse.statusMessage)
                         passwordEditText.setText("")
@@ -321,11 +316,5 @@ class LoginActivity : AppCompatActivity() {
         snackBar.setActionTextColor(ContextCompat.getColor(this, R.color.neon_green))
         snackBar.view.setBackgroundColor(Color.parseColor("#20202C"))
         snackBar.show()
-    }
-
-    // for sending as intent if mob not verified
-    companion object {
-        var userEmailAddress : String? = "userEmailAddress"
-        var userPassword : String? = "userPassword"
     }
 }

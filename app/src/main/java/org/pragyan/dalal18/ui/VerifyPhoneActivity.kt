@@ -19,15 +19,10 @@ import org.pragyan.dalal18.R
 import org.pragyan.dalal18.dagger.ContextModule
 import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent
 import org.pragyan.dalal18.fragment.OTPVerificationDialogFragment
-import org.pragyan.dalal18.ui.LoginActivity.Companion.userEmailAddress
-import org.pragyan.dalal18.ui.LoginActivity.Companion.userPassword
 import org.pragyan.dalal18.utils.ConnectionUtils
 import javax.inject.Inject
 
 class VerifyPhoneActivity: AppCompatActivity() {
-
-    var email : String? = String()
-    var password : String? = String()
 
     @Inject
     lateinit var channel: ManagedChannel
@@ -40,11 +35,6 @@ class VerifyPhoneActivity: AppCompatActivity() {
         setContentView(R.layout.layout_phone_no_verify)
 
         DaggerDalalStreetApplicationComponent.builder().contextModule(ContextModule(this)).build().inject(this)
-
-        var intent = intent
-
-        email = intent.getStringExtra(userEmailAddress)
-        password = intent.getStringExtra(userPassword)
 
         verifyButton = findViewById(R.id.btnVerify)
         mobNoEditText = findViewById(R.id.etMobNo)
@@ -75,7 +65,7 @@ class VerifyPhoneActivity: AppCompatActivity() {
 
                 if (phoneResponse.statusCode == AddPhoneResponse.StatusCode.OK) {
                     // sms sent.
-                    val dialog = OTPVerificationDialogFragment.newInstance(phone,email,password)
+                    val dialog = OTPVerificationDialogFragment.newInstance(phone)
                     dialog.show(supportFragmentManager, "otp_dialog")
 
                 } else {
