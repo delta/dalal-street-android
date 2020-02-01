@@ -153,7 +153,6 @@ class SplashActivity : AppCompatActivity() {
                                     intent = Intent(this@SplashActivity, VerifyPhoneActivity::class.java)
 
 
-                                if(loginResponse.user.isPhoneVerified) {
                                     with(intent) {
                                         putExtra(USERNAME_KEY, loginResponse.user.name)
                                         putExtra(MainActivity.CASH_WORTH_KEY, loginResponse.user.cash)
@@ -184,7 +183,6 @@ class SplashActivity : AppCompatActivity() {
 
                                     startActivity(intent)
                                     finish()
-                                }
                             } else {
                                 toast(loginResponse.statusMessage)
                                 preferences.edit().putString(EMAIL_KEY, null).putString(PASSWORD_KEY, null).apply()
