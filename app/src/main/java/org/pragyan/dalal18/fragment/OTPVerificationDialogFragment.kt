@@ -3,9 +3,11 @@ package org.pragyan.dalal18.fragment
 import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
+import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.INVISIBLE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
@@ -25,8 +27,6 @@ import org.pragyan.dalal18.dagger.ContextModule
 import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent
 import org.pragyan.dalal18.ui.MainActivity
 import org.pragyan.dalal18.ui.OtpEditText
-import org.pragyan.dalal18.ui.SplashActivity
-import org.pragyan.dalal18.ui.SplashActivity.Companion.USERNAME_KEY
 import org.pragyan.dalal18.utils.ConnectionUtils
 import javax.inject.Inject
 
@@ -85,7 +85,13 @@ class OTPVerificationDialogFragment : DialogFragment() {
         phoneNumberEditText.setText(mobNumber)
 
 
-        resendOtp.setOnClickListener { sendOtpAgain() }
+        resendOtp.setOnClickListener {
+            sendOtpAgain()
+            resendOtp.visibility = INVISIBLE
+            Handler().postDelayed({
+                resendOtp.visibility = VISIBLE
+            }, 60 * 1000)
+        }
         verifyOtp.setOnClickListener {
             if (otpEditText.text!!.toString() == "")
                 Toast.makeText(context, "Enter OTP.", Toast.LENGTH_SHORT).show()
@@ -129,7 +135,7 @@ class OTPVerificationDialogFragment : DialogFragment() {
 
     private fun sendOtpAgain() {
         // will go back to last activity and when button clicked, a new otp will be sent.
-        dismiss()
+        //dismiss()
     }
 
 }

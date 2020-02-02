@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/clPhoneNoVerification"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -46,20 +45,41 @@
             android:textColor="@color/neutral_font_color"
             android:textSize="24sp" />
 
-        <EditText
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/etMobNo"
+            android:layout_marginTop="12dp"
             android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
-            android:backgroundTint="@color/neutral_font_color"
-            android:fontFamily="@font/kreon_light"
-            android:hint="@string/mobile_number"
-            android:maxLines="1"
-            android:maxLength="15"
-            android:textColor="@color/neutral_font_color"
-            android:layout_marginTop="12dp"
-            android:textColorHint="@color/neutral_font_color" />
+            android:orientation="horizontal"
+            android:weightSum="10">
+
+            <com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner
+                android:id="@+id/spinnerCountry"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="3"
+                android:backgroundTint="@color/neutral_font_color"
+                android:shadowColor="@color/neutral_font_color"
+                android:textColor="@color/neutral_font_color"
+                android:textColorHighlight="@color/neutral_font_color"
+                android:textColorHint="@color/neutral_font_color"
+                android:textColorLink="@color/neutral_font_color"></com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner>
+
+            <EditText
+                android:id="@+id/etMobNo"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="7"
+                android:backgroundTint="@color/neutral_font_color"
+                android:fontFamily="@font/kreon_light"
+                android:hint="@string/mobile_number"
+                android:inputType="number"
+                android:maxLength="10"
+                android:maxLines="1"
+                android:textColor="@color/neutral_font_color"
+                android:textColorHint="@color/neutral_font_color" />
+        </LinearLayout>
 
         <Button
             android:layout_width="wrap_content"

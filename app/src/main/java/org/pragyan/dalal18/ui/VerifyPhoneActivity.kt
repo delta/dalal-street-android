@@ -3,23 +3,23 @@ package org.pragyan.dalal18.ui
 import android.app.AlertDialog
 import android.content.Intent
 import android.content.SharedPreferences
+import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
+import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner
 import dalalstreet.api.DalalActionServiceGrpc
 import dalalstreet.api.actions.AddPhoneRequest
 import dalalstreet.api.actions.AddPhoneResponse
 import dalalstreet.api.actions.LogoutRequest
 import dalalstreet.api.actions.LogoutResponse
-import dalalstreet.api.datastreams.UnsubscribeRequest
-import io.grpc.ManagedChannel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -30,12 +30,11 @@ import org.jetbrains.anko.uiThread
 import org.pragyan.dalal18.R
 import org.pragyan.dalal18.dagger.ContextModule
 import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent
-import org.pragyan.dalal18.dagger.SharedPreferencesModule
-import org.pragyan.dalal18.dagger.StubModule
 import org.pragyan.dalal18.fragment.OTPVerificationDialogFragment
 import org.pragyan.dalal18.utils.ConnectionUtils
 import org.pragyan.dalal18.utils.Constants
 import org.pragyan.dalal18.utils.hideKeyboard
+import java.util.*
 import javax.inject.Inject
 
 class VerifyPhoneActivity: AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
@@ -52,6 +51,9 @@ class VerifyPhoneActivity: AppCompatActivity(), ConnectionUtils.OnNetworkDownHan
     private var logoutDialog: AlertDialog? = null
     private var errorDialog: AlertDialog? = null
     private lateinit var loadingDialog: android.app.AlertDialog
+    lateinit var spinner: MaterialBetterSpinner
+    var countryCode = "+91"
+//    lateinit var countryCodes: List<String>
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -63,12 +65,35 @@ class VerifyPhoneActivity: AppCompatActivity(), ConnectionUtils.OnNetworkDownHan
         verifyButton = findViewById(R.id.btnVerify)
         mobNoEditText = findViewById(R.id.etMobNo)
         logoutButton = findViewById(R.id.btnLogoutVerifyActivity)
+        spinner = findViewById(R.id.spinnerCountry)
+        var countryCodes = Arrays.asList(getResources().getStringArray(R.array.DialingCountryCode))
+
+        ArrayAdapter.createFromResource(
+                this,
+                R.array.DialingCountryCode,
+                R.layout.spinner_item_country
+        ).also { adapter ->
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            spinner.setAdapter(adapter)
+            spinner.setTextColor(Color.parseColor("#FFFFFF"))
+            spinner.setHintTextColor(Color.parseColor("#FFFFFF"))
+            spinner.setText("91,IN")
+        }
+
+        spinner.setOnItemClickListener { _, _, _, _ ->
+            var selection = spinner.text.toString()
+            countryCode = ""
+            var i = 0
+            var lastIndex = selection.indexOf(",")
+            if (lastIndex != -1)
+                countryCode = selection.substring(0, lastIndex)
+            System.out.println(countryCode)
+        }
 
         logoutButton.setOnClickListener(object: View.OnClickListener {
             override fun onClick(v: View?) {
                 logoutClicked()
             }
-
         })
 
         verifyButton.setOnClickListener(object : View.OnClickListener {
@@ -78,7 +103,7 @@ class VerifyPhoneActivity: AppCompatActivity(), ConnectionUtils.OnNetworkDownHan
                 dialog.arguments = intent.extras
                 dialog.show(supportFragmentManager, "otp_dialog")*/
                 if(mobNoEditText.text.toString() != "" )//&& mobNoEditText.text.toString().length==10)
-                onVerifyButtonClicked(mobNoEditText.text.toString())
+                    onVerifyButtonClicked(countryCode.toString() + mobNoEditText.text.toString())
                 else
                     toast("Enter valid mobile number.")
             }
