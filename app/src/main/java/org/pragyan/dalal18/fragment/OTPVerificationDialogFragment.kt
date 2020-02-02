@@ -1,48 +1,31 @@
 package org.pragyan.dalal18.fragment
 
 import android.content.Intent
-import android.content.SharedPreferences
-import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.lifecycleScope
-import com.google.android.material.snackbar.Snackbar
 import dalalstreet.api.DalalActionServiceGrpc
-import dalalstreet.api.actions.LoginRequest
-import dalalstreet.api.actions.LoginResponse
 import dalalstreet.api.actions.VerifyOTPRequest
 import dalalstreet.api.actions.VerifyOTPResponse
 import io.grpc.ManagedChannel
-import kotlinx.android.synthetic.main.activity_login.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.jetbrains.anko.contentView
-import org.jetbrains.anko.doAsync
-import org.jetbrains.anko.toast
-import org.jetbrains.anko.uiThread
 import org.pragyan.dalal18.R
 import org.pragyan.dalal18.dagger.ContextModule
 import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent
-import org.pragyan.dalal18.data.GlobalStockDetails
-import org.pragyan.dalal18.data.StockDetails
-import org.pragyan.dalal18.ui.LoginActivity
 import org.pragyan.dalal18.ui.MainActivity
 import org.pragyan.dalal18.ui.OtpEditText
-import org.pragyan.dalal18.ui.VerifyPhoneActivity
+import org.pragyan.dalal18.ui.SplashActivity
+import org.pragyan.dalal18.ui.SplashActivity.Companion.USERNAME_KEY
 import org.pragyan.dalal18.utils.ConnectionUtils
-import org.pragyan.dalal18.utils.Constants
-import org.pragyan.dalal18.utils.MiscellaneousUtils
-import org.pragyan.dalal18.utils.hideKeyboard
-import java.util.ArrayList
 import javax.inject.Inject
 
 class OTPVerificationDialogFragment : DialogFragment() {
@@ -55,22 +38,24 @@ class OTPVerificationDialogFragment : DialogFragment() {
     lateinit var resendOtp: Button
     lateinit var verifyOtp: Button
     lateinit var otpEditText: OtpEditText
+    lateinit var bundle: Bundle
 
     companion object {
-        fun newInstance(phNum: String) : OTPVerificationDialogFragment  {
+        fun newInstance(phoneNumber: String) : OTPVerificationDialogFragment  {
 
             val f = OTPVerificationDialogFragment()
-            f.mobNumber = phNum
+            f.mobNumber = phoneNumber
 
             return f
         }
+        var BUNDLE_KEY = "BUNDLE_KEY"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         DaggerDalalStreetApplicationComponent.builder().contextModule(ContextModule(context!!)).build().inject(this)
-
+        bundle = this.arguments!!
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -90,10 +75,14 @@ class OTPVerificationDialogFragment : DialogFragment() {
 
         resendOtp.setOnClickListener { sendOtpAgain() }
         verifyOtp.setOnClickListener {
-            if (otpEditText.text!!.toString() == "")
+            /*if (otpEditText.text!!.toString() == "")
                 Toast.makeText(context, "Enter OTP.", Toast.LENGTH_SHORT).show()
             else
-                checkIfOtpIsCorrect(otpEditText.text!!.toString())
+                checkIfOtpIsCorrect(otpEditText.text!!.toString())*/
+            val intent = Intent(activity,MainActivity::class.java)
+            intent.putExtra(BUNDLE_KEY,bundle)
+            startActivity(intent)
+            activity?.finish()
         }
     }
 
@@ -103,10 +92,10 @@ class OTPVerificationDialogFragment : DialogFragment() {
             val verifyOTPRequest = VerifyOTPRequest
                     .newBuilder()
                     .setOtp(Integer.parseInt(OTP))
+                    .setPhone(mobNumber)
                     .build()
 
             val verifyOTPResponse = withContext(Dispatchers.IO) { DalalActionServiceGrpc.newBlockingStub(channel).verifyOTP(verifyOTPRequest) }
-
             Toast.makeText(context,verifyOTPResponse.statusMessage,Toast.LENGTH_SHORT).show()
 
             if (verifyOTPResponse.statusCode == VerifyOTPResponse.StatusCode.OK) {
@@ -114,9 +103,6 @@ class OTPVerificationDialogFragment : DialogFragment() {
                 val intent = Intent(activity,MainActivity::class.java)
                 startActivity(intent)
                 activity?.finish()
-
-            } else {
-                Toast.makeText(context, "Wrong OTP.", Toast.LENGTH_SHORT).show()
             }
         }
         else {
@@ -128,4 +114,5 @@ class OTPVerificationDialogFragment : DialogFragment() {
         // will go back to last activity and when button clicked, a new otp will be sent.
         dismiss()
     }
+
 }

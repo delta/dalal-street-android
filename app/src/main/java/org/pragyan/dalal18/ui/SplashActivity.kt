@@ -148,41 +148,44 @@ class SplashActivity : AppCompatActivity() {
                                 lateinit var intent: Intent
 
                                 if(loginResponse.user.isPhoneVerified)
-                                intent = Intent(this@SplashActivity, MainActivity::class.java)
+                                    intent = Intent(this@SplashActivity, MainActivity::class.java)
+
+                                // TODO: uncomment
+
                                 else
                                     intent = Intent(this@SplashActivity, VerifyPhoneActivity::class.java)
 
 
-                                    with(intent) {
-                                        putExtra(USERNAME_KEY, loginResponse.user.name)
-                                        putExtra(MainActivity.CASH_WORTH_KEY, loginResponse.user.cash)
-                                        putExtra(MainActivity.TOTAL_WORTH_KEY, loginResponse.user.total)
-                                        intent.putExtra(MainActivity.RESERVED_CASH_KEY, loginResponse.user.reservedCash)
-                                        putExtra(MARKET_OPEN_KEY, loginResponse.isMarketOpen)
+                                with(intent) {
+                                    putExtra(USERNAME_KEY, loginResponse.user.name)
+                                    putExtra(MainActivity.CASH_WORTH_KEY, loginResponse.user.cash)
+                                    putExtra(MainActivity.TOTAL_WORTH_KEY, loginResponse.user.total)
+                                    intent.putExtra(MainActivity.RESERVED_CASH_KEY, loginResponse.user.reservedCash)
+                                    putExtra(MARKET_OPEN_KEY, loginResponse.isMarketOpen)
 
-                                        putParcelableArrayListExtra(MainActivity.STOCKS_OWNED_KEY, stocksOwnedList)
-                                        putParcelableArrayListExtra(MainActivity.GLOBAL_STOCKS_KEY, globalStockList)
+                                    putParcelableArrayListExtra(MainActivity.STOCKS_OWNED_KEY, stocksOwnedList)
+                                    putParcelableArrayListExtra(MainActivity.GLOBAL_STOCKS_KEY, globalStockList)
 
-                                        putParcelableArrayListExtra(MainActivity.RESERVED_STOCKS_KEY, reservedStocksList)
-                                        putParcelableArrayListExtra(MainActivity.STOCKS_OWNED_KEY, stocksOwnedList)
-                                        putParcelableArrayListExtra(MainActivity.GLOBAL_STOCKS_KEY, globalStockList)
+                                    putParcelableArrayListExtra(MainActivity.RESERVED_STOCKS_KEY, reservedStocksList)
+                                    putParcelableArrayListExtra(MainActivity.STOCKS_OWNED_KEY, stocksOwnedList)
+                                    putParcelableArrayListExtra(MainActivity.GLOBAL_STOCKS_KEY, globalStockList)
+                                }
+
+                                // Checking for constants
+                                for ((key, value) in loginResponse.constantsMap) {
+                                    when (key) {
+                                        "MORTGAGE_DEPOSIT_RATE" -> Constants.MORTGAGE_DEPOSIT_RATE = value.toDouble()
+                                        "MORTGAGE_RETRIEVE_RATE" -> Constants.MORTGAGE_RETRIEVE_RATE = value.toDouble()
+                                        "ORDER_FEE_PERCENT" -> Constants.ORDER_FEE_RATE = (value.toDouble() / 100)
+                                        "ORDER_PRICE_WINDOW" -> Constants.ORDER_PRICE_WINDOW = value
                                     }
+                                }
 
-                                    // Checking for constants
-                                    for ((key, value) in loginResponse.constantsMap) {
-                                        when (key) {
-                                            "MORTGAGE_DEPOSIT_RATE" -> Constants.MORTGAGE_DEPOSIT_RATE = value.toDouble()
-                                            "MORTGAGE_RETRIEVE_RATE" -> Constants.MORTGAGE_RETRIEVE_RATE = value.toDouble()
-                                            "ORDER_FEE_PERCENT" -> Constants.ORDER_FEE_RATE = (value.toDouble() / 100)
-                                            "ORDER_PRICE_WINDOW" -> Constants.ORDER_PRICE_WINDOW = value
-                                        }
-                                    }
+                                preferences.edit().putString(Constants.MARKET_OPEN_TEXT_KEY, loginResponse.marketIsOpenHackyNotif)
+                                        .putString(Constants.MARKET_CLOSED_TEXT_KEY, loginResponse.marketIsClosedHackyNotif).apply()
 
-                                    preferences.edit().putString(Constants.MARKET_OPEN_TEXT_KEY, loginResponse.marketIsOpenHackyNotif)
-                                            .putString(Constants.MARKET_CLOSED_TEXT_KEY, loginResponse.marketIsClosedHackyNotif).apply()
-
-                                    startActivity(intent)
-                                    finish()
+                                startActivity(intent)
+                                finish()
                             } else {
                                 toast(loginResponse.statusMessage)
                                 preferences.edit().putString(EMAIL_KEY, null).putString(PASSWORD_KEY, null).apply()

@@ -19,6 +19,7 @@ import androidx.navigation.findNavController
 import androidx.navigation.fragment.FragmentNavigator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import androidx.transition.TransitionInflater
 import dalalstreet.api.DalalActionServiceGrpc
 import dalalstreet.api.actions.GetMarketEventsRequest
 import dalalstreet.api.actions.GetMarketEventsResponse
