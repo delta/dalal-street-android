@@ -106,6 +106,14 @@ class StockExchangeFragment : Fragment() {
         }
 
         buyExchangeButton.setOnClickListener { buyStocksFromExchange() }
+        stockIncrementFiveButton.setOnClickListener { addToStockExchangeInput(5) }
+        stockIncrementOneButton.setOnClickListener { addToStockExchangeInput(1) }
+    }
+
+    private fun addToStockExchangeInput(increment: Int) {
+        var noOfStocks = noOfStocksEditText.text.toString().toInt()
+        noOfStocks = (noOfStocks + increment).coerceAtMost(Constants.ASK_LIMIT)
+        noOfStocksEditText.setText(noOfStocks.toString())
     }
 
     private fun buyStocksFromExchange() {

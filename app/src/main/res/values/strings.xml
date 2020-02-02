@@ -100,6 +100,8 @@
     <string name="deptgfraph_tour">Graph for Market Depth</string>
     <string name="bidepth_tour">Bid Depth </string>
     <string name="askdepth_tour">Ask Depth</string>
+    <string name="incrementFive">+5</string>
+    <string name="incrementOne">+1</string>
 
     <string name="up_arrow">&#8593;</string>
     <string name="down_arrow">&#8595;</string>
