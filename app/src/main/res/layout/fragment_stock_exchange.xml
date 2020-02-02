@@ -1,6 +1,5 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/black_background"
@@ -186,8 +185,8 @@
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/stocks_exchange_input"
-        android:layout_width="199dp"
-        android:layout_height="56dp"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
         android:layout_above="@+id/buyExchangeButton"
         android:layout_alignParentStart="true"
         android:layout_marginStart="8dp"
@@ -195,7 +194,6 @@
         android:textColorHint="@color/neutral_font_color"
         app:layout_constraintBottom_toTopOf="@+id/buyExchangeButton"
         app:layout_constraintEnd_toEndOf="@id/guideline"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/stocksInExchangeText">
 
@@ -208,6 +206,7 @@
             android:hint="@string/enter_the_number_of_stocks"
             android:inputType="number"
             android:maxLength="6"
+            android:text="0"
             android:textColor="@color/neutral_font_color"
             android:textSize="20sp" />
 
@@ -235,42 +234,37 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_begin="226dp" />
-
+        app:layout_constraintGuide_percent="0.6" />
 
     <Button
-        android:id="@+id/stockIncrementButton"
+        android:id="@+id/stockIncrementFiveButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="40dp"
         android:background="@drawable/black_white_rounded_button"
         android:elevation="4dp"
+        android:minWidth="60dp"
         android:text="@string/incrementFive"
         android:textColor="@color/neon_yellow"
-        android:textSize="@dimen/buttonTextSize"
-        android:layout_marginBottom="@dimen/normalMargin"
-        app:layout_constraintBottom_toTopOf="@+id/stockDecrementButton"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="@+id/stocks_exchange_input"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.086"
-        app:layout_constraintStart_toStartOf="@+id/guideline"
-        app:layout_constraintTop_toBottomOf="@+id/stocksInExchange_textView"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintStart_toEndOf="@id/stockIncrementOneButton"
+        app:layout_constraintTop_toTopOf="@+id/stocks_exchange_input" />
 
     <Button
-        android:id="@+id/stockDecrementButton"
+        android:id="@+id/stockIncrementOneButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="40dp"
         android:background="@drawable/black_white_rounded_button"
         android:elevation="4dp"
-        android:text="@string/decrementFive"
+        android:minWidth="60dp"
+        android:text="@string/incrementOne"
         android:textColor="@color/neon_yellow"
-        android:textSize="@dimen/buttonTextSize"
-        android:layout_marginTop="@dimen/normalMargin"
-        app:layout_constraintBottom_toTopOf="@+id/buyExchangeButton"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.086"
-        app:layout_constraintStart_toStartOf="@+id/guideline" />
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="@+id/stocks_exchange_input"
+        app:layout_constraintEnd_toStartOf="@id/stockIncrementFiveButton"
+        app:layout_constraintStart_toStartOf="@+id/guideline"
+        app:layout_constraintTop_toTopOf="@+id/stocks_exchange_input" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

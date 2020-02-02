@@ -259,6 +259,8 @@ class LoginActivity : AppCompatActivity() {
                                 "MORTGAGE_RETRIEVE_RATE" -> Constants.MORTGAGE_RETRIEVE_RATE = value.toDouble()
                                 "ORDER_FEE_PERCENT" -> Constants.ORDER_FEE_RATE = (value.toDouble() / 100)
                                 "ORDER_PRICE_WINDOW" -> Constants.ORDER_PRICE_WINDOW = value
+                                "ASK_LIMIT" -> Constants.ASK_LIMIT = value
+                                "BID_LIMIT" -> Constants.BID_LIMIT = value
                             }
                         }
 

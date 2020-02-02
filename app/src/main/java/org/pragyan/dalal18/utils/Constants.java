@@ -4,7 +4,7 @@ public class Constants {
 
     // TODO (Release): Change server IP and Port
 
-    public static final String HOST = "192.168.43.33";
+    public static final String HOST = "10.2.66.196";
     public static final int PORT = 8000;
 
     public static final int EVENT_START_TIME = 20;
@@ -31,6 +31,8 @@ public class Constants {
     public static double MORTGAGE_DEPOSIT_RATE = 0.8;
     public static double MORTGAGE_RETRIEVE_RATE = 0.9;
     public static double ORDER_FEE_RATE = 0.03;
+    public static int ASK_LIMIT = 50;
+    public static int BID_LIMIT = 50;
     public static int ORDER_PRICE_WINDOW = 20;
 
     public static final String MARKET_OPEN_TEXT_KEY = "market-open-text-key";
@@ -56,15 +58,11 @@ public class Constants {
     public static final String LAST_NOTIFICATION_ID = "last_notification_id";
     public static final String LAST_TRANSACTION_ID = "last_transaction_id";
     public static final String PREF_MAIN = "MAINACTIVITY_TOUR";
-    public static final String TAG ="IS LOGIN FIRST TIME" ;
-    public static final String PREF_COMP="COMPANYFRAG_TOUR";
-    public static final String PREF_MKT="MARKET_TOUR";
-    public static final String PREF_TRADE="TRADE_TOUR";
-    public static final String PREF_MRTG="MORTGAGE_TOUR";
-    public static final String PREF_GPH="MARKET_GRAPH_TOUR";
+    public static final String PREF_COMP = "COMPANYFRAG_TOUR";
+    public static final String PREF_TRADE = "TRADE_TOUR";
 }
 
-/*  Login response : Constants
+/*  Login response : Constants : Last Checked 02/02/2020
 
     ORDER_PRICE_WINDOW"      -> 20
     LEADERBOARD_COUNT"       -> 10

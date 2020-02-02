@@ -5,8 +5,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.Bundle
-import android.util.DisplayMetrics
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -27,7 +25,6 @@ import kotlinx.android.synthetic.main.fragment_stock_exchange.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.toast
 import org.jetbrains.anko.uiThread
-import org.jetbrains.anko.windowManager
 import org.pragyan.dalal18.R
 import org.pragyan.dalal18.dagger.ContextModule
 import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent
@@ -51,9 +48,6 @@ class StockExchangeFragment : Fragment() {
     private var loadingDialog: AlertDialog? = null
     private var decimalFormat = DecimalFormat(Constants.PRICE_FORMAT)
     lateinit var networkDownHandler: ConnectionUtils.OnNetworkDownHandler
-    private var initialStocks : Int =0
-    private var increment : Int = 5;
-    private var decrement : Int= 1;
 
     private val refreshStockPricesReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
@@ -111,30 +105,15 @@ class StockExchangeFragment : Fragment() {
             }
         }
 
-        noOfStocksEditText.setText(initialStocks.toString())
         buyExchangeButton.setOnClickListener { buyStocksFromExchange() }
-        stockIncrementButton.setOnClickListener { incrementButtonListener() }
-        stockDecrementButton.setOnClickListener { decrementbuttonListener() }
+        stockIncrementFiveButton.setOnClickListener { addToStockExchangeInput(5) }
+        stockIncrementOneButton.setOnClickListener { addToStockExchangeInput(1) }
     }
 
-    private fun incrementButtonListener(){
-
-        if (noOfStocksEditText.text.toString().toInt()<=48) {
-            var noOfStocks = noOfStocksEditText.text.toString().toInt()
-            noOfStocks += increment
-            noOfStocksEditText.setText(noOfStocks.toString())
-        }
-        //Log.d("INCREASING",noOfStocksEditText.text.toString())
-    }
-
-    private fun decrementbuttonListener(){
-
-        if (noOfStocksEditText.text.toString().toInt()>=2) {
-            var noOfStocks = noOfStocksEditText.text.toString().toInt()
-            noOfStocks += decrement
-            noOfStocksEditText.setText(noOfStocks.toString())
-        }
-        //Log.d("DECREASING",noOfStocksEditText.text.toString())
+    private fun addToStockExchangeInput(increment: Int) {
+        var noOfStocks = noOfStocksEditText.text.toString().toInt()
+        noOfStocks = (noOfStocks + increment).coerceAtMost(Constants.ASK_LIMIT)
+        noOfStocksEditText.setText(noOfStocks.toString())
     }
 
     private fun buyStocksFromExchange() {
