@@ -75,14 +75,15 @@ class OTPVerificationDialogFragment : DialogFragment() {
 
         resendOtp.setOnClickListener { sendOtpAgain() }
         verifyOtp.setOnClickListener {
-            /*if (otpEditText.text!!.toString() == "")
+            if (otpEditText.text!!.toString() == "")
                 Toast.makeText(context, "Enter OTP.", Toast.LENGTH_SHORT).show()
             else
-                checkIfOtpIsCorrect(otpEditText.text!!.toString())*/
-            val intent = Intent(activity,MainActivity::class.java)
+                checkIfOtpIsCorrect(otpEditText.text!!.toString())
+
+            /*val intent = Intent(activity,MainActivity::class.java)
             intent.putExtra(BUNDLE_KEY,bundle)
             startActivity(intent)
-            activity?.finish()
+            activity?.finish()*/
         }
     }
 
