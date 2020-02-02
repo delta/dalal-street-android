@@ -70,6 +70,7 @@ class VerifyPhoneActivity: AppCompatActivity(), ConnectionUtils.OnNetworkDownHan
         verifyButton.setOnClickListener(object : View.OnClickListener {
             override fun onClick(v: View?) {
 
+                // DONE only for testing. TODO remove next three lines and uncomment the rest
                 val dialog = OTPVerificationDialogFragment.newInstance("7338798208")
                 dialog.arguments = intent.extras
                 dialog.show(supportFragmentManager, "otp_dialog")
