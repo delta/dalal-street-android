@@ -45,7 +45,7 @@ class ResetPasswordActivity : AppCompatActivity() {
 
         resetPasswordButton.setOnClickListener { onResetPasswordButtonClick() }
 
-        if(preferences.getString(Constants.EMAIL_KEY, null) != null) {
+        if (preferences.getString(Constants.EMAIL_KEY, null) != null) {
             longToast("User already logged in")
             finish()
         }
@@ -60,14 +60,17 @@ class ResetPasswordActivity : AppCompatActivity() {
                 confirmPasswordEditText.text.toString() != newPasswordEditText.text.toString()) {
             toast("Confirm password failed")
         } else {
-            sendChangePasswordRequestAsynchronously(temporaryPasswordEditText.text.toString(), newPasswordEditText.text.toString())
+            sendChangePasswordRequestAsynchronously(
+                    temporaryPasswordEditText.text.toString(),
+                    newPasswordEditText.text.toString(),
+                    confirmPasswordEditText.text.toString())
         }
     }
 
-    private fun sendChangePasswordRequestAsynchronously(tempPassword: String, newPassword: String) = lifecycleScope.launch {
+    private fun sendChangePasswordRequestAsynchronously(tempPassword: String, newPassword: String, confirmPassword: String) = lifecycleScope.launch {
 
         if (withContext(Dispatchers.IO) { ConnectionUtils.getConnectionInfo(this@ResetPasswordActivity) }) {
-            val changePasswordRequest = ChangePasswordRequest.newBuilder().setTempPassword(tempPassword).setNewPassword(newPassword).build()
+            val changePasswordRequest = ChangePasswordRequest.newBuilder().setTempPassword(tempPassword).setNewPassword(newPassword).setConfirmPassword(confirmPassword).build()
             val changePasswordResponse = withContext(Dispatchers.IO) { DalalActionServiceGrpc.newBlockingStub(channel).changePassword(changePasswordRequest) }
 
             toast(changePasswordResponse.statusMessage)
