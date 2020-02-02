@@ -55,8 +55,8 @@
             android:backgroundTint="@color/neutral_font_color"
             android:fontFamily="@font/kreon_light"
             android:hint="@string/mobile_number"
-            android:inputType="number"
             android:maxLines="1"
+            android:maxLength="15"
             android:textColor="@color/neutral_font_color"
             android:layout_marginTop="12dp"
             android:textColorHint="@color/neutral_font_color" />

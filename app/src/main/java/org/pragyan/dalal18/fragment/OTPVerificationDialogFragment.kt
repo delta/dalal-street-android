@@ -1,5 +1,6 @@
 package org.pragyan.dalal18.fragment
 
+import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -8,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
+import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.lifecycleScope
@@ -33,12 +35,16 @@ class OTPVerificationDialogFragment : DialogFragment() {
     @Inject
     lateinit var channel: ManagedChannel
 
+    @Inject
+    lateinit var stub: DalalActionServiceGrpc.DalalActionServiceBlockingStub
+
     lateinit var mobNumber: String
     lateinit var phoneNumberEditText: EditText
     lateinit var resendOtp: Button
     lateinit var verifyOtp: Button
     lateinit var otpEditText: OtpEditText
     lateinit var bundle: Bundle
+    private lateinit var loadingDialog: AlertDialog
 
     companion object {
         fun newInstance(phoneNumber: String) : OTPVerificationDialogFragment  {
@@ -56,6 +62,11 @@ class OTPVerificationDialogFragment : DialogFragment() {
 
         DaggerDalalStreetApplicationComponent.builder().contextModule(ContextModule(context!!)).build().inject(this)
         bundle = this.arguments!!
+
+        val dialogBox = LayoutInflater.from(activity).inflate(R.layout.progress_dialog, null)
+        dialogBox.findViewById<TextView>(R.id.progressDialog_textView).setText("Sending OTP...")
+        loadingDialog = AlertDialog.Builder(activity).setView(dialogBox).setCancelable(false).create()
+        loadingDialog.show()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -73,6 +84,7 @@ class OTPVerificationDialogFragment : DialogFragment() {
 
         phoneNumberEditText.setText(mobNumber)
 
+
         resendOtp.setOnClickListener { sendOtpAgain() }
         verifyOtp.setOnClickListener {
             if (otpEditText.text!!.toString() == "")
@@ -85,18 +97,22 @@ class OTPVerificationDialogFragment : DialogFragment() {
             startActivity(intent)
             activity?.finish()*/
         }
+        loadingDialog.dismiss()
     }
 
     private fun checkIfOtpIsCorrect(OTP: String) = lifecycleScope.launch {
 
         if (withContext(Dispatchers.IO) { ConnectionUtils.getConnectionInfo(context) }) {
+
+            System.out.println(""+Integer.parseInt(OTP)+" is the otp")
+
             val verifyOTPRequest = VerifyOTPRequest
                     .newBuilder()
                     .setOtp(Integer.parseInt(OTP))
                     .setPhone(mobNumber)
                     .build()
 
-            val verifyOTPResponse = withContext(Dispatchers.IO) { DalalActionServiceGrpc.newBlockingStub(channel).verifyOTP(verifyOTPRequest) }
+            val verifyOTPResponse = withContext(Dispatchers.IO) { stub.verifyOTP(verifyOTPRequest) }
             Toast.makeText(context,verifyOTPResponse.statusMessage,Toast.LENGTH_SHORT).show()
 
             if (verifyOTPResponse.statusCode == VerifyOTPResponse.StatusCode.OK) {

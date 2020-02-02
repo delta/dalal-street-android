@@ -1,13 +1,15 @@
 package org.pragyan.dalal18.ui
 
+import android.app.AlertDialog
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
-import androidx.appcompat.app.AlertDialog
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
@@ -49,6 +51,8 @@ class VerifyPhoneActivity: AppCompatActivity(), ConnectionUtils.OnNetworkDownHan
     lateinit var logoutButton: Button
     private var logoutDialog: AlertDialog? = null
     private var errorDialog: AlertDialog? = null
+    private lateinit var loadingDialog: android.app.AlertDialog
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -73,7 +77,7 @@ class VerifyPhoneActivity: AppCompatActivity(), ConnectionUtils.OnNetworkDownHan
                 /*val dialog = OTPVerificationDialogFragment.newInstance("7338798208")
                 dialog.arguments = intent.extras
                 dialog.show(supportFragmentManager, "otp_dialog")*/
-                if(mobNoEditText.text.toString() != "" && mobNoEditText.text.toString().length==10)
+                if(mobNoEditText.text.toString() != "" )//&& mobNoEditText.text.toString().length==10)
                 onVerifyButtonClicked(mobNoEditText.text.toString())
                 else
                     toast("Enter valid mobile number.")
@@ -146,6 +150,11 @@ class VerifyPhoneActivity: AppCompatActivity(), ConnectionUtils.OnNetworkDownHan
 
         if (withContext(Dispatchers.IO) { ConnectionUtils.getConnectionInfo(this@VerifyPhoneActivity) }) {
 
+            val dialogBox = LayoutInflater.from(this@VerifyPhoneActivity).inflate(R.layout.progress_dialog, null)
+            dialogBox.findViewById<TextView>(R.id.progressDialog_textView).setText("Sending OTP...")
+            loadingDialog = AlertDialog.Builder(this@VerifyPhoneActivity).setView(dialogBox).setCancelable(false).create()
+            loadingDialog.show()
+
             val phoneRequest = AddPhoneRequest
                     .newBuilder()
                     .setPhoneNumber(phone)
@@ -158,11 +167,9 @@ class VerifyPhoneActivity: AppCompatActivity(), ConnectionUtils.OnNetworkDownHan
             if (phoneResponse.statusCode == AddPhoneResponse.StatusCode.OK) {
                 // sms sent.
                 val dialog = OTPVerificationDialogFragment.newInstance(phone)
+                dialog.arguments = intent.extras
                 dialog.show(supportFragmentManager, "otp_dialog")
-
-            } else {
-                // report error.
-                toast("Server Error.")
+                loadingDialog.dismiss()
             }
         } else {
             toast("Server Unreachable.")
