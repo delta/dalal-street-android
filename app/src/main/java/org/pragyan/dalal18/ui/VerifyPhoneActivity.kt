@@ -21,6 +21,8 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.pragyan.dalal18.R
 import org.pragyan.dalal18.adapter.SmsVerificationPagerAdapter
+import org.pragyan.dalal18.adapter.SmsVerificationPagerAdapter.Companion.ADD_PHONE
+import org.pragyan.dalal18.adapter.SmsVerificationPagerAdapter.Companion.OTP_VERIFICATION
 import org.pragyan.dalal18.utils.ConnectionUtils
 import org.pragyan.dalal18.utils.Constants
 import org.pragyan.dalal18.utils.MiscellaneousUtils.convertDpToPixel
@@ -34,6 +36,8 @@ class VerifyPhoneActivity : AppCompatActivity(), ConnectionUtils.SmsVerification
 
     @Inject
     lateinit var preferences: SharedPreferences
+
+    private var phoneNumber = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -89,6 +93,20 @@ class VerifyPhoneActivity : AppCompatActivity(), ConnectionUtils.SmsVerification
         } else {
             onNetworkDownError(resources.getString(R.string.error_check_internet))
         }
+    }
+
+    override fun navigateToOtpVerification(phoneNumber: String) {
+        this.phoneNumber = phoneNumber
+        smsViewPager.currentItem = OTP_VERIFICATION
+    }
+
+    override fun navigateToAddPhone() {
+        this.phoneNumber = ""
+        smsViewPager.currentItem = ADD_PHONE
+    }
+
+    override fun getPhoneNumber(): String {
+        return phoneNumber
     }
 
     override fun onNetworkDownError(message: String) {

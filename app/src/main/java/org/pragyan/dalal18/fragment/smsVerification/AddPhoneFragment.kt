@@ -3,21 +3,17 @@ package org.pragyan.dalal18.fragment.smsVerification
 import android.app.AlertDialog
 import android.content.Context
 import android.content.SharedPreferences
-import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
-import android.widget.Button
-import android.widget.EditText
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
-import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner
 import dalalstreet.api.DalalActionServiceGrpc
 import dalalstreet.api.actions.AddPhoneRequest
 import dalalstreet.api.actions.AddPhoneResponse
+import kotlinx.android.synthetic.main.fragment_add_phone.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -26,28 +22,23 @@ import org.pragyan.dalal18.R
 import org.pragyan.dalal18.dagger.ContextModule
 import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent
 import org.pragyan.dalal18.utils.ConnectionUtils
+import org.pragyan.dalal18.utils.hideKeyboard
 import javax.inject.Inject
 
 class AddPhoneFragment : Fragment() {
 
     @Inject
-    lateinit var stub: DalalActionServiceGrpc.DalalActionServiceBlockingStub
+    lateinit var actionServiceBlockingStub: DalalActionServiceGrpc.DalalActionServiceBlockingStub
 
     @Inject
     lateinit var preferences: SharedPreferences
 
-    private lateinit var verifyButton: Button
-    lateinit var mobNoEditText: EditText
     lateinit var loadingDialog: AlertDialog
     private lateinit var smsVerificationHandler: ConnectionUtils.SmsVerificationHandler
-
-    private lateinit var spinner: MaterialBetterSpinner
-    var countryCode = "+91"
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
         val rootView = inflater.inflate(R.layout.fragment_add_phone, container, false)
-
         DaggerDalalStreetApplicationComponent.builder().contextModule(ContextModule(context!!)).build().inject(this)
 
         return rootView
@@ -57,38 +48,13 @@ class AddPhoneFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         DaggerDalalStreetApplicationComponent.builder().contextModule(ContextModule(context!!)).build().inject(this)
 
-        verifyButton = view.findViewById(R.id.btnVerify)
-        mobNoEditText = view.findViewById(R.id.etMobNo)
-        spinner = view.findViewById(R.id.spinnerCountry)
-
-        ArrayAdapter.createFromResource(
-                context!!,
-                R.array.DialingCountryCode,
-                R.layout.spinner_item_country
-        ).also { adapter ->
-            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-            spinner.setAdapter(adapter)
-            spinner.setTextColor(Color.parseColor("#FFFFFF"))
-            spinner.setHintTextColor(Color.parseColor("#FFFFFF"))
-            spinner.setText("91,IN")
-        }
-
-        spinner.setOnItemClickListener { _, _, _, _ ->
-            val selection = spinner.text.toString()
-            countryCode = ""
-            val lastIndex = selection.indexOf(",")
-            if (lastIndex != -1)
-                countryCode = selection.substring(0, lastIndex)
-        }
-
         verifyButton.setOnClickListener {
-            /*val dialog = OTPVerificationDialogFragment.newInstance("7338798208")
-                dialog.arguments = intent.extras
-                dialog.show(supportFragmentManager, "otp_dialog")*/
-            if (mobNoEditText.text.toString() != "")//&& mobNoEditText.text.toString().length==10)
-                onVerifyButtonClicked(countryCode + mobNoEditText.text.toString())
+            if (extensionEditText.text.toString().isEmpty() || extensionEditText.text.toString().isBlank())
+                context?.toast("Enter valid country code")
+            else if (mobileNumberEditText.text.toString().isEmpty() || mobileNumberEditText.text.toString().isBlank())
+                context?.toast("Enter valid mobile number")
             else
-                context?.toast("Enter valid mobile number.")
+                sendAddPhoneNumberAsynchronously(extensionEditText.text.toString() + mobileNumberEditText.text.toString())
         }
     }
 
@@ -101,27 +67,26 @@ class AddPhoneFragment : Fragment() {
         }
     }
 
-    private fun onVerifyButtonClicked(phone: String) = lifecycleScope.launch {
+    private fun sendAddPhoneNumberAsynchronously(phoneNumber: String) = lifecycleScope.launch {
+
+        view?.hideKeyboard()
 
         if (withContext(Dispatchers.IO) { ConnectionUtils.getConnectionInfo(context) }) {
 
             val dialogBox = LayoutInflater.from(context).inflate(R.layout.progress_dialog, null)
-            dialogBox.findViewById<TextView>(R.id.progressDialog_textView).text = "Sending OTP..."
+            dialogBox.findViewById<TextView>(R.id.progressDialog_textView).text = getString(R.string.sending_otp)
             loadingDialog = AlertDialog.Builder(context).setView(dialogBox).setCancelable(false).create()
             loadingDialog.show()
 
-            val phoneRequest = AddPhoneRequest
-                    .newBuilder()
-                    .setPhoneNumber(phone)
-                    .build()
+            val phoneRequest = AddPhoneRequest.newBuilder().setPhoneNumber(phoneNumber).build()
 
-            val phoneResponse = withContext(Dispatchers.IO) { stub.addPhone(phoneRequest) }
+            val phoneResponse = withContext(Dispatchers.IO) { actionServiceBlockingStub.addPhone(phoneRequest) }
 
             context?.toast(phoneResponse.statusMessage)
+            loadingDialog.dismiss()
 
             if (phoneResponse.statusCode == AddPhoneResponse.StatusCode.OK) {
-                // TODO: Switch fragments.
-                loadingDialog.dismiss()
+                smsVerificationHandler.navigateToOtpVerification(phoneNumber)
             }
         } else {
             smsVerificationHandler.onNetworkDownError(resources.getString(R.string.error_check_internet))

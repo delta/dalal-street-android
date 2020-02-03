@@ -39,5 +39,8 @@ public class ConnectionUtils {
 
     public interface SmsVerificationHandler {
         void onNetworkDownError(String message);
+        void navigateToOtpVerification(String phoneNumber);
+        void navigateToAddPhone();
+        String getPhoneNumber();
     }
 }

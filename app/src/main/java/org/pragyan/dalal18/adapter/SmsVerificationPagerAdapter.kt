@@ -21,5 +21,7 @@ class SmsVerificationPagerAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm
 
     companion object {
         private const val NUMBER_OF_FRAGMENTS = 2
+        const val ADD_PHONE = 0
+        const val OTP_VERIFICATION = 1
     }
 }
