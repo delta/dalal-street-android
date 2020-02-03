@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/black_background">
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        app:cardBackgroundColor="#20202C"
+        app:cardCornerRadius="8dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:layout_marginEnd="32dp"
+            android:paddingTop="12dp"
+            android:paddingBottom="12dp">
+
+            <TextView
+                android:id="@+id/phoneNumberText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:fontFamily="@font/marcellus_sc"
+                android:text="@string/phone_number"
+                android:textColor="@color/neon_blue"
+                android:textSize="24sp"
+                app:layout_constraintBottom_toTopOf="@id/mobileNumberEditText"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <EditText
+                android:id="@+id/extensionEditText"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:backgroundTint="@color/neutral_font_color"
+                android:ems="3"
+                android:fontFamily="@font/kreon_light"
+                android:gravity="center"
+                android:hint="@string/country_code"
+                android:inputType="phone"
+                android:maxLength="3"
+                android:maxLines="1"
+                android:text="@string/india_country_code"
+                android:textColor="@color/neutral_font_color"
+                android:textColorHint="@color/neutral_font_color"
+                android:textColorLink="@color/neutral_font_color"
+                app:layout_constraintBottom_toBottomOf="@+id/mobileNumberEditText"
+                app:layout_constraintEnd_toStartOf="@id/mobileNumberEditText"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/mobileNumberEditText" />
+
+            <EditText
+                android:id="@+id/mobileNumberEditText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:backgroundTint="@color/neutral_font_color"
+                android:fontFamily="@font/kreon_light"
+                android:hint="@string/mobile_number"
+                android:inputType="number"
+                android:maxLength="12"
+                android:maxLines="1"
+                android:textColor="@color/neutral_font_color"
+                android:textColorHint="@color/neutral_font_color"
+                app:layout_constraintBottom_toTopOf="@id/verifyButton"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/extensionEditText"
+                app:layout_constraintTop_toBottomOf="@id/phoneNumberText" />
+
+            <Button
+                android:id="@+id/verifyButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:background="@drawable/black_white_rounded_button"
+                android:text="@string/send_otp"
+                android:textColor="@color/neutral_font_color"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/mobileNumberEditText" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.cardview.widget.CardView>
+
+</RelativeLayout>

@@ -1,5 +1,9 @@
 package org.pragyan.dalal18.utils;
 
+import android.content.Context;
+import android.content.res.Resources;
+import android.util.DisplayMetrics;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -23,6 +27,12 @@ public class MiscellaneousUtils {
             e.printStackTrace();
         }
         return str;
+    }
+
+    public static int convertDpToPixel(float dp, Context context) {
+        Resources resources = context.getResources();
+        DisplayMetrics metrics = resources.getDisplayMetrics();
+        return (int) (dp * (metrics.densityDpi / 160f));
     }
 
     public static String sessionId = "dalalStreetSessionId";
@@ -53,5 +63,4 @@ public class MiscellaneousUtils {
             "n8lG/ZKeivbUai547FHqdI2qJwv2mElxojG2hLV7sImSg26fuaTyy5+ftP3GH8Yj\n" +
             "5+8T\n" +
             "-----END CERTIFICATE-----\n";
-
 }

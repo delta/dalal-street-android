@@ -1,4 +1,4 @@
-package org.pragyan.dalal18.ui;
+package org.pragyan.dalal18.views;
 
 import android.annotation.SuppressLint;
 import android.content.Context;

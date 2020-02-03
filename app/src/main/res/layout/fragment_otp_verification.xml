@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/black_background">
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:background="@color/black_background"
+        app:cardBackgroundColor="#20202C"
+        app:cardCornerRadius="8dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:layout_marginEnd="32dp"
+            android:paddingTop="12dp"
+            android:paddingBottom="12dp">
+
+            <TextView
+                android:id="@+id/enterOtpText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_margin="16dp"
+                android:fontFamily="@font/marcellus_sc"
+                android:gravity="center"
+                android:text="@string/enter_otp"
+                android:textColor="@color/neon_blue"
+                android:textSize="22sp"
+                app:layout_constraintBottom_toTopOf="@id/phoneNumberTextView"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/phoneNumberTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:layout_marginBottom="8dp"
+                android:backgroundTint="@color/neutral_font_color"
+                android:fontFamily="@font/kreon_light"
+                android:textColor="@color/neutral_font_color"
+                android:textColorHint="@color/neutral_font_color"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toTopOf="@id/otpSpecialEditText"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/enterOtpText" />
+
+            <org.pragyan.dalal18.views.OtpEditText
+                android:id="@+id/otpSpecialEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="12dp"
+                android:backgroundTint="@color/neutral_font_color"
+                android:cursorVisible="false"
+                android:digits="1234567890"
+                android:fontFamily="@font/kreon_light"
+                android:hint="@string/otp"
+                android:inputType="number"
+                android:maxLength="4"
+                android:textColor="@color/neutral_font_color"
+                android:textColorHint="@color/neutral_font_color"
+                android:textIsSelectable="false"
+                android:textSize="20sp"
+                app:layout_constraintBottom_toTopOf="@id/verifyOtpButton"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/phoneNumberTextView" />
+
+            <Button
+                android:id="@+id/verifyOtpButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/black_white_rounded_button"
+                android:text="@string/verify"
+                android:textColor="@color/neutral_font_color"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/resendOtpButton"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/otpSpecialEditText" />
+
+            <Button
+                android:id="@+id/resendOtpButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/black_white_rounded_button"
+                android:text="@string/resend_otp"
+                android:textColor="@color/neutral_font_color"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="@+id/verifyOtpButton"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/verifyOtpButton"
+                app:layout_constraintTop_toTopOf="@+id/verifyOtpButton" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.cardview.widget.CardView>
+
+</RelativeLayout>

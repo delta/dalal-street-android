@@ -12,7 +12,7 @@ import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.viewpager.widget.ViewPager
 import com.google.android.material.tabs.TabLayout
 import org.pragyan.dalal18.R
-import org.pragyan.dalal18.adapter.DepthPagerAdapter
+import org.pragyan.dalal18.adapter.pagerAdapters.DepthPagerAdapter
 
 class MarketDepthFragment : Fragment() {
 

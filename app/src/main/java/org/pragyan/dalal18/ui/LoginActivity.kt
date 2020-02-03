@@ -242,7 +242,12 @@ class LoginActivity : AppCompatActivity() {
                             }
                         }
 
-                        val intent = Intent(this@LoginActivity, MainActivity::class.java)
+                        val intent: Intent = if (loginResponse.user.isPhoneVerified) {
+                            Intent(this@LoginActivity, MainActivity::class.java)
+                        } else {
+                            Intent(this@LoginActivity, VerifyPhoneActivity::class.java)
+                        }
+
                         intent.putExtra(Constants.USERNAME_KEY, loginResponse.user.name)
                         intent.putExtra(MainActivity.CASH_WORTH_KEY, loginResponse.user.cash)
                         intent.putExtra(MainActivity.TOTAL_WORTH_KEY, loginResponse.user.total)

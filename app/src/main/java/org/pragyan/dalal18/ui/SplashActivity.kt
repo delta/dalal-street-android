@@ -145,13 +145,16 @@ class SplashActivity : AppCompatActivity() {
                                     }
                                 }
 
-                                val intent = Intent(this@SplashActivity, MainActivity::class.java)
+                                val intent: Intent = if (loginResponse.user.isPhoneVerified)
+                                    Intent(this@SplashActivity, MainActivity::class.java)
+                                else
+                                    Intent(this@SplashActivity, VerifyPhoneActivity::class.java)
 
                                 with(intent) {
                                     putExtra(USERNAME_KEY, loginResponse.user.name)
                                     putExtra(MainActivity.CASH_WORTH_KEY, loginResponse.user.cash)
                                     putExtra(MainActivity.TOTAL_WORTH_KEY, loginResponse.user.total)
-                                    intent.putExtra(MainActivity.RESERVED_CASH_KEY, loginResponse.user.reservedCash)
+                                    putExtra(MainActivity.RESERVED_CASH_KEY, loginResponse.user.reservedCash)
                                     putExtra(MARKET_OPEN_KEY, loginResponse.isMarketOpen)
 
                                     putParcelableArrayListExtra(MainActivity.STOCKS_OWNED_KEY, stocksOwnedList)
@@ -179,7 +182,6 @@ class SplashActivity : AppCompatActivity() {
 
                                 startActivity(intent)
                                 finish()
-
                             } else {
                                 toast(loginResponse.statusMessage)
                                 preferences.edit().putString(EMAIL_KEY, null).putString(PASSWORD_KEY, null).apply()
