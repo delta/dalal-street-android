@@ -1,4 +1,4 @@
-package org.pragyan.dalal18.adapter
+package org.pragyan.dalal18.adapter.pagerAdapters
 
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
@@ -6,7 +6,7 @@ import androidx.fragment.app.FragmentPagerAdapter
 import org.pragyan.dalal18.fragment.smsVerification.AddPhoneFragment
 import org.pragyan.dalal18.fragment.smsVerification.OTPVerificationFragment
 
-class SmsVerificationPagerAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm) {
+class SmsVerificationPagerAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
 
     override fun getItem(position: Int): Fragment {
         return when (position) {

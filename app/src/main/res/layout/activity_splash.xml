@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <org.pragyan.dalal18.ui.GraphDrawView
+    <org.pragyan.dalal18.views.GraphDrawView
         android:id="@+id/graph_drawer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

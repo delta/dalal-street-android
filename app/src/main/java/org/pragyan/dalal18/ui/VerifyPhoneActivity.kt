@@ -20,9 +20,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.pragyan.dalal18.R
-import org.pragyan.dalal18.adapter.SmsVerificationPagerAdapter
-import org.pragyan.dalal18.adapter.SmsVerificationPagerAdapter.Companion.ADD_PHONE
-import org.pragyan.dalal18.adapter.SmsVerificationPagerAdapter.Companion.OTP_VERIFICATION
+import org.pragyan.dalal18.adapter.pagerAdapters.SmsVerificationPagerAdapter
+import org.pragyan.dalal18.adapter.pagerAdapters.SmsVerificationPagerAdapter.Companion.ADD_PHONE
+import org.pragyan.dalal18.adapter.pagerAdapters.SmsVerificationPagerAdapter.Companion.OTP_VERIFICATION
 import org.pragyan.dalal18.dagger.ContextModule
 import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent
 import org.pragyan.dalal18.utils.ConnectionUtils

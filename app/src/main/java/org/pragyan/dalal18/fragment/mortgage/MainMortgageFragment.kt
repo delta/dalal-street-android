@@ -10,7 +10,7 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import kotlinx.android.synthetic.main.fragment_main_mortgage.*
 import org.pragyan.dalal18.R
-import org.pragyan.dalal18.adapter.MortgagePagerAdapter
+import org.pragyan.dalal18.adapter.pagerAdapters.MortgagePagerAdapter
 
 class MainMortgageFragment : Fragment() {
 

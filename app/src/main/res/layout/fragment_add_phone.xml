@@ -82,7 +82,7 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="16dp"
                 android:background="@drawable/black_white_rounded_button"
-                android:text="@string/verify"
+                android:text="@string/send_otp"
                 android:textColor="@color/neutral_font_color"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"

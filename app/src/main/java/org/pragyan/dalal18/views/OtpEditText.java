@@ -86,7 +86,7 @@ public class OtpEditText extends AppCompatEditText {
             canvas.drawLine(startX, bottom, startX + mCharSize, bottom, mLinesPaint);
             if (getText().length() > i) {
                 float middle = startX + mCharSize / 2;
-                canvas.drawText(text, i, i + 1, middle - textWidths[0] / 2, bottom - mLineSpacing, getPaint());
+                canvas.drawText(text, i, i + 1, middle - textWidths[0] / 2, bottom - mLineSpacing, mLinesPaint);
             }
             if (mSpace < 0) {
                 startX += mCharSize * 2;

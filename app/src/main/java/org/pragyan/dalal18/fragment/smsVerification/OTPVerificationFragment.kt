@@ -4,7 +4,8 @@ import android.app.AlertDialog
 import android.content.Context
 import android.os.Bundle
 import android.os.Handler
-import android.util.Log
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.VISIBLE
@@ -53,12 +54,23 @@ class OTPVerificationFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        verifyOtpButton.setOnClickListener {
-            if (otpSpecialEditText.text.toString().length != 4)
-                context?.toast("Enter valid OTP")
-            else
-                checkIfOtpIsCorrect(otpSpecialEditText.text.toString(), smsVerificationHandler.phoneNumber)
-        }
+        verifyOtpButton.setOnClickListener { onVerifyButtonClick() }
+
+        otpSpecialEditText.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(p0: Editable?) {
+            }
+
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+            }
+
+            override fun onTextChanged(charSequence: CharSequence?, p1: Int, p2: Int, p3: Int) {
+                if (charSequence?.length == 4) {
+                    view.hideKeyboard()
+                    onVerifyButtonClick()
+                }
+            }
+
+        })
     }
 
     override fun onAttach(context: Context) {
@@ -68,6 +80,13 @@ class OTPVerificationFragment : Fragment() {
         } catch (classCastException: ClassCastException) {
             throw ClassCastException("$context must implement network down handler.")
         }
+    }
+
+    private fun onVerifyButtonClick() {
+        if (otpSpecialEditText.text.toString().length != 4)
+            context?.toast("Enter valid OTP")
+        else
+            checkIfOtpIsCorrect(otpSpecialEditText.text.toString(), smsVerificationHandler.phoneNumber)
     }
 
     private fun checkIfOtpIsCorrect(otp: String, phoneNumber: String) = lifecycleScope.launch {
@@ -99,7 +118,6 @@ class OTPVerificationFragment : Fragment() {
         super.onResume()
 
         phoneNumberTextView.text = smsVerificationHandler.phoneNumber
-        Log.v(":::", smsVerificationHandler.phoneNumber)
 
         if (smsVerificationHandler.phoneNumber.isBlank() || smsVerificationHandler.phoneNumber.isEmpty())
             smsVerificationHandler.navigateToAddPhone()

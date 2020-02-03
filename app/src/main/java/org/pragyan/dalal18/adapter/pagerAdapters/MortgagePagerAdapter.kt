@@ -1,29 +1,26 @@
-package org.pragyan.dalal18.adapter
+package org.pragyan.dalal18.adapter.pagerAdapters
 
+import org.pragyan.dalal18.fragment.mortgage.MortgageFragment
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
+import org.pragyan.dalal18.fragment.mortgage.RetrieveFragment
 
-import org.pragyan.dalal18.fragment.marketDepth.DepthGraphFragment
-import org.pragyan.dalal18.fragment.marketDepth.DepthTableFragment
-
-class DepthPagerAdapter(fm: FragmentManager, behavior: Int) : FragmentPagerAdapter(fm, behavior) {
+class MortgagePagerAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm) {
 
     override fun getItem(position: Int): Fragment {
-
         return when (position) {
-            0 -> DepthTableFragment()
-            else -> DepthGraphFragment()
+            0 -> MortgageFragment()
+            else -> RetrieveFragment()
         }
     }
 
     override fun getCount() = NUMBER_OF_FRAGMENTS
 
     override fun getPageTitle(position: Int): CharSequence? {
-
         return when (position) {
-            0 -> "Table"
-            else -> "Chart"
+            0 -> "Mortgage"
+            else -> "Retrieve"
         }
     }
 
