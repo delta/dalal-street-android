@@ -118,7 +118,7 @@ class OTPVerificationDialogFragment : DialogFragment() {
                     .setPhone(mobNumber)
                     .build()
 
-            val verifyOTPResponse = withContext(Dispatchers.IO) { stub.verifyOTP(verifyOTPRequest) }
+            val verifyOTPResponse = withContext(Dispatchers.IO) { stub.verifyPhone(verifyOTPRequest) }
             Toast.makeText(context,verifyOTPResponse.statusMessage,Toast.LENGTH_SHORT).show()
 
             if (verifyOTPResponse.statusCode == VerifyOTPResponse.StatusCode.OK) {
