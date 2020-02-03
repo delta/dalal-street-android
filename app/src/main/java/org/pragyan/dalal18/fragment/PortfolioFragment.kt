@@ -85,15 +85,15 @@ class PortfolioFragment : Fragment() {
             description.isEnabled = false
             setExtraOffsets(25f, 45f, 25f, 20f)
             isDrawHoleEnabled = true
-            holeRadius = 65f
-            setHoleColor(android.graphics.Color.WHITE)
+            holeRadius = 85f
+            setHoleColor(android.graphics.Color.TRANSPARENT)
             setDrawEntryLabels(false)
             setTransparentCircleColor(android.graphics.Color.WHITE)
             setTransparentCircleAlpha(110)
             transparentCircleRadius = 70f
             setDrawCenterText(true)
             centerText = "Net Worth \n (In percentage)"
-            setCenterTextColor(R.color.black_background)
+            setCenterTextColor(android.graphics.Color.WHITE)
             setCenterTextSize(22f)
             setCenterTextTypeface(kreonLightTypeFace)
             animateY(800, com.github.mikephil.charting.animation.Easing.EaseInOutQuad)
@@ -163,22 +163,24 @@ class PortfolioFragment : Fragment() {
         val dataSet = PieDataSet(entries.toList(), "")
         val colors = ArrayList<Int>()
 
+        colors.add(ContextCompat.getColor(context!!, R.color.gold_medal))
         colors.add(ContextCompat.getColor(context!!, R.color.neon_blue))
         colors.add(ContextCompat.getColor(context!!, R.color.neon_green))
-        colors.add(ContextCompat.getColor(context!!, R.color.neon_purple))
+        colors.add(ContextCompat.getColor(context!!, R.color.green))
         colors.add(ContextCompat.getColor(context!!, R.color.neon_yellow))
+        colors.add(ContextCompat.getColor(context!!, R.color.lime))
         colors.add(ContextCompat.getColor(context!!, R.color.neon_orange))
         colors.add(ContextCompat.getColor(context!!, R.color.bronze_medal))
         colors.add(ContextCompat.getColor(context!!, R.color.neon_pink))
         colors.add(ContextCompat.getColor(context!!, R.color.redTint))
-        colors.add(ContextCompat.getColor(context!!, R.color.gold_medal))
 
 
         dataSet.colors = colors
         dataSet.selectionShift = 5f
+        dataSet.sliceSpace=1f
         val data = PieData(dataSet)
         data.setValueFormatter(PercentFormatter())
-        data.setValueTextSize(13f)
+        data.setValueTextSize(10f)
         data.setValueTypeface(kreonLightTypeFace)
         data.setValueTextColor(R.color.black)
         portfolio_piechart.data = data
