@@ -154,7 +154,7 @@ class SplashActivity : AppCompatActivity() {
                                     putExtra(USERNAME_KEY, loginResponse.user.name)
                                     putExtra(MainActivity.CASH_WORTH_KEY, loginResponse.user.cash)
                                     putExtra(MainActivity.TOTAL_WORTH_KEY, loginResponse.user.total)
-                                    intent.putExtra(MainActivity.RESERVED_CASH_KEY, loginResponse.user.reservedCash)
+                                    putExtra(MainActivity.RESERVED_CASH_KEY, loginResponse.user.reservedCash)
                                     putExtra(MARKET_OPEN_KEY, loginResponse.isMarketOpen)
 
                                     putParcelableArrayListExtra(MainActivity.STOCKS_OWNED_KEY, stocksOwnedList)

@@ -114,8 +114,8 @@ class VerifyPhoneActivity : AppCompatActivity(), ConnectionUtils.SmsVerification
     }
 
     override fun phoneVerificationSuccessful() {
-        // TODO: Pass bundle
         val intent = Intent(this, MainActivity::class.java)
+        intent.putExtras(this.intent)
         startActivity(intent)
         finish()
     }
