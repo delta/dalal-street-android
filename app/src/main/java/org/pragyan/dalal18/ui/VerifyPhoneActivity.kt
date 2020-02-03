@@ -23,6 +23,8 @@ import org.pragyan.dalal18.R
 import org.pragyan.dalal18.adapter.SmsVerificationPagerAdapter
 import org.pragyan.dalal18.adapter.SmsVerificationPagerAdapter.Companion.ADD_PHONE
 import org.pragyan.dalal18.adapter.SmsVerificationPagerAdapter.Companion.OTP_VERIFICATION
+import org.pragyan.dalal18.dagger.ContextModule
+import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent
 import org.pragyan.dalal18.utils.ConnectionUtils
 import org.pragyan.dalal18.utils.Constants
 import org.pragyan.dalal18.utils.MiscellaneousUtils.convertDpToPixel
@@ -42,6 +44,8 @@ class VerifyPhoneActivity : AppCompatActivity(), ConnectionUtils.SmsVerification
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_verify_phone)
+
+        DaggerDalalStreetApplicationComponent.builder().contextModule(ContextModule(this)).build().inject(this)
 
         val toolbar = findViewById<Toolbar>(R.id.verifyOtpToolbar)
         setSupportActionBar(toolbar)
@@ -107,6 +111,13 @@ class VerifyPhoneActivity : AppCompatActivity(), ConnectionUtils.SmsVerification
 
     override fun getPhoneNumber(): String {
         return phoneNumber
+    }
+
+    override fun phoneVerificationSuccessful() {
+        // TODO: Pass bundle
+        val intent = Intent(this, MainActivity::class.java)
+        startActivity(intent)
+        finish()
     }
 
     override fun onNetworkDownError(message: String) {

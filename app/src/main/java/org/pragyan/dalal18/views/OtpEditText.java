@@ -6,7 +6,7 @@ import android.graphics.Paint;
 import android.text.Editable;
 import android.util.AttributeSet;
 import android.view.ActionMode;
-import android.view.View;
+
 import androidx.appcompat.widget.AppCompatEditText;
 
 import org.pragyan.dalal18.R;
@@ -38,20 +38,17 @@ public class OtpEditText extends AppCompatEditText {
         mLineStroke = multi * mLineStroke;
         mLinesPaint = new Paint(getPaint());
         mLinesPaint.setStrokeWidth(mLineStroke);
-        mLinesPaint.setColor(getResources().getColor(R.color.colorPrimaryDark));
+        mLinesPaint.setColor(getResources().getColor(R.color.neutral_font_color));
         setBackgroundResource(0);
         mSpace = multi * mSpace; //convert to pixels for our density
         mLineSpacing = multi * mLineSpacing; //convert to pixels for our density
         mNumChars = 4;
 
-        super.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // When tapped, move cursor to end of text.
-                setSelection(getText().length());
-                if (mClickListener != null) {
-                    mClickListener.onClick(v);
-                }
+        super.setOnClickListener(v -> {
+            // When tapped, move cursor to end of text.
+            setSelection(getText().length());
+            if (mClickListener != null) {
+                mClickListener.onClick(v);
             }
         });
     }

@@ -41,6 +41,7 @@ public class ConnectionUtils {
         void onNetworkDownError(String message);
         void navigateToOtpVerification(String phoneNumber);
         void navigateToAddPhone();
+        void phoneVerificationSuccessful();
         String getPhoneNumber();
     }
 }

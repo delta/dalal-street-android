@@ -652,6 +652,7 @@
     <string name="country_code">Country code</string>
     <string name="india_country_code">91</string>
     <string name="sending_otp">Sending OTP…</string>
+    <string name="verifying_otp">Verifying OTP</string>
     <string-array name="intervalType">
         <item>1 min</item>
         <item>5 mins</item>
