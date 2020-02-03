@@ -145,16 +145,10 @@ class SplashActivity : AppCompatActivity() {
                                     }
                                 }
 
-                                lateinit var intent: Intent
-
-                                if(loginResponse.user.isPhoneVerified)
-                                    intent = Intent(this@SplashActivity, MainActivity::class.java)
-
-                                // TODO: uncomment
-
+                                val intent: Intent = if (loginResponse.user.isPhoneVerified)
+                                    Intent(this@SplashActivity, MainActivity::class.java)
                                 else
-                                    intent = Intent(this@SplashActivity, VerifyPhoneActivity::class.java)
-
+                                    Intent(this@SplashActivity, VerifyPhoneActivity::class.java)
 
                                 with(intent) {
                                     putExtra(USERNAME_KEY, loginResponse.user.name)

@@ -1,97 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/clPhoneNoVerification"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/black_background"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
 
-    <Button
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:id="@+id/btnLogoutVerifyActivity"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:background="@drawable/logout_action"
-        android:layout_marginEnd="12dp"
-        android:layout_marginTop="12dp"
-        >
-    </Button>
-
-    <LinearLayout
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/verifyOtpToolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="30dp"
-        android:layout_marginEnd="30dp"
-        android:background="#20202C"
-        android:orientation="vertical"
-        android:paddingStart="12dp"
-        android:paddingEnd="12dp"
-        android:paddingBottom="20dp"
+        android:background="?colorPrimary"
+        android:elevation="8dp"
+        android:orientation="horizontal"
+        android:theme="@style/Base.ThemeOverlay.AppCompat.Dark"
+        app:layout_constraintBottom_toTopOf="@id/smsViewPager"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <org.pragyan.dalal18.views.NonSwipeableViewPager
+        android:id="@+id/smsViewPager"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@id/smsTabLayout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/verifyOtpToolbar" />
+
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/smsTabLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <TextView
-            android:id="@+id/tvPhoneNo"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:fontFamily="@font/marcellus_sc"
-            android:padding="12dp"
-            android:text="@string/phone_number"
-            android:textColor="@color/neutral_font_color"
-            android:textSize="24sp" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
-            android:orientation="horizontal"
-            android:weightSum="10">
-
-            <com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner
-                android:id="@+id/spinnerCountry"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="3"
-                android:backgroundTint="@color/neutral_font_color"
-                android:shadowColor="@color/neutral_font_color"
-                android:textColor="@color/neutral_font_color"
-                android:textColorHighlight="@color/neutral_font_color"
-                android:textColorHint="@color/neutral_font_color"
-                android:textColorLink="@color/neutral_font_color"></com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner>
-
-            <EditText
-                android:id="@+id/etMobNo"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="7"
-                android:backgroundTint="@color/neutral_font_color"
-                android:fontFamily="@font/kreon_light"
-                android:hint="@string/mobile_number"
-                android:inputType="number"
-                android:maxLength="10"
-                android:maxLines="1"
-                android:textColor="@color/neutral_font_color"
-                android:textColorHint="@color/neutral_font_color" />
-        </LinearLayout>
-
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/btnVerify"
-            android:layout_marginTop="20dp"
-            android:layout_marginBottom="8dp"
-            android:layout_gravity="center"
-            android:text="@string/verify_otp"
-            android:textColor="@color/neutral_font_color"
-            android:background="@drawable/black_white_rounded_button"
-            />
-    </LinearLayout>
+        app:layout_constraintTop_toBottomOf="@id/smsViewPager"
+        app:tabBackground="@drawable/tab_selector"
+        app:tabGravity="center"
+        app:tabIndicatorHeight="0dp"
+        app:tabSelectedTextColor="@color/black"
+        app:tabTextColor="@color/neutral_font_color" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

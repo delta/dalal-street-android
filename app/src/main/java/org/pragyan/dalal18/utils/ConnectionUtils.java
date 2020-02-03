@@ -36,4 +36,8 @@ public class ConnectionUtils {
     public interface OnNetworkDownHandler {
         void onNetworkDownError(String message, int fragment);
     }
+
+    public interface SmsVerificationHandler {
+        void onNetworkDownError(String message);
+    }
 }

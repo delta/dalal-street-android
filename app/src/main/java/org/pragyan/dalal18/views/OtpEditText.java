@@ -1,4 +1,4 @@
-package org.pragyan.dalal18.ui;
+package org.pragyan.dalal18.views;
 
 import android.content.Context;
 import android.graphics.Canvas;
