@@ -65,7 +65,6 @@ class OTPVerificationFragment : Fragment() {
 
             override fun onTextChanged(charSequence: CharSequence?, p1: Int, p2: Int, p3: Int) {
                 if (charSequence?.length == 4) {
-                    view.hideKeyboard()
                     onVerifyButtonClick()
                 }
             }

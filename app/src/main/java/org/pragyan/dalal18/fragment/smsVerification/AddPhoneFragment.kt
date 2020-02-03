@@ -2,7 +2,6 @@ package org.pragyan.dalal18.fragment.smsVerification
 
 import android.app.AlertDialog
 import android.content.Context
-import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -29,9 +28,6 @@ class AddPhoneFragment : Fragment() {
 
     @Inject
     lateinit var actionServiceBlockingStub: DalalActionServiceGrpc.DalalActionServiceBlockingStub
-
-    @Inject
-    lateinit var preferences: SharedPreferences
 
     lateinit var loadingDialog: AlertDialog
     private lateinit var smsVerificationHandler: ConnectionUtils.SmsVerificationHandler
