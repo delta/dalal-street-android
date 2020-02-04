@@ -34,6 +34,7 @@ class OTPVerificationFragment : Fragment() {
 
     private lateinit var loadingDialog: AlertDialog
     private lateinit var smsVerificationHandler: ConnectionUtils.SmsVerificationHandler
+    private lateinit var resendTimer: CountDownTimer
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -68,6 +69,8 @@ class OTPVerificationFragment : Fragment() {
             }
 
         })
+
+        setupResendTimer()
     }
 
     override fun onAttach(context: Context) {
@@ -79,6 +82,25 @@ class OTPVerificationFragment : Fragment() {
         }
     }
 
+    private fun setupResendTimer() {
+        resendTimer = object : CountDownTimer(60000, 1000) {
+            override fun onFinish() {
+                resendOtpButton.text = this@OTPVerificationFragment.getString(R.string.resend_otp)
+                resendOtpButton.isEnabled = true
+            }
+
+            override fun onTick(left: Long) {
+                val resendButtonText = getString(R.string.resend_in_00) + adjustUnits(left / 1000)
+                resendOtpButton.text = resendButtonText
+            }
+
+        }
+
+        resendOtpButton.setOnClickListener {
+            smsVerificationHandler.navigateToAddPhone()
+        }
+    }
+
     private fun onVerifyButtonClick() {
         if (otpSpecialEditText.text.toString().length != 4)
             context?.toast("Enter valid OTP")
@@ -86,10 +108,11 @@ class OTPVerificationFragment : Fragment() {
             checkIfOtpIsCorrect(otpSpecialEditText.text.toString(), smsVerificationHandler.phoneNumber)
     }
 
-    private fun checkIfOtpIsCorrect(otp: String, phoneNumber: String) = lifecycleScope.launch {
+    fun checkIfOtpIsCorrect(otp: String, phoneNumber: String) = lifecycleScope.launch {
 
         loadingDialog.show()
         view?.hideKeyboard()
+        otpSpecialEditText.setText(otp)
 
         if (withContext(Dispatchers.IO) { ConnectionUtils.getConnectionInfo(context) }) {
 
@@ -111,8 +134,8 @@ class OTPVerificationFragment : Fragment() {
         }
     }
 
-    fun adjustUnits(left: Long): String {
-        return if(left < 10) "0$left"
+    private fun adjustUnits(left: Long): String {
+        return if (left < 10) "0$left"
         else left.toString()
     }
 
@@ -124,21 +147,11 @@ class OTPVerificationFragment : Fragment() {
         if (smsVerificationHandler.phoneNumber.isBlank() || smsVerificationHandler.phoneNumber.isEmpty())
             smsVerificationHandler.navigateToAddPhone()
 
-        object : CountDownTimer(60000, 1000) {
-            override fun onFinish() {
-                resendOtpButton.text = this@OTPVerificationFragment.getString(R.string.resend_otp)
-                resendOtpButton.isEnabled = true
-            }
+        resendTimer.start()
+    }
 
-            override fun onTick(left: Long) {
-                val resendButtonText = getString(R.string.resend_in_00) + adjustUnits(left/1000)
-                resendOtpButton.text = resendButtonText
-            }
-
-        }.start()
-
-        resendOtpButton.setOnClickListener {
-            smsVerificationHandler.navigateToAddPhone()
-        }
+    override fun onPause() {
+        super.onPause()
+        resendTimer.cancel()
     }
 }

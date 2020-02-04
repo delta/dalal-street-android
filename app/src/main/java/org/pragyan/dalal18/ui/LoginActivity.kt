@@ -179,7 +179,6 @@ class LoginActivity : AppCompatActivity() {
         val stub = DalalActionServiceGrpc.newBlockingStub(channel)
 
         doAsync {
-
             if (ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
 
                 val loginResponse = stub.login(loginRequest)

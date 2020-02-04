@@ -1,6 +1,7 @@
 package org.pragyan.dalal18.data
 
 import android.os.Parcelable
+import dalalstreet.api.models.GameStateUpdateType
 import dalalstreet.api.models.OrderType
 import kotlinx.android.parcel.Parcelize
 import java.util.*
@@ -44,3 +45,7 @@ data class Transaction(var type: String?, var stockId: Int, val companyName: Str
                        var time: String?, val totalMoney: Long)
 
 data class StockIdCompanyName(val stockId: Int, val companyName: String, val shortName: String)
+
+@Parcelize
+data class GameStateDetails(val gameStateUpdateType: GameStateUpdateType, val isMarketOpen: Boolean?, val isOtpVerified: Boolean?, val dividendStockId: Int?, val givesDividend: Boolean?,
+                            val bankruptStockId: Int?, val isBankrupt: Boolean?): Parcelable

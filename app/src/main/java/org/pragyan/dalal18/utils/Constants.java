@@ -4,7 +4,7 @@ public class Constants {
 
     // TODO (Release): Change server IP and Port
 
-    public static final String HOST = "10.2.66.196";
+    public static final String HOST = "192.168.0.15";
     public static final int PORT = 8000;
 
     public static final int EVENT_START_TIME = 20;
@@ -24,6 +24,7 @@ public class Constants {
     public static final String REFRESH_MARKET_DEPTH = "refresh_market_depth";
     public static final String STOP_NOTIFICATION_ACTION = "stop-notification-action";
     public static final String REFRESH_MORTGAGE_UPDATE_ACTION = "refresh-mortgage-update-action";
+    public static final String NEW_SMS_RECEIVED_ACTION = "new-sms-received-action";
     public static final String PRICE_FORMAT = "##,##,##,###";
 
     public static final String RUPEE_SYMBOL = "₹";
@@ -46,6 +47,7 @@ public class Constants {
     public static final String SESSION_KEY = "session-key";
     public static final String MARKET_OPEN_KEY = "market-open-key";
     public static final String PASSWORD_KEY = "password-key";
+    public static final String SMS_KEY = "sms-key";
 
     public static final String NEWS_HEAD_KEY = "news-head-key";
     public static final String NEWS_CONTENT_KEY = "news-content-key";

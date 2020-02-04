@@ -1,8 +1,7 @@
 package org.pragyan.dalal18.ui
 
 import android.app.Activity
-import android.content.Intent
-import android.content.SharedPreferences
+import android.content.*
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
@@ -14,9 +13,11 @@ import android.view.ViewGroup.MarginLayoutParams
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.lifecycle.lifecycleScope
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.google.android.gms.auth.api.Auth
 import com.google.android.gms.auth.api.credentials.Credential
 import com.google.android.gms.auth.api.credentials.HintRequest
+import com.google.android.gms.auth.api.phone.SmsRetriever
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.api.GoogleApiClient
 import dalalstreet.api.DalalActionServiceGrpc
@@ -34,11 +35,12 @@ import org.pragyan.dalal18.adapter.pagerAdapters.SmsVerificationPagerAdapter.Com
 import org.pragyan.dalal18.dagger.ContextModule
 import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent
 import org.pragyan.dalal18.fragment.smsVerification.AddPhoneFragment
+import org.pragyan.dalal18.fragment.smsVerification.OTPVerificationFragment
 import org.pragyan.dalal18.utils.ConnectionUtils
 import org.pragyan.dalal18.utils.Constants
+import org.pragyan.dalal18.utils.Constants.SMS_KEY
 import org.pragyan.dalal18.utils.MiscellaneousUtils.convertDpToPixel
 import javax.inject.Inject
-
 
 class VerifyPhoneActivity : AppCompatActivity(), ConnectionUtils.SmsVerificationHandler, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
@@ -50,6 +52,23 @@ class VerifyPhoneActivity : AppCompatActivity(), ConnectionUtils.SmsVerification
 
     private var phoneNumber = ""
     private val LOG_TAG = VerifyPhoneActivity::class.java.simpleName
+
+    private val newSMSReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            if (intent.action == Constants.NEW_SMS_RECEIVED_ACTION) {
+                val message = intent.getStringExtra(SMS_KEY) ?: ""
+
+                Log.v(LOG_TAG, message)
+
+                val otp = extractOtpFromMessage(message)
+                val page = supportFragmentManager.findFragmentByTag(
+                        "android:switcher:" + R.id.smsViewPager + ":" + smsViewPager.currentItem) as OTPVerificationFragment
+
+                Log.v(LOG_TAG, "Extracted OTP: $otp")
+                page.checkIfOtpIsCorrect(otp, phoneNumber)
+            }
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -106,15 +125,29 @@ class VerifyPhoneActivity : AppCompatActivity(), ConnectionUtils.SmsVerification
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == RESOLVE_HINT_RC) {
             if (resultCode == Activity.RESULT_OK) {
-                val credential: Credential? = data?.getParcelableExtra(Credential.EXTRA_KEY)
+                val phoneNumberWithExtension: Credential? = data?.getParcelableExtra(Credential.EXTRA_KEY)
 
-                if (credential != null) {
+                if (phoneNumberWithExtension != null) {
+
+                    startListeningToSMS()
+
                     val page = supportFragmentManager.findFragmentByTag(
                             "android:switcher:" + R.id.smsViewPager + ":" + smsViewPager.currentItem) as AddPhoneFragment
-                    page.sendAddPhoneNumberAsynchronously(credential.id)
+
+                    phoneNumber = phoneNumberWithExtension.id
+                    page.sendAddPhoneNumberAsynchronously(phoneNumberWithExtension.id)
                 }
             }
         }
+    }
+
+    private fun startListeningToSMS() {
+
+        val client = SmsRetriever.getClient(this)
+        val task = client.startSmsRetriever()
+
+        task.addOnSuccessListener { Log.v(LOG_TAG, "Expect a broadcast intent") }
+        task.addOnFailureListener { Log.v(LOG_TAG, "Failed to start SMS retriever") }
     }
 
     fun logout() = lifecycleScope.launch {
@@ -136,6 +169,10 @@ class VerifyPhoneActivity : AppCompatActivity(), ConnectionUtils.SmsVerification
         } else {
             onNetworkDownError(resources.getString(R.string.error_check_internet))
         }
+    }
+
+    private fun extractOtpFromMessage(message: String): String {
+        return message.substringAfter("is ").substring(0, 4)
     }
 
     override fun navigateToOtpVerification(phoneNumber: String) {
@@ -163,8 +200,15 @@ class VerifyPhoneActivity : AppCompatActivity(), ConnectionUtils.SmsVerification
         toast(message)
     }
 
-    companion object {
-        const val RESOLVE_HINT_RC = 144
+    override fun onResume() {
+        super.onResume()
+        val intentFilter = IntentFilter(Constants.NEW_SMS_RECEIVED_ACTION)
+        // LocalBroadcastManager.getInstance(this).registerReceiver(newSMSReceiver, intentFilter)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        // LocalBroadcastManager.getInstance(this).unregisterReceiver(newSMSReceiver)
     }
 
     override fun onConnected(p0: Bundle?) {
@@ -177,5 +221,9 @@ class VerifyPhoneActivity : AppCompatActivity(), ConnectionUtils.SmsVerification
 
     override fun onConnectionFailed(p0: ConnectionResult) {
         Log.d(LOG_TAG, "onConnectionFailed")
+    }
+
+    companion object {
+        const val RESOLVE_HINT_RC = 144
     }
 }
