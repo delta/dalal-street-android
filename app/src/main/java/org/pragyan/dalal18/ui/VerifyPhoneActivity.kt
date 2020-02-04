@@ -1,9 +1,11 @@
 package org.pragyan.dalal18.ui
 
+import android.app.Activity
 import android.content.Intent
 import android.content.SharedPreferences
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -12,6 +14,11 @@ import android.view.ViewGroup.MarginLayoutParams
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.lifecycle.lifecycleScope
+import com.google.android.gms.auth.api.Auth
+import com.google.android.gms.auth.api.credentials.Credential
+import com.google.android.gms.auth.api.credentials.HintRequest
+import com.google.android.gms.common.ConnectionResult
+import com.google.android.gms.common.api.GoogleApiClient
 import dalalstreet.api.DalalActionServiceGrpc
 import dalalstreet.api.actions.LogoutRequest
 import dalalstreet.api.actions.LogoutResponse
@@ -19,19 +26,21 @@ import kotlinx.android.synthetic.main.activity_verify_phone.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.jetbrains.anko.toast
 import org.pragyan.dalal18.R
 import org.pragyan.dalal18.adapter.pagerAdapters.SmsVerificationPagerAdapter
 import org.pragyan.dalal18.adapter.pagerAdapters.SmsVerificationPagerAdapter.Companion.ADD_PHONE
 import org.pragyan.dalal18.adapter.pagerAdapters.SmsVerificationPagerAdapter.Companion.OTP_VERIFICATION
 import org.pragyan.dalal18.dagger.ContextModule
 import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent
+import org.pragyan.dalal18.fragment.smsVerification.AddPhoneFragment
 import org.pragyan.dalal18.utils.ConnectionUtils
 import org.pragyan.dalal18.utils.Constants
 import org.pragyan.dalal18.utils.MiscellaneousUtils.convertDpToPixel
 import javax.inject.Inject
 
 
-class VerifyPhoneActivity : AppCompatActivity(), ConnectionUtils.SmsVerificationHandler {
+class VerifyPhoneActivity : AppCompatActivity(), ConnectionUtils.SmsVerificationHandler, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     @Inject
     lateinit var actionServiceBlockingStub: DalalActionServiceGrpc.DalalActionServiceBlockingStub
@@ -40,6 +49,7 @@ class VerifyPhoneActivity : AppCompatActivity(), ConnectionUtils.SmsVerification
     lateinit var preferences: SharedPreferences
 
     private var phoneNumber = ""
+    private val LOG_TAG = VerifyPhoneActivity::class.java.simpleName
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -66,6 +76,8 @@ class VerifyPhoneActivity : AppCompatActivity(), ConnectionUtils.SmsVerification
             tab.requestLayout()
             tab.setOnTouchListener { _, _ -> true }
         }
+
+        requestHint()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -76,6 +88,33 @@ class VerifyPhoneActivity : AppCompatActivity(), ConnectionUtils.SmsVerification
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == R.id.action_otp_logout) logout()
         return super.onOptionsItemSelected(item)
+    }
+
+    private fun requestHint() {
+        val mGoogleApiClient = GoogleApiClient.Builder(this)
+                .addConnectionCallbacks(this)
+                .enableAutoManage(this, this)
+                .addApi(Auth.CREDENTIALS_API)
+                .build()
+
+        val hintRequest = HintRequest.Builder().setPhoneNumberIdentifierSupported(true).build()
+        val intent = Auth.CredentialsApi.getHintPickerIntent(mGoogleApiClient, hintRequest)
+        startIntentSenderForResult(intent.intentSender, RESOLVE_HINT_RC, null, 0, 0, 0)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == RESOLVE_HINT_RC) {
+            if (resultCode == Activity.RESULT_OK) {
+                val credential: Credential? = data?.getParcelableExtra(Credential.EXTRA_KEY)
+
+                if (credential != null) {
+                    val page = supportFragmentManager.findFragmentByTag(
+                            "android:switcher:" + R.id.smsViewPager + ":" + smsViewPager.currentItem) as AddPhoneFragment
+                    page.sendAddPhoneNumberAsynchronously(credential.id)
+                }
+            }
+        }
     }
 
     fun logout() = lifecycleScope.launch {
@@ -121,6 +160,22 @@ class VerifyPhoneActivity : AppCompatActivity(), ConnectionUtils.SmsVerification
     }
 
     override fun onNetworkDownError(message: String) {
-        // TODO: Internet unavailable
+        toast(message)
+    }
+
+    companion object {
+        const val RESOLVE_HINT_RC = 144
+    }
+
+    override fun onConnected(p0: Bundle?) {
+        Log.d(LOG_TAG, "onConnected")
+    }
+
+    override fun onConnectionSuspended(p0: Int) {
+        Log.d(LOG_TAG, "onConnectionSuspended")
+    }
+
+    override fun onConnectionFailed(p0: ConnectionResult) {
+        Log.d(LOG_TAG, "onConnectionFailed")
     }
 }

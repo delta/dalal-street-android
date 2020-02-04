@@ -26,7 +26,8 @@
 
         <activity
             android:name=".ui.SplashActivity"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize">
 
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -36,7 +37,8 @@
 
         </activity>
 
-        <activity android:name=".ui.VerifyPhoneActivity"
+        <activity
+            android:name=".ui.VerifyPhoneActivity"
             android:screenOrientation="portrait">
 
         </activity>
@@ -47,12 +49,14 @@
 
             <intent-filter android:label="@string/filter_dalal_reset_password">
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
                 <!-- Accepts URIs that begin with "http://dalal.pragyan.org/forgotPassword” -->
-                <data android:scheme="http"
+                <data
                     android:host="dalal.pragyan.org"
-                    android:pathPrefix="/forgotPassword" />
+                    android:pathPrefix="/forgotPassword"
+                    android:scheme="http" />
                 <!-- note that the leading "/" is required for pathPrefix-->
             </intent-filter>
         </activity>

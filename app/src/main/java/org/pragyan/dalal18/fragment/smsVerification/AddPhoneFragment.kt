@@ -63,7 +63,7 @@ class AddPhoneFragment : Fragment() {
         }
     }
 
-    private fun sendAddPhoneNumberAsynchronously(phoneNumber: String) = lifecycleScope.launch {
+    fun sendAddPhoneNumberAsynchronously(phoneNumber: String) = lifecycleScope.launch {
 
         view?.hideKeyboard()
 

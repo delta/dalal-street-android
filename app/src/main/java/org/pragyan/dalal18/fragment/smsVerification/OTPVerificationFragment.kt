@@ -3,14 +3,12 @@ package org.pragyan.dalal18.fragment.smsVerification
 import android.app.AlertDialog
 import android.content.Context
 import android.os.Bundle
-import android.os.Handler
+import android.os.CountDownTimer
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
-import android.view.View.VISIBLE
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -113,6 +111,11 @@ class OTPVerificationFragment : Fragment() {
         }
     }
 
+    fun adjustUnits(left: Long): String {
+        return if(left < 10) "0$left"
+        else left.toString()
+    }
+
     override fun onResume() {
         super.onResume()
 
@@ -121,9 +124,18 @@ class OTPVerificationFragment : Fragment() {
         if (smsVerificationHandler.phoneNumber.isBlank() || smsVerificationHandler.phoneNumber.isEmpty())
             smsVerificationHandler.navigateToAddPhone()
 
-        Handler().postDelayed({
-            view?.findViewById<Button>(R.id.resendOtpButton)?.visibility = VISIBLE
-        }, 60 * 1000)
+        object : CountDownTimer(60000, 1000) {
+            override fun onFinish() {
+                resendOtpButton.text = this@OTPVerificationFragment.getString(R.string.resend_otp)
+                resendOtpButton.isEnabled = true
+            }
+
+            override fun onTick(left: Long) {
+                val resendButtonText = getString(R.string.resend_in_00) + adjustUnits(left/1000)
+                resendOtpButton.text = resendButtonText
+            }
+
+        }.start()
 
         resendOtpButton.setOnClickListener {
             smsVerificationHandler.navigateToAddPhone()
