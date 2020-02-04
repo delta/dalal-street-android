@@ -39,7 +39,8 @@
 
         <activity
             android:name=".ui.VerifyPhoneActivity"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize">
 
         </activity>
 
@@ -77,6 +78,14 @@
             android:label="RestartServiceWhenStopped">
             <intent-filter>
                 <action android:name="NotifServiceBroadcast" />
+            </intent-filter>
+        </receiver>
+
+        <receiver
+            android:name=".utils.SmsVerificationReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.google.android.gms.auth.api.phone.SMS_RETRIEVED" />
             </intent-filter>
         </receiver>
 

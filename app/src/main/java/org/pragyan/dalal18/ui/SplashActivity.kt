@@ -28,6 +28,7 @@ import org.pragyan.dalal18.data.GlobalStockDetails
 import org.pragyan.dalal18.data.StockDetails
 import org.pragyan.dalal18.utils.ConnectionUtils
 import org.pragyan.dalal18.utils.Constants
+import org.pragyan.dalal18.utils.Constants.MARKET_OPEN_KEY
 import org.pragyan.dalal18.utils.MiscellaneousUtils
 import java.util.*
 import javax.inject.Inject
@@ -245,7 +246,6 @@ class SplashActivity : AppCompatActivity() {
     companion object {
         const val USERNAME_KEY = "username-key"
         const val EMAIL_KEY = "email-key"
-        const val MARKET_OPEN_KEY = "market-open-key"
         internal const val PASSWORD_KEY = "password-key"
     }
 }

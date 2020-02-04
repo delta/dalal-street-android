@@ -29,6 +29,7 @@ import dalalstreet.api.DalalStreamServiceGrpc
 import dalalstreet.api.actions.LogoutRequest
 import dalalstreet.api.actions.LogoutResponse
 import dalalstreet.api.datastreams.*
+import dalalstreet.api.models.GameStateUpdateType
 import dalalstreet.api.models.TransactionType
 import io.grpc.stub.StreamObserver
 import kotlinx.android.synthetic.main.activity_main.*
@@ -40,6 +41,7 @@ import org.pragyan.dalal18.R
 import org.pragyan.dalal18.dagger.ContextModule
 import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent
 import org.pragyan.dalal18.data.DalalViewModel
+import org.pragyan.dalal18.data.GameStateDetails
 import org.pragyan.dalal18.fragment.mortgage.MortgageFragment
 import org.pragyan.dalal18.utils.*
 import org.pragyan.dalal18.utils.Constants.*
@@ -117,6 +119,19 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
                         unreadNotificationsCount = 0
                     invalidateOptionsMenu()
                 }
+
+                GAME_STATE_UPDATE_ACTION -> {
+                    val gameStateDetails = intent.getParcelableExtra<GameStateDetails>(GAME_STATE_KEY)
+
+                    // TODO: Do something with update
+                    if(gameStateDetails != null) when(gameStateDetails.gameStateUpdateType) {
+                        GameStateUpdateType.MarketStateUpdate -> TODO()
+                        GameStateUpdateType.StockDividendStateUpdate -> TODO()
+                        GameStateUpdateType.OtpVerifiedStateUpdate -> TODO()
+                        GameStateUpdateType.StockBankruptStateUpdate -> TODO()
+                        else -> TODO()
+                    }
+                }
             }
         }
     }
@@ -154,7 +169,7 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
 
         createNetworkCallbackObject()
 
-        if (!intent.getBooleanExtra(SplashActivity.MARKET_OPEN_KEY, false)) {
+        if (!intent.getBooleanExtra(MARKET_OPEN_KEY, false)) {
             AlertDialog.Builder(this, R.style.AlertDialogTheme)
                     .setTitle("Market Closed")
                     .setMessage("Please check notifications for market opening time. You can still browse through the app.")
@@ -165,18 +180,17 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
 
         drawerEdgeButton.setOnClickListener { mainDrawerLayout.openDrawer(GravityCompat.START, true) }
 
-        val navController = findNavController(R.id.main_host_fragment)
-        val worthViewClickListener = View.OnClickListener {
-            contentView?.hideKeyboard()
-            navController.navigate(R.id.portfolio_dest, null, NavOptions.Builder().setPopUpTo(R.id.home_dest, false).build())
-        }
-
         if (preferences.getBoolean(PREF_MAIN, true)) {
             preferences.edit()
                     .putBoolean(PREF_MAIN, false)
                     .putBoolean(PREF_COMP, true)
                     .apply()
             DalalTourUtils.toolbarTour(mainToolbar, this, 40, getString(R.string.notification_tour))
+        }
+
+        val worthViewClickListener = View.OnClickListener {
+            contentView?.hideKeyboard()
+            findNavController(R.id.main_host_fragment).navigate(R.id.portfolio_dest, null, NavOptions.Builder().setPopUpTo(R.id.home_dest, false).build())
         }
 
         // Tried to use single view didn't work; It took up toolbar space also
@@ -524,6 +538,38 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
                 })
     }
 
+    private fun subscribeToGameStateStream(gameStateSubscriptionId: SubscriptionId) {
+
+        streamServiceStub.getGameStateUpdates(gameStateSubscriptionId,
+                object : StreamObserver<GameStateUpdate> {
+                    override fun onNext(value: GameStateUpdate?) {
+                        if (value?.gameState != null) with(value.gameState) {
+                            val intent = Intent(GAME_STATE_UPDATE_ACTION)
+                            val gameStateDetails = GameStateDetails(
+                                    type,
+                                    marketState?.isMarketOpen,
+                                    otpVerifiedState?.isVerified,
+                                    stockDividendState?.stockId,
+                                    stockDividendState?.givesDividend,
+                                    stockBankruptState?.stockId,
+                                    stockBankruptState?.isBankrupt)
+
+                            intent.putExtra(GAME_STATE_KEY, gameStateDetails)
+                            LocalBroadcastManager.getInstance(this@MainActivity).sendBroadcast(intent)
+                        }
+                    }
+
+                    override fun onError(t: Throwable?) {
+
+                    }
+
+                    override fun onCompleted() {
+
+                    }
+
+                })
+    }
+
     // Unsubscribes from all streams
     private fun unsubscribeFromAllStreams() {
         doAsync {
@@ -608,7 +654,7 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
                 }
             }
 
-            override fun onLost(network: Network?) {
+            override fun onLost(network: Network) {
                 super.onLost(network)
                 toast(getString(R.string.internet_connection_lost))
                 lostOnce = true
@@ -683,6 +729,8 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
         intentFilter.addAction(UPDATE_WORTH_VIA_STREAM_ACTION)
         intentFilter.addAction(REFRESH_CASH_ACTION)
         intentFilter.addAction(REFRESH_UNREAD_NOTIFICATIONS_COUNT)
+        intentFilter.addAction(GAME_STATE_UPDATE_ACTION)
+
         LocalBroadcastManager.getInstance(this).registerReceiver(refreshCashStockReceiver, IntentFilter(intentFilter))
 
         connectivityManager.registerNetworkCallback(networkRequest, networkCallback)
@@ -696,11 +744,12 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
                 ?: R.id.home_dest
 
         preferences.edit().remove(LAST_TRANSACTION_ID).apply()
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(refreshCashStockReceiver)
+
         helpDialog?.dismiss()
         logoutDialog?.dismiss()
 
         connectivityManager.unregisterNetworkCallback(networkCallback)
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(refreshCashStockReceiver)
 
         preferences.edit().remove(LAST_TRANSACTION_ID).apply()
     }
@@ -739,6 +788,12 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
                 }
                 subscriptionIds.add(transactionsResponse.subscriptionId)
                 subscribeToTransactionsStream(transactionsResponse.subscriptionId)
+
+                val gameStateResponse = withContext(Dispatchers.IO) {
+                    streamServiceBlockingStub.subscribe(SubscribeRequest.newBuilder().setDataStreamType(DataStreamType.GAME_STATE).setDataStreamId("").build())
+                }
+                subscriptionIds.add(gameStateResponse.subscriptionId)
+                subscribeToGameStateStream(gameStateResponse.subscriptionId)
 
             } else {
                 onNetworkDownError(resources.getString(R.string.error_server_down), R.id.home_dest)
@@ -813,5 +868,8 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
         private const val REFRESH_CASH_AND_TOTAL_ACTION = "refresh-cash-and-total-worth-textview"
         private const val UPDATE_WORTH_VIA_STREAM_ACTION = "refresh-worth-via-stream-action"
         private const val REFRESH_UNREAD_NOTIFICATIONS_COUNT = "refresh-unread-notifications-count"
+
+        private const val GAME_STATE_UPDATE_ACTION = "game-state-update-action"
+        private const val GAME_STATE_KEY = "game-state-key"
     }
 }
