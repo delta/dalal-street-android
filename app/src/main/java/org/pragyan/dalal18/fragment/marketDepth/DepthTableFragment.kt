@@ -9,7 +9,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
-import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
@@ -33,9 +32,11 @@ import org.pragyan.dalal18.data.DalalViewModel
 import org.pragyan.dalal18.data.MarketDepth
 import org.pragyan.dalal18.utils.ConnectionUtils
 import org.pragyan.dalal18.utils.Constants
+import org.pragyan.dalal18.utils.Constants.REFRESH_MARKET_DEPTH_FOR_TABLE
 import java.text.DecimalFormat
 import java.util.*
 import javax.inject.Inject
+import kotlin.math.abs
 
 class DepthTableFragment : Fragment() {
 
@@ -60,7 +61,7 @@ class DepthTableFragment : Fragment() {
 
     private val refreshMarketDepth = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
-            if (activity != null && isAdded) {
+            if (activity != null && isAdded && intent.action == REFRESH_MARKET_DEPTH_FOR_TABLE) {
                 if (askArrayList.size == 0) {
                     ask_depth_holder.visibility = View.VISIBLE
                 } else if (askArrayList.size > 0) {
@@ -226,7 +227,7 @@ class DepthTableFragment : Fragment() {
                                 askArrayList.add(MarketDepth(price, volume))
                             }
                         }
-                        val marketDepthIntent = Intent(Constants.REFRESH_MARKET_DEPTH)
+                        val marketDepthIntent = Intent(REFRESH_MARKET_DEPTH_FOR_TABLE)
 
                         if (context != null)
                             LocalBroadcastManager.getInstance(context!!).sendBroadcast(marketDepthIntent)
@@ -291,7 +292,7 @@ class DepthTableFragment : Fragment() {
                             current_stock_price_layout.visibility = View.VISIBLE
                             val currentStockPrice = "Current Stock Price : " + Constants.RUPEE_SYMBOL + df.format(currentPrice).toString()
                             current_stock_price_textView.text = currentStockPrice
-                            val prevDayClosePrice = Constants.RUPEE_SYMBOL + df.format(Math.abs(currentPrice - prevDayClose)).toString()
+                            val prevDayClosePrice = Constants.RUPEE_SYMBOL + df.format(abs(currentPrice - prevDayClose)).toString()
                             prev_day_close_stock_price.text = prevDayClosePrice
                             if (currentPrice >= prevDayClose) {
                                 arrow_image_view.setImageResource(R.drawable.arrow_up_green)
@@ -356,7 +357,7 @@ class DepthTableFragment : Fragment() {
             }
         }
 
-        intentFilter.addAction(Constants.REFRESH_MARKET_DEPTH)
+        intentFilter.addAction(REFRESH_MARKET_DEPTH_FOR_TABLE)
         LocalBroadcastManager.getInstance(context!!).registerReceiver(refreshMarketDepth, intentFilter)
     }
 

@@ -35,8 +35,8 @@ class CompanyFragment : Fragment(), CompanyRecyclerAdapter.OnCompanyClickListene
 
     private val refreshStockPricesReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
-            if (intent.action.equals(Constants.REFRESH_STOCK_PRICES_ACTION, ignoreCase = true) ||
-                    intent.action.equals(Constants.REFRESH_STOCKS_EXCHANGE_ACTION, ignoreCase = true)) {
+            if (intent.action.equals(Constants.REFRESH_STOCK_PRICES_FOR_ALL, ignoreCase = true) ||
+                    intent.action.equals(Constants.REFRESH_STOCKS_EXCHANGE_FOR_COMPANY, ignoreCase = true)) {
                 updateValues()
             }
         }
@@ -85,8 +85,8 @@ class CompanyFragment : Fragment(), CompanyRecyclerAdapter.OnCompanyClickListene
 
     override fun onResume() {
         super.onResume()
-        val intentFilter = IntentFilter(Constants.REFRESH_STOCKS_EXCHANGE_ACTION)
-        intentFilter.addAction(Constants.REFRESH_STOCK_PRICES_ACTION)
+        val intentFilter = IntentFilter(Constants.REFRESH_STOCKS_EXCHANGE_FOR_COMPANY)
+        intentFilter.addAction(Constants.REFRESH_STOCK_PRICES_FOR_ALL)
         LocalBroadcastManager.getInstance(context!!).registerReceiver(refreshStockPricesReceiver, intentFilter)
     }
 

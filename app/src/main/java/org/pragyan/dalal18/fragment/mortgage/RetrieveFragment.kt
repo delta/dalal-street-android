@@ -48,7 +48,7 @@ class RetrieveFragment : Fragment(), RetrieveRecyclerAdapter.OnRetrieveButtonCli
 
     private val refreshMortgageListReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
-            if (intent.action != null && intent.action.equals(Constants.REFRESH_MORTGAGE_UPDATE_ACTION, ignoreCase = true)) {
+            if (intent.action != null && intent.action.equals(Constants.REFRESH_STOCKS_FOR_MORTGAGE, ignoreCase = true)) {
 
                 val quantity = intent.getLongExtra(MortgageFragment.STOCKS_QUANTITY_KEY, 0)
                 val stockId = intent.getIntExtra(MortgageFragment.STOCKS_ID_KEY, 0)
@@ -213,7 +213,7 @@ class RetrieveFragment : Fragment(), RetrieveRecyclerAdapter.OnRetrieveButtonCli
 
     override fun onResume() {
         super.onResume()
-        val intentFilter = IntentFilter(Constants.REFRESH_MORTGAGE_UPDATE_ACTION)
+        val intentFilter = IntentFilter(Constants.REFRESH_STOCKS_FOR_MORTGAGE)
         LocalBroadcastManager.getInstance(context!!).registerReceiver(refreshMortgageListReceiver, intentFilter)
     }
 

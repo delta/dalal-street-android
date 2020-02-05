@@ -51,7 +51,7 @@ class StockExchangeFragment : Fragment() {
 
     private val refreshStockPricesReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
-            if (activity != null && intent.action != null && intent.action!!.equals(Constants.REFRESH_STOCK_PRICES_ACTION, ignoreCase = true)) {
+            if (activity != null && intent.action != null && intent.action!!.equals(Constants.REFRESH_STOCK_PRICES_FOR_ALL, ignoreCase = true)) {
                 getCompanyProfileAsynchronously(lastSelectedStockId)
             }
         }
@@ -207,7 +207,7 @@ class StockExchangeFragment : Fragment() {
 
         companySpinner.setSelection(model.getIndexForFavoriteCompany())
 
-        LocalBroadcastManager.getInstance(context!!).registerReceiver(refreshStockPricesReceiver, IntentFilter(Constants.REFRESH_STOCK_PRICES_ACTION))
+        LocalBroadcastManager.getInstance(context!!).registerReceiver(refreshStockPricesReceiver, IntentFilter(Constants.REFRESH_STOCK_PRICES_FOR_ALL))
     }
 
     override fun onPause() {

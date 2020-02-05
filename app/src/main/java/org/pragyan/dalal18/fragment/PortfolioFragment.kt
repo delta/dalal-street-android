@@ -51,8 +51,8 @@ class PortfolioFragment : Fragment() {
 
     private val refreshPortfolioDetails = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
-            if (intent.action != null && (intent.action == Constants.REFRESH_STOCK_PRICES_ACTION
-                            || intent.action == Constants.REFRESH_OWNED_STOCKS_ACTION || intent.action == Constants.REFRESH_RESERVED_ASSETS_ACTION)) {
+            if (intent.action != null && (intent.action == Constants.REFRESH_STOCK_PRICES_FOR_ALL
+                            || intent.action == Constants.REFRESH_OWNED_STOCKS_FOR_ALL || intent.action == Constants.REFRESH_RESERVED_ASSETS_FOR_PORTFOLIO)) {
                 updatePortfolioTable()
             }
         }
@@ -193,9 +193,9 @@ class PortfolioFragment : Fragment() {
     override fun onResume() {
         super.onResume()
 
-        val intentFilter = IntentFilter(Constants.REFRESH_OWNED_STOCKS_ACTION)
-        intentFilter.addAction(Constants.REFRESH_STOCK_PRICES_ACTION)
-        intentFilter.addAction(Constants.REFRESH_RESERVED_ASSETS_ACTION)
+        val intentFilter = IntentFilter(Constants.REFRESH_OWNED_STOCKS_FOR_ALL)
+        intentFilter.addAction(Constants.REFRESH_STOCK_PRICES_FOR_ALL)
+        intentFilter.addAction(Constants.REFRESH_RESERVED_ASSETS_FOR_PORTFOLIO)
         LocalBroadcastManager.getInstance(context!!).registerReceiver(refreshPortfolioDetails, intentFilter)
     }
 

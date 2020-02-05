@@ -49,7 +49,7 @@ class TradeFragment : Fragment() {
     lateinit var networkDownHandler: ConnectionUtils.OnNetworkDownHandler
     private val refreshOwnedStockDetails = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
-            if (intent.action != null && (intent.action == Constants.REFRESH_OWNED_STOCKS_ACTION || intent.action == Constants.REFRESH_STOCK_PRICES_ACTION)) {
+            if (intent.action != null && (intent.action == Constants.REFRESH_OWNED_STOCKS_FOR_ALL || intent.action == Constants.REFRESH_STOCK_PRICES_FOR_ALL)) {
                 val stocksOwned = model.getQuantityOwnedFromCompanyName(companySpinner.selectedItem.toString())
                 var tempString = " :" + decimalFormat.format(stocksOwned).toString()
                 stocksOwnedTextView.text = tempString
@@ -280,8 +280,8 @@ class TradeFragment : Fragment() {
             companySpinner.setSelection(model.getIndexForFavoriteCompany())
         }
 
-        val intentFilter = IntentFilter(Constants.REFRESH_OWNED_STOCKS_ACTION)
-        intentFilter.addAction(Constants.REFRESH_STOCK_PRICES_ACTION)
+        val intentFilter = IntentFilter(Constants.REFRESH_OWNED_STOCKS_FOR_ALL)
+        intentFilter.addAction(Constants.REFRESH_STOCK_PRICES_FOR_ALL)
         LocalBroadcastManager.getInstance(context!!).registerReceiver(refreshOwnedStockDetails, intentFilter)
     }
 

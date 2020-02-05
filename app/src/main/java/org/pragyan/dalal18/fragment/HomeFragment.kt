@@ -63,11 +63,11 @@ class HomeFragment : Fragment(), NewsRecyclerAdapter.NewsItemClickListener, Swip
 
     private val refreshNewsListReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
-            if (intent.action.equals(Constants.REFRESH_NEWS_ACTION, ignoreCase = true)) {
+            if (intent.action.equals(Constants.REFRESH_MARKET_EVENTS_FOR_HOME_AND_NEWS, ignoreCase = true)) {
 
                 getLatestNewsAsynchronously()
 
-            } else if (intent.action.equals(Constants.REFRESH_PRICE_TICKER_ACTION, ignoreCase = true)) {
+            } else if (intent.action.equals(Constants.REFRESH_PRICE_TICKER_FOR_HOME, ignoreCase = true)) {
 
                 val builder = StringBuilder("")
                 if (model.globalStockDetails.isNotEmpty()) {
@@ -247,8 +247,8 @@ class HomeFragment : Fragment(), NewsRecyclerAdapter.NewsItemClickListener, Swip
         super.onResume()
 
         val intentFilter = IntentFilter()
-        intentFilter.addAction(Constants.REFRESH_NEWS_ACTION)
-        intentFilter.addAction(Constants.REFRESH_PRICE_TICKER_ACTION)
+        intentFilter.addAction(Constants.REFRESH_MARKET_EVENTS_FOR_HOME_AND_NEWS)
+        intentFilter.addAction(Constants.REFRESH_PRICE_TICKER_FOR_HOME)
         LocalBroadcastManager.getInstance(context!!).registerReceiver(refreshNewsListReceiver, intentFilter)
     }
 

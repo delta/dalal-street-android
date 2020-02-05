@@ -58,12 +58,12 @@ class MortgageFragment : Fragment() {
     private val refreshStockPricesReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
 
-            if (intent.action.equals(Constants.REFRESH_STOCK_PRICES_ACTION, ignoreCase = true)) {
+            if (intent.action.equals(Constants.REFRESH_STOCK_PRICES_FOR_ALL, ignoreCase = true)) {
                 val currentPriceText = " :  " + Constants.RUPEE_SYMBOL +
                         decimalFormat.format(model.getPriceFromStockId(lastStockId)).toString()
                 currentPriceTextView.text = currentPriceText
 
-            } else if (intent.action.equals(Constants.REFRESH_MORTGAGE_UPDATE_ACTION, ignoreCase = true)) {
+            } else if (intent.action.equals(Constants.REFRESH_STOCKS_FOR_MORTGAGE, ignoreCase = true)) {
 
                 val quantity = intent.getLongExtra(STOCKS_QUANTITY_KEY, 0)
                 val stockId = intent.getIntExtra(STOCKS_ID_KEY, 0)
@@ -296,8 +296,8 @@ class MortgageFragment : Fragment() {
             mortgage_companies_spinner.setSelection(model.getIndexForFavoriteCompany())
         }
 
-        val intentFilter = IntentFilter(Constants.REFRESH_STOCK_PRICES_ACTION)
-        intentFilter.addAction(Constants.REFRESH_MORTGAGE_UPDATE_ACTION)
+        val intentFilter = IntentFilter(Constants.REFRESH_STOCK_PRICES_FOR_ALL)
+        intentFilter.addAction(Constants.REFRESH_STOCKS_FOR_MORTGAGE)
         LocalBroadcastManager.getInstance(context!!).registerReceiver(refreshStockPricesReceiver, intentFilter)
     }
 

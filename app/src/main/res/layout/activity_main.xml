@@ -101,7 +101,7 @@
             android:text="@string/total_worth"
             android:textColor="@color/neon_orange"
             android:textSize="12sp"
-            app:layout_constraintEnd_toStartOf="@+id/totalIndicatorImageVIew"
+            app:layout_constraintEnd_toStartOf="@+id/totalIndicatorImageView"
             app:layout_constraintStart_toEndOf="@+id/stockIndicatorImageView"
             app:layout_constraintTop_toBottomOf="@+id/mainToolbar" />
 
@@ -160,7 +160,7 @@
             app:layout_constraintTop_toTopOf="@+id/cashInHandTextView" />
 
         <ImageView
-            android:id="@+id/totalIndicatorImageVIew"
+            android:id="@+id/totalIndicatorImageView"
             android:layout_width="16dp"
             android:layout_height="0dp"
             android:background="#20202C"
