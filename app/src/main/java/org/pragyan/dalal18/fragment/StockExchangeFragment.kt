@@ -111,6 +111,9 @@ class StockExchangeFragment : Fragment() {
     }
 
     private fun addToStockExchangeInput(increment: Int) {
+        if(noOfStocksEditText.text.toString()==""){
+            noOfStocksEditText.setText("0");
+        }
         var noOfStocks = noOfStocksEditText.text.toString().toInt()
         noOfStocks = (noOfStocks + increment).coerceAtMost(Constants.ASK_LIMIT)
         noOfStocksEditText.setText(noOfStocks.toString())
@@ -133,7 +136,7 @@ class StockExchangeFragment : Fragment() {
                             uiThread {
                                 if (response.statusCode == BuyStocksFromExchangeResponse.StatusCode.OK) {
                                     context?.toast("Stocks bought")
-                                    noOfStocksEditText.setText("")
+                                    noOfStocksEditText.setText("0")
                                     getCompanyProfileAsynchronously(lastSelectedStockId)
                                     view?.hideKeyboard()
                                 } else
