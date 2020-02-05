@@ -383,7 +383,7 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
                             TransactionType.PLACE_ORDER_TRANSACTION -> {
                                 if (transaction.total != 0L) { // Cash reserved; here transaction.total will be negative as reserveCash is taken from actual cash
                                     model.reservedCash += abs(transaction.total)
-                                    val intent = Intent(REFRESH_CASH_AND_TOTAL_ONLY_ACTION) // Since now TotalWorth = CashWorth + StockWorth
+                                    val intent = Intent(REFRESH_CASH_ONLY_ACTION) // Since now TotalWorth = CashWorth + StockWorth
                                     intent.putExtra(TRANSACTION_TOTAL_KEY, transaction.total)
                                     LocalBroadcastManager.getInstance(this@MainActivity).sendBroadcast(intent)
                                 } else {
@@ -398,7 +398,7 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
                             TransactionType.CANCEL_ORDER_TRANSACTION -> {
                                 if (transaction.total != 0L) { // Here transaction.total will be positive
                                     model.reservedCash -= abs(transaction.total)
-                                    val intent = Intent(REFRESH_CASH_AND_TOTAL_ONLY_ACTION) //  Since now TotalWorth = CashWorth + StockWorth
+                                    val intent = Intent(REFRESH_CASH_ONLY_ACTION) //  Since now TotalWorth = CashWorth + StockWorth
                                     intent.putExtra(TRANSACTION_TOTAL_KEY, transaction.total)
                                     LocalBroadcastManager.getInstance(this@MainActivity).sendBroadcast(intent)
                                 } else {
@@ -609,8 +609,8 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
             }
             netStockWorth += quantity * rate
         }
-        // Backend has it the way TotalWorth = CashWorth + StockWorth
-        totalWorth = stockWorth + cashWorth
+        // Backend has it the way TotalWorth = CashWorth + OwnedStockWorth + ReservedStockWorth
+        totalWorth = netStockWorth + cashWorth + model.reservedCash
 
         changeTextViewValue(totalWorthTextView, totalIndicatorImageView, totalWorth)
     }
