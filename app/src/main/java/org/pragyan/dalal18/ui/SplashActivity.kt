@@ -158,12 +158,9 @@ class SplashActivity : AppCompatActivity() {
                                     putExtra(MainActivity.RESERVED_CASH_KEY, loginResponse.user.reservedCash)
                                     putExtra(MARKET_OPEN_KEY, loginResponse.isMarketOpen)
 
-                                    putParcelableArrayListExtra(MainActivity.STOCKS_OWNED_KEY, stocksOwnedList)
                                     putParcelableArrayListExtra(MainActivity.GLOBAL_STOCKS_KEY, globalStockList)
-
                                     putParcelableArrayListExtra(MainActivity.RESERVED_STOCKS_KEY, reservedStocksList)
                                     putParcelableArrayListExtra(MainActivity.STOCKS_OWNED_KEY, stocksOwnedList)
-                                    putParcelableArrayListExtra(MainActivity.GLOBAL_STOCKS_KEY, globalStockList)
                                 }
 
                                 // Checking for constants

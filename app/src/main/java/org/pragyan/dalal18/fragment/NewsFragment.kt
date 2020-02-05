@@ -19,7 +19,6 @@ import androidx.navigation.findNavController
 import androidx.navigation.fragment.FragmentNavigator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import androidx.transition.TransitionInflater
 import dalalstreet.api.DalalActionServiceGrpc
 import dalalstreet.api.actions.GetMarketEventsRequest
 import dalalstreet.api.actions.GetMarketEventsResponse
@@ -53,7 +52,7 @@ class NewsFragment : Fragment(), NewsRecyclerAdapter.NewsItemClickListener, Swip
 
     private val refreshNewsListListener = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
-            if (intent.action != null && intent.action.equals(Constants.REFRESH_NEWS_ACTION, ignoreCase = true))
+            if (intent.action != null && intent.action.equals(Constants.REFRESH_MARKET_EVENTS_FOR_HOME_AND_NEWS, ignoreCase = true))
                 getNewsAsynchronously()
         }
     }
@@ -140,7 +139,7 @@ class NewsFragment : Fragment(), NewsRecyclerAdapter.NewsItemClickListener, Swip
 
     override fun onResume() {
         super.onResume()
-        LocalBroadcastManager.getInstance(context!!).registerReceiver(refreshNewsListListener, IntentFilter(Constants.REFRESH_NEWS_ACTION))
+        LocalBroadcastManager.getInstance(context!!).registerReceiver(refreshNewsListListener, IntentFilter(Constants.REFRESH_MARKET_EVENTS_FOR_HOME_AND_NEWS))
     }
 
     override fun onPause() {
