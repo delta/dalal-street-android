@@ -163,9 +163,11 @@ class PortfolioFragment : Fragment() {
         val dataSet = PieDataSet(entries.toList(), "")
         val colors = ArrayList<Int>()
 
+        colors.add(ContextCompat.getColor(context!!,R.color.blue_piechart))
+        colors.add(ContextCompat.getColor(context!!,R.color.red_piechart))
+        colors.add(ContextCompat.getColor(context!!,R.color.green_piechart))
         colors.add(ContextCompat.getColor(context!!, R.color.gold_medal))
         colors.add(ContextCompat.getColor(context!!, R.color.neon_blue))
-        colors.add(ContextCompat.getColor(context!!, R.color.neon_green))
         colors.add(ContextCompat.getColor(context!!, R.color.green))
         colors.add(ContextCompat.getColor(context!!, R.color.neon_yellow))
         colors.add(ContextCompat.getColor(context!!, R.color.lime))
@@ -180,9 +182,9 @@ class PortfolioFragment : Fragment() {
         dataSet.sliceSpace=1f
         val data = PieData(dataSet)
         data.setValueFormatter(PercentFormatter())
-        data.setValueTextSize(10f)
+        data.setValueTextSize(8f)
         data.setValueTypeface(kreonLightTypeFace)
-        data.setValueTextColor(R.color.black)
+        data.setValueTextColor(android.graphics.Color.WHITE)
         portfolio_piechart.data = data
         portfolio_piechart.highlightValues(null)
         portfolio_piechart.invalidate()

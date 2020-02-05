@@ -25,5 +25,7 @@
     <color name="black">#000000</color>
     <color name="lime">#00FF00</color>
     <color name="green">#45d126</color>
-    <color name="pink">#f75c6f</color>
+    <color name="green_piechart">#7d6608</color>
+    <color name="red_piechart">#d30000</color>
+    <color name="blue_piechart">#5c71f7</color>
 </resources>
