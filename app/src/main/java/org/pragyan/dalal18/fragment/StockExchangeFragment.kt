@@ -111,8 +111,8 @@ class StockExchangeFragment : Fragment() {
     }
 
     private fun addToStockExchangeInput(increment: Int) {
-        if(noOfStocksEditText.text.toString()==""){
-            noOfStocksEditText.setText("0");
+        if(noOfStocksEditText.text.isEmpty()){
+            noOfStocksEditText.setText("0")
         }
         var noOfStocks = noOfStocksEditText.text.toString().toInt()
         noOfStocks = (noOfStocks + increment).coerceAtMost(Constants.ASK_LIMIT)
