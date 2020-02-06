@@ -124,13 +124,13 @@ class PortfolioFragment : Fragment() {
         var currentPrice: Long
         val currentPriceList = ArrayList<Long>()
 
-        for (currentStockDetails in model.ownedStockDetails) {
-            currentPrice = model.getGlobalStockPriceFromStockId(currentStockDetails.stockId)
+        for ((stockId, quantity) in model.ownedStockDetails) {
+            currentPrice = model.getGlobalStockPriceFromStockId(stockId)
 
-            if (currentStockDetails.quantity > 0L) {
+            if (quantity > 0L) {
                 currentPriceList.add(currentPrice)
-                totalStockWorth += currentPrice * currentStockDetails.quantity
-                stocks.add(currentStockDetails)
+                totalStockWorth += currentPrice * quantity
+                stocks.add(StockDetails(stockId, quantity))
             }
         }
 

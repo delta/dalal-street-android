@@ -341,7 +341,7 @@ class DepthTableFragment : Fragment() {
         super.onResume()
         val intentFilter = IntentFilter()
 
-        val currentCompany = model.companyName
+        val currentCompany = model.favoriteCompanyName
 
         if (currentCompany != null) {
             bidArrayList.clear()

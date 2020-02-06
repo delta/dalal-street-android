@@ -4,11 +4,11 @@ import androidx.lifecycle.ViewModel
 
 class DalalViewModel : ViewModel() {
 
-    lateinit var ownedStockDetails: MutableList<StockDetails>
+    lateinit var ownedStockDetails: HashMap<Int, Long>
     lateinit var globalStockDetails: HashMap<Int, GlobalStockDetails>
     lateinit var reservedStockDetails: HashMap<Int, Long>
 
-    var companyName: String? = null
+    var favoriteCompanyName: String? = null
 
     var reservedCash = 0L
 
@@ -29,13 +29,7 @@ class DalalViewModel : ViewModel() {
     }
 
     fun updateStocksOwned(stockId: Int, quantity: Long) {
-        for (currentStock in ownedStockDetails)
-            if (currentStock.stockId == stockId) {
-                currentStock.quantity += quantity
-                return
-            }
-
-        ownedStockDetails.add(StockDetails(stockId, quantity)) // It means new stock company added
+        ownedStockDetails[stockId] = ownedStockDetails[stockId]?.plus(quantity) ?: quantity
     }
 
     fun getReservedStocksFromStockId(stockId: Int): Long {
@@ -43,7 +37,7 @@ class DalalViewModel : ViewModel() {
     }
 
     fun updateFavouriteCompanyName(company: String) {
-        companyName = company
+        favoriteCompanyName = company
     }
 
     fun updateDividendState(stockId: Int?, givesDividend: Boolean?) {
@@ -88,17 +82,11 @@ class DalalViewModel : ViewModel() {
 
     fun getQuantityOwnedFromCompanyName(companyName: String?): Long {
         val stockId = getStockIdFromCompanyName(companyName)
-        for ((stockId1, quantity) in ownedStockDetails) {
-            if (stockId1 == stockId) return quantity
-        }
-        return 0
+        return ownedStockDetails[stockId] ?: 0
     }
 
     fun getQuantityOwnedFromStockId(stockId: Int): Long {
-        for ((stockId1, quantity) in ownedStockDetails) {
-            if (stockId1 == stockId) return quantity
-        }
-        return 0
+        return ownedStockDetails[stockId] ?: 0
     }
 
     fun getDescriptionFromCompanyName(companyName: String?): String? {
@@ -133,10 +121,10 @@ class DalalViewModel : ViewModel() {
     fun getIndexForFavoriteCompany(): Int {
         var index = 0
 
-        if (companyName == null) return index
+        if (favoriteCompanyName == null) return index
 
         while (index < getCompanyNamesArray().size) {
-            if (companyName == getCompanyNamesArray()[index]) break
+            if (favoriteCompanyName == getCompanyNamesArray()[index]) break
             index++
         }
         return index
