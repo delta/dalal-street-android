@@ -114,13 +114,9 @@ class SplashActivity : AppCompatActivity() {
                                 }
 
                                 // Adding user's reserved assets details
-                                val reservedStocksList = ArrayList<StockDetails>(30)
-                                val reservedStocksMap = loginResponse.reservedStocksOwnedMap.orEmpty()
-
-                                for (i in 1..Constants.NUMBER_OF_COMPANIES) {
-                                    if (reservedStocksMap.containsKey(i)) {
-                                        reservedStocksList.add(StockDetails(i, reservedStocksMap.getValue(i)))
-                                    }
+                                val reservedStockDetailsMap = hashMapOf<Int, Long>()
+                                for ((stockId, quantity) in loginResponse.reservedStocksOwnedMap) {
+                                    reservedStockDetailsMap[stockId] = quantity
                                 }
 
                                 // Adding global stock details
@@ -156,7 +152,7 @@ class SplashActivity : AppCompatActivity() {
                                     putExtra(MARKET_OPEN_KEY, loginResponse.isMarketOpen)
 
                                     putExtra(MainActivity.GLOBAL_STOCKS_KEY, globalStockDetailsMap)
-                                    putParcelableArrayListExtra(MainActivity.RESERVED_STOCKS_KEY, reservedStocksList)
+                                    putExtra(MainActivity.RESERVED_STOCKS_KEY, reservedStockDetailsMap)
                                     putParcelableArrayListExtra(MainActivity.STOCKS_OWNED_KEY, stocksOwnedList)
                                 }
 

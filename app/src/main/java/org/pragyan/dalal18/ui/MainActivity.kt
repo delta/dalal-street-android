@@ -51,6 +51,7 @@ import org.pragyan.dalal18.utils.CountDrawable.buildCounterDrawable
 import java.text.DecimalFormat
 import java.util.*
 import javax.inject.Inject
+import kotlin.collections.HashMap
 import kotlin.math.abs
 
 /* Subscribes to Transactions, Exchange, StockPrices and MarketEvents stream*/
@@ -164,7 +165,7 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
 
         model.ownedStockDetails = intent.getParcelableArrayListExtra(STOCKS_OWNED_KEY)
         model.globalStockDetails = intent.getSerializableExtra(GLOBAL_STOCKS_KEY) as HashMap<Int, GlobalStockDetails>
-        model.reservedStockDetails = intent.getParcelableArrayListExtra(RESERVED_STOCKS_KEY)
+        model.reservedStockDetails = intent.getSerializableExtra(RESERVED_STOCKS_KEY) as HashMap<Int, Long>
         model.reservedCash = intent.getLongExtra(RESERVED_CASH_KEY, 0)
 
         setupWorthTextViews()
