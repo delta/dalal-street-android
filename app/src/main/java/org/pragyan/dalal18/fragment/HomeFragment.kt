@@ -188,7 +188,7 @@ class HomeFragment : Fragment(), NewsRecyclerAdapter.NewsItemClickListener, Swip
 
         companyTickerDetailsList.clear()
 
-        for ((fullName, _, _, _, price, _, _, _, up, imagePath) in model.globalStockDetails) {
+        for ((fullName, _, _, _, price, _, _, _, up, _, _, imagePath) in model.globalStockDetails) {
             companyTickerDetailsList.add(CompanyTickerDetails(fullName, imagePath, price, up == 1))
         }
 

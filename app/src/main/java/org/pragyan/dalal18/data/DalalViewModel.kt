@@ -65,6 +65,28 @@ class DalalViewModel : ViewModel() {
         companyName = company
     }
 
+    fun updateDividendState(stockId: Int?, givesDividend: Boolean?) {
+        if(stockId == null || givesDividend == null) return
+
+        for(currentStock in globalStockDetails) {
+            if(currentStock.stockId == stockId) {
+                currentStock.givesDividend = givesDividend
+                return
+            }
+        }
+    }
+
+    fun updateBankruptState(stockId: Int?, isBankrupt: Boolean?) {
+        if(stockId == null || isBankrupt == null) return
+
+        for(currentStock in globalStockDetails) {
+            if(currentStock.stockId == stockId) {
+                currentStock.isBankrupt = isBankrupt
+                return
+            }
+        }
+    }
+
     /* ============================= Stock Utils ============================= */
 
     fun getStockIdFromCompanyName(incomingCompanyName: String?): Int {
@@ -128,7 +150,7 @@ class DalalViewModel : ViewModel() {
 
     fun getImageUrlFromCompanyName(companyName: String?): String? {
         val stockId = getStockIdFromCompanyName(companyName)
-        for ((_, _, stockId1, _, _, _, _, _, _, imagePath) in globalStockDetails) {
+        for ((_, _, stockId1, _, _, _, _, _, _, _, _, imagePath) in globalStockDetails) {
             if (stockId1 == stockId) return imagePath
         }
         return ""
