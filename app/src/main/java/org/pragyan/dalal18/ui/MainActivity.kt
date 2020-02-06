@@ -7,6 +7,7 @@ import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkRequest
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -125,11 +126,14 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
 
                     // TODO: Do something with update
                     if (gameStateDetails != null) when (gameStateDetails.gameStateUpdateType) {
-                        GameStateUpdateType.MarketStateUpdate -> TODO()
-                        GameStateUpdateType.StockDividendStateUpdate -> TODO()
-                        GameStateUpdateType.OtpVerifiedStateUpdate -> TODO()
-                        GameStateUpdateType.StockBankruptStateUpdate -> TODO()
-                        else -> TODO()
+                        GameStateUpdateType.MarketStateUpdate ->
+                            displayMarketStatusAlert(gameStateDetails.isMarketOpen ?: true)
+                        GameStateUpdateType.StockDividendStateUpdate ->
+                            model.updateDividendState(gameStateDetails.dividendStockId, gameStateDetails.givesDividend)
+                        GameStateUpdateType.StockBankruptStateUpdate ->
+                            model.updateBankruptState(gameStateDetails.bankruptStockId, gameStateDetails.isBankrupt)
+                        else ->
+                            Log.v(MainActivity::class.java.simpleName, "Game state update unused: $gameStateDetails")
                     }
                 }
             }
@@ -169,14 +173,7 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
 
         createNetworkCallbackObject()
 
-        if (!intent.getBooleanExtra(MARKET_OPEN_KEY, false)) {
-            AlertDialog.Builder(this, R.style.AlertDialogTheme)
-                    .setTitle("Market Closed")
-                    .setMessage("Please check notifications for market opening time. You can still browse through the app.")
-                    .setCancelable(true)
-                    .setPositiveButton("CLOSE") { dI, _ -> dI.dismiss() }
-                    .show()
-        }
+        displayMarketStatusAlert(intent.getBooleanExtra(MARKET_OPEN_KEY, false))
 
         drawerEdgeButton.setOnClickListener { mainDrawerLayout.openDrawer(GravityCompat.START, true) }
 
@@ -337,7 +334,7 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
                                     LocalBroadcastManager.getInstance(this@MainActivity).sendBroadcast(Intent(REFRESH_OWNED_STOCKS_FOR_ALL))
 
                                 } else { // Ask order transaction which means stocks were reserved and OrderFill made user gain cash
-                                    val intent = Intent(REFRESH_CASH_ONLY_ACTION)
+                                    val intent = Intent(REFRESH_CASH_AND_TOTAL_ONLY_ACTION)
                                     intent.putExtra(TRANSACTION_TOTAL_KEY, transaction.total)
                                     LocalBroadcastManager.getInstance(this@MainActivity).sendBroadcast(intent)
                                 }
@@ -382,7 +379,7 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
 
                             TransactionType.PLACE_ORDER_TRANSACTION -> {
                                 if (transaction.total != 0L) { // Cash reserved; here transaction.total will be negative as reserveCash is taken from actual cash
-                                    model.reservedCash += abs(transaction.total)
+                                    model.reservedCash += abs(transaction.reservedCashTotal)
                                     val intent = Intent(REFRESH_CASH_ONLY_ACTION) // Since now TotalWorth = CashWorth + StockWorth
                                     intent.putExtra(TRANSACTION_TOTAL_KEY, transaction.total)
                                     LocalBroadcastManager.getInstance(this@MainActivity).sendBroadcast(intent)
@@ -397,7 +394,7 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
 
                             TransactionType.CANCEL_ORDER_TRANSACTION -> {
                                 if (transaction.total != 0L) { // Here transaction.total will be positive
-                                    model.reservedCash -= abs(transaction.total)
+                                    model.reservedCash += abs(transaction.reservedCashTotal)
                                     val intent = Intent(REFRESH_CASH_ONLY_ACTION) //  Since now TotalWorth = CashWorth + StockWorth
                                     intent.putExtra(TRANSACTION_TOTAL_KEY, transaction.total)
                                     LocalBroadcastManager.getInstance(this@MainActivity).sendBroadcast(intent)
@@ -660,6 +657,15 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
         }
     }
 
+    private fun displayMarketStatusAlert(isMarketOpen: Boolean) {
+        AlertDialog.Builder(this, R.style.AlertDialogTheme)
+                .setTitle(if (isMarketOpen) "Market Open" else "Market Closed")
+                .setMessage(getString(if (isMarketOpen) R.string.market_open_text else R.string.market_closed_text))
+                .setCancelable(true)
+                .setPositiveButton(getString(R.string.close)) { dI, _ -> dI.dismiss() }
+                .show()
+    }
+
     // Increases/decreases text view value depending on input parameters
     private fun changeTextViewValue(textView: TextView, indicatorImageView: ImageView, newValue: Long) {
         val oldValue = textView.text.toString().replace(",", "").toLong()
@@ -851,6 +857,7 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
     companion object {
 
         private const val LAST_TRANSACTION_ID = "last_transaction_id"
+        private const val TRANSACTION_TOTAL_KEY = "transaction-total-key"
 
         const val CASH_WORTH_KEY = "cash-worth-key"
         const val TOTAL_WORTH_KEY = "total-worth-key"
@@ -858,8 +865,6 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
         const val STOCKS_OWNED_KEY = "stocks-owned-key"
         const val GLOBAL_STOCKS_KEY = "global-stocks-key"
         const val RESERVED_STOCKS_KEY = "reserved-stocks-key"
-
-        const val TRANSACTION_TOTAL_KEY = "transaction-total-key"
 
         private const val REFRESH_ALL_WORTH_ACTION = "refresh-cash-worth-text-view"
         private const val REFRESH_CASH_ONLY_ACTION = "refresh-hard-cash-action-text-view"

@@ -448,6 +448,8 @@
     <string name="verifying_otp">Verifying OTP</string>
     <string name="send_otp">Send OTP</string>
     <string name="resend_in_00">Resend in 00:</string>
+    <string name="market_open_text">Market is open and ready for some deranged trading.</string>
+    <string name="market_closed_text">Please check notifications for market opening time. You can still browse through the app.</string>
     <string-array name="intervalType">
         <item>1 min</item>
         <item>5 mins</item>
