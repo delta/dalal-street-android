@@ -203,12 +203,12 @@ class VerifyPhoneActivity : AppCompatActivity(), ConnectionUtils.SmsVerification
     override fun onResume() {
         super.onResume()
         val intentFilter = IntentFilter(Constants.NEW_SMS_RECEIVED_ACTION)
-        // LocalBroadcastManager.getInstance(this).registerReceiver(newSMSReceiver, intentFilter)
+        LocalBroadcastManager.getInstance(this).registerReceiver(newSMSReceiver, intentFilter)
     }
 
     override fun onPause() {
         super.onPause()
-        // LocalBroadcastManager.getInstance(this).unregisterReceiver(newSMSReceiver)
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(newSMSReceiver)
     }
 
     override fun onConnected(p0: Bundle?) {

@@ -36,7 +36,6 @@ class AddPhoneFragment : Fragment() {
 
         val rootView = inflater.inflate(R.layout.fragment_add_phone, container, false)
         DaggerDalalStreetApplicationComponent.builder().contextModule(ContextModule(context!!)).build().inject(this)
-
         return rootView
     }
 
