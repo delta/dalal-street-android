@@ -209,13 +209,9 @@ class LoginActivity : AppCompatActivity() {
                         }
 
                         // Adding user's reserved assets details
-                        val reservedStocksList = ArrayList<StockDetails>(30)
-                        val reservedStocksMap = loginResponse.reservedStocksOwnedMap.orEmpty()
-
-                        for (i in 1..Constants.NUMBER_OF_COMPANIES) {
-                            if (reservedStocksMap.containsKey(i)) {
-                                reservedStocksList.add(StockDetails(i, reservedStocksMap.getValue(i)))
-                            }
+                        val reservedStockDetailsMap = hashMapOf<Int, Long>()
+                        for ((stockId, quantity) in loginResponse.reservedStocksOwnedMap) {
+                            reservedStockDetailsMap[stockId] = quantity
                         }
 
                         // Adding global stock details
@@ -252,7 +248,7 @@ class LoginActivity : AppCompatActivity() {
 
                         intent.putParcelableArrayListExtra(MainActivity.STOCKS_OWNED_KEY, stocksOwnedList)
                         intent.putExtra(MainActivity.GLOBAL_STOCKS_KEY, globalStockDetailsMap)
-                        intent.putParcelableArrayListExtra(MainActivity.RESERVED_STOCKS_KEY, reservedStocksList)
+                        intent.putExtra(MainActivity.RESERVED_STOCKS_KEY, reservedStockDetailsMap)
 
                         for ((key, value) in loginResponse.constantsMap) {
                             when (key) {
