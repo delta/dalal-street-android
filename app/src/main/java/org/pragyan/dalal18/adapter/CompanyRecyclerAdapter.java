@@ -26,7 +26,7 @@ public class CompanyRecyclerAdapter extends RecyclerView.Adapter<CompanyRecycler
     private OnCompanyClickListener listener;
 
     public interface OnCompanyClickListener {
-        void onCompanyClick(View view, int position);
+        void onCompanyClick(View view, String companyName);
     }
 
     public CompanyRecyclerAdapter(Context context, ArrayList<CompanyDetails> portfolioValues, OnCompanyClickListener listener) {
@@ -92,7 +92,7 @@ public class CompanyRecyclerAdapter extends RecyclerView.Adapter<CompanyRecycler
 
         @Override
         public void onClick(View view) {
-            listener.onCompanyClick(view, getAdapterPosition());
+            listener.onCompanyClick(view, list.get(getAdapterPosition()).getCompany());
         }
     }
 }

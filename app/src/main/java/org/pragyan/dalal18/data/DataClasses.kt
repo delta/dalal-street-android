@@ -44,8 +44,6 @@ data class StockHistory(var stockDate: Date?, var stockHigh: Long, var stockLow:
 data class Transaction(var type: String?, var stockId: Int, val companyName: String, val noOfStocks: Long, val stockPrice: Long,
                        var time: String?, val totalMoney: Long)
 
-data class StockIdCompanyName(val stockId: Int, val companyName: String, val shortName: String)
-
 @Parcelize
 data class GameStateDetails(val gameStateUpdateType: GameStateUpdateType, val isMarketOpen: Boolean?, val isOtpVerified: Boolean?, val dividendStockId: Int?, val givesDividend: Boolean?,
                             val bankruptStockId: Int?, val isBankrupt: Boolean?): Parcelable
