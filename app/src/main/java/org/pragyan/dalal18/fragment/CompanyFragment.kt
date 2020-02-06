@@ -70,16 +70,16 @@ class CompanyFragment : Fragment(), CompanyRecyclerAdapter.OnCompanyClickListene
 
         companiesList.clear()
 
-        for ((fullName, shortName, _, _, price, _, _, previousDayClose) in model.globalStockDetails) {
-            companiesList.add(CompanyDetails(fullName, shortName, price, previousDayClose))
+        for ((_, currentStock) in model.globalStockDetails) {
+            companiesList.add(CompanyDetails(currentStock.fullName, currentStock.shortName, currentStock.price, currentStock.previousDayClose))
         }
 
         adapter.swapData(companiesList)
     }
 
-    override fun onCompanyClick(view: View, position: Int) {
+    override fun onCompanyClick(view: View, companyName: String) {
         val bundle = Bundle()
-        bundle.putString(CompanyDescriptionFragment.COMPANY_NAME_KEY, model.getCompanyNameFromShortName(companiesList[position].shortName))
+        bundle.putString(CompanyDescriptionFragment.COMPANY_NAME_KEY, companyName)
         view.findNavController().navigate(R.id.action_company_ticker_to_details, bundle)
     }
 

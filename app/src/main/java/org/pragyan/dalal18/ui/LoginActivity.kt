@@ -219,28 +219,23 @@ class LoginActivity : AppCompatActivity() {
                         }
 
                         // Adding global stock details
-                        val globalStockList = ArrayList<GlobalStockDetails>()
-                        val globalStockMap = loginResponse.stockListMap
+                        val globalStockDetailsMap = hashMapOf<Int, GlobalStockDetails>()
 
-                        for (q in 1..globalStockMap.size) {
+                        for ((stockId, currentStock) in loginResponse.stockListMap) {
 
-                            val currentStockDetails = globalStockMap[q]
-
-                            if (currentStockDetails != null) {
-                                globalStockList.add(GlobalStockDetails(
-                                        currentStockDetails.fullName,
-                                        currentStockDetails.shortName,
-                                        q,
-                                        currentStockDetails.description,
-                                        currentStockDetails.currentPrice,
-                                        currentStockDetails.stocksInMarket,
-                                        currentStockDetails.stocksInExchange,
-                                        currentStockDetails.previousDayClose,
-                                        if (currentStockDetails.upOrDown) 1 else 0,
-                                        currentStockDetails.isBankrupt,
-                                        currentStockDetails.givesDividends,
-                                        Constants.COMPANY_IMAGES_BASE_URL + currentStockDetails.shortName.toUpperCase() + ".png"))
-                            }
+                            globalStockDetailsMap[stockId] = GlobalStockDetails(
+                                    currentStock.fullName,
+                                    currentStock.shortName,
+                                    stockId,
+                                    currentStock.description,
+                                    currentStock.currentPrice,
+                                    currentStock.stocksInMarket,
+                                    currentStock.stocksInExchange,
+                                    currentStock.previousDayClose,
+                                    if (currentStock.upOrDown) 1 else 0,
+                                    currentStock.isBankrupt,
+                                    currentStock.givesDividends,
+                                    Constants.COMPANY_IMAGES_BASE_URL + currentStock.shortName.toUpperCase() + ".png")
                         }
 
                         val intent: Intent = if (loginResponse.user.isPhoneVerified) {
@@ -256,7 +251,7 @@ class LoginActivity : AppCompatActivity() {
                         intent.putExtra(Constants.MARKET_OPEN_KEY, loginResponse.isMarketOpen)
 
                         intent.putParcelableArrayListExtra(MainActivity.STOCKS_OWNED_KEY, stocksOwnedList)
-                        intent.putParcelableArrayListExtra(MainActivity.GLOBAL_STOCKS_KEY, globalStockList)
+                        intent.putExtra(MainActivity.GLOBAL_STOCKS_KEY, globalStockDetailsMap)
                         intent.putParcelableArrayListExtra(MainActivity.RESERVED_STOCKS_KEY, reservedStocksList)
 
                         for ((key, value) in loginResponse.constantsMap) {

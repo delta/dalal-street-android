@@ -121,16 +121,11 @@ class PortfolioFragment : Fragment() {
     private fun setUpWorthPieChart() {
 
         val entries = ArrayList<PieEntry>()
-        var currentPrice = -1L
+        var currentPrice: Long
         val currentPriceList = ArrayList<Long>()
 
         for (currentStockDetails in model.ownedStockDetails) {
-            for (globalStockDetails in model.globalStockDetails) {
-                if (currentStockDetails.stockId == globalStockDetails.stockId) {
-                    currentPrice = globalStockDetails.price
-                    break
-                }
-            }
+            currentPrice = model.getGlobalStockPriceFromStockId(currentStockDetails.stockId)
 
             if (currentStockDetails.quantity > 0L) {
                 currentPriceList.add(currentPrice)
@@ -163,9 +158,9 @@ class PortfolioFragment : Fragment() {
         val dataSet = PieDataSet(entries.toList(), "")
         val colors = ArrayList<Int>()
 
-        colors.add(ContextCompat.getColor(context!!,R.color.blue_piechart))
-        colors.add(ContextCompat.getColor(context!!,R.color.red_piechart))
-        colors.add(ContextCompat.getColor(context!!,R.color.green_piechart))
+        colors.add(ContextCompat.getColor(context!!, R.color.blue_piechart))
+        colors.add(ContextCompat.getColor(context!!, R.color.red_piechart))
+        colors.add(ContextCompat.getColor(context!!, R.color.green_piechart))
         colors.add(ContextCompat.getColor(context!!, R.color.gold_medal))
         colors.add(ContextCompat.getColor(context!!, R.color.neon_blue))
         colors.add(ContextCompat.getColor(context!!, R.color.green))
@@ -179,7 +174,7 @@ class PortfolioFragment : Fragment() {
 
         dataSet.colors = colors
         dataSet.selectionShift = 5f
-        dataSet.sliceSpace=1f
+        dataSet.sliceSpace = 1f
         val data = PieData(dataSet)
         data.setValueFormatter(PercentFormatter())
         data.setValueTextSize(8f)
@@ -209,18 +204,11 @@ class PortfolioFragment : Fragment() {
         val portfolioList = mutableListOf<Portfolio>()
         for ((stockId, quantity) in model.ownedStockDetails) {
 
-            var currentPrice = -1L
-
-            for (globalStockDetails in model.globalStockDetails) {
-                if (stockId == globalStockDetails.stockId) {
-                    currentPrice = globalStockDetails.price
-                    break
-                }
-            }
+            val currentPrice = model.getGlobalStockPriceFromStockId(stockId)
 
             if (quantity != 0L) {
                 portfolioList.add(Portfolio(
-                        model.getShortNameForStockId(stockId),
+                        model.getShortNameFromStockId(stockId),
                         quantity,
                         model.getReservedStocksFromStockId(stockId),
                         currentPrice * quantity

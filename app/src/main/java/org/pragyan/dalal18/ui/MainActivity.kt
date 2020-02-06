@@ -43,6 +43,7 @@ import org.pragyan.dalal18.dagger.ContextModule
 import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent
 import org.pragyan.dalal18.data.DalalViewModel
 import org.pragyan.dalal18.data.GameStateDetails
+import org.pragyan.dalal18.data.GlobalStockDetails
 import org.pragyan.dalal18.fragment.mortgage.MortgageFragment
 import org.pragyan.dalal18.utils.*
 import org.pragyan.dalal18.utils.Constants.*
@@ -162,10 +163,9 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
         setupNavigationDrawer()
 
         model.ownedStockDetails = intent.getParcelableArrayListExtra(STOCKS_OWNED_KEY)
-        model.globalStockDetails = intent.getParcelableArrayListExtra(GLOBAL_STOCKS_KEY)
+        model.globalStockDetails = intent.getSerializableExtra(GLOBAL_STOCKS_KEY) as HashMap<Int, GlobalStockDetails>
         model.reservedStockDetails = intent.getParcelableArrayListExtra(RESERVED_STOCKS_KEY)
         model.reservedCash = intent.getLongExtra(RESERVED_CASH_KEY, 0)
-        model.createCompanyArrayFromGlobalStockDetails()
 
         setupWorthTextViews()
 
@@ -173,7 +173,7 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
 
         createNetworkCallbackObject()
 
-        if(!intent.getBooleanExtra(MARKET_OPEN_KEY, false))
+        if (!intent.getBooleanExtra(MARKET_OPEN_KEY, false))
             displayMarketStatusAlert(false)
 
         drawerEdgeButton.setOnClickListener { mainDrawerLayout.openDrawer(GravityCompat.START, true) }
@@ -457,13 +457,11 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
         streamServiceStub.getStockPricesUpdates(stockPricesSubscriptionId,
                 object : StreamObserver<StockPricesUpdate> {
                     override fun onNext(value: StockPricesUpdate) {
-                        for (i in 1..NUMBER_OF_COMPANIES) {
-                            if (value.pricesMap.containsKey(i)) {
-                                model.updateGlobalStockPrice(i, value.pricesMap[i] ?: 0)
-                                LocalBroadcastManager.getInstance(this@MainActivity).sendBroadcast(Intent(REFRESH_PRICE_TICKER_FOR_HOME))
-                                LocalBroadcastManager.getInstance(this@MainActivity).sendBroadcast(Intent(REFRESH_STOCK_PRICES_FOR_ALL))
-                                LocalBroadcastManager.getInstance(this@MainActivity).sendBroadcast(Intent(REFRESH_STOCK_AND_TOTAL_ONLY_ACTION))
-                            }
+                        for((stockId, price) in value.pricesMap) {
+                            model.updateGlobalStockPrice(stockId, price)
+                            LocalBroadcastManager.getInstance(this@MainActivity).sendBroadcast(Intent(REFRESH_PRICE_TICKER_FOR_HOME))
+                            LocalBroadcastManager.getInstance(this@MainActivity).sendBroadcast(Intent(REFRESH_STOCK_PRICES_FOR_ALL))
+                            LocalBroadcastManager.getInstance(this@MainActivity).sendBroadcast(Intent(REFRESH_STOCK_AND_TOTAL_ONLY_ACTION))
                         }
                     }
 
@@ -483,25 +481,10 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
         streamServiceStub.getStockExchangeUpdates(stockExchangeSubscriptionId,
                 object : StreamObserver<StockExchangeUpdate> {
                     override fun onNext(value: StockExchangeUpdate) {
-                        val stockExchangeDataPointMap = value.stocksInExchangeMap
-                        val tempGlobalStocks = model.globalStockDetails
-
-                        for (x in 1..NUMBER_OF_COMPANIES) {
-                            if (stockExchangeDataPointMap.containsKey(x)) {
-                                val currentDataPoint = value.stocksInExchangeMap[x]
-
-                                var position = -1
-                                for (i in tempGlobalStocks.indices) {
-                                    if (x == tempGlobalStocks[i].stockId) {
-                                        position = i
-                                        break
-                                    }
-                                }
-
-                                model.updateGlobalStock(position, currentDataPoint!!.price, currentDataPoint.stocksInMarket, currentDataPoint.stocksInExchange)
-                                LocalBroadcastManager.getInstance(this@MainActivity).sendBroadcast(Intent(REFRESH_STOCKS_EXCHANGE_FOR_COMPANY))
-                                LocalBroadcastManager.getInstance(this@MainActivity).sendBroadcast(Intent(REFRESH_STOCK_AND_TOTAL_ONLY_ACTION))
-                            }
+                        for ((stockId, currentDataPoint) in value.stocksInExchangeMap) {
+                            model.updateGlobalStock(stockId, currentDataPoint.price, currentDataPoint.stocksInMarket, currentDataPoint.stocksInExchange)
+                            LocalBroadcastManager.getInstance(this@MainActivity).sendBroadcast(Intent(REFRESH_STOCKS_EXCHANGE_FOR_COMPANY))
+                            LocalBroadcastManager.getInstance(this@MainActivity).sendBroadcast(Intent(REFRESH_STOCK_AND_TOTAL_ONLY_ACTION))
                         }
                     }
 
@@ -583,15 +566,8 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
     // Method is called when stock price update is received, it changes stock worth and total worth textview
     private fun updateStockWorthViaStreamUpdates() {
         var netStockWorth = 0L
-        var rate = 0L
         for ((stockId, quantity) in model.ownedStockDetails) {
-            for ((_, _, stockId1, _, price) in model.globalStockDetails) {
-                if (stockId1 == stockId) {
-                    rate = price
-                    break
-                }
-            }
-            netStockWorth += quantity * rate
+            netStockWorth += quantity * model.getGlobalStockPriceFromStockId(stockId)
         }
         stockWorth = netStockWorth
 
@@ -599,13 +575,7 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
 
         // We need to add reserved stocks worth to calculate total worth
         for ((stockId, quantity) in model.reservedStockDetails) {
-            for ((_, _, stockId1, _, price) in model.globalStockDetails) {
-                if (stockId1 == stockId) {
-                    rate = price
-                    break
-                }
-            }
-            netStockWorth += quantity * rate
+            netStockWorth += quantity * model.getGlobalStockPriceFromStockId(stockId)
         }
         // Backend has it the way TotalWorth = CashWorth + OwnedStockWorth + ReservedStockWorth
         totalWorth = netStockWorth + cashWorth + model.reservedCash

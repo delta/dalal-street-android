@@ -5,30 +5,21 @@ import androidx.lifecycle.ViewModel
 class DalalViewModel : ViewModel() {
 
     lateinit var ownedStockDetails: MutableList<StockDetails>
-    lateinit var globalStockDetails: MutableList<GlobalStockDetails>
+    lateinit var globalStockDetails: HashMap<Int, GlobalStockDetails>
     lateinit var reservedStockDetails: MutableList<StockDetails>
-
-    private var stockIdCompanyNameList = mutableListOf<StockIdCompanyName>()
 
     var companyName: String? = null
 
     var reservedCash = 0L
 
-    fun updateGlobalStock(position: Int, price: Long, quantityInMarket: Long, quantityInExchange: Long) {
-        globalStockDetails[position].price = price
-        globalStockDetails[position].quantityInMarket = quantityInMarket
-        globalStockDetails[position].quantityInExchange = quantityInExchange
+    fun updateGlobalStock(stockId: Int, price: Long, quantityInMarket: Long, quantityInExchange: Long) {
+        globalStockDetails[stockId]?.price = price
+        globalStockDetails[stockId]?.quantityInMarket = quantityInMarket
+        globalStockDetails[stockId]?.quantityInExchange = quantityInExchange
     }
 
-    fun updateGlobalStockPrice(pos: Int, price: Long) {
-        globalStockDetails[pos - 1].price = price
-    }
-
-    fun createCompanyArrayFromGlobalStockDetails() {
-
-        for (currentStockDetails in globalStockDetails) {
-            stockIdCompanyNameList.add(StockIdCompanyName(currentStockDetails.stockId, currentStockDetails.fullName, currentStockDetails.shortName))
-        }
+    fun updateGlobalStockPrice(stockId: Int, price: Long) {
+        globalStockDetails[stockId]?.price = price
     }
 
     /* If quantity is positive it means user is getting back stocks as he cancelled an order so here reservedStocks will decrease
@@ -66,63 +57,43 @@ class DalalViewModel : ViewModel() {
     }
 
     fun updateDividendState(stockId: Int?, givesDividend: Boolean?) {
-        if(stockId == null || givesDividend == null) return
+        if (stockId == null || givesDividend == null) return
+        globalStockDetails[stockId]?.givesDividend = givesDividend
 
-        for(currentStock in globalStockDetails) {
-            if(currentStock.stockId == stockId) {
-                currentStock.givesDividend = givesDividend
-                return
-            }
-        }
     }
 
     fun updateBankruptState(stockId: Int?, isBankrupt: Boolean?) {
-        if(stockId == null || isBankrupt == null) return
+        if (stockId == null || isBankrupt == null) return
+        globalStockDetails[stockId]?.isBankrupt = isBankrupt
+    }
 
-        for(currentStock in globalStockDetails) {
-            if(currentStock.stockId == stockId) {
-                currentStock.isBankrupt = isBankrupt
-                return
-            }
-        }
+    fun getGlobalStockPriceFromStockId(stockId: Int): Long {
+        return globalStockDetails[stockId]?.price ?: 0
     }
 
     /* ============================= Stock Utils ============================= */
 
     fun getStockIdFromCompanyName(incomingCompanyName: String?): Int {
-        for (stockIdCompanyName in stockIdCompanyNameList) {
-            if (stockIdCompanyName.companyName.equals(incomingCompanyName, ignoreCase = true)) return stockIdCompanyName.stockId
+        for ((stockId, currentStock) in globalStockDetails) {
+            if (currentStock.fullName.equals(incomingCompanyName, ignoreCase = true)) return stockId
         }
         return -1
     }
 
     fun getCompanyNameFromStockId(stockId: Int): String {
-        for (stockIdCompanyName in stockIdCompanyNameList) {
-            if (stockIdCompanyName.stockId == stockId) return stockIdCompanyName.companyName
-        }
-        return ""
-    }
-
-    fun getCompanyNameFromShortName(shortName: String): String? {
-        for (stockIdCompanyName in stockIdCompanyNameList) {
-            if (stockIdCompanyName.shortName == shortName) return stockIdCompanyName.companyName
-        }
-        return ""
+        return globalStockDetails[stockId]?.fullName ?: ""
     }
 
     fun getCompanyNamesArray(): MutableList<String> {
         val companyNames = mutableListOf<String>()
-        for (i in 0 until stockIdCompanyNameList.size) {
-            companyNames.add(stockIdCompanyNameList[i].companyName)
+        for ((_, currentStock) in globalStockDetails) {
+            companyNames.add(currentStock.fullName)
         }
         return companyNames
     }
 
-    fun getShortNameForStockId(stockId: Int): String {
-        for (currentDetails in stockIdCompanyNameList) {
-            if (currentDetails.stockId == stockId) return currentDetails.shortName
-        }
-        return ""
+    fun getShortNameFromStockId(stockId: Int): String {
+        return globalStockDetails[stockId]?.shortName ?: ""
     }
 
     fun getQuantityOwnedFromCompanyName(companyName: String?): Long {
@@ -141,37 +112,28 @@ class DalalViewModel : ViewModel() {
     }
 
     fun getDescriptionFromCompanyName(companyName: String?): String? {
-        val stockId = getStockIdFromCompanyName(companyName)
-        for ((_, _, stockId1, description) in globalStockDetails) {
-            if (stockId1 == stockId) return description
+        for ((_, currentStock) in globalStockDetails) {
+            if (currentStock.fullName == companyName) return currentStock.description
         }
         return ""
     }
 
     fun getImageUrlFromCompanyName(companyName: String?): String? {
-        val stockId = getStockIdFromCompanyName(companyName)
-        for ((_, _, stockId1, _, _, _, _, _, _, _, _, imagePath) in globalStockDetails) {
-            if (stockId1 == stockId) return imagePath
+        for ((_, currentStock) in globalStockDetails) {
+            if (currentStock.fullName == companyName) return currentStock.imagePath
         }
         return ""
     }
 
     fun getPriceFromCompanyName(companyName: String): Long {
-
-        val stockId = getStockIdFromCompanyName(companyName)
-
-        for ((_, _, stockId1, _, price) in globalStockDetails) {
-            if (stockId1 == stockId) return price
+        for ((_, currentStock) in globalStockDetails) {
+            if (currentStock.fullName == companyName) return currentStock.price
         }
         return 0
     }
 
     fun getPriceFromStockId(stockId: Int): Long {
-
-        for ((_, _, stockId1, _, price) in globalStockDetails) {
-            if (stockId1 == stockId) return price
-        }
-        return 0
+        return globalStockDetails[stockId]?.price ?: 0
     }
 
     /**

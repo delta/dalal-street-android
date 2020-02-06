@@ -71,9 +71,9 @@ class HomeFragment : Fragment(), NewsRecyclerAdapter.NewsItemClickListener, Swip
 
                 val builder = StringBuilder("")
                 if (model.globalStockDetails.isNotEmpty()) {
-                    for ((_, shortName, _, _, price, _, _, _, up) in model.globalStockDetails) {
-                        builder.append(shortName).append(" : ").append(price)
-                        builder.append(if (up == 1) "\u2191" else "\u2193").append("     ")
+                    for ((_, currentStock) in model.globalStockDetails) {
+                        builder.append(currentStock.shortName).append(" : ").append(currentStock.price)
+                        builder.append(if (currentStock.up == 1) "\u2191" else "\u2193").append("     ")
                     }
                 }
                 breakingNewsTextView.text = builder.toString()
@@ -188,8 +188,8 @@ class HomeFragment : Fragment(), NewsRecyclerAdapter.NewsItemClickListener, Swip
 
         companyTickerDetailsList.clear()
 
-        for ((fullName, _, _, _, price, _, _, _, up, _, _, imagePath) in model.globalStockDetails) {
-            companyTickerDetailsList.add(CompanyTickerDetails(fullName, imagePath, price, up == 1))
+        for ((_, stock) in model.globalStockDetails) {
+            companyTickerDetailsList.add(CompanyTickerDetails(stock.fullName, stock.imagePath, stock.price, stock.up == 1))
         }
 
         if (companyTickerDetailsList.size != 0) {
@@ -202,11 +202,11 @@ class HomeFragment : Fragment(), NewsRecyclerAdapter.NewsItemClickListener, Swip
 
 
         val builder = StringBuilder("")
-        for ((_, shortName, _, _, price, _, _, _, up) in model.globalStockDetails) {
+        for ((_, currentStock) in model.globalStockDetails) {
 
-            builder.append(shortName).append(" : ").append(DecimalFormat(Constants.PRICE_FORMAT).format(price))
+            builder.append(currentStock.shortName).append(" : ").append(DecimalFormat(Constants.PRICE_FORMAT).format(currentStock.price))
             if (activity != null) {
-                builder.append(if (up == 1) "\u2191" else "\u2193")
+                builder.append(if (currentStock.up == 1) "\u2191" else "\u2193")
             }
             builder.append("     ")
         }
