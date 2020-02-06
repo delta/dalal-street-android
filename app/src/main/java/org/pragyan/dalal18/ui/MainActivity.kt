@@ -173,7 +173,8 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
 
         createNetworkCallbackObject()
 
-        displayMarketStatusAlert(intent.getBooleanExtra(MARKET_OPEN_KEY, false))
+        if(!intent.getBooleanExtra(MARKET_OPEN_KEY, false))
+            displayMarketStatusAlert(false)
 
         drawerEdgeButton.setOnClickListener { mainDrawerLayout.openDrawer(GravityCompat.START, true) }
 
