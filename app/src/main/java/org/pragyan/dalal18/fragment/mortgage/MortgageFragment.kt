@@ -292,7 +292,7 @@ class MortgageFragment : Fragment() {
     override fun onResume() {
         super.onResume()
 
-        if(model.companyName!=null) {
+        if(model.favoriteCompanyName!=null) {
             mortgage_companies_spinner.setSelection(model.getIndexForFavoriteCompany())
         }
 

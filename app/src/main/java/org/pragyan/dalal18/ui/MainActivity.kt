@@ -163,7 +163,7 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
 
         setupNavigationDrawer()
 
-        model.ownedStockDetails = intent.getParcelableArrayListExtra(STOCKS_OWNED_KEY)
+        model.ownedStockDetails = intent.getSerializableExtra(STOCKS_OWNED_KEY) as HashMap<Int, Long>
         model.globalStockDetails = intent.getSerializableExtra(GLOBAL_STOCKS_KEY) as HashMap<Int, GlobalStockDetails>
         model.reservedStockDetails = intent.getSerializableExtra(RESERVED_STOCKS_KEY) as HashMap<Int, Long>
         model.reservedCash = intent.getLongExtra(RESERVED_CASH_KEY, 0)

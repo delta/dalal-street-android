@@ -104,13 +104,9 @@ class SplashActivity : AppCompatActivity() {
                                 MiscellaneousUtils.sessionId = loginResponse.sessionId
 
                                 // Adding user's stock details
-                                val stocksOwnedList = ArrayList<StockDetails>()
-                                val stocksOwnedMap = loginResponse.stocksOwnedMap
-
-                                for (i in 1..Constants.NUMBER_OF_COMPANIES) {
-                                    if (stocksOwnedMap.containsKey(i)) {
-                                        stocksOwnedList.add(StockDetails(i, stocksOwnedMap[i]!!))
-                                    }
+                                val ownedStockDetailsMap = hashMapOf<Int, Long>()
+                                for ((stockId, quantity) in loginResponse.stocksOwnedMap) {
+                                    ownedStockDetailsMap[stockId] = quantity
                                 }
 
                                 // Adding user's reserved assets details
@@ -153,7 +149,7 @@ class SplashActivity : AppCompatActivity() {
 
                                     putExtra(MainActivity.GLOBAL_STOCKS_KEY, globalStockDetailsMap)
                                     putExtra(MainActivity.RESERVED_STOCKS_KEY, reservedStockDetailsMap)
-                                    putParcelableArrayListExtra(MainActivity.STOCKS_OWNED_KEY, stocksOwnedList)
+                                    putExtra(MainActivity.STOCKS_OWNED_KEY, ownedStockDetailsMap)
                                 }
 
                                 // Checking for constants

@@ -276,7 +276,7 @@ class TradeFragment : Fragment() {
         super.onResume()
 
         // to manually select the element after trade fragment is opened by pressing back key from market depth frag.
-        if (model.companyName != null) {
+        if (model.favoriteCompanyName != null) {
             companySpinner.setSelection(model.getIndexForFavoriteCompany())
         }
 
