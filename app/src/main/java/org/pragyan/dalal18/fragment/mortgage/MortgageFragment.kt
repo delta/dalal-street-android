@@ -164,15 +164,26 @@ class MortgageFragment : Fragment() {
             }
         }
 
-        mortgage_button.setOnClickListener { onMortgageButtonClick() }
+        mortgageButton.setOnClickListener { onMortgageButtonClick() }
+        stockIncrementFiveButton.setOnClickListener { addToMortgageInput(5) }
+        stockIncrementOneButton.setOnClickListener { addToMortgageInput(1) }
 
         val tempText = " :  ${Constants.MORTGAGE_DEPOSIT_RATE}%"
         depositRateTextView.text = tempText
     }
 
+    private fun addToMortgageInput(increment: Int) {
+        if(mortgageStocksEditText.text.isBlank()){
+            mortgageStocksEditText.setText("0")
+        }
+        var noOfStocks = mortgageStocksEditText.text.toString().toInt()
+        noOfStocks = (noOfStocks + increment).coerceAtMost(Constants.ASK_LIMIT)
+        mortgageStocksEditText.setText(noOfStocks.toString())
+    }
+
     private fun onMortgageButtonClick() {
 
-        with(stocks_editText) {
+        with(mortgageStocksEditText) {
             when {
                 text.toString().trim { it <= ' ' }.isEmpty() -> {
                     error = "Stocks quantity missing"
@@ -191,7 +202,7 @@ class MortgageFragment : Fragment() {
             }
         }
 
-        val stocksTransaction = (stocks_editText.text.toString().trim { it <= ' ' }).toLong()
+        val stocksTransaction = (mortgageStocksEditText.text.toString().trim { it <= ' ' }).toLong()
 
         if (stocksTransaction <= model.getQuantityOwnedFromCompanyName(model.getCompanyNameFromStockId(lastStockId))) {
             mortgageStocksAsynchronously(stocksTransaction)
@@ -261,7 +272,7 @@ class MortgageFragment : Fragment() {
                     uiThread {
                         if (mortgageStocksResponse.statusCode == MortgageStocksResponse.StatusCode.OK) {
                             context?.toast("Transaction successful")
-                            stocks_editText.setText("")
+                            mortgageStocksEditText.setText("0")
                             view?.hideKeyboard()
                         } else {
                             context?.toast(mortgageStocksResponse.statusMessage)

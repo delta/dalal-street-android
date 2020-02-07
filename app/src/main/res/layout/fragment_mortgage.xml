@@ -159,7 +159,7 @@
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/textInputLayout"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
@@ -167,26 +167,57 @@
         android:gravity="bottom"
         android:paddingTop="12dp"
         android:textColorHint="@color/neutral_font_color"
-        app:layout_constraintBottom_toTopOf="@+id/mortgage_button"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/mortgageButton"
+        app:layout_constraintEnd_toStartOf="@id/guideline"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/depositRateTextTextView">
 
         <EditText
-            android:id="@+id/stocks_editText"
+            android:id="@+id/mortgageStocksEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
             android:hint="@string/enter_the_number_of_stocks"
             android:inputType="number"
             android:maxLength="6"
+            android:text="0"
             android:textColor="@color/neutral_font_color" />
 
     </com.google.android.material.textfield.TextInputLayout>
 
     <Button
-        android:id="@+id/mortgage_button"
+        android:id="@+id/stockIncrementFiveButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/black_white_rounded_button"
+        android:elevation="4dp"
+        android:minWidth="60dp"
+        android:text="@string/incrementFive"
+        android:textColor="@color/neon_yellow"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="@+id/textInputLayout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/stockIncrementOneButton"
+        app:layout_constraintTop_toTopOf="@+id/textInputLayout" />
+
+    <Button
+        android:id="@+id/stockIncrementOneButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/black_white_rounded_button"
+        android:elevation="4dp"
+        android:minWidth="60dp"
+        android:text="@string/incrementOne"
+        android:textColor="@color/neon_yellow"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="@+id/textInputLayout"
+        app:layout_constraintEnd_toStartOf="@id/stockIncrementFiveButton"
+        app:layout_constraintStart_toStartOf="@+id/guideline"
+        app:layout_constraintTop_toTopOf="@+id/textInputLayout" />
+
+    <Button
+        android:id="@+id/mortgageButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
