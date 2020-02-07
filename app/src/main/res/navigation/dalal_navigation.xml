@@ -34,8 +34,12 @@
         tools:layout="@layout/fragment_companies">
 
         <action
-            android:id="@+id/action_company_ticker_to_details"
+            android:id="@+id/action_company_to_details"
             app:destination="@+id/company_description_dest" />
+
+        <action
+            android:id="@+id/action_company_to_secret"
+            app:destination="@+id/secret_dest" />
 
     </fragment>
 
@@ -110,9 +114,17 @@
         android:name="org.pragyan.dalal18.fragment.CompanyDescriptionFragment"
         android:label="@string/company_description"
         tools:layout="@layout/fragment_company_description" />
+
     <fragment
         android:id="@+id/help_dest"
         android:name="org.pragyan.dalal18.fragment.help.HelpMainFragment"
         android:label="@string/help_title"
         tools:layout="@layout/fragment_main_help" />
+
+    <fragment
+        android:id="@+id/secret_dest"
+        android:name="org.pragyan.dalal18.fragment.SecretFragment"
+        android:label="@string/admin_panel"
+        tools:layout="@layout/fragment_secret" />
+
 </navigation>

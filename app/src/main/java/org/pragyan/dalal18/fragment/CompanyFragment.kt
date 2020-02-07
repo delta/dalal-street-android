@@ -9,7 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.fragment_companies.*
 import org.pragyan.dalal18.R
@@ -32,6 +32,9 @@ class CompanyFragment : Fragment(), CompanyRecyclerAdapter.OnCompanyClickListene
     private val companiesList = ArrayList<CompanyDetails>()
     private lateinit var adapter: CompanyRecyclerAdapter
     private lateinit var model: DalalViewModel
+
+    private var counter = 0
+    private var index = 0
 
     private val refreshStockPricesReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
@@ -64,6 +67,8 @@ class CompanyFragment : Fragment(), CompanyRecyclerAdapter.OnCompanyClickListene
             preferences.edit().putBoolean(PREF_COMP, false).apply()
             DalalTourUtils.genericViewTour(activity as AppCompatActivity, percentageChangeTextView, 100, getString(R.string.percentchange_tour))
         }
+
+        setupAdminPanelLink("107116035")
     }
 
     fun updateValues() {
@@ -77,10 +82,38 @@ class CompanyFragment : Fragment(), CompanyRecyclerAdapter.OnCompanyClickListene
         adapter.swapData(companiesList)
     }
 
-    override fun onCompanyClick(view: View, companyName: String) {
+    private fun setupAdminPanelLink(code: String) {
+        stockDetailsTextOne.setOnClickListener {
+            onSecretButtonClick(code, false)
+        }
+
+        stockDetailsTextTwo.setOnClickListener {
+            onSecretButtonClick(code, true)
+        }
+    }
+
+    private fun onSecretButtonClick(code: String, isOdd: Boolean) {
+        counter++
+        if (index % 2 == if (isOdd) 1 else 0) {
+            if (Integer.parseInt(code.substring(index, index + 1)) == counter) {
+                index++
+                counter = 0
+            }
+        } else {
+            counter = 0
+            index = 0
+        }
+
+        while (index < code.length && code[index] == '0') index++
+        if (index == code.length) {
+            findNavController().navigate(R.id.action_company_to_secret)
+        }
+    }
+
+    override fun onCompanyClick(companyName: String) {
         val bundle = Bundle()
         bundle.putString(CompanyDescriptionFragment.COMPANY_NAME_KEY, companyName)
-        view.findNavController().navigate(R.id.action_company_ticker_to_details, bundle)
+        findNavController().navigate(R.id.action_company_to_details, bundle)
     }
 
     override fun onResume() {

@@ -5,19 +5,41 @@
     android:background="@color/black_background">
 
     <TextView
-        android:id="@+id/stock_details"
-        android:layout_width="wrap_content"
+        android:id="@+id/stockDetailsTextOne"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="8dp"
         android:fontFamily="@font/kreon_light"
-        android:text="@string/stock_details"
+        android:gravity="end"
+        android:paddingStart="4dp"
+        android:paddingEnd="4dp"
+        android:text="@string/stock"
+        android:textAllCaps="true"
+        android:textColor="@color/neon_blue"
+        android:textSize="30sp"
+        app:layout_constraintBottom_toTopOf="@id/percentageChangeTextView"
+        app:layout_constraintEnd_toStartOf="@id/stockDetailsTextTwo"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/stockDetailsTextTwo"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="8dp"
+        android:fontFamily="@font/kreon_light"
+        android:gravity="start"
+        android:paddingStart="4dp"
+        android:paddingEnd="4dp"
+        android:text="@string/details"
         android:textAllCaps="true"
         android:textColor="@color/neon_blue"
         android:textSize="30sp"
         app:layout_constraintBottom_toTopOf="@id/percentageChangeTextView"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@id/stockDetailsTextOne"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
@@ -50,7 +72,7 @@
         app:layout_constraintEnd_toStartOf="@+id/pricePortfolioText"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/companyPortfoilioText"
-        app:layout_constraintTop_toBottomOf="@id/stock_details" />
+        app:layout_constraintTop_toBottomOf="@id/stockDetailsTextOne" />
 
     <TextView
         android:id="@+id/pricePortfolioText"
