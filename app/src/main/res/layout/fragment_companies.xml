@@ -1,4 +1,5 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/black_background">
@@ -13,61 +14,83 @@
         android:text="@string/stock_details"
         android:textAllCaps="true"
         android:textColor="@color/neon_blue"
-        android:textSize="30sp" />
+        android:textSize="30sp"
+        app:layout_constraintBottom_toTopOf="@id/percentageChangeTextView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-    <LinearLayout
-        android:id="@+id/headings_tab_linearLayout"
-        android:layout_width="match_parent"
+    <TextView
+        android:id="@+id/companyPortfoilioText"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/stock_details">
+        android:layout_weight="2"
+        android:fontFamily="@font/kreon_light"
+        android:gravity="center"
+        android:text="@string/company"
+        android:textColor="@color/neutral_font_color"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="@id/percentageChangeTextView"
+        app:layout_constraintEnd_toStartOf="@+id/percentageChangeTextView"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/percentageChangeTextView" />
 
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="2"
-            android:fontFamily="@font/kreon_light"
-            android:gravity="center"
-            android:text="@string/company"
-            android:textColor="@color/neutral_font_color"
-            android:textSize="18sp" />
+    <TextView
+        android:id="@+id/percentageChangeTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:fontFamily="@font/kreon_light"
+        android:gravity="center"
+        android:text="@string/change"
+        android:textColor="@color/neutral_font_color"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toTopOf="@id/portfolioDivider"
+        app:layout_constraintEnd_toStartOf="@+id/pricePortfolioText"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/companyPortfoilioText"
+        app:layout_constraintTop_toBottomOf="@id/stock_details" />
 
-        <TextView
-            android:id="@+id/percentageChangeTextView"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:fontFamily="@font/kreon_light"
-            android:gravity="center"
-            android:text="@string/change"
-            android:textColor="@color/neutral_font_color"
-            android:textSize="16sp" />
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1.5"
-            android:fontFamily="@font/kreon_light"
-            android:gravity="center"
-            android:text="@string/price"
-            android:textColor="@color/neutral_font_color"
-            android:textSize="18sp" />
-
-    </LinearLayout>
+    <TextView
+        android:id="@+id/pricePortfolioText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1.5"
+        android:fontFamily="@font/kreon_light"
+        android:gravity="center"
+        android:text="@string/price"
+        android:textColor="@color/neutral_font_color"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="@id/percentageChangeTextView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/percentageChangeTextView"
+        app:layout_constraintTop_toTopOf="@id/percentageChangeTextView" />
 
     <View
+        android:id="@+id/portfolioDivider"
         android:layout_width="match_parent"
         android:layout_height="1px"
         android:layout_below="@+id/headings_tab_linearLayout"
         android:layout_marginStart="2dp"
         android:layout_marginTop="4dp"
-        android:background="@color/neon_blue" />
+        android:background="@color/neon_blue"
+        app:layout_constraintBottom_toTopOf="@id/portfolioRecyclerView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/percentageChangeTextView" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/portfolioRecyclerView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
         android:layout_below="@+id/headings_tab_linearLayout"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="8dp" />
+        android:layout_marginTop="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/portfolioDivider" />
 
-</RelativeLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,10 +1,15 @@
 package org.pragyan.dalal18.adapter;
 
 import android.content.Context;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.RecyclerView;
 
 import org.pragyan.dalal18.R;
 import org.pragyan.dalal18.data.CompanyDetails;
@@ -14,10 +19,6 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-
-import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
-import androidx.recyclerview.widget.RecyclerView;
 
 public class CompanyRecyclerAdapter extends RecyclerView.Adapter<CompanyRecyclerAdapter.PortfolioViewHolder> {
 
@@ -47,16 +48,14 @@ public class CompanyRecyclerAdapter extends RecyclerView.Adapter<CompanyRecycler
 
         CompanyDetails currentCompanyDetails = list.get(position);
 
-        if (currentCompanyDetails.getCompany() != null && currentCompanyDetails.getCompany().length() > 14) {
-            holder.companyNameTextView.setText(currentCompanyDetails.getShortName());
-        } else {
-            holder.companyNameTextView.setText(currentCompanyDetails.getCompany());
-        }
+        holder.companyNameTextView.setText(currentCompanyDetails.getCompanyName());
+        new Handler().postDelayed(() -> holder.companyNameTextView.setSelected(true), 1000);
+
         String temporaryString = String.valueOf(new DecimalFormat(Constants.PRICE_FORMAT).format(currentCompanyDetails.getValue()));
         holder.priceTextView.setText(temporaryString);
 
-        double diff = (double)(currentCompanyDetails.getValue() - currentCompanyDetails.getPreviousDayClose()) / (double)currentCompanyDetails.getPreviousDayClose() * 100.0;
-        holder.differenceTextView.setText(String.format(Locale.getDefault(),"%.1f", diff));
+        double diff = (double) (currentCompanyDetails.getValue() - currentCompanyDetails.getPreviousDayClose()) / (double) currentCompanyDetails.getPreviousDayClose() * 100.0;
+        holder.differenceTextView.setText(String.format(Locale.getDefault(), "%.1f", diff));
         if (diff < 0) {
             holder.differenceTextView.setTextColor(ContextCompat.getColor(context, R.color.redTint));
         } else if (diff == 0) {
@@ -92,7 +91,7 @@ public class CompanyRecyclerAdapter extends RecyclerView.Adapter<CompanyRecycler
 
         @Override
         public void onClick(View view) {
-            listener.onCompanyClick(view, list.get(getAdapterPosition()).getCompany());
+            listener.onCompanyClick(view, list.get(getAdapterPosition()).getCompanyName());
         }
     }
 }

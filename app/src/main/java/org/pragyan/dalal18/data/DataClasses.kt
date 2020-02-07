@@ -6,7 +6,7 @@ import dalalstreet.api.models.OrderType
 import kotlinx.android.parcel.Parcelize
 import java.util.*
 
-data class CompanyDetails(var company: String, var shortName: String, var value: Long, var previousDayClose: Long)
+data class CompanyDetails(var companyName: String, var shortName: String, var value: Long, var previousDayClose: Long)
 
 data class CompanyTickerDetails(val fullName: String, val imageUrl: String?, val previousDayClose: Long, val isUp: Boolean)
 
