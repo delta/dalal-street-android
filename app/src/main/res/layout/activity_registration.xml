@@ -1,20 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schema.android.com/apk/res-auto"
-    xmlns:app1="http://schemas.android.com/apk/res-auto"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/black_background"
-    android:orientation="vertical"
-    android:paddingBottom="20dp">
+    android:background="@color/black_background">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/registrationToolBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?colorPrimary"
-        android:orientation="horizontal"
-        android:theme="@style/Base.ThemeOverlay.AppCompat.Dark" />
+        android:theme="@style/Base.ThemeOverlay.AppCompat.Dark"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.cardview.widget.CardView
         android:id="@+id/login_cardView"
@@ -25,10 +24,13 @@
         android:clickable="true"
         android:elevation="10dp"
         android:focusable="true"
-        app:cardCornerRadius="12dp">
+        app:cardCornerRadius="12dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/registrationToolBar">
 
-        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:app="http://schema.android.com/apk/res-auto"
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="#20202C"
@@ -46,7 +48,11 @@
                 android:fontFamily="@font/marcellus_sc"
                 android:text="@string/register"
                 android:textColor="@color/neutral_font_color"
-                android:textSize="36sp" />
+                android:textSize="36sp"
+                app:layout_constraintBottom_toTopOf="@+id/register_name_input"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/register_name_input"
@@ -56,7 +62,11 @@
                 android:layout_marginTop="24dp"
                 android:paddingStart="12dp"
                 android:paddingEnd="2dp"
-                android:textColorHint="@color/neutral_font_color">
+                android:textColorHint="@color/neutral_font_color"
+                app:layout_constraintBottom_toTopOf="@+id/register_email_input"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/register_text">
 
                 <EditText
                     android:id="@+id/nameEditText"
@@ -81,7 +91,11 @@
                 android:layout_marginTop="24dp"
                 android:paddingStart="12dp"
                 android:paddingEnd="2dp"
-                android:textColorHint="@color/neutral_font_color">
+                android:textColorHint="@color/neutral_font_color"
+                app:layout_constraintBottom_toTopOf="@+id/register_password_input"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/register_name_input">
 
                 <EditText
                     android:id="@+id/emailEditText"
@@ -108,8 +122,12 @@
                 android:paddingStart="12dp"
                 android:paddingEnd="2dp"
                 android:textColorHint="@color/neutral_font_color"
-                app1:passwordToggleEnabled="true"
-                app1:passwordToggleTint="@color/neutral_font_color">
+                app:layout_constraintBottom_toTopOf="@+id/register_password_confirm_input"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/register_email_input"
+                app:passwordToggleEnabled="true"
+                app:passwordToggleTint="@color/neutral_font_color">
 
                 <EditText
                     android:id="@+id/passwordEditText"
@@ -129,14 +147,17 @@
                 android:id="@+id/register_password_confirm_input"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/register_password_input"
                 android:layout_marginTop="24dp"
                 android:hint="@string/confirm_password"
                 android:paddingStart="12dp"
                 android:paddingEnd="2dp"
                 android:textColorHint="@color/neutral_font_color"
-                app1:passwordToggleEnabled="true"
-                app1:passwordToggleTint="@color/neutral_font_color">
+                app:layout_constraintBottom_toTopOf="@+id/countrySpinner"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/register_password_input"
+                app:passwordToggleEnabled="true"
+                app:passwordToggleTint="@color/neutral_font_color">
 
                 <EditText
                     android:id="@+id/confirmPasswordEditText"
@@ -157,11 +178,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/register_password_confirm_input"
-                android:layout_marginStart="12dp"
                 android:layout_marginTop="24dp"
-                android:layout_marginEnd="6dp"
                 android:backgroundTint="@color/neutral_font_color"
-                android:textColorHint="@color/neutral_font_color" />
+                android:textColorHint="@color/neutral_font_color"
+                app:layout_constraintBottom_toTopOf="@id/registerButton"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/register_password_confirm_input" />
 
             <Button
                 android:id="@+id/registerButton"
@@ -177,12 +200,14 @@
                 android:text="@string/register"
                 android:textColor="@color/neutral_font_color"
                 android:textSize="20sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/countrySpinner" />
 
-        </RelativeLayout>
-
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.cardview.widget.CardView>
 
-
-</RelativeLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
