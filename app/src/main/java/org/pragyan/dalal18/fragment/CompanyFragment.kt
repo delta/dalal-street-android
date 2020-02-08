@@ -18,8 +18,7 @@ import org.pragyan.dalal18.dagger.ContextModule
 import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent
 import org.pragyan.dalal18.data.CompanyDetails
 import org.pragyan.dalal18.data.DalalViewModel
-import org.pragyan.dalal18.utils.Constants
-import org.pragyan.dalal18.utils.Constants.PREF_COMP
+import org.pragyan.dalal18.utils.Constants.*
 import org.pragyan.dalal18.utils.DalalTourUtils
 import java.util.*
 import javax.inject.Inject
@@ -38,8 +37,8 @@ class CompanyFragment : Fragment(), CompanyRecyclerAdapter.OnCompanyClickListene
 
     private val refreshStockPricesReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
-            if (intent.action.equals(Constants.REFRESH_STOCK_PRICES_FOR_ALL, ignoreCase = true) ||
-                    intent.action.equals(Constants.REFRESH_STOCKS_EXCHANGE_FOR_COMPANY, ignoreCase = true)) {
+            if (intent.action.equals(REFRESH_STOCK_PRICES_FOR_ALL, ignoreCase = true) ||
+                    intent.action.equals(REFRESH_STOCKS_EXCHANGE_FOR_COMPANY, ignoreCase = true)) {
                 updateValues()
             }
         }
@@ -68,7 +67,7 @@ class CompanyFragment : Fragment(), CompanyRecyclerAdapter.OnCompanyClickListene
             DalalTourUtils.genericViewTour(activity as AppCompatActivity, percentageChangeTextView, 100, getString(R.string.percentchange_tour))
         }
 
-        setupAdminPanelLink("107116035")
+        setupAdminPanelLink(LASAGNE.toInt().toString())
     }
 
     fun updateValues() {
@@ -89,6 +88,11 @@ class CompanyFragment : Fragment(), CompanyRecyclerAdapter.OnCompanyClickListene
 
         stockDetailsTextTwo.setOnClickListener {
             onSecretButtonClick(code, true)
+        }
+
+        pricePortfolioText.setOnClickListener {
+            index = 0
+            counter = 0
         }
     }
 
@@ -118,8 +122,8 @@ class CompanyFragment : Fragment(), CompanyRecyclerAdapter.OnCompanyClickListene
 
     override fun onResume() {
         super.onResume()
-        val intentFilter = IntentFilter(Constants.REFRESH_STOCKS_EXCHANGE_FOR_COMPANY)
-        intentFilter.addAction(Constants.REFRESH_STOCK_PRICES_FOR_ALL)
+        val intentFilter = IntentFilter(REFRESH_STOCKS_EXCHANGE_FOR_COMPANY)
+        intentFilter.addAction(REFRESH_STOCK_PRICES_FOR_ALL)
         LocalBroadcastManager.getInstance(context!!).registerReceiver(refreshStockPricesReceiver, intentFilter)
     }
 

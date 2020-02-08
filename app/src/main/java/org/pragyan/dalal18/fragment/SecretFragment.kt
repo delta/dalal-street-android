@@ -20,6 +20,7 @@ import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent
 import org.pragyan.dalal18.data.DalalViewModel
 import org.pragyan.dalal18.utils.ConnectionUtils
 import org.pragyan.dalal18.utils.Constants
+import org.pragyan.dalal18.utils.hideKeyboard
 import javax.inject.Inject
 
 /**
@@ -58,6 +59,8 @@ class SecretFragment : Fragment() {
     }
 
     private fun openMarket() = lifecycleScope.launch {
+        view?.hideKeyboard()
+
         withContext(Dispatchers.IO) {
             if (ConnectionUtils.getConnectionInfo(context!!) && ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
                 actionServiceBlockingStub.openMarket(OpenMarket.OpenMarketRequest.newBuilder().setUpdateDayHighAndLow(true).build())
@@ -66,6 +69,8 @@ class SecretFragment : Fragment() {
     }
 
     private fun closeMarket() = lifecycleScope.launch {
+        view?.hideKeyboard()
+
         withContext(Dispatchers.IO) {
             if (ConnectionUtils.getConnectionInfo(context!!) && ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
                 actionServiceBlockingStub.closeMarket(CloseMarket.CloseMarketRequest.newBuilder().setUpdatePrevDayClose(true).build())
@@ -74,6 +79,8 @@ class SecretFragment : Fragment() {
     }
 
     private fun sendNotification() = lifecycleScope.launch {
+        view?.hideKeyboard()
+
         withContext(Dispatchers.IO) {
             if (ConnectionUtils.getConnectionInfo(context!!) && ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
                 if (userIdEditText.text.toString().isNotBlank() && notificationEditText.text.toString().isNotBlank())
@@ -87,6 +94,8 @@ class SecretFragment : Fragment() {
     }
 
     private fun setCompanyBankrupt(isBankrupt: Boolean) = lifecycleScope.launch {
+        view?.hideKeyboard()
+
         withContext(Dispatchers.IO) {
             if (ConnectionUtils.getConnectionInfo(context!!) && ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
                 if (stockIdEditText2.text.toString().isNotBlank())
@@ -99,6 +108,8 @@ class SecretFragment : Fragment() {
     }
 
     private fun setCompanyDividends(givesDividends: Boolean) = lifecycleScope.launch {
+        view?.hideKeyboard()
+
         withContext(Dispatchers.IO) {
             if (ConnectionUtils.getConnectionInfo(context!!) && ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
                 if (stockIdEditText2.text.toString().isNotBlank())
@@ -111,6 +122,8 @@ class SecretFragment : Fragment() {
     }
 
     private fun addStocksToExchange() = lifecycleScope.launch {
+        view?.hideKeyboard()
+
         withContext(Dispatchers.IO) {
             if (ConnectionUtils.getConnectionInfo(context!!) && ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
                 if (stockIdEditText.text.toString().isNotBlank() && stocksToExchangeEditText.text.toString().isNotBlank())
@@ -123,6 +136,8 @@ class SecretFragment : Fragment() {
     }
 
     private fun updateStockPrice() = lifecycleScope.launch {
+        view?.hideKeyboard()
+
         withContext(Dispatchers.IO) {
             if (ConnectionUtils.getConnectionInfo(context!!) && ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
                 if (stockIdEditText.text.toString().isNotBlank() && newStockPriceEditText.text.toString().isNotBlank())
@@ -135,6 +150,8 @@ class SecretFragment : Fragment() {
     }
 
     private fun sendNews() = lifecycleScope.launch {
+        view?.hideKeyboard()
+
         withContext(Dispatchers.IO) {
             if (ConnectionUtils.getConnectionInfo(context!!) && ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
                 if (headlinesEditText.text.toString().isNotBlank() && newsDescriptionEditText.text.toString().isNotBlank() &&

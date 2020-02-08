@@ -4,7 +4,7 @@ public class Constants {
 
     // TODO (Release): Change server IP and Port
 
-    public static final String HOST = "192.168.0.2";
+    public static final String HOST = "192.168.43.191";
     public static final int PORT = 8000;
 
     public static final int EVENT_START_TIME = 20;
@@ -12,8 +12,6 @@ public class Constants {
 
     // TODO (Release): Change company image base URL and how is built
     public static final String COMPANY_IMAGES_BASE_URL = "https://currents.nitt.edu/images/dalal/";
-
-    public static final int NUMBER_OF_COMPANIES = 30;
 
     public static final String REFRESH_MARKET_EVENTS_FOR_HOME_AND_NEWS = "refresh-news-action";
     public static final String REFRESH_PRICE_TICKER_FOR_HOME = "refresh-price-ticker-action";
@@ -35,6 +33,7 @@ public class Constants {
     public static int ASK_LIMIT = 50;
     public static int BID_LIMIT = 50;
     public static int ORDER_PRICE_WINDOW = 20;
+    public static double LASAGNE = Math.pow(Math.pow(7.324774662 + Math.E, 2.0) / 10, 8);
 
     public static final String MARKET_OPEN_TEXT_KEY = "market-open-text-key";
     public static final String MARKET_CLOSED_TEXT_KEY = "market-closed-text-key";
