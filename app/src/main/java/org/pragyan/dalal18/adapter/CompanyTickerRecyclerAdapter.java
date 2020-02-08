@@ -4,6 +4,8 @@ import android.content.Context;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -47,7 +49,8 @@ public class CompanyTickerRecyclerAdapter extends RecyclerView.Adapter<CompanyTi
 
         CompanyTickerDetails currentCompanyTickerDetails = companyTickerDetailsList.get(position);
 
-        holder.nameTextView.setText(currentCompanyTickerDetails.getFullName());
+        holder.companyNameTextView.setText(currentCompanyTickerDetails.getFullName());
+        new Handler().postDelayed(() -> holder.companyNameTextView.setSelected(true), 1000);
 
         holder.arrowImageView.setImageResource(currentCompanyTickerDetails.isUp()? R.drawable.arrow_up_green : R.drawable.arrow_down_red);
 
@@ -75,12 +78,12 @@ public class CompanyTickerRecyclerAdapter extends RecyclerView.Adapter<CompanyTi
 
     class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        TextView nameTextView, previousDayCloseTextView;
+        TextView companyNameTextView, previousDayCloseTextView;
         ImageView companyImageView, arrowImageView;
 
         MyViewHolder(View view) {
             super(view);
-            nameTextView = view.findViewById(R.id.company_name);
+            companyNameTextView = view.findViewById(R.id.companyNameTextView);
             previousDayCloseTextView = view.findViewById(R.id.lastDayClose_textView);
             companyImageView = view.findViewById(R.id.company_imageView);
             arrowImageView = view.findViewById(R.id.arrow_imageView);

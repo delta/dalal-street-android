@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
 
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/black_background"
-    android:orientation="vertical">
+    android:background="@color/black_background">
 
     <ImageView
         android:id="@+id/company_imageView"
@@ -12,44 +12,58 @@
         android:layout_height="180dp"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:contentDescription="@string/company_image_description"
-        android:scaleType="centerCrop" />
+        android:scaleType="centerCrop"
+        app:layout_constraintBottom_toTopOf="@id/companyNameTextView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-    <RelativeLayout
-        android:layout_width="match_parent"
+    <ImageView
+        android:id="@+id/arrow_imageView"
+        android:layout_width="28dp"
+        android:layout_height="0dp"
+        android:contentDescription="@string/company_profile"
+        android:foregroundGravity="center"
+        android:padding="2dp"
+        app:layout_constraintBottom_toBottomOf="@id/lastDayClose_textView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/lastDayClose_textView"
+        app:layout_constraintTop_toTopOf="@id/lastDayClose_textView" />
+
+    <TextView
+        android:id="@+id/companyNameTextView"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:background="#20202C"
-        android:paddingTop="2dp">
+        android:ellipsize="marquee"
+        android:fontFamily="@font/marcellus_sc"
+        android:gravity="start"
+        android:marqueeRepeatLimit="marquee_forever"
+        android:paddingStart="8dp"
+        android:paddingTop="2dp"
+        android:paddingEnd="8dp"
+        android:paddingBottom="2dp"
+        android:singleLine="true"
+        android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
+        android:textColor="@color/neutral_font_color"
+        android:textSize="22sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/lastDayClose_textView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/company_imageView" />
 
-        <ImageView
-            android:id="@+id/arrow_imageView"
-            android:layout_width="28dp"
-            android:layout_height="28dp"
-            android:layout_alignParentEnd="true"
-            android:contentDescription="@string/company_profile"
-            android:foregroundGravity="center" />
+    <TextView
+        android:id="@+id/lastDayClose_textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toStartOf="@+id/arrow_imageView"
+        android:fontFamily="@font/kreon_light"
+        android:gravity="center"
+        android:padding="2dp"
+        android:textColor="@color/neutral_font_color"
+        android:textSize="22sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/arrow_imageView"
+        app:layout_constraintStart_toEndOf="@id/companyNameTextView"
+        app:layout_constraintTop_toBottomOf="@id/company_imageView" />
 
-        <TextView
-            android:id="@+id/company_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_marginStart="2dp"
-            android:fontFamily="@font/marcellus_sc"
-            android:gravity="center"
-            android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
-            android:textColor="@color/neutral_font_color"
-            android:textSize="22sp" />
-
-        <TextView
-            android:id="@+id/lastDayClose_textView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_toStartOf="@+id/arrow_imageView"
-            android:fontFamily="@font/kreon_light"
-            android:gravity="center"
-            android:textColor="@color/neutral_font_color"
-            android:textSize="22sp" />
-
-    </RelativeLayout>
-
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
