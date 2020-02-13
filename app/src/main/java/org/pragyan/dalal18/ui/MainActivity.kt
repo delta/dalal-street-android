@@ -1,7 +1,10 @@
 package org.pragyan.dalal18.ui
 
 import android.animation.ValueAnimator
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.content.*
+import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.net.ConnectivityManager
 import android.net.Network
@@ -45,7 +48,13 @@ import org.pragyan.dalal18.dagger.ContextModule
 import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent
 import org.pragyan.dalal18.data.DalalViewModel
 import org.pragyan.dalal18.data.GameStateDetails
+<<<<<<< HEAD
 import org.pragyan.dalal18.data.GlobalStockDetails
+=======
+import org.pragyan.dalal18.fragment.mortgage.MortgageFragment
+import org.pragyan.dalal18.notifications.NotificationService
+import org.pragyan.dalal18.notifications.PushNotificationService
+>>>>>>> Add files for Notifications
 import org.pragyan.dalal18.utils.*
 import org.pragyan.dalal18.utils.Constants.*
 import org.pragyan.dalal18.utils.CountDrawable.buildCounterDrawable
@@ -187,7 +196,11 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
         stockWorthTextView.setOnClickListener(worthViewClickListener)
         totalInHandTextView.setOnClickListener(worthViewClickListener)
         totalWorthTextView.setOnClickListener(worthViewClickListener)
+        createChannel()
+        var notificationIntent = Intent(this.getBaseContext(), PushNotificationService::class.java)
+        this.startService(notificationIntent)
     }
+
 
     // Adding and setting up Navigation drawer
     private fun setupNavigationDrawer() {
@@ -399,7 +412,7 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
                 })
     }
 
-    // Subscribes to notifications stream and gets updates (TESTED)
+    // Subscribes to s stream and gets updates (TESTED)
     private fun subscribeToNotificationsStream(notificationsSubscriptionId: SubscriptionId) {
 
         streamServiceStub.getNotificationUpdates(notificationsSubscriptionId,
@@ -742,6 +755,18 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
             R.id.company_description_dest -> lastOpenFragmentId = R.id.home_dest
         }
         navController.navigate(lastOpenFragmentId, null, NavOptions.Builder().setPopUpTo(R.id.home_dest, false).build())
+    }
+
+    private fun createChannel(){
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            var nm = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            var mChannel = NotificationChannel("test_channel_01","test_channel_01",NotificationManager.IMPORTANCE_DEFAULT)
+            mChannel.enableLights(true)
+            mChannel.description = "gi"
+            mChannel.setShowBadge(true)
+            mChannel.setLightColor(Color.RED)
+            nm.createNotificationChannel(mChannel)
+        }
     }
 
     companion object {
