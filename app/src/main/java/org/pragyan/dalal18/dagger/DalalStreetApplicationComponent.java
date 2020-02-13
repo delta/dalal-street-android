@@ -17,6 +17,7 @@ import org.pragyan.dalal18.fragment.marketDepth.DepthTableFragment;
 import org.pragyan.dalal18.fragment.mortgage.RetrieveFragment;
 import org.pragyan.dalal18.notifications.NotificationFragment;
 import org.pragyan.dalal18.notifications.NotificationService;
+import org.pragyan.dalal18.notifications.PushNotificationService;
 import org.pragyan.dalal18.ui.LoginActivity;
 import org.pragyan.dalal18.ui.MainActivity;
 import org.pragyan.dalal18.ui.RegistrationActivity;
@@ -56,5 +57,6 @@ public interface DalalStreetApplicationComponent {
 
     void inject(NotificationService notificationService);
     void inject(VerifyPhoneActivity verifyPhoneActivity);
+    void inject(PushNotificationService pushNotificationService);
 
 }
