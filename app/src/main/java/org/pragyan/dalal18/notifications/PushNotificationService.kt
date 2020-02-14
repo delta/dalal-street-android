@@ -20,6 +20,8 @@ import org.pragyan.dalal18.utils.Constants
 import javax.inject.Inject
 import android.app.NotificationManager
 import android.content.Context
+import android.content.ComponentName
+import org.pragyan.dalal18.R
 
 
 class PushNotificationService : Service() {
@@ -40,6 +42,17 @@ class PushNotificationService : Service() {
     override fun onCreate() {
         DaggerDalalStreetApplicationComponent.builder().contextModule(ContextModule(this)).build().inject(this)
         notificationmanager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+    }
+
+    override fun onTaskRemoved(rootIntent: Intent?) {
+        Log.d("TAGDAAW", "Task Removed")
+        Intent().also { intent ->
+            intent.setAction("android.intent.action.NotifServiceBroadcast")
+            sendImplicitBroadcast(applicationContext, intent)
+        }
+
+
+        Log.d("TAGDAAW", "Intent Sent")
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -71,15 +84,17 @@ class PushNotificationService : Service() {
         streamServiceStub.getNotificationUpdates(notificationsSubscriptionId,
                 object : StreamObserver<NotificationUpdate> {
                     override fun onNext(value: NotificationUpdate) {
-
+                        Log.d("TAGDAAW", "hello")
                         val notification = value.notification
 
                         Log.d("TAGDAAW", notification.text)
-//                        var builder = NotificationCompat.Builder(this@PushNotificationService, "test_channel_01")
-//                                .setContentText(notification.text)
-//                                .setContentTitle("Dalal Street")
-//                                .build()
-//                        notificationmanager.notify(notification.id, builder)
+                        var builder = NotificationCompat.Builder(applicationContext, "dalal_notification_channel")
+                                .setSmallIcon(R.drawable.market_depth_icon)
+                                .setAutoCancel(true)
+                                .setContentText(notification.text)
+                                .setContentTitle("Dalal Street")
+                                .build()
+                        notificationmanager.notify(notification.id, builder)
 
                     }
 
@@ -107,6 +122,20 @@ class PushNotificationService : Service() {
                     }
                 }
             }
+        }
+    }
+
+    private fun sendImplicitBroadcast(ctxt: Context, i: Intent) {
+        val pm = ctxt.packageManager
+        val matches = pm.queryBroadcastReceivers(i, 0)
+
+        for (resolveInfo in matches) {
+            val explicit = Intent(i)
+            val cn = ComponentName(resolveInfo.activityInfo.applicationInfo.packageName,
+                    resolveInfo.activityInfo.name)
+
+            explicit.component = cn
+            ctxt.sendBroadcast(explicit)
         }
     }
 
