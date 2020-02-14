@@ -69,12 +69,12 @@
         <receiver
             android:name=".notifications.NotificationBroadcastReceiver"
             android:enabled="true"
-            android:exported="true"
-            android:label="RestartServiceWhenStopped">
+            android:exported="true">
             <intent-filter>
-                <action android:name="NotifServiceBroadcast" />
+                <action android:name="android.intent.action.NotifServiceBroadcast" />
             </intent-filter>
         </receiver>
+
         <receiver
             android:name=".utils.SmsVerificationReceiver"
             android:exported="true">
