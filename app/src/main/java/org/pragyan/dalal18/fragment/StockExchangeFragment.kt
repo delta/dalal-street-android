@@ -44,7 +44,7 @@ class StockExchangeFragment : Fragment() {
 
     private var currentStock: Stock? = null
     private var lastSelectedStockId: Int = 0
-    lateinit var companiesArray: MutableList<String>
+    private lateinit var companiesArray: MutableList<String>
     private var loadingDialog: AlertDialog? = null
     private var decimalFormat = DecimalFormat(Constants.PRICE_FORMAT)
     lateinit var networkDownHandler: ConnectionUtils.OnNetworkDownHandler
@@ -87,7 +87,7 @@ class StockExchangeFragment : Fragment() {
                 .setCancelable(false)
                 .create()
 
-        companiesArray = model.getCompanyNamesArray()
+        companiesArray = model.getSpinnerArray()
         val arrayAdapter = ArrayAdapter<String>(activity!!, R.layout.company_spinner_item, companiesArray)
         with(companySpinner) {
             adapter = arrayAdapter
@@ -97,9 +97,15 @@ class StockExchangeFragment : Fragment() {
                 }
 
                 override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                    val stockId = model.getStockIdFromCompanyName(companiesArray[position])
-                    lastSelectedStockId = stockId
-                    model.updateFavouriteCompanyName(companiesArray[position])
+                    lastSelectedStockId = model.getStockIdFromSpinnerCompanyName(
+                            companySpinner.selectedItem.toString(),
+                            getString(R.string.bankruptSuffix),
+                            getString(R.string.dividendSuffix)
+                    )
+                    model.updateFavouriteCompanyStockId(lastSelectedStockId)
+
+                    changeStockExchangeOptions(!model.getIsBankruptFromStockId(lastSelectedStockId))
+
                     getCompanyProfileAsynchronously(lastSelectedStockId)
                 }
             }
@@ -111,7 +117,7 @@ class StockExchangeFragment : Fragment() {
     }
 
     private fun addToStockExchangeInput(increment: Int) {
-        if(noOfStocksEditText.text.isEmpty()){
+        if (noOfStocksEditText.text.isEmpty()) {
             noOfStocksEditText.setText("0")
         }
         var noOfStocks = noOfStocksEditText.text.toString().toInt()
@@ -213,5 +219,12 @@ class StockExchangeFragment : Fragment() {
     override fun onPause() {
         super.onPause()
         LocalBroadcastManager.getInstance(context!!).unregisterReceiver(refreshStockPricesReceiver)
+    }
+
+    fun changeStockExchangeOptions(openOptions: Boolean) {
+        stocks_exchange_input.isEnabled = openOptions
+        stockIncrementOneButton.isEnabled = openOptions
+        stockIncrementFiveButton.isEnabled = openOptions
+        buyExchangeButton.isEnabled = openOptions
     }
 }
