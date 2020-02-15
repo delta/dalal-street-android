@@ -25,6 +25,7 @@ import org.pragyan.dalal18.R
 
 
 class PushNotificationService : Service() {
+    lateinit var subscriptionId: SubscriptionId
 
     lateinit var notificationmanager: NotificationManager
 
@@ -45,49 +46,66 @@ class PushNotificationService : Service() {
     }
 
     override fun onTaskRemoved(rootIntent: Intent?) {
-        Log.d("TAGDAAW", "Task Removed")
+//        Log.d("TAGDAAW", "Task Removed")
         Intent().also { intent ->
             intent.setAction("android.intent.action.NotifServiceBroadcast")
             sendImplicitBroadcast(applicationContext, intent)
         }
-
-
-        Log.d("TAGDAAW", "Intent Sent")
+//        Log.d("TAGDAAW", "Intent Sent")
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        Log.d("TAGDAAW", "Big F1")
-        Toast.makeText(this, "service starting", Toast.LENGTH_SHORT).show()
+//        Log.d("TAGDAAW", "Big F1")
+//        Toast.makeText(this, "service starting", Toast.LENGTH_SHORT).show()
         createNetworkCallbackObject()
         subscribeToStreamsAsynchronously()
-        return super.onStartCommand(intent, flags, startId)
+        debu()
+        return START_STICKY
     }
 
 
     private fun subscribeToStreamsAsynchronously() = doAsync {
-        Log.d("TAGDAAW", "Big F2")
+//        Log.d("TAGDAAW", "Big F2")
                 if(ConnectionUtils.getConnectionInfo(this@PushNotificationService))
-        Log.d("TAGDAAW", "Big F3")
+//        Log.d("TAGDAAW", "Big F3")
                 if(!ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT))
                     Log.d("TAGDAAW", "Not Reachable")
 
             doAsync {
                 val notificationsResponse = streamServiceBlockingStub.subscribe(SubscribeRequest.newBuilder().setDataStreamType(DataStreamType.NOTIFICATIONS).setDataStreamId("").build())
+                subscriptionId = notificationsResponse.subscriptionId
+//                Log.d("WAKANDA", notificationsResponse.subscriptionId.toString())
                 subscribeToNotificationsStream(notificationsResponse.subscriptionId)
-                Log.d("TAGDAAW", "Big F4")
+//                Log.d("TAGDAAW", "Big F4")
             }
 
     }
+    private fun unsubscribeFromNotificationStream() {
+        doAsync {
+            if (ConnectionUtils.getConnectionInfo(this@PushNotificationService) && ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
+                    val unsubscribeResponse = streamServiceBlockingStub.unsubscribe(UnsubscribeRequest.newBuilder().setSubscriptionId(subscriptionId).build())
 
+            }
+        }
+    }
+    private fun debu(){
+        doAsync {
+            for(i in 1..100){
+                Thread.sleep(1000)
+//                Log.d("Alive", "Service is Alive" + i.toString())
+            }
+
+        }
+    }
     private fun subscribeToNotificationsStream(notificationsSubscriptionId: SubscriptionId) {
 
         streamServiceStub.getNotificationUpdates(notificationsSubscriptionId,
                 object : StreamObserver<NotificationUpdate> {
                     override fun onNext(value: NotificationUpdate) {
-                        Log.d("TAGDAAW", "hello")
+//                        Log.d("TAGDAAW", "hello")
                         val notification = value.notification
 
-                        Log.d("TAGDAAW", notification.text)
+//                        Log.d("TAGDAAW", notification.text)
                         var builder = NotificationCompat.Builder(applicationContext, "dalal_notification_channel")
                                 .setSmallIcon(R.drawable.market_depth_icon)
                                 .setAutoCancel(true)
@@ -118,7 +136,7 @@ class PushNotificationService : Service() {
 
                         }
                     } else {
-                        Log.d("TAGDAAW", "Error in createNetworkCallbackObject")
+//                        Log.d("TAGDAAW", "Error in createNetworkCallbackObject")
                     }
                 }
             }
