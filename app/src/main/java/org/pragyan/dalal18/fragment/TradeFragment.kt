@@ -119,7 +119,16 @@ class TradeFragment : Fragment() {
                 }
 
                 override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                    val selectedCompany = companySpinner.selectedItem.toString()
+                    var selectedCompany = companySpinner.selectedItem.toString()
+                    //first checking the suffix and then removing it
+                    //NEED TO CHECK IF IT WORKS FINE
+                    if(selectedCompany.endsWith(getString(R.string.dividendSuffix))){
+                        selectedCompany=selectedCompany.removeSuffix(getString(R.string.dividendSuffix))
+                    }
+                    else if (selectedCompany.endsWith(getString(R.string.bankruptSuffix))){
+                        selectedCompany=selectedCompany.removeSuffix(getString(R.string.dividendSuffix))
+                    }
+
                     model.updateFavouriteCompanyName(selectedCompany)
 
                     val stocksOwned = model.getQuantityOwnedFromCompanyName(selectedCompany)

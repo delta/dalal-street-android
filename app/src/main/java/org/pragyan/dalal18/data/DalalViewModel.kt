@@ -7,6 +7,8 @@ class DalalViewModel : ViewModel() {
     lateinit var ownedStockDetails: HashMap<Int, Long>
     lateinit var globalStockDetails: HashMap<Int, GlobalStockDetails>
     lateinit var reservedStockDetails: HashMap<Int, Long>
+    var dividendSuffix : String = "$$$"
+    var bankruptSuffix : String = "!!!"
 
     var favoriteCompanyName: String? = null
 
@@ -71,6 +73,7 @@ class DalalViewModel : ViewModel() {
     fun getCompanyNamesArray(): MutableList<String> {
         val companyNames = mutableListOf<String>()
         for ((_, currentStock) in globalStockDetails) {
+            checkDividendAndbankruptcy(currentStock)
             companyNames.add(currentStock.fullName)
         }
         return companyNames
@@ -135,5 +138,16 @@ class DalalViewModel : ViewModel() {
             if (stockId1 == stockId) return previousDayClose
         }
         return 0
+    }
+    fun checkDividendAndbankruptcy(currentStock : GlobalStockDetails){
+        if (currentStock.isBankrupt){
+            //currentStock.fullName+= org.pragyan.dalal18.R.string.bankruptSuffix.toString()
+            currentStock.fullName+=dividendSuffix
+        }
+        else if (currentStock.givesDividend){
+            //currentStock.fullName+=org.pragyan.dalal18.R.string.dividendSuffix.toString()
+            currentStock.fullName+=dividendSuffix
+        }
+
     }
 }
