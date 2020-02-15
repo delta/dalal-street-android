@@ -4,11 +4,8 @@ public class Constants {
 
     // TODO (Release): Change server IP and Port
 
-    public static final String HOST = "192.168.43.191";
+    public static final String HOST = "delta.nitt.edu";
     public static final int PORT = 8000;
-
-    public static final int EVENT_START_TIME = 20;
-    public static final int EVENT_END_TIME = 24;
 
     // TODO (Release): Change company image base URL and how is built
     public static final String COMPANY_IMAGES_BASE_URL = "https://currents.nitt.edu/images/dalal/";
