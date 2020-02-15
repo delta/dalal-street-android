@@ -278,6 +278,7 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
                         .setCancelable(true)
                         .show()
                 logoutDialog = logOutBuilder.create()
+
                 return true
             }
 
@@ -291,7 +292,8 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
     }
 
     fun logout() = lifecycleScope.launch {
-
+        var notificationIntent = Intent(baseContext, PushNotificationService::class.java)
+        this@MainActivity.stopService(notificationIntent)
         unsubscribeFromAllStreams()
 
         if (withContext(Dispatchers.IO) { ConnectionUtils.getConnectionInfo(this@MainActivity) }) {
