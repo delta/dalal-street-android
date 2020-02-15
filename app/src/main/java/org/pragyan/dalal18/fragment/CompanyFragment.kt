@@ -18,6 +18,7 @@ import org.pragyan.dalal18.dagger.ContextModule
 import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent
 import org.pragyan.dalal18.data.CompanyDetails
 import org.pragyan.dalal18.data.DalalViewModel
+import org.pragyan.dalal18.data.GlobalStockDetails
 import org.pragyan.dalal18.utils.Constants.*
 import org.pragyan.dalal18.utils.DalalTourUtils
 import java.util.*
@@ -75,7 +76,7 @@ class CompanyFragment : Fragment(), CompanyRecyclerAdapter.OnCompanyClickListene
         companiesList.clear()
 
         for ((_, currentStock) in model.globalStockDetails) {
-            companiesList.add(CompanyDetails(currentStock.fullName, currentStock.shortName, currentStock.price, currentStock.previousDayClose))
+            companiesList.add(CompanyDetails(currentStock.fullName, currentStock.shortName, currentStock.price, currentStock.previousDayClose,currentStock.isBankrupt,currentStock.givesDividend))
         }
 
         adapter.swapData(companiesList)
@@ -114,9 +115,11 @@ class CompanyFragment : Fragment(), CompanyRecyclerAdapter.OnCompanyClickListene
         }
     }
 
-    override fun onCompanyClick(companyName: String) {
+    override fun onCompanyClick(companyName: String,isBankrupt : Boolean,givesDividend : Boolean) {
         val bundle = Bundle()
         bundle.putString(CompanyDescriptionFragment.COMPANY_NAME_KEY, companyName)
+        bundle.putBoolean(CompanyDescriptionFragment.COMPANY_ISBANKRUPT,isBankrupt)
+        bundle.putBoolean(CompanyDescriptionFragment.COMPANY_GIVESDIVIDEND,givesDividend)
         findNavController().navigate(R.id.action_company_to_details, bundle)
     }
 
@@ -131,4 +134,5 @@ class CompanyFragment : Fragment(), CompanyRecyclerAdapter.OnCompanyClickListene
         super.onPause()
         LocalBroadcastManager.getInstance(context!!).unregisterReceiver(refreshStockPricesReceiver)
     }
+
 }

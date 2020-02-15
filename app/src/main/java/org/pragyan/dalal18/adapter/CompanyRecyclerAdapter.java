@@ -27,7 +27,7 @@ public class CompanyRecyclerAdapter extends RecyclerView.Adapter<CompanyRecycler
     private OnCompanyClickListener listener;
 
     public interface OnCompanyClickListener {
-        void onCompanyClick(String companyName);
+        void onCompanyClick(String companyName,Boolean isBankrupt,Boolean givesDividend);
     }
 
     public CompanyRecyclerAdapter(Context context, ArrayList<CompanyDetails> portfolioValues, OnCompanyClickListener listener) {
@@ -48,7 +48,14 @@ public class CompanyRecyclerAdapter extends RecyclerView.Adapter<CompanyRecycler
 
         CompanyDetails currentCompanyDetails = list.get(position);
 
-        holder.companyNameTextView.setText(currentCompanyDetails.getCompanyName());
+        if (currentCompanyDetails.getGivesDividend()){
+        holder.companyNameTextView.setText(currentCompanyDetails.getCompanyName()+ context.getResources().getString(R.string.dividendSuffix));}
+        else if (currentCompanyDetails.isBankrupt()){
+            holder.companyNameTextView.setText(currentCompanyDetails.getCompanyName()+context.getResources().getString(R.string.bankruptSuffix));
+        }
+        else{
+            holder.companyNameTextView.setText(currentCompanyDetails.getCompanyName());
+        }
         new Handler().postDelayed(() -> holder.companyNameTextView.setSelected(true), 1000);
 
         String temporaryString = String.valueOf(new DecimalFormat(Constants.PRICE_FORMAT).format(currentCompanyDetails.getValue()));
@@ -91,7 +98,7 @@ public class CompanyRecyclerAdapter extends RecyclerView.Adapter<CompanyRecycler
 
         @Override
         public void onClick(View view) {
-            listener.onCompanyClick(list.get(getAdapterPosition()).getCompanyName());
+            listener.onCompanyClick(list.get(getAdapterPosition()).getCompanyName(),list.get(getAdapterPosition()).isBankrupt(),list.get(getAdapterPosition()).getGivesDividend());
         }
     }
 }

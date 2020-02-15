@@ -189,7 +189,7 @@ class HomeFragment : Fragment(), NewsRecyclerAdapter.NewsItemClickListener, Swip
         companyTickerDetailsList.clear()
 
         for ((_, stock) in model.globalStockDetails) {
-            companyTickerDetailsList.add(CompanyTickerDetails(stock.fullName, stock.imagePath, stock.price, stock.up == 1))
+            companyTickerDetailsList.add(CompanyTickerDetails(stock.fullName, stock.imagePath, stock.price, stock.up == 1,stock.isBankrupt,stock.givesDividend))
         }
 
         if (companyTickerDetailsList.size != 0) {

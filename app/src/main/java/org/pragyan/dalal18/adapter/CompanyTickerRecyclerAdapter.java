@@ -49,7 +49,13 @@ public class CompanyTickerRecyclerAdapter extends RecyclerView.Adapter<CompanyTi
 
         CompanyTickerDetails currentCompanyTickerDetails = companyTickerDetailsList.get(position);
 
-        holder.companyNameTextView.setText(currentCompanyTickerDetails.getFullName());
+        if (currentCompanyTickerDetails.getGivesDividend())
+        holder.companyNameTextView.setText(currentCompanyTickerDetails.getFullName()+context.getResources().getString(R.string.dividendSuffix));
+       else  if (currentCompanyTickerDetails.isBankrupt())
+            holder.companyNameTextView.setText(currentCompanyTickerDetails.getFullName()+context.getResources().getString(R.string.bankruptSuffix));
+        else{
+            holder.companyNameTextView.setText(currentCompanyTickerDetails.getFullName());
+        }
         new Handler().postDelayed(() -> holder.companyNameTextView.setSelected(true), 1000);
 
         holder.arrowImageView.setImageResource(currentCompanyTickerDetails.isUp()? R.drawable.arrow_up_green : R.drawable.arrow_down_red);
