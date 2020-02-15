@@ -6,7 +6,6 @@ import android.net.ConnectivityManager
 import android.net.Network
 import android.os.IBinder
 import android.util.Log
-import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import dalalstreet.api.DalalStreamServiceGrpc
 import dalalstreet.api.datastreams.*
@@ -26,8 +25,9 @@ import org.pragyan.dalal18.R
 
 class PushNotificationService : Service() {
     lateinit var subscriptionId: SubscriptionId
+    lateinit var marketSubscriptionId: SubscriptionId
 
-    lateinit var notificationmanager: NotificationManager
+    lateinit var notificationManager: NotificationManager
 
     @Inject
     lateinit var streamServiceStub: DalalStreamServiceGrpc.DalalStreamServiceStub
@@ -42,7 +42,7 @@ class PushNotificationService : Service() {
 
     override fun onCreate() {
         DaggerDalalStreetApplicationComponent.builder().contextModule(ContextModule(this)).build().inject(this)
-        notificationmanager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
     }
 
     override fun onTaskRemoved(rootIntent: Intent?) {
@@ -76,10 +76,45 @@ class PushNotificationService : Service() {
                 subscriptionId = notificationsResponse.subscriptionId
 //                Log.d("WAKANDA", notificationsResponse.subscriptionId.toString())
                 subscribeToNotificationsStream(notificationsResponse.subscriptionId)
+
+                val marketEventResponse = streamServiceBlockingStub.subscribe(SubscribeRequest.newBuilder().setDataStreamType(DataStreamType.MARKET_EVENTS).setDataStreamId("").build())
+                marketSubscriptionId = marketEventResponse.subscriptionId
+
+                subscribeToMarketsStream(marketEventResponse.subscriptionId)
+
 //                Log.d("TAGDAAW", "Big F4")
             }
 
     }
+
+    private fun subscribeToMarketsStream(subscriptionId: SubscriptionId?) {
+
+        streamServiceStub.getMarketEventUpdates(subscriptionId,
+                object : StreamObserver<MarketEventUpdate> {
+                    override fun onNext(value: MarketEventUpdate) {
+//                        Log.d("TAGDAAW", "hello")
+                        val event = value.marketEvent
+
+//                        Log.d("TAGDAAW", notification.text)
+                        var builder = NotificationCompat.Builder(applicationContext, "dalal_notification_channel")
+                                .setSmallIcon(R.drawable.market_depth_icon)
+                                // todo change icon if needed
+                                .setAutoCancel(true)
+                                .setContentText(event.headline)
+                                .setContentTitle("Dalal Street")
+                                .build()
+                        notificationManager.notify(event.id, builder)
+                    }
+
+                    override fun onError(t: Throwable?) {
+                    }
+
+                    override fun onCompleted() {
+                    }
+
+                })
+    }
+
     private fun unsubscribeFromNotificationStream() {
         doAsync {
             if (ConnectionUtils.getConnectionInfo(this@PushNotificationService) && ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
@@ -112,7 +147,7 @@ class PushNotificationService : Service() {
                                 .setContentText(notification.text)
                                 .setContentTitle("Dalal Street")
                                 .build()
-                        notificationmanager.notify(notification.id, builder)
+                        notificationManager.notify(notification.id, builder)
 
                     }
 
