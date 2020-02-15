@@ -70,7 +70,7 @@ class MortgageFragment : Fragment() {
 
         model = activity?.run { ViewModelProvider(this).get(DalalViewModel::class.java) }
                 ?: throw Exception("Invalid activity")
-        lastStockId = model.getStockIdFromCompanyName(model.favoriteCompanyName)
+        lastStockId = model.favoriteCompanyStockId ?: 1
         DaggerDalalStreetApplicationComponent.builder().contextModule(ContextModule(context!!)).build().inject(this)
 
         return rootView
@@ -90,16 +90,26 @@ class MortgageFragment : Fragment() {
         setupMortgageDetails(lastStockId)
 
         with(mortgage_companies_spinner) {
-            val companiesArray = model.getCompanyNamesArray()
+            val companiesArray = model.getSpinnerArray()
             adapter = ArrayAdapter(context!!, R.layout.company_spinner_item, companiesArray)
 
             onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
                 override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
 
-                    lastStockId = model.getStockIdFromCompanyName(companiesArray[position])
-                    setupMortgageDetails(lastStockId)
+                    lastStockId = model.getStockIdFromSpinnerCompanyName(
+                            companiesArray[position],
+                            getString(R.string.bankruptSuffix),
+                            getString(R.string.dividendSuffix)
+                    )
 
-                    model.updateFavouriteCompanyName(companiesArray[position])
+                    changeMortgageOptions(!model.getIsBankruptFromStockId(lastStockId))
+
+                    model.updateFavouriteCompanyStockId(lastStockId)
+                    if (model.getIsBankruptFromStockId(lastStockId)) {
+                        mortgageStocksEditText.setText("0")
+                    } else {
+                        setupMortgageDetails(lastStockId)
+                    }
                 }
 
                 override fun onNothingSelected(parent: AdapterView<*>) {
@@ -202,10 +212,7 @@ class MortgageFragment : Fragment() {
     override fun onResume() {
         super.onResume()
 
-        if (model.favoriteCompanyName != null) {
-            mortgage_companies_spinner.setSelection(model.getIndexForFavoriteCompany())
-            lastStockId = model.getStockIdFromCompanyName(model.favoriteCompanyName)
-        }
+        mortgage_companies_spinner.setSelection(model.getIndexForFavoriteCompany())
 
         val intentFilter = IntentFilter(Constants.REFRESH_STOCK_PRICES_FOR_ALL)
         intentFilter.addAction(Constants.REFRESH_STOCKS_FOR_MORTGAGE)
@@ -215,5 +222,16 @@ class MortgageFragment : Fragment() {
     override fun onPause() {
         super.onPause()
         LocalBroadcastManager.getInstance(context!!).unregisterReceiver(refreshStockPricesReceiver)
+    }
+
+    fun changeMortgageOptions(openOptions: Boolean) {
+        stocksOwnedTextView.isEnabled = openOptions
+        stocksMortgagedTextView.isEnabled = openOptions
+        currentPriceTextView.isEnabled = openOptions
+        depositRateTextView.isEnabled = openOptions
+        textInputLayout.isEnabled = openOptions
+        stockIncrementFiveButton.isEnabled = openOptions
+        stockIncrementOneButton.isEnabled = openOptions
+        mortgageButton.isEnabled = openOptions
     }
 }

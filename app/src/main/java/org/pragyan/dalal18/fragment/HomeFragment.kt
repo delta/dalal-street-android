@@ -189,7 +189,7 @@ class HomeFragment : Fragment(), NewsRecyclerAdapter.NewsItemClickListener, Swip
         companyTickerDetailsList.clear()
 
         for ((_, stock) in model.globalStockDetails) {
-            companyTickerDetailsList.add(CompanyTickerDetails(stock.fullName, stock.imagePath, stock.price, stock.up == 1))
+            companyTickerDetailsList.add(CompanyTickerDetails(stock.stockId, stock.fullName, stock.imagePath, stock.price, stock.up == 1, stock.isBankrupt, stock.givesDividend))
         }
 
         if (companyTickerDetailsList.size != 0) {
@@ -237,7 +237,7 @@ class HomeFragment : Fragment(), NewsRecyclerAdapter.NewsItemClickListener, Swip
 
     override fun onCompanyTickerClick(view: View, position: Int) {
         val bundle = Bundle()
-        bundle.putString(CompanyDescriptionFragment.COMPANY_NAME_KEY, companyTickerDetailsList[position].fullName)
+        bundle.putInt(CompanyDescriptionFragment.COMPANY_STOCK_ID_KEY, companyTickerDetailsList[position].stockId)
         findNavController().navigate(R.id.action_company_ticker_to_details, bundle)
     }
 

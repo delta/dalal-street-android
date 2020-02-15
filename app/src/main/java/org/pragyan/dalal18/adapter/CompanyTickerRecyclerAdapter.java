@@ -1,10 +1,6 @@
 package org.pragyan.dalal18.adapter;
 
 import android.content.Context;
-
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,10 +8,14 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.squareup.picasso.Picasso;
+
 import org.pragyan.dalal18.R;
 import org.pragyan.dalal18.data.CompanyTickerDetails;
 import org.pragyan.dalal18.utils.Constants;
-import com.squareup.picasso.Picasso;
 
 import java.text.DecimalFormat;
 import java.util.List;
@@ -25,10 +25,6 @@ public class CompanyTickerRecyclerAdapter extends RecyclerView.Adapter<CompanyTi
     private Context context;
     private List<CompanyTickerDetails> companyTickerDetailsList;
     private OnCompanyTickerClickListener listener;
-
-    public interface OnCompanyTickerClickListener {
-        void onCompanyTickerClick(View view, int position);
-    }
 
     public CompanyTickerRecyclerAdapter(Context context, List<CompanyTickerDetails> companyTickerDetailsList, OnCompanyTickerClickListener listener) {
         this.context = context;
@@ -49,31 +45,42 @@ public class CompanyTickerRecyclerAdapter extends RecyclerView.Adapter<CompanyTi
 
         CompanyTickerDetails currentCompanyTickerDetails = companyTickerDetailsList.get(position);
 
-        holder.companyNameTextView.setText(currentCompanyTickerDetails.getFullName());
+        String temp = currentCompanyTickerDetails.getFullName();
+        if (currentCompanyTickerDetails.getGivesDividend()) {
+            temp += context.getString(R.string.dividendSuffix);
+        } else if (currentCompanyTickerDetails.isBankrupt()) {
+            temp += context.getString(R.string.bankruptSuffix);
+        }
+
+        holder.companyNameTextView.setText(temp);
         new Handler().postDelayed(() -> holder.companyNameTextView.setSelected(true), 1000);
 
-        holder.arrowImageView.setImageResource(currentCompanyTickerDetails.isUp()? R.drawable.arrow_up_green : R.drawable.arrow_down_red);
+        holder.arrowImageView.setImageResource(currentCompanyTickerDetails.isUp() ? R.drawable.arrow_up_green : R.drawable.arrow_down_red);
 
 
-        String worthString = Constants.RUPEE_SYMBOL + String.valueOf(new DecimalFormat(Constants.PRICE_FORMAT).format(currentCompanyTickerDetails.getPreviousDayClose()));
+        String worthString = Constants.RUPEE_SYMBOL + new DecimalFormat(Constants.PRICE_FORMAT).format(currentCompanyTickerDetails.getPreviousDayClose());
         holder.previousDayCloseTextView.setText(worthString);
 
         if (currentCompanyTickerDetails.getImageUrl() != null) {
             Picasso.get().load(currentCompanyTickerDetails.getImageUrl()).placeholder(R.drawable.loading_placeholder)
-                    .error(R.raw.connection_error).into(holder.companyImageView);
+                    .error(R.drawable.connection_error).into(holder.companyImageView);
         } else {
-            Picasso.get().load(R.raw.connection_error).into(holder.companyImageView);
+            Picasso.get().load(R.drawable.connection_error).into(holder.companyImageView);
         }
     }
 
     @Override
     public int getItemCount() {
-        return (companyTickerDetailsList == null || companyTickerDetailsList.size() == 0)? 0 : companyTickerDetailsList.size();
+        return (companyTickerDetailsList == null || companyTickerDetailsList.size() == 0) ? 0 : companyTickerDetailsList.size();
     }
 
     public void swapData(List<CompanyTickerDetails> companyTickerDetailsList) {
         this.companyTickerDetailsList = companyTickerDetailsList;
         notifyDataSetChanged();
+    }
+
+    public interface OnCompanyTickerClickListener {
+        void onCompanyTickerClick(View view, int position);
     }
 
     class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {

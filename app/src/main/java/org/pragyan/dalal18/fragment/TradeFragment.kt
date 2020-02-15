@@ -46,15 +46,19 @@ class TradeFragment : Fragment() {
     private var decimalFormat = DecimalFormat(Constants.PRICE_FORMAT)
 
     private var loadingDialog: AlertDialog? = null
+
     lateinit var networkDownHandler: ConnectionUtils.OnNetworkDownHandler
+
+    private var lastStockId = 1
+
     private val refreshOwnedStockDetails = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             if (intent.action != null && (intent.action == Constants.REFRESH_OWNED_STOCKS_FOR_ALL || intent.action == Constants.REFRESH_STOCK_PRICES_FOR_ALL)) {
-                val stocksOwned = model.getQuantityOwnedFromCompanyName(companySpinner.selectedItem.toString())
-                var tempString = " :" + decimalFormat.format(stocksOwned).toString()
+
+                var tempString = " :" + decimalFormat.format(model.getQuantityOwnedFromStockId(lastStockId)).toString()
                 stocksOwnedTextView.text = tempString
 
-                tempString = " : " + Constants.RUPEE_SYMBOL + " " + decimalFormat.format(model.getPriceFromCompanyName(companySpinner.selectedItem.toString())).toString()
+                tempString = " : " + Constants.RUPEE_SYMBOL + " " + decimalFormat.format(model.getPriceFromStockId(lastStockId)).toString()
                 currentStockPrice_textView.text = tempString
 
                 setOrderPriceWindow()
@@ -85,7 +89,6 @@ class TradeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         (activity as AppCompatActivity).supportActionBar?.title = resources.getString(R.string.trade)
-        val companiesAdapter = ArrayAdapter(context!!, R.layout.order_spinner_item, model.getCompanyNamesArray())
         val orderSelectAdapter = ArrayAdapter(context!!, R.layout.order_spinner_item, resources.getStringArray(R.array.orderType))
 
         with(order_select_spinner) {
@@ -111,7 +114,8 @@ class TradeFragment : Fragment() {
         }
 
         with(companySpinner) {
-            adapter = companiesAdapter
+            val companiesArray = model.getSpinnerArray()
+            adapter = ArrayAdapter(context!!, R.layout.order_spinner_item, model.getSpinnerArray())
 
             onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
 
@@ -119,18 +123,31 @@ class TradeFragment : Fragment() {
                 }
 
                 override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                    val selectedCompany = companySpinner.selectedItem.toString()
-                    model.updateFavouriteCompanyName(selectedCompany)
 
-                    val stocksOwned = model.getQuantityOwnedFromCompanyName(selectedCompany)
-                    var tempString = " : $stocksOwned"
-                    stocksOwnedTextView.text = tempString
+                    lastStockId = model.getStockIdFromSpinnerCompanyName(
+                            companiesArray[position],
+                            getString(R.string.bankruptSuffix),
+                            getString(R.string.dividendSuffix)
+                    )
 
-                    tempString = " : " + Constants.RUPEE_SYMBOL + " " + decimalFormat.format(model.getPriceFromCompanyName(companySpinner.selectedItem.toString())).toString()
-                    currentStockPrice_textView.text = tempString
+                    changeTradeOptions(!model.getIsBankruptFromStockId(lastStockId))
 
-                    calculateOrderFee()
-                    setOrderPriceWindow()
+                    model.updateFavouriteCompanyStockId(lastStockId)
+
+                    if (model.getIsBankruptFromStockId(lastStockId)) {
+                        noOfStocksEditText.setText("0")
+                        orderPriceEditText.setText("0")
+                    } else {
+                        val stocksOwned = model.getQuantityOwnedFromStockId(lastStockId)
+                        var tempString = " : $stocksOwned"
+                        stocksOwnedTextView.text = tempString
+
+                        tempString = " : " + Constants.RUPEE_SYMBOL + " " + decimalFormat.format(model.getPriceFromStockId(lastStockId)).toString()
+                        currentStockPrice_textView.text = tempString
+
+                        calculateOrderFee()
+                        setOrderPriceWindow()
+                    }
                 }
             }
         }
@@ -189,7 +206,7 @@ class TradeFragment : Fragment() {
     private fun calculateOrderFee() {
 
         val price = if (order_price_input.visibility == View.GONE) {
-            model.getPriceFromCompanyName(companySpinner.selectedItem.toString())
+            model.getPriceFromStockId(lastStockId)
         } else {
             if (orderPriceEditText.text.toString().trim { it <= ' ' }.isNotEmpty()) {
                 (orderPriceEditText.text.toString()).toLong()
@@ -211,7 +228,7 @@ class TradeFragment : Fragment() {
     }
 
     private fun setOrderPriceWindow() {
-        val currentPrice = model.getPriceFromCompanyName(companySpinner.selectedItem.toString())
+        val currentPrice = model.getPriceFromStockId(lastStockId)
         val lowerLimit = currentPrice.toDouble() * (1 - Constants.ORDER_PRICE_WINDOW.toDouble() / 100)
         val higherLimit = currentPrice.toDouble() * (1 + Constants.ORDER_PRICE_WINDOW.toDouble() / 100)
         val tempOrderPriceText = "Price must be between " + Constants.RUPEE_SYMBOL + DecimalFormat(Constants.PRICE_FORMAT).format(lowerLimit.toLong()) + " - " +
@@ -275,10 +292,7 @@ class TradeFragment : Fragment() {
     override fun onResume() {
         super.onResume()
 
-        // to manually select the element after trade fragment is opened by pressing back key from market depth frag.
-        if (model.favoriteCompanyName != null) {
-            companySpinner.setSelection(model.getIndexForFavoriteCompany())
-        }
+        companySpinner.setSelection(model.getIndexForFavoriteCompany())
 
         val intentFilter = IntentFilter(Constants.REFRESH_OWNED_STOCKS_FOR_ALL)
         intentFilter.addAction(Constants.REFRESH_STOCK_PRICES_FOR_ALL)
@@ -288,5 +302,19 @@ class TradeFragment : Fragment() {
     override fun onPause() {
         super.onPause()
         LocalBroadcastManager.getInstance(context!!).unregisterReceiver(refreshOwnedStockDetails)
+    }
+
+    fun changeTradeOptions(openOptions: Boolean) {
+        if (order_select_spinner.isEnabled) order_select_spinner.isEnabled = openOptions
+        if (radioGroupStock.isEnabled) radioGroupStock.isEnabled = openOptions
+        if (stocksOwnedTextView.isEnabled) stocksOwnedTextView.isEnabled = openOptions
+        if (order_fee_textview.isEnabled) order_fee_textview.isEnabled = openOptions
+        if (no_of_stocks_input.isEnabled) no_of_stocks_input.isEnabled = openOptions
+        if (btnMarketDepth.isEnabled) btnMarketDepth.isEnabled = openOptions
+        if (order_price_input.isEnabled) order_price_input.isEnabled = openOptions
+        if (orderPriceWindowTextView.isEnabled) orderPriceWindowTextView.isEnabled = openOptions
+        if (bidRadioButton.isEnabled) bidRadioButton.isEnabled = openOptions
+        if (askRadioButton.isEnabled) askRadioButton.isEnabled = openOptions
+        if (bidAskButton.isEnabled) bidAskButton.isEnabled = openOptions
     }
 }
