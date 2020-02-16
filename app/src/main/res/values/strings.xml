@@ -453,6 +453,7 @@
     <string name="stock">Stock</string>
     <string name="details">Details</string>
     <string name="admin_panel">Admin Panel</string>
+    <string name="updating_your_orders">Updating your orders…</string>
     <string-array name="intervalType">
         <item>1 min</item>
         <item>5 mins</item>

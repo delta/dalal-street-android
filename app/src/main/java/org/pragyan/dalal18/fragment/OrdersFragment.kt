@@ -10,6 +10,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -24,6 +25,9 @@ import dalalstreet.api.actions.GetMyOpenOrdersResponse
 import dalalstreet.api.datastreams.*
 import io.grpc.stub.StreamObserver
 import kotlinx.android.synthetic.main.fragment_my_orders.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.longToast
 import org.jetbrains.anko.toast
@@ -96,7 +100,7 @@ class OrdersFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, OrderIt
         }
 
         val dialogView = LayoutInflater.from(context).inflate(R.layout.progress_dialog, null)
-        (dialogView.findViewById<View>(R.id.progressDialog_textView) as TextView).setText(R.string.getting_your_orders)
+        (dialogView.findViewById<View>(R.id.progressDialog_textView) as TextView).setText(R.string.updating_your_orders)
         loadingOrdersDialog = AlertDialog.Builder(context!!).setView(dialogView).setCancelable(false).create()
 
         getOpenOrdersAsynchronously()
@@ -217,31 +221,33 @@ class OrdersFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, OrderIt
         }
     }
 
-    private fun cancelOrder(orderId: Int, bid: Boolean) {
-        doAsync {
-            if (ConnectionUtils.getConnectionInfo(context)) {
-                if (ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
+    private fun cancelOrder(orderId: Int, bid: Boolean) = lifecycleScope.launch {
+        loadingOrdersDialog.show()
 
-                    val response = actionServiceBlockingStub.cancelOrder(
+        if (withContext(Dispatchers.IO) { ConnectionUtils.getConnectionInfo(context) }) {
+            if (withContext(Dispatchers.IO) { ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT) }) {
+
+                val response = withContext(Dispatchers.IO) {
+                    actionServiceBlockingStub.cancelOrder(
                             CancelOrderRequest.newBuilder().setOrderId(orderId).setIsAsk(!bid).build())
-
-                    uiThread {
-                        if (response.statusCode == CancelOrderResponse.StatusCode.OK) {
-                            context?.toast("Order cancelled")
-                            val empty = ordersRecyclerAdapter?.cancelOrder(orderId)
-                            flipVisibilities(empty)
-                        } else {
-                            context?.toast(response.statusMessage)
-                        }
-                    }
-
-                } else {
-                    uiThread { networkDownHandler?.onNetworkDownError(resources.getString(R.string.error_server_down), R.id.open_orders_dest) }
                 }
+
+                if (response.statusCode == CancelOrderResponse.StatusCode.OK) {
+                    context?.toast("Order cancelled")
+                    val empty = ordersRecyclerAdapter?.cancelOrder(orderId)
+                    flipVisibilities(empty)
+                } else {
+                    context?.toast(response.statusMessage)
+                }
+
             } else {
-                uiThread { networkDownHandler?.onNetworkDownError(resources.getString(R.string.error_check_internet), R.id.open_orders_dest) }
+                networkDownHandler?.onNetworkDownError(resources.getString(R.string.error_server_down), R.id.open_orders_dest)
             }
+        } else {
+            networkDownHandler?.onNetworkDownError(resources.getString(R.string.error_check_internet), R.id.open_orders_dest)
         }
+
+        loadingOrdersDialog.dismiss()
     }
 
     private fun flipVisibilities(empty: Boolean?) {
