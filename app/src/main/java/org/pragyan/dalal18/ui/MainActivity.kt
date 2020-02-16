@@ -48,13 +48,10 @@ import org.pragyan.dalal18.dagger.ContextModule
 import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent
 import org.pragyan.dalal18.data.DalalViewModel
 import org.pragyan.dalal18.data.GameStateDetails
-<<<<<<< HEAD
 import org.pragyan.dalal18.data.GlobalStockDetails
-=======
 import org.pragyan.dalal18.fragment.mortgage.MortgageFragment
 import org.pragyan.dalal18.notifications.NotificationService
 import org.pragyan.dalal18.notifications.PushNotificationService
->>>>>>> Add files for Notifications
 import org.pragyan.dalal18.utils.*
 import org.pragyan.dalal18.utils.Constants.*
 import org.pragyan.dalal18.utils.CountDrawable.buildCounterDrawable
