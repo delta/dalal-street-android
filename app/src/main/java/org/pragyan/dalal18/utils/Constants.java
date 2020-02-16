@@ -4,7 +4,7 @@ public class Constants {
 
     // TODO (Release): Change server IP and Port
 
-    public static final String HOST = "delta.nitt.edu";
+    public static final String HOST = "192.168.43.191";
     public static final int PORT = 8000;
 
     // TODO (Release): Change company image base URL and how is built
@@ -15,7 +15,6 @@ public class Constants {
     public static final String REFRESH_STOCK_PRICES_FOR_ALL = "refresh-stock-prices-action";
     public static final String REFRESH_STOCKS_EXCHANGE_FOR_COMPANY = "refresh-stock-exchange-action";
     public static final String REFRESH_OWNED_STOCKS_FOR_ALL = "refresh-owned-stocks-action";
-    public static final String REFRESH_RESERVED_ASSETS_FOR_PORTFOLIO = "refresh-reserved-stocks-action";
     public static final String REFRESH_MARKET_DEPTH_FOR_TABLE = "refresh_market_depth";
     public static final String STOP_NOTIFICATION_ACTION = "stop-notification-action";
     public static final String REFRESH_STOCKS_FOR_MORTGAGE = "refresh-mortgage-update-action";

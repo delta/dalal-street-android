@@ -40,9 +40,9 @@ public class PortfolioRecyclerAdapter extends RecyclerView.Adapter<PortfolioRecy
         Portfolio currentPortfolioItem = portfolioList.get(position);
 
         holder.companyShortNameTextView.setText(currentPortfolioItem.getShortName());
-        holder.reservedStocksTextView.setText(String.valueOf(decimalFormat.format(currentPortfolioItem.getReservedStocks())));
-        holder.quantityTextView.setText(String.valueOf(decimalFormat.format(currentPortfolioItem.getQuantityOwned())));
-        holder.worthTextView.setText(String.valueOf(decimalFormat.format(currentPortfolioItem.getWorth())));
+        holder.reservedStocksTextView.setText(decimalFormat.format(currentPortfolioItem.getReservedStocks()));
+        holder.quantityTextView.setText(decimalFormat.format(currentPortfolioItem.getQuantityOwned()));
+        holder.worthTextView.setText(decimalFormat.format(currentPortfolioItem.getWorth()));
     }
 
     @Override

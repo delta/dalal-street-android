@@ -8,6 +8,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+
 import org.pragyan.dalal18.R;
 import org.pragyan.dalal18.data.MortgageDetails;
 import org.pragyan.dalal18.utils.Constants;
@@ -15,14 +18,12 @@ import org.pragyan.dalal18.utils.Constants;
 import java.text.DecimalFormat;
 import java.util.List;
 
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
-
 public class RetrieveRecyclerAdapter extends RecyclerView.Adapter<RetrieveRecyclerAdapter.RetrieveViewHolder> {
 
     private Context context;
     private List<MortgageDetails> mortgageDetailsList;
     private OnRetrieveButtonClickListener listener;
+
     public interface OnRetrieveButtonClickListener {
         void onRetrieveButtonClick(int position, String retrieveQuantity, String stocksQuantity);
     }
@@ -44,7 +45,7 @@ public class RetrieveRecyclerAdapter extends RecyclerView.Adapter<RetrieveRecycl
 
         MortgageDetails currentDetails = mortgageDetailsList.get(position);
         holder.companyNameTextView.setText(currentDetails.getCompanyName());
-        holder.mortgagePriceTextView.setText(String.valueOf(new DecimalFormat(Constants.PRICE_FORMAT).format(currentDetails.getMortgagePrice())));
+        holder.mortgagePriceTextView.setText(new DecimalFormat(Constants.PRICE_FORMAT).format(currentDetails.getMortgagePrice()));
         holder.stockQuantityTextView.setText(String.valueOf(currentDetails.getStockQuantity()));
         holder.retrieveQuantityEditText.setText("");
     }
@@ -52,21 +53,6 @@ public class RetrieveRecyclerAdapter extends RecyclerView.Adapter<RetrieveRecycl
     public void swapData(List<MortgageDetails> newList) {
         mortgageDetailsList = newList;
         notifyDataSetChanged();
-    }
-
-    public void changeSingleItem(List<MortgageDetails> newList, int position) {
-        mortgageDetailsList = newList;
-        notifyItemChanged(position);
-    }
-
-    public void addSingleItem(List<MortgageDetails> newList, int position) {
-        mortgageDetailsList = newList;
-        notifyItemInserted(position);
-    }
-
-    public void removeSingleItem(List<MortgageDetails> newList, int position) {
-        mortgageDetailsList = newList;
-        notifyItemRemoved(position);
     }
 
     @Override
@@ -94,7 +80,7 @@ public class RetrieveRecyclerAdapter extends RecyclerView.Adapter<RetrieveRecycl
 
         @Override
         public void onClick(View view) {
-            listener.onRetrieveButtonClick(getAdapterPosition(), retrieveQuantityEditText.getText().toString() , stockQuantityTextView.getText().toString());
+            listener.onRetrieveButtonClick(getAdapterPosition(), retrieveQuantityEditText.getText().toString(), stockQuantityTextView.getText().toString());
         }
     }
 }

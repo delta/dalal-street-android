@@ -51,8 +51,7 @@ class PortfolioFragment : Fragment() {
 
     private val refreshPortfolioDetails = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
-            if (intent.action != null && (intent.action == Constants.REFRESH_STOCK_PRICES_FOR_ALL
-                            || intent.action == Constants.REFRESH_OWNED_STOCKS_FOR_ALL || intent.action == Constants.REFRESH_RESERVED_ASSETS_FOR_PORTFOLIO)) {
+            if (intent.action != null && (intent.action == Constants.REFRESH_STOCK_PRICES_FOR_ALL || intent.action == Constants.REFRESH_OWNED_STOCKS_FOR_ALL)) {
                 updatePortfolioTable()
             }
         }
@@ -111,7 +110,7 @@ class PortfolioFragment : Fragment() {
             yEntrySpace = 2f
             yOffset = -65f
             xOffset = 18f
-            textColor = androidx.core.content.ContextCompat.getColor(context!!, R.color.gold_medal)
+            textColor = ContextCompat.getColor(context!!, R.color.gold_medal)
             typeface = kreonLightTypeFace
         }
 
@@ -190,7 +189,6 @@ class PortfolioFragment : Fragment() {
 
         val intentFilter = IntentFilter(Constants.REFRESH_OWNED_STOCKS_FOR_ALL)
         intentFilter.addAction(Constants.REFRESH_STOCK_PRICES_FOR_ALL)
-        intentFilter.addAction(Constants.REFRESH_RESERVED_ASSETS_FOR_PORTFOLIO)
         LocalBroadcastManager.getInstance(context!!).registerReceiver(refreshPortfolioDetails, intentFilter)
     }
 

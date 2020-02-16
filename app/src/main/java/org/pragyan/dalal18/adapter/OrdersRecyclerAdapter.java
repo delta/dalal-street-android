@@ -60,7 +60,7 @@ public class OrdersRecyclerAdapter extends RecyclerView.Adapter<OrdersRecyclerAd
         tempString = order.getCompanyName();
         holder.companyNameTextView.setText(tempString);
 
-        tempString = String.valueOf(order.getStockQuantityFulfilled()) + " / " + String.valueOf(order.getStockQuantity());
+        tempString = order.getStockQuantityFulfilled() + " / " + order.getStockQuantity();
         holder.quantityTextView.setText(tempString);
 
         if (order.getOrderType() == OrderType.MARKET) {
@@ -68,7 +68,7 @@ public class OrdersRecyclerAdapter extends RecyclerView.Adapter<OrdersRecyclerAd
         } else {
             holder.priceTextView.setVisibility(View.VISIBLE);
             tempString = (order.getStockQuantityFulfilled() == 0 ? "Placed " : order.getStockQuantity() == order.getStockQuantityFulfilled() ? "Filled" : "Partially Filled") + " at " +
-                    Constants.RUPEE_SYMBOL + " " + String.valueOf(new DecimalFormat(Constants.PRICE_FORMAT).format(order.getPrice()) + "/stock");
+                    Constants.RUPEE_SYMBOL + " " + new DecimalFormat(Constants.PRICE_FORMAT).format(order.getPrice()) + "/stock";
             holder.priceTextView.setText(tempString);
         }
 

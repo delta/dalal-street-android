@@ -7,6 +7,7 @@ class DalalViewModel : ViewModel() {
     lateinit var ownedStockDetails: HashMap<Int, Long>
     lateinit var globalStockDetails: HashMap<Int, GlobalStockDetails>
     lateinit var reservedStockDetails: HashMap<Int, Long>
+    lateinit var mortgageStockDetails: HashMap<Pair<Int, Long>, Long>
 
     var favoriteCompanyName: String? = null
 
@@ -25,11 +26,16 @@ class DalalViewModel : ViewModel() {
     /* If quantity is positive it means user is getting back stocks as he cancelled an order so here reservedStocks will decrease
        when quantity is negative it means stocks reserved because he place new order so here reservedStocks will increase */
     fun updateReservedStocks(stockId: Int, quantity: Long) {
-        reservedStockDetails[stockId] = reservedStockDetails[stockId]?.minus(quantity) ?: -quantity
+        reservedStockDetails[stockId] = reservedStockDetails[stockId]?.plus(quantity) ?: quantity
     }
 
     fun updateStocksOwned(stockId: Int, quantity: Long) {
         ownedStockDetails[stockId] = ownedStockDetails[stockId]?.plus(quantity) ?: quantity
+    }
+
+    fun updateMortgagedStocks(stockId: Int, quantity: Long, price: Long) {
+        val stockIdPricePair = Pair(stockId, price)
+        mortgageStockDetails[stockIdPricePair] = mortgageStockDetails[stockIdPricePair]?.plus(quantity) ?: quantity
     }
 
     fun getReservedStocksFromStockId(stockId: Int): Long {
@@ -112,6 +118,15 @@ class DalalViewModel : ViewModel() {
 
     fun getPriceFromStockId(stockId: Int): Long {
         return globalStockDetails[stockId]?.price ?: 0
+    }
+
+    fun getMortgagedStocksFromStockId(stockId: Int): Long {
+
+        var stocks = 0L
+        for((pair, quantity) in mortgageStockDetails) {
+            if(pair.first == stockId) stocks += quantity
+        }
+        return stocks
     }
 
     /**

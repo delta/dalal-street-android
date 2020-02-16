@@ -50,9 +50,9 @@ public class NewsRecyclerAdapter extends RecyclerView.Adapter<NewsRecyclerAdapte
         holder.createdAtTextView.setText(parseDate(currentNewsDetails.getCreatedAt()));
         holder.contentTextView.setText(currentNewsDetails.getContent());
 
-        ViewCompat.setTransitionName(holder.headlinesTextView, "head" + String.valueOf(position));
-        ViewCompat.setTransitionName(holder.contentTextView, "content" + String.valueOf(position));
-        ViewCompat.setTransitionName(holder.createdAtTextView, "created" + String.valueOf(position));
+        ViewCompat.setTransitionName(holder.headlinesTextView, "head" + position);
+        ViewCompat.setTransitionName(holder.contentTextView, "content" + position);
+        ViewCompat.setTransitionName(holder.createdAtTextView, "created" + position);
     }
 
     @Override

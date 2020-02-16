@@ -13,10 +13,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import dalalstreet.api.DalalActionServiceGrpc
-import dalalstreet.api.actions.GetMortgageDetailsRequest
-import dalalstreet.api.actions.GetMortgageDetailsResponse
 import dalalstreet.api.actions.RetrieveMortgageStocksRequest
 import dalalstreet.api.actions.RetrieveMortgageStocksResponse
 import kotlinx.android.synthetic.main.fragment_retrieve.*
@@ -34,7 +31,7 @@ import org.pragyan.dalal18.utils.Constants
 import org.pragyan.dalal18.utils.hideKeyboard
 import javax.inject.Inject
 
-class RetrieveFragment : Fragment(), RetrieveRecyclerAdapter.OnRetrieveButtonClickListener, SwipeRefreshLayout.OnRefreshListener {
+class RetrieveFragment : Fragment(), RetrieveRecyclerAdapter.OnRetrieveButtonClickListener {
 
     @Inject
     lateinit var actionServiceBlockingStub: DalalActionServiceGrpc.DalalActionServiceBlockingStub
@@ -49,50 +46,7 @@ class RetrieveFragment : Fragment(), RetrieveRecyclerAdapter.OnRetrieveButtonCli
     private val refreshMortgageListReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             if (intent.action != null && intent.action.equals(Constants.REFRESH_STOCKS_FOR_MORTGAGE, ignoreCase = true)) {
-
-                val quantity = intent.getLongExtra(MortgageFragment.STOCKS_QUANTITY_KEY, 0)
-                val stockId = intent.getIntExtra(MortgageFragment.STOCKS_ID_KEY, 0)
-                val price = intent.getLongExtra(MortgageFragment.STOCKS_PRICE_KEY, 0)
-
-                if (quantity < 0) /* Mortgage Action */ {
-
-                    mortgageDetailsList.forEachIndexed { index, mortgageDetails ->
-                        if (mortgageDetails.stockId == stockId && mortgageDetails.mortgagePrice == price) {
-                            mortgageDetails.stockQuantity -= quantity
-                            retrieveAdapter.changeSingleItem(mortgageDetailsList, index)
-                            return
-                        }
-                    }
-
-                    mortgageDetailsList.add(MortgageDetails(stockId, model.getCompanyNameFromStockId(stockId), -quantity, price))
-                    retrieveAdapter.addSingleItem(mortgageDetailsList, mortgageDetailsList.size - 1)
-                    if (mortgageDetailsList.size > 0) flipVisibilities(false)
-
-                } else /* Retrieve Action */ {
-                    var modifyIndex = -1
-                    var modifyMortgageDetails: MortgageDetails? = null
-
-                    mortgageDetailsList.forEachIndexed { index, mortgageDetails ->
-                        if (mortgageDetails.stockId == stockId && mortgageDetails.mortgagePrice == price) {
-                            if (mortgageDetails.stockQuantity == quantity) {
-                                modifyMortgageDetails = mortgageDetails
-                                modifyIndex = index
-                                return@forEachIndexed
-                            } else {
-                                mortgageDetails.stockQuantity -= quantity
-                                retrieveAdapter.changeSingleItem(mortgageDetailsList, index)
-                                return@forEachIndexed
-                            }
-                        }
-                    }
-
-                    if (modifyIndex != -1) {
-                        mortgageDetailsList.remove(modifyMortgageDetails)
-                        retrieveAdapter.removeSingleItem(mortgageDetailsList, modifyIndex)
-                    }
-                }
-
-                if (mortgageDetailsList.size == 0) flipVisibilities(true)
+                updateMortgageDetailsListFromViewModel()
             }
         }
     }
@@ -127,50 +81,27 @@ class RetrieveFragment : Fragment(), RetrieveRecyclerAdapter.OnRetrieveButtonCli
         retrieveRecyclerView.adapter = retrieveAdapter
         retrieveRecyclerView.setHasFixedSize(false)
 
-        retrieveSwipeRefreshLayout.setOnRefreshListener(this)
         val tempString = "(Retrieve Rate: ${Constants.MORTGAGE_RETRIEVE_RATE}%)"
         retrieveRateTextView.text = tempString
 
-        getMortgageDetailsAsynchronously()
+        updateMortgageDetailsListFromViewModel()
     }
 
-    private fun getMortgageDetailsAsynchronously() {
-        retrieveSwipeRefreshLayout.isRefreshing = true
-        messageStocksMortgagedTextview.visibility = View.VISIBLE
+    private fun updateMortgageDetailsListFromViewModel() {
+        messageStocksMortgagedTextView.visibility = View.VISIBLE
         retrieveRecyclerViewParentLayout.visibility = View.GONE
-        messageStocksMortgagedTextview.text = getString(R.string.swipe_to_refresh)
-        doAsync {
-            if (ConnectionUtils.getConnectionInfo(context)) {
-                if (ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
-                    val response = actionServiceBlockingStub.getMortgageDetails(GetMortgageDetailsRequest.newBuilder().build())
+        messageStocksMortgagedTextView.text = getString(R.string.swipe_to_refresh)
 
-                    uiThread {
+        mortgageDetailsList.clear()
+        for ((pair, quantity) in model.mortgageStockDetails) {
+            mortgageDetailsList.add(MortgageDetails(pair.first, model.getCompanyNameFromStockId(pair.first), quantity, pair.second))
+        }
 
-                        if (response.statusCode == GetMortgageDetailsResponse.StatusCode.OK) {
-
-                            mortgageDetailsList.clear()
-                            for (currentDetails in response.mortgageDetailsList) {
-                                mortgageDetailsList.add(MortgageDetails(currentDetails.stockId, model.getCompanyNameFromStockId(currentDetails.stockId),
-                                        currentDetails.stocksInBank, currentDetails.mortgagePrice))
-                            }
-
-                            if (mortgageDetailsList.size == 0) {
-                                flipVisibilities(true)
-                            } else {
-                                retrieveAdapter.swapData(mortgageDetailsList)
-                                flipVisibilities(false)
-                            }
-                        } else {
-                            context?.toast(response.statusMessage)
-                        }
-                    }
-                } else {
-                    uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_server_down), R.id.main_mortgage_dest) }
-                }
-            } else {
-                uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_check_internet), R.id.main_mortgage_dest) }
-            }
-            uiThread { retrieveSwipeRefreshLayout.isRefreshing = false }
+        if (mortgageDetailsList.size == 0) {
+            flipVisibilities(true)
+        } else {
+            retrieveAdapter.swapData(mortgageDetailsList)
+            flipVisibilities(false)
         }
     }
 
@@ -206,8 +137,8 @@ class RetrieveFragment : Fragment(), RetrieveRecyclerAdapter.OnRetrieveButtonCli
     }
 
     private fun flipVisibilities(noStocksMortgaged: Boolean) {
-        messageStocksMortgagedTextview.text = getString(R.string.no_stocks_mortgaged)
-        messageStocksMortgagedTextview.visibility = if (noStocksMortgaged) View.VISIBLE else View.GONE
+        messageStocksMortgagedTextView.text = getString(R.string.no_stocks_mortgaged)
+        messageStocksMortgagedTextView.visibility = if (noStocksMortgaged) View.VISIBLE else View.GONE
         retrieveRecyclerViewParentLayout.visibility = if (noStocksMortgaged) View.GONE else View.VISIBLE
     }
 
@@ -221,9 +152,4 @@ class RetrieveFragment : Fragment(), RetrieveRecyclerAdapter.OnRetrieveButtonCli
         super.onPause()
         LocalBroadcastManager.getInstance(context!!).unregisterReceiver(refreshMortgageListReceiver)
     }
-
-    override fun onRefresh() {
-        getMortgageDetailsAsynchronously()
-    }
-
 }

@@ -8,6 +8,7 @@ import android.net.Network
 import android.net.NetworkRequest
 import android.os.Bundle
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -27,6 +28,7 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import dalalstreet.api.DalalActionServiceGrpc
 import dalalstreet.api.DalalStreamServiceGrpc
+import dalalstreet.api.actions.GetMortgageDetailsRequest
 import dalalstreet.api.actions.LogoutRequest
 import dalalstreet.api.actions.LogoutResponse
 import dalalstreet.api.datastreams.*
@@ -44,7 +46,6 @@ import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent
 import org.pragyan.dalal18.data.DalalViewModel
 import org.pragyan.dalal18.data.GameStateDetails
 import org.pragyan.dalal18.data.GlobalStockDetails
-import org.pragyan.dalal18.fragment.mortgage.MortgageFragment
 import org.pragyan.dalal18.utils.*
 import org.pragyan.dalal18.utils.Constants.*
 import org.pragyan.dalal18.utils.CountDrawable.buildCounterDrawable
@@ -52,7 +53,6 @@ import java.text.DecimalFormat
 import java.util.*
 import javax.inject.Inject
 import kotlin.collections.HashMap
-import kotlin.math.abs
 
 /* Subscribes to Transactions, Exchange, StockPrices and MarketEvents stream*/
 class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
@@ -96,26 +96,11 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
         override fun onReceive(context: Context, intent: Intent) {
             when (intent.action) {
                 REFRESH_ALL_WORTH_ACTION -> {
-                    // Passing future value of cash worth TextView beforehand as old cash
+
                     cashWorth += intent.getLongExtra(TRANSACTION_TOTAL_KEY, 0)
                     updateStockWorthViaStreamUpdates()
                     changeTextViewValue(cashWorthTextView, cashIndicatorImageView, cashWorth)
                 }
-
-                REFRESH_CASH_AND_TOTAL_ONLY_ACTION -> {
-                    totalWorth += intent.getLongExtra(TRANSACTION_TOTAL_KEY, 0)
-                    changeTextViewValue(totalWorthTextView, totalIndicatorImageView, totalWorth)
-                    cashWorth += intent.getLongExtra(TRANSACTION_TOTAL_KEY, 0)
-                    changeTextViewValue(cashWorthTextView, cashIndicatorImageView, cashWorth)
-                }
-
-                REFRESH_CASH_ONLY_ACTION -> {
-                    cashWorth += intent.getLongExtra(TRANSACTION_TOTAL_KEY, 0)
-                    changeTextViewValue(cashWorthTextView, cashIndicatorImageView, cashWorth)
-                }
-
-                REFRESH_STOCK_AND_TOTAL_ONLY_ACTION ->
-                    updateStockWorthViaStreamUpdates()
 
                 REFRESH_UNREAD_NOTIFICATIONS_COUNT -> {
                     if (findNavController(R.id.main_host_fragment).currentDestination?.id == R.id.notifications_dest)
@@ -166,6 +151,7 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
         model.ownedStockDetails = intent.getSerializableExtra(STOCKS_OWNED_KEY) as HashMap<Int, Long>
         model.globalStockDetails = intent.getSerializableExtra(GLOBAL_STOCKS_KEY) as HashMap<Int, GlobalStockDetails>
         model.reservedStockDetails = intent.getSerializableExtra(RESERVED_STOCKS_KEY) as HashMap<Int, Long>
+        model.mortgageStockDetails = hashMapOf()
         model.reservedCash = intent.getLongExtra(RESERVED_CASH_KEY, 0)
 
         setupWorthTextViews()
@@ -173,6 +159,8 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
         startMakingButtonsTransparent()
 
         createNetworkCallbackObject()
+
+        getMortgageDetailsAsynchronously()
 
         if (!intent.getBooleanExtra(MARKET_OPEN_KEY, false))
             displayMarketStatusAlert(false)
@@ -318,109 +306,21 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
 
                         val transaction = value.transaction
 
-                        when (transaction.type) {
-                            TransactionType.DIVIDEND_TRANSACTION -> {
-                                val intent = Intent(REFRESH_CASH_AND_TOTAL_ONLY_ACTION)
-                                intent.putExtra(TRANSACTION_TOTAL_KEY, transaction.total)
-                                LocalBroadcastManager.getInstance(this@MainActivity).sendBroadcast(intent)
-                            }
+                        model.updateStocksOwned(transaction.stockId, transaction.stockQuantity)
+                        model.updateReservedStocks(transaction.stockId, transaction.reservedStockQuantity)
+                        model.reservedCash += transaction.reservedCashTotal
 
-                            TransactionType.ORDER_FILL_TRANSACTION -> { // transaction.total = -(stockTradePrice * stockTradeQty) + reservedCash
-                                if (transaction.stockQuantity > 0) {  // Bid order transaction which means cash was reserved and user gains stocks
-                                    model.updateStocksOwned(transaction.stockId, transaction.stockQuantity)
-
-                                    // It will refresh all 3 worth TextViews
-                                    val intent = Intent(REFRESH_ALL_WORTH_ACTION)
-                                    intent.putExtra(TRANSACTION_TOTAL_KEY, transaction.total)
-                                    LocalBroadcastManager.getInstance(this@MainActivity).sendBroadcast(intent)
-                                    LocalBroadcastManager.getInstance(this@MainActivity).sendBroadcast(Intent(REFRESH_OWNED_STOCKS_FOR_ALL))
-
-                                } else { // Ask order transaction which means stocks were reserved and OrderFill made user gain cash
-                                    val intent = Intent(REFRESH_CASH_AND_TOTAL_ONLY_ACTION)
-                                    intent.putExtra(TRANSACTION_TOTAL_KEY, transaction.total)
-                                    LocalBroadcastManager.getInstance(this@MainActivity).sendBroadcast(intent)
-                                }
-                                LocalBroadcastManager.getInstance(this@MainActivity).sendBroadcast(Intent(REFRESH_RESERVED_ASSETS_FOR_PORTFOLIO))
-                            }
-
-                            TransactionType.FROM_EXCHANGE_TRANSACTION -> {
-
-                                model.updateStocksOwned(transaction.stockId, transaction.stockQuantity)
-
-                                val intent = Intent(REFRESH_ALL_WORTH_ACTION)
-                                intent.putExtra(TRANSACTION_TOTAL_KEY, transaction.total)
-                                LocalBroadcastManager.getInstance(this@MainActivity).sendBroadcast(intent)
-                            }
-
-                            TransactionType.MORTGAGE_TRANSACTION -> /* Meant for MORTGAGE TRANSACTION type; While retrieving stockQuantity is positive */ {
-
-                                model.updateStocksOwned(transaction.stockId, transaction.stockQuantity)
-
-                                var intent = Intent(REFRESH_ALL_WORTH_ACTION)
-                                intent.putExtra(TRANSACTION_TOTAL_KEY, transaction.total)
-                                LocalBroadcastManager.getInstance(this@MainActivity).sendBroadcast(intent)
-
-                                intent = Intent(REFRESH_STOCKS_FOR_MORTGAGE)
-                                intent.putExtra(MortgageFragment.STOCKS_ID_KEY, transaction.stockId)
-                                intent.putExtra(MortgageFragment.STOCKS_PRICE_KEY, transaction.price)
-                                intent.putExtra(MortgageFragment.STOCKS_QUANTITY_KEY, transaction.stockQuantity)
-                                LocalBroadcastManager.getInstance(this@MainActivity).sendBroadcast(intent)
-                            }
-
-                            TransactionType.TAX_TRANSACTION -> {
-                                val intent = Intent(REFRESH_CASH_AND_TOTAL_ONLY_ACTION)
-                                intent.putExtra(TRANSACTION_TOTAL_KEY, transaction.total)
-                                LocalBroadcastManager.getInstance(this@MainActivity).sendBroadcast(intent)
-                            }
-
-                            TransactionType.ORDER_FEE_TRANSACTION -> {
-                                val intent = Intent(REFRESH_CASH_AND_TOTAL_ONLY_ACTION)
-                                intent.putExtra(TRANSACTION_TOTAL_KEY, transaction.total)
-                                LocalBroadcastManager.getInstance(this@MainActivity).sendBroadcast(intent)
-                            }
-
-                            TransactionType.PLACE_ORDER_TRANSACTION -> {
-                                if (transaction.total != 0L) { // Cash reserved; here transaction.total will be negative as reserveCash is taken from actual cash
-                                    model.reservedCash += abs(transaction.reservedCashTotal)
-                                    val intent = Intent(REFRESH_CASH_ONLY_ACTION) // Since now TotalWorth = CashWorth + StockWorth
-                                    intent.putExtra(TRANSACTION_TOTAL_KEY, transaction.total)
-                                    LocalBroadcastManager.getInstance(this@MainActivity).sendBroadcast(intent)
-                                } else {
-                                    model.updateReservedStocks(transaction.stockId, transaction.stockQuantity) // stockQuantity will be negative
-                                    model.updateStocksOwned(transaction.stockId, transaction.stockQuantity)
-                                    LocalBroadcastManager.getInstance(this@MainActivity).sendBroadcast(Intent(REFRESH_OWNED_STOCKS_FOR_ALL))
-                                    LocalBroadcastManager.getInstance(this@MainActivity).sendBroadcast(Intent(REFRESH_STOCK_AND_TOTAL_ONLY_ACTION))
-                                }
-                                LocalBroadcastManager.getInstance(this@MainActivity).sendBroadcast(Intent(REFRESH_RESERVED_ASSETS_FOR_PORTFOLIO))
-                            }
-
-                            TransactionType.CANCEL_ORDER_TRANSACTION -> {
-                                if (transaction.total != 0L) { // Here transaction.total will be positive
-                                    model.reservedCash += abs(transaction.reservedCashTotal)
-                                    val intent = Intent(REFRESH_CASH_ONLY_ACTION) //  Since now TotalWorth = CashWorth + StockWorth
-                                    intent.putExtra(TRANSACTION_TOTAL_KEY, transaction.total)
-                                    LocalBroadcastManager.getInstance(this@MainActivity).sendBroadcast(intent)
-                                } else {
-                                    model.updateReservedStocks(transaction.stockId, transaction.stockQuantity) // stockQuantity will be positive
-                                    model.updateStocksOwned(transaction.stockId, transaction.stockQuantity)
-                                    LocalBroadcastManager.getInstance(this@MainActivity).sendBroadcast(Intent(REFRESH_STOCK_AND_TOTAL_ONLY_ACTION))
-                                }
-                                LocalBroadcastManager.getInstance(this@MainActivity).sendBroadcast(Intent(REFRESH_RESERVED_ASSETS_FOR_PORTFOLIO))
-                            }
-
-                            TransactionType.RESERVE_UPDATE_TRANSACTION -> {
-                                if (transaction.stockQuantity > 0) {
-                                    model.updateReservedStocks(transaction.stockId, transaction.stockQuantity)
-                                } else {
-                                    model.reservedCash -= transaction.total
-                                }
-                                LocalBroadcastManager.getInstance(this@MainActivity).sendBroadcast(Intent(REFRESH_RESERVED_ASSETS_FOR_PORTFOLIO))
-                            }
-
-                            else -> {
-                                // Do nothing
-                            }
+                        if (transaction.type == TransactionType.MORTGAGE_TRANSACTION) {
+                            // Incoming stock quantity will be negative when user mortgages
+                            model.updateMortgagedStocks(transaction.stockId, -transaction.stockQuantity, transaction.price)
                         }
+
+                        val intent = Intent(REFRESH_ALL_WORTH_ACTION)
+                        intent.putExtra(TRANSACTION_TOTAL_KEY, transaction.total)
+                        LocalBroadcastManager.getInstance(this@MainActivity).sendBroadcast(intent)
+
+                        LocalBroadcastManager.getInstance(this@MainActivity).sendBroadcast(Intent(REFRESH_OWNED_STOCKS_FOR_ALL))
+                        LocalBroadcastManager.getInstance(this@MainActivity).sendBroadcast(Intent(REFRESH_STOCKS_FOR_MORTGAGE))
                     }
 
                     override fun onError(t: Throwable) {
@@ -458,11 +358,11 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
         streamServiceStub.getStockPricesUpdates(stockPricesSubscriptionId,
                 object : StreamObserver<StockPricesUpdate> {
                     override fun onNext(value: StockPricesUpdate) {
-                        for((stockId, price) in value.pricesMap) {
+                        for ((stockId, price) in value.pricesMap) {
                             model.updateGlobalStockPrice(stockId, price)
                             LocalBroadcastManager.getInstance(this@MainActivity).sendBroadcast(Intent(REFRESH_PRICE_TICKER_FOR_HOME))
                             LocalBroadcastManager.getInstance(this@MainActivity).sendBroadcast(Intent(REFRESH_STOCK_PRICES_FOR_ALL))
-                            LocalBroadcastManager.getInstance(this@MainActivity).sendBroadcast(Intent(REFRESH_STOCK_AND_TOTAL_ONLY_ACTION))
+                            LocalBroadcastManager.getInstance(this@MainActivity).sendBroadcast(Intent(REFRESH_ALL_WORTH_ACTION))
                         }
                     }
 
@@ -485,7 +385,7 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
                         for ((stockId, currentDataPoint) in value.stocksInExchangeMap) {
                             model.updateGlobalStock(stockId, currentDataPoint.price, currentDataPoint.stocksInMarket, currentDataPoint.stocksInExchange)
                             LocalBroadcastManager.getInstance(this@MainActivity).sendBroadcast(Intent(REFRESH_STOCKS_EXCHANGE_FOR_COMPANY))
-                            LocalBroadcastManager.getInstance(this@MainActivity).sendBroadcast(Intent(REFRESH_STOCK_AND_TOTAL_ONLY_ACTION))
+                            LocalBroadcastManager.getInstance(this@MainActivity).sendBroadcast(Intent(REFRESH_ALL_WORTH_ACTION))
                         }
                     }
 
@@ -629,6 +529,27 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
         }
     }
 
+    private fun getMortgageDetailsAsynchronously() = lifecycleScope.launch {
+
+        val dialogView = LayoutInflater.from(this@MainActivity).inflate(R.layout.progress_dialog, null)
+        val tempString = "Getting stock details..."
+        (dialogView.findViewById<View>(R.id.progressDialog_textView) as TextView).text = tempString
+        val loadingDialog = AlertDialog.Builder(this@MainActivity).setView(dialogView).setCancelable(false).create()
+        loadingDialog.show()
+
+        withContext(Dispatchers.IO) {
+            if (ConnectionUtils.getConnectionInfo(this@MainActivity) && ConnectionUtils.isReachableByTcp(HOST, PORT)) {
+                val response = actionServiceBlockingStub.getMortgageDetails(GetMortgageDetailsRequest.newBuilder().build())
+
+                for (currentMortgageStock in response.mortgageDetailsList) {
+                    model.updateMortgagedStocks(currentMortgageStock.stockId, currentMortgageStock.stocksInBank, currentMortgageStock.mortgagePrice)
+                }
+            }
+        }
+
+        loadingDialog.dismiss()
+    }
+
     private fun displayMarketStatusAlert(isMarketOpen: Boolean) {
         AlertDialog.Builder(this, R.style.AlertDialogTheme)
                 .setTitle(if (isMarketOpen) "Market Open" else "Market Closed")
@@ -698,10 +619,7 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
         lostOnce = false
         subscribeToStreamsAsynchronously()
 
-        val intentFilter = IntentFilter(REFRESH_CASH_AND_TOTAL_ONLY_ACTION)
-        intentFilter.addAction(REFRESH_ALL_WORTH_ACTION)
-        intentFilter.addAction(REFRESH_STOCK_AND_TOTAL_ONLY_ACTION)
-        intentFilter.addAction(REFRESH_CASH_ONLY_ACTION)
+        val intentFilter = IntentFilter(REFRESH_ALL_WORTH_ACTION)
         intentFilter.addAction(REFRESH_UNREAD_NOTIFICATIONS_COUNT)
         intentFilter.addAction(GAME_STATE_UPDATE_ACTION)
 
@@ -839,9 +757,6 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
         const val RESERVED_STOCKS_KEY = "reserved-stocks-key"
 
         private const val REFRESH_ALL_WORTH_ACTION = "refresh-cash-worth-text-view"
-        private const val REFRESH_CASH_ONLY_ACTION = "refresh-hard-cash-action-text-view"
-        private const val REFRESH_CASH_AND_TOTAL_ONLY_ACTION = "refresh-cash-and-total-worth-text-view"
-        private const val REFRESH_STOCK_AND_TOTAL_ONLY_ACTION = "refresh-worth-via-stream-action"
         private const val REFRESH_UNREAD_NOTIFICATIONS_COUNT = "refresh-unread-notifications-count"
 
         private const val GAME_STATE_UPDATE_ACTION = "game-state-update-action"
