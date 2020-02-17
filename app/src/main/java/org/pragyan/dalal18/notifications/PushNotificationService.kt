@@ -24,6 +24,7 @@ import org.pragyan.dalal18.R
 
 
 class PushNotificationService : Service() {
+    val TAG = "PushNotificationService"
     lateinit var subscriptionId: SubscriptionId
     lateinit var marketSubscriptionId: SubscriptionId
 
@@ -46,44 +47,37 @@ class PushNotificationService : Service() {
     }
 
     override fun onTaskRemoved(rootIntent: Intent?) {
-//        Log.d("TAGDAAW", "Task Removed")
         Intent().also { intent ->
             intent.setAction("android.intent.action.NotifServiceBroadcast")
             sendImplicitBroadcast(applicationContext, intent)
         }
-//        Log.d("TAGDAAW", "Intent Sent")
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-//        Log.d("TAGDAAW", "Big F1")
-//        Toast.makeText(this, "service starting", Toast.LENGTH_SHORT).show()
         createNetworkCallbackObject()
         subscribeToStreamsAsynchronously()
-        debu()
+//        Uncomment next line to test if service is running
+//        debugService()
         return START_STICKY
     }
 
 
     private fun subscribeToStreamsAsynchronously() = doAsync {
-//        Log.d("TAGDAAW", "Big F2")
-                if(ConnectionUtils.getConnectionInfo(this@PushNotificationService))
-//        Log.d("TAGDAAW", "Big F3")
-                if(!ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT))
-                    Log.d("TAGDAAW", "Not Reachable")
+        if (ConnectionUtils.getConnectionInfo(this@PushNotificationService))
+            if (!ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT))
+                Log.d(TAG, "Not Reachable")
 
-            doAsync {
-                val notificationsResponse = streamServiceBlockingStub.subscribe(SubscribeRequest.newBuilder().setDataStreamType(DataStreamType.NOTIFICATIONS).setDataStreamId("").build())
-                subscriptionId = notificationsResponse.subscriptionId
-//                Log.d("WAKANDA", notificationsResponse.subscriptionId.toString())
-                subscribeToNotificationsStream(notificationsResponse.subscriptionId)
+        doAsync {
+            val notificationsResponse = streamServiceBlockingStub.subscribe(SubscribeRequest.newBuilder().setDataStreamType(DataStreamType.NOTIFICATIONS).setDataStreamId("").build())
+            subscriptionId = notificationsResponse.subscriptionId
+            subscribeToNotificationsStream(notificationsResponse.subscriptionId)
 
-                val marketEventResponse = streamServiceBlockingStub.subscribe(SubscribeRequest.newBuilder().setDataStreamType(DataStreamType.MARKET_EVENTS).setDataStreamId("").build())
-                marketSubscriptionId = marketEventResponse.subscriptionId
+            val marketEventResponse = streamServiceBlockingStub.subscribe(SubscribeRequest.newBuilder().setDataStreamType(DataStreamType.MARKET_EVENTS).setDataStreamId("").build())
+            marketSubscriptionId = marketEventResponse.subscriptionId
 
-                subscribeToMarketsStream(marketEventResponse.subscriptionId)
+            subscribeToMarketsStream(marketEventResponse.subscriptionId)
 
-//                Log.d("TAGDAAW", "Big F4")
-            }
+        }
 
     }
 
@@ -92,11 +86,8 @@ class PushNotificationService : Service() {
         streamServiceStub.getMarketEventUpdates(subscriptionId,
                 object : StreamObserver<MarketEventUpdate> {
                     override fun onNext(value: MarketEventUpdate) {
-//                        Log.d("TAGDAAW", "hello")
                         val event = value.marketEvent
-
-//                        Log.d("TAGDAAW", notification.text)
-                        var builder = NotificationCompat.Builder(applicationContext, "dalal_notification_channel")
+                        val builder = NotificationCompat.Builder(applicationContext, getString(R.string.notification_channel_id))
                                 .setSmallIcon(R.drawable.market_depth_icon)
                                 // todo change icon if needed
                                 .setAutoCancel(true)
@@ -118,30 +109,30 @@ class PushNotificationService : Service() {
     private fun unsubscribeFromNotificationStream() {
         doAsync {
             if (ConnectionUtils.getConnectionInfo(this@PushNotificationService) && ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
-                    val unsubscribeResponse = streamServiceBlockingStub.unsubscribe(UnsubscribeRequest.newBuilder().setSubscriptionId(subscriptionId).build())
+                val unsubscribeResponse = streamServiceBlockingStub.unsubscribe(UnsubscribeRequest.newBuilder().setSubscriptionId(subscriptionId).build())
 
             }
         }
     }
-    private fun debu(){
+
+    private fun debugService() {
         doAsync {
-            for(i in 1..100){
+            for (i in 1..100) {
                 Thread.sleep(1000)
-//                Log.d("Alive", "Service is Alive" + i.toString())
+                Log.d("Alive", "Service is Alive" + i.toString())
             }
 
         }
     }
+
     private fun subscribeToNotificationsStream(notificationsSubscriptionId: SubscriptionId) {
 
         streamServiceStub.getNotificationUpdates(notificationsSubscriptionId,
                 object : StreamObserver<NotificationUpdate> {
                     override fun onNext(value: NotificationUpdate) {
-//                        Log.d("TAGDAAW", "hello")
                         val notification = value.notification
 
-//                        Log.d("TAGDAAW", notification.text)
-                        var builder = NotificationCompat.Builder(applicationContext, "dalal_notification_channel")
+                        val builder = NotificationCompat.Builder(applicationContext, getString(R.string.notification_channel_id))
                                 .setSmallIcon(R.drawable.market_depth_icon)
                                 .setAutoCancel(true)
                                 .setContentText(notification.text)
@@ -171,7 +162,7 @@ class PushNotificationService : Service() {
 
                         }
                     } else {
-//                        Log.d("TAGDAAW", "Error in createNetworkCallbackObject")
+                        Log.d(TAG, "Error in createNetworkCallbackObject")
                     }
                 }
             }

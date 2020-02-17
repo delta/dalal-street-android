@@ -760,7 +760,7 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
     private fun createChannel(){
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
             var nm = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-            var mChannel = NotificationChannel("dalal_notification_channel","dalal_notification_channel",NotificationManager.IMPORTANCE_DEFAULT)
+            var mChannel = NotificationChannel(getString(R.string.notification_channel_id),getString(R.string.notification_channel_id),NotificationManager.IMPORTANCE_DEFAULT)
             mChannel.enableLights(true)
             mChannel.description = "gi"
             mChannel.setShowBadge(true)
