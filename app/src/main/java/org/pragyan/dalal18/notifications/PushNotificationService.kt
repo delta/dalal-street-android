@@ -39,7 +39,6 @@ class PushNotificationService : Service() {
     @Inject
     lateinit var connectivityManager: ConnectivityManager
 
-    private lateinit var networkCallback: ConnectivityManager.NetworkCallback
 
     override fun onCreate() {
         DaggerDalalStreetApplicationComponent.builder().contextModule(ContextModule(this)).build().inject(this)
@@ -54,7 +53,6 @@ class PushNotificationService : Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        createNetworkCallbackObject()
         subscribeToStreamsAsynchronously()
 //        Uncomment next line to test if service is running
 //        debugService()
@@ -151,23 +149,6 @@ class PushNotificationService : Service() {
                 })
     }
 
-    private fun createNetworkCallbackObject() {
-        networkCallback = object : ConnectivityManager.NetworkCallback() {
-
-            override fun onAvailable(network: Network) {
-                super.onAvailable(network)
-                doAsync {
-                    if (ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
-                        uiThread {
-
-                        }
-                    } else {
-                        Log.d(TAG, "Error in createNetworkCallbackObject")
-                    }
-                }
-            }
-        }
-    }
 
     private fun sendImplicitBroadcast(ctxt: Context, i: Intent) {
         val pm = ctxt.packageManager
