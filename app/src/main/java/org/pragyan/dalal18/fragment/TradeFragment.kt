@@ -4,6 +4,7 @@ import android.content.*
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -85,7 +86,7 @@ class TradeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         (activity as AppCompatActivity).supportActionBar?.title = resources.getString(R.string.trade)
-        val companiesAdapter = ArrayAdapter(context!!, R.layout.order_spinner_item, model.getCompanyNamesArray())
+        val companiesAdapter = ArrayAdapter(context!!, R.layout.order_spinner_item, model.getSpinnerArray())
         val orderSelectAdapter = ArrayAdapter(context!!, R.layout.order_spinner_item, resources.getStringArray(R.array.orderType))
 
         with(order_select_spinner) {
@@ -120,26 +121,37 @@ class TradeFragment : Fragment() {
 
                 override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                     var selectedCompany = companySpinner.selectedItem.toString()
-                    //first checking the suffix and then removing it
-                    //NEED TO CHECK IF IT WORKS FINE
-                    if(selectedCompany.endsWith(getString(R.string.dividendSuffix))){
-                        selectedCompany=selectedCompany.removeSuffix(getString(R.string.dividendSuffix))
-                    }
-                    else if (selectedCompany.endsWith(getString(R.string.bankruptSuffix))){
-                        selectedCompany=selectedCompany.removeSuffix(getString(R.string.dividendSuffix))
-                    }
 
+                    //first checking the suffix and then removing it
+
+                    if (selectedCompany.endsWith(getString(R.string.dividendSuffix))) {
+                        selectedCompany = selectedCompany.removeSuffix(getString(R.string.dividendSuffix))
+                       // model.updateFavouriteCompanyName(selectedCompany)
+                        openAllTradingOptions()
+                    } else if (selectedCompany.endsWith(getString(R.string.bankruptSuffix))) {
+                        selectedCompany = selectedCompany.removeSuffix(getString(R.string.bankruptSuffix))
+                        //for making all treading disable for the given company with bankruptcy
+                        //model.updateFavouriteCompanyName(selectedCompany)
+                        closeAllTradeOptions()
+                    }else{
+                        openAllTradingOptions()
+                    }
                     model.updateFavouriteCompanyName(selectedCompany)
 
-                    val stocksOwned = model.getQuantityOwnedFromCompanyName(selectedCompany)
-                    var tempString = " : $stocksOwned"
-                    stocksOwnedTextView.text = tempString
+                    if(!model.getBankruptcyStatusByCompanyName(selectedCompany)) {
+                        val stocksOwned = model.getQuantityOwnedFromCompanyName(selectedCompany)
+                        var tempString = " : $stocksOwned"
+                        stocksOwnedTextView.text = tempString
 
-                    tempString = " : " + Constants.RUPEE_SYMBOL + " " + decimalFormat.format(model.getPriceFromCompanyName(companySpinner.selectedItem.toString())).toString()
-                    currentStockPrice_textView.text = tempString
+                        tempString = " : " + Constants.RUPEE_SYMBOL + " " + decimalFormat.format(model.getPriceFromCompanyName(companySpinner.selectedItem.toString())).toString()
+                        currentStockPrice_textView.text = tempString
 
-                    calculateOrderFee()
-                    setOrderPriceWindow()
+                        calculateOrderFee()
+                        setOrderPriceWindow()
+                    }else{
+                        noOfStocksEditText.setText("0")
+                        orderPriceEditText.setText("0")
+                    }
                 }
             }
         }
@@ -298,4 +310,44 @@ class TradeFragment : Fragment() {
         super.onPause()
         LocalBroadcastManager.getInstance(context!!).unregisterReceiver(refreshOwnedStockDetails)
     }
+
+    fun closeAllTradeOptions() {
+        if (order_select_spinner.isEnabled) order_select_spinner.isEnabled = false
+        if (radioGroupStock.isEnabled) radioGroupStock.isEnabled = false
+        if (stocksOwnedTextView.isEnabled) stocksOwnedTextView.isEnabled = false
+        if (order_fee_textview.isEnabled) order_fee_textview.isEnabled = false
+        if (no_of_stocks_input.isEnabled) no_of_stocks_input.isEnabled = false
+        if (btnMarketDepth.isEnabled) btnMarketDepth.isEnabled = false
+        if (order_price_input.isEnabled) order_price_input.isEnabled = false
+        if (orderPriceWindowTextView.isEnabled) orderPriceWindowTextView.isEnabled = false
+        if (bidRadioButton.isEnabled) bidRadioButton.isEnabled = false
+        if (askRadioButton.isEnabled) askRadioButton.isEnabled = false
+        bidAskButton.text = context?.resources!!.getString(R.string.bankruptText)
+        if (bidAskButton.isEnabled) bidAskButton.isEnabled = false
+        //Toast.makeText(context,"THIS IS BANKRUPT COMPANY !!!",Toast.LENGTH_LONG).show()
+        Log.d("CLOSINGTHEVIEWS", "CLOSING")
+    }
+
+    fun openAllTradingOptions() {
+        if (!order_select_spinner.isEnabled) order_select_spinner.isEnabled = true
+        if (!radioGroupStock.isEnabled) radioGroupStock.isEnabled = true
+        if (!stocksOwnedTextView.isEnabled) stocksOwnedTextView.isEnabled = true
+        if (!order_fee_textview.isEnabled) order_fee_textview.isEnabled = true
+        if (!no_of_stocks_input.isEnabled) no_of_stocks_input.isEnabled = true
+        if (!btnMarketDepth.isEnabled) btnMarketDepth.isEnabled = true
+        if (!order_price_input.isEnabled) order_price_input.isEnabled = true
+        if (!orderPriceWindowTextView.isEnabled) orderPriceWindowTextView.isEnabled = true
+        if (!bidRadioButton.isEnabled) bidRadioButton.isEnabled = true
+        if (!askRadioButton.isEnabled) askRadioButton.isEnabled = true
+        bidAskButton.text = context?.resources?.getString(R.string.bid)
+        if (!bidAskButton.isEnabled) bidAskButton.isEnabled = true
+        Log.d("OPENINGTHEVIEWS", "OPEN")
+    }
+
+    fun isAllTradingOptionsClose(): Boolean {
+
+        return (!order_select_spinner.isEnabled && !radioGroupStock.isEnabled && !stocksOwnedText.isEnabled && !order_fee_textview.isEnabled && !no_of_stocks_input.isEnabled && !btnMarketDepth.isEnabled && !order_price_input.isEnabled && !orderPriceWindowTextView.isEnabled && !bidAskButton.isEnabled)
+    }
+
+
 }

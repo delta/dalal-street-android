@@ -87,7 +87,7 @@ class StockExchangeFragment : Fragment() {
                 .setCancelable(false)
                 .create()
 
-        companiesArray = model.getCompanyNamesArray()
+        companiesArray = model.getSpinnerArray()
         val arrayAdapter = ArrayAdapter<String>(activity!!, R.layout.company_spinner_item, companiesArray)
         with(companySpinner) {
             adapter = arrayAdapter
@@ -97,9 +97,22 @@ class StockExchangeFragment : Fragment() {
                 }
 
                 override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                    val stockId = model.getStockIdFromCompanyName(companiesArray[position])
-                    lastSelectedStockId = stockId
-                    model.updateFavouriteCompanyName(companiesArray[position])
+                    var selectStockName = companySpinner.selectedItem.toString()
+                    val stockId = model.getStockIdFromCompanyName(selectStockName)
+                    if (selectStockName.endsWith(resources.getString(R.string.bankruptSuffix))) {
+                        selectStockName = selectStockName.removeSuffix(resources.getString(R.string.bankruptSuffix))
+                        lastSelectedStockId = model.getStockIdFromCompanyName(selectStockName)
+                        closeStockExchangeOptions()
+                    } else if (selectStockName.endsWith(resources.getString(R.string.dividendSuffix))) {
+                        selectStockName = selectStockName.removeSuffix(resources.getString(R.string.dividendSuffix))
+                        lastSelectedStockId = model.getStockIdFromCompanyName(selectStockName)
+                        openStockExchangeoptions()
+                    } else {
+                        lastSelectedStockId = model.getStockIdFromCompanyName(selectStockName)
+                        openStockExchangeoptions()
+                    }
+                    //lastSelectedStockId = stockId
+                    model.updateFavouriteCompanyName(selectStockName)
                     getCompanyProfileAsynchronously(lastSelectedStockId)
                 }
             }
@@ -111,7 +124,7 @@ class StockExchangeFragment : Fragment() {
     }
 
     private fun addToStockExchangeInput(increment: Int) {
-        if(noOfStocksEditText.text.isEmpty()){
+        if (noOfStocksEditText.text.isEmpty()) {
             noOfStocksEditText.setText("0")
         }
         var noOfStocks = noOfStocksEditText.text.toString().toInt()
@@ -213,5 +226,21 @@ class StockExchangeFragment : Fragment() {
     override fun onPause() {
         super.onPause()
         LocalBroadcastManager.getInstance(context!!).unregisterReceiver(refreshStockPricesReceiver)
+    }
+
+    fun closeStockExchangeOptions() {
+        if (stocks_exchange_input.isEnabled) stocks_exchange_input.isEnabled = false
+        if (stockIncrementOneButton.isEnabled) stockIncrementOneButton.isEnabled = false
+        if (stockIncrementFiveButton.isEnabled) stockIncrementFiveButton.isEnabled = false
+        buyExchangeButton.setText(resources.getString(R.string.bankruptText))
+        if (buyExchangeButton.isEnabled) buyExchangeButton.isEnabled = false
+    }
+
+    fun openStockExchangeoptions() {
+        if (!stocks_exchange_input.isEnabled) stocks_exchange_input.isEnabled = true
+        if (!stockIncrementOneButton.isEnabled) stockIncrementOneButton.isEnabled = true
+        if (!stockIncrementFiveButton.isEnabled) stockIncrementFiveButton.isEnabled = true
+        buyExchangeButton.setText(resources.getString(R.string.buy_stocks))
+        if (!buyExchangeButton.isEnabled) buyExchangeButton.isEnabled = true
     }
 }

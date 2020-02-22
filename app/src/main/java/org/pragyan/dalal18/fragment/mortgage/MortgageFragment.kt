@@ -47,6 +47,7 @@ class MortgageFragment : Fragment() {
     lateinit var actionServiceBlockingStub: DalalActionServiceGrpc.DalalActionServiceBlockingStub
 
     private var lastStockId = 1
+    private lateinit var selectedStockName: String
     private val decimalFormat = DecimalFormat(Constants.PRICE_FORMAT)
     private lateinit var model: DalalViewModel
 
@@ -137,25 +138,44 @@ class MortgageFragment : Fragment() {
         getMortgageDetailsAsynchronously()
 
         with(mortgage_companies_spinner) {
-            val companiesArray = model.getCompanyNamesArray()
+            val companiesArray = model.getSpinnerArray()
             adapter = ArrayAdapter(context!!, R.layout.company_spinner_item, companiesArray)
 
             onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
                 override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
 
                     lastStockId = model.getStockIdFromCompanyName(companiesArray[position])
-                    val ownedString = " :  " + decimalFormat.format(model.getQuantityOwnedFromStockId(lastStockId)).toString()
-                    stocksOwnedTextView.text = ownedString
+                    selectedStockName = mortgage_companies_spinner.selectedItem.toString()
+                    if (selectedStockName.endsWith(resources.getString(R.string.dividendSuffix))) {
+                        selectedStockName = selectedStockName.removeSuffix(resources.getString(R.string.dividendSuffix))
+                        //make all the views in fragment visible
+                        openAllMortgageOptions()
 
-                    if (mortgageDetailsList.size > 0) {
-                        val mortgageString = " :  " + decimalFormat.format(getStocksMortgagedFromStockId(lastStockId))
-                        stocksMortgagedTextView.text = mortgageString
+                    } else if (selectedStockName.endsWith(resources.getString(R.string.bankruptSuffix))) {
+                        selectedStockName = selectedStockName.removeSuffix(resources.getString(R.string.bankruptSuffix))
+                        //make all the view disable in fragment
+                        closeAllMortgageOptions()
+                    } else {
+                        openAllMortgageOptions()
                     }
 
-                    val currentPriceText = " :  " + Constants.RUPEE_SYMBOL + decimalFormat.format(model.getPriceFromStockId(lastStockId)).toString()
-                    currentPriceTextView.text = currentPriceText
+                    model.updateFavouriteCompanyName(selectedStockName)
+                    if (!model.getBankruptcyStatusByCompanyName(selectedStockName)) {
+                        val ownedString = " :  " + decimalFormat.format(model.getQuantityOwnedFromStockId(lastStockId)).toString()
+                        stocksOwnedTextView.text = ownedString
 
-                    model.updateFavouriteCompanyName(companiesArray[position])
+                        if (mortgageDetailsList.size > 0) {
+                            val mortgageString = " :  " + decimalFormat.format(getStocksMortgagedFromStockId(lastStockId))
+                            stocksMortgagedTextView.text = mortgageString
+                        }
+
+                        val currentPriceText = " :  " + Constants.RUPEE_SYMBOL + decimalFormat.format(model.getPriceFromStockId(lastStockId)).toString()
+                        currentPriceTextView.text = currentPriceText
+
+                    }else{
+                        mortgageStocksEditText.setText("0")
+                    }
+
                 }
 
                 override fun onNothingSelected(parent: AdapterView<*>) {
@@ -173,7 +193,7 @@ class MortgageFragment : Fragment() {
     }
 
     private fun addToMortgageInput(increment: Int) {
-        if(mortgageStocksEditText.text.isBlank()){
+        if (mortgageStocksEditText.text.isBlank()) {
             mortgageStocksEditText.setText("0")
         }
         var noOfStocks = mortgageStocksEditText.text.toString().toInt()
@@ -303,7 +323,7 @@ class MortgageFragment : Fragment() {
     override fun onResume() {
         super.onResume()
 
-        if(model.favoriteCompanyName!=null) {
+        if (model.favoriteCompanyName != null) {
             mortgage_companies_spinner.setSelection(model.getIndexForFavoriteCompany())
         }
 
@@ -321,5 +341,30 @@ class MortgageFragment : Fragment() {
         const val STOCKS_ID_KEY = "stocks-id-key"
         const val STOCKS_QUANTITY_KEY = "stocks-quantity-key"
         const val STOCKS_PRICE_KEY = "stocks-price-key"
+    }
+
+    fun closeAllMortgageOptions() {
+        if (stocksOwnedTextView.isEnabled) stocksOwnedTextView.isEnabled = false
+        if (stocksMortgagedTextView.isEnabled) stocksMortgagedTextView.isEnabled = false
+        if (currentPriceTextView.isEnabled) currentPriceTextView.isEnabled = false
+        if (depositRateTextView.isEnabled) depositRateTextView.isEnabled = false
+        if (textInputLayout.isEnabled) textInputLayout.isEnabled = false
+        if (stockIncrementFiveButton.isEnabled) stockIncrementFiveButton.isEnabled = false
+        if (stockIncrementOneButton.isEnabled) stockIncrementOneButton.isEnabled = false
+        if (mortgageButton.isEnabled) mortgageButton.isEnabled = false
+        mortgageButton.text = context?.resources?.getString(R.string.bankruptText)
+    }
+
+    fun openAllMortgageOptions() {
+
+        if (!stocksOwnedTextView.isEnabled) stocksOwnedTextView.isEnabled = true
+        if (!stocksMortgagedTextView.isEnabled) stocksMortgagedTextView.isEnabled = true
+        if (!currentPriceTextView.isEnabled) currentPriceTextView.isEnabled = true
+        if (!depositRateTextView.isEnabled) depositRateTextView.isEnabled = true
+        if (!textInputLayout.isEnabled) textInputLayout.isEnabled = true
+        if (!stockIncrementFiveButton.isEnabled) stockIncrementFiveButton.isEnabled = true
+        if (!stockIncrementOneButton.isEnabled) stockIncrementOneButton.isEnabled = true
+        if (!mortgageButton.isEnabled) mortgageButton.isEnabled = true
+        mortgageButton.text = context?.resources?.getString(R.string.mortgage)
     }
 }

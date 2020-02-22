@@ -26,21 +26,19 @@ class CompanyDescriptionFragment : Fragment() {
                 ?: throw Exception("Invalid activity")
 
         Picasso.get().load(model.getImageUrlFromCompanyName(arguments?.getString(COMPANY_NAME_KEY))).into(companyImageView)
-        if (arguments!!.getBoolean(COMPANY_ISBANKRUPT)) {
+        if (arguments!!.getBoolean(COMPANY_ISBANKRUPT) ) {
             companyNameTextView.text = arguments?.getString(COMPANY_NAME_KEY) + resources.getString(R.string.bankruptSuffix)
-        }
-        else if (arguments!!.getBoolean(COMPANY_GIVESDIVIDEND)){
-            companyNameTextView.text=arguments?.getString(COMPANY_NAME_KEY)+ resources.getString(R.string.dividendSuffix)
-        }
-        else{
-            companyNameTextView.text=arguments?.getString(COMPANY_NAME_KEY)
+        } else if (arguments!!.getBoolean(COMPANY_GIVESDIVIDEND)) {
+            companyNameTextView.text = arguments?.getString(COMPANY_NAME_KEY) + resources.getString(R.string.dividendSuffix)
+        } else {
+            companyNameTextView.text = arguments?.getString(COMPANY_NAME_KEY)
         }
         companyDescriptionTextView.text = model.getDescriptionFromCompanyName(arguments?.getString(COMPANY_NAME_KEY))
     }
 
     companion object {
         const val COMPANY_NAME_KEY = "company-name-key"
-        const val COMPANY_ISBANKRUPT="company-is-bankrupt"
-        const val COMPANY_GIVESDIVIDEND="copany-gives-dividend"
+        const val COMPANY_ISBANKRUPT = "company-is-bankrupt"
+        const val COMPANY_GIVESDIVIDEND = "copany-gives-dividend"
     }
 }

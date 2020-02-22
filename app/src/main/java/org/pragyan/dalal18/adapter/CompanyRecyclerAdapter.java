@@ -26,10 +26,6 @@ public class CompanyRecyclerAdapter extends RecyclerView.Adapter<CompanyRecycler
     private List<CompanyDetails> list;
     private OnCompanyClickListener listener;
 
-    public interface OnCompanyClickListener {
-        void onCompanyClick(String companyName,Boolean isBankrupt,Boolean givesDividend);
-    }
-
     public CompanyRecyclerAdapter(Context context, ArrayList<CompanyDetails> portfolioValues, OnCompanyClickListener listener) {
         this.list = portfolioValues;
         this.context = context;
@@ -48,12 +44,13 @@ public class CompanyRecyclerAdapter extends RecyclerView.Adapter<CompanyRecycler
 
         CompanyDetails currentCompanyDetails = list.get(position);
 
-        if (currentCompanyDetails.getGivesDividend()){
-        holder.companyNameTextView.setText(currentCompanyDetails.getCompanyName()+ context.getResources().getString(R.string.dividendSuffix));}
-        else if (currentCompanyDetails.isBankrupt()){
-            holder.companyNameTextView.setText(currentCompanyDetails.getCompanyName()+context.getResources().getString(R.string.bankruptSuffix));
-        }
-        else{
+        if (currentCompanyDetails.getGivesDividend()) {
+            String temp=currentCompanyDetails.getCompanyName().concat((context.getResources().getString(R.string.dividendSuffix)));
+            holder.companyNameTextView.setText(temp);
+        } else if (currentCompanyDetails.isBankrupt()) {
+            String temp=currentCompanyDetails.getCompanyName().concat(context.getString(R.string.bankruptSuffix));
+            holder.companyNameTextView.setText(temp);
+        } else {
             holder.companyNameTextView.setText(currentCompanyDetails.getCompanyName());
         }
         new Handler().postDelayed(() -> holder.companyNameTextView.setSelected(true), 1000);
@@ -83,6 +80,10 @@ public class CompanyRecyclerAdapter extends RecyclerView.Adapter<CompanyRecycler
         notifyDataSetChanged();
     }
 
+    public interface OnCompanyClickListener {
+        void onCompanyClick(String companyName, Boolean isBankrupt, Boolean givesDividend);
+    }
+
     class PortfolioViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         TextView companyNameTextView, priceTextView, differenceTextView;
@@ -98,7 +99,7 @@ public class CompanyRecyclerAdapter extends RecyclerView.Adapter<CompanyRecycler
 
         @Override
         public void onClick(View view) {
-            listener.onCompanyClick(list.get(getAdapterPosition()).getCompanyName(),list.get(getAdapterPosition()).isBankrupt(),list.get(getAdapterPosition()).getGivesDividend());
+            listener.onCompanyClick(list.get(getAdapterPosition()).getCompanyName(), list.get(getAdapterPosition()).isBankrupt(), list.get(getAdapterPosition()).getGivesDividend());
         }
     }
 }

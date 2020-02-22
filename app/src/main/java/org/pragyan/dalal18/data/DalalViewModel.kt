@@ -1,14 +1,15 @@
 package org.pragyan.dalal18.data
 
 import androidx.lifecycle.ViewModel
+import org.pragyan.dalal18.utils.Constants.bankruptSuffix
+import org.pragyan.dalal18.utils.Constants.dividendSuffix
 
 class DalalViewModel : ViewModel() {
 
     lateinit var ownedStockDetails: HashMap<Int, Long>
     lateinit var globalStockDetails: HashMap<Int, GlobalStockDetails>
     lateinit var reservedStockDetails: HashMap<Int, Long>
-    var dividendSuffix : String = "$$$"
-    var bankruptSuffix : String = "!!!"
+
 
     var favoriteCompanyName: String? = null
 
@@ -73,7 +74,6 @@ class DalalViewModel : ViewModel() {
     fun getCompanyNamesArray(): MutableList<String> {
         val companyNames = mutableListOf<String>()
         for ((_, currentStock) in globalStockDetails) {
-            checkDividendAndbankruptcy(currentStock)
             companyNames.add(currentStock.fullName)
         }
         return companyNames
@@ -139,15 +139,48 @@ class DalalViewModel : ViewModel() {
         }
         return 0
     }
-    fun checkDividendAndbankruptcy(currentStock : GlobalStockDetails){
-        if (currentStock.isBankrupt){
+
+    fun checkDividendAndbankruptcy(currentStock: GlobalStockDetails) {
+        if (currentStock.isBankrupt) {
             //currentStock.fullName+= org.pragyan.dalal18.R.string.bankruptSuffix.toString()
-            currentStock.fullName+=dividendSuffix
-        }
-        else if (currentStock.givesDividend){
+            currentStock.fullName += bankruptSuffix
+        } else if (currentStock.givesDividend) {
             //currentStock.fullName+=org.pragyan.dalal18.R.string.dividendSuffix.toString()
-            currentStock.fullName+=dividendSuffix
+            currentStock.fullName += dividendSuffix
         }
 
+    }
+
+    fun getSpinnerArray(): MutableList<String> {
+            var array  = mutableListOf<String>()
+        for ((_, stock: GlobalStockDetails) in globalStockDetails) {
+            if (stock.givesDividend) {
+                //var temp = stock.fullName +dividendSuffix
+                array.add(stock.fullName+ dividendSuffix)
+            } else if (stock.isBankrupt) {
+                //var temp = stock.fullName + bankruptSuffix
+                array.add(stock.fullName+ bankruptSuffix)
+            } else{
+                array.add(stock.fullName)
+            }
+
+        }
+        return array
+    }
+
+    fun getBankruptcyStatusByCompanyName(companyName: String?): Boolean {
+        if (companyName == null) return false
+        for ((_, currentStock) in globalStockDetails) {
+            if (currentStock.fullName == companyName) return currentStock.isBankrupt
+        }
+        return false
+    }
+
+    fun getDividendStatusByCompanyName(companyName: String?): Boolean {
+        if (companyName == null) return false
+        for ((_, currentStock) in globalStockDetails) {
+            if (currentStock.fullName == companyName) return currentStock.givesDividend
+        }
+        return false
     }
 }
