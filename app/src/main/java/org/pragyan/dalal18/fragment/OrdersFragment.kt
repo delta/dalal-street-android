@@ -1,6 +1,9 @@
 package org.pragyan.dalal18.fragment
 
+import android.content.BroadcastReceiver
 import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -11,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -36,6 +40,7 @@ import org.pragyan.dalal18.R
 import org.pragyan.dalal18.adapter.OrdersRecyclerAdapter
 import org.pragyan.dalal18.dagger.ContextModule
 import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent
+import org.pragyan.dalal18.data.CustomOrderUpdate
 import org.pragyan.dalal18.data.DalalViewModel
 import org.pragyan.dalal18.data.Order
 import org.pragyan.dalal18.utils.ConnectionUtils
@@ -61,6 +66,18 @@ class OrdersFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, OrderIt
 
     private var networkDownHandler: ConnectionUtils.OnNetworkDownHandler? = null
     private lateinit var loadingOrdersDialog: AlertDialog
+
+    private val ordersReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            if (intent.action == REFRESH_ORDERS_ACTION) {
+                val orderUpdate = intent.getParcelableExtra<CustomOrderUpdate>(ORDER_UPDATE_KEY)
+                        ?: return
+
+                val empty = ordersRecyclerAdapter?.updateOrder(orderUpdate, model.getCompanyNameFromStockId(orderUpdate.stockId))
+                flipVisibilities(empty)
+            }
+        }
+    }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -110,20 +127,33 @@ class OrdersFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, OrderIt
         }
     }
 
-    private fun getMyOrdersSubscriptionId() {
-        doAsync {
-            val response = streamServiceBlockingStub.subscribe(
+    private fun getMyOrdersSubscriptionId() = lifecycleScope.launch {
+        val response = withContext(Dispatchers.IO) {
+            streamServiceBlockingStub.subscribe(
                     SubscribeRequest.newBuilder().setDataStreamType(DataStreamType.MY_ORDERS).setDataStreamId("").build())
-            orderSubscriptionId = response.subscriptionId
-            uiThread { subscribeToMyOrdersStream(response.subscriptionId) }
         }
+        orderSubscriptionId = response.subscriptionId
+        subscribeToMyOrdersStream(response.subscriptionId)
     }
 
     private fun subscribeToMyOrdersStream(subscriptionId: SubscriptionId) {
         streamServiceStub.getMyOrderUpdates(subscriptionId, object : StreamObserver<MyOrderUpdate> {
             override fun onNext(orderUpdate: MyOrderUpdate) {
-                val empty = ordersRecyclerAdapter?.updateOrder(orderUpdate, model.getCompanyNameFromStockId(orderUpdate.stockId))
-                flipVisibilities(empty)
+                val intent = Intent(REFRESH_ORDERS_ACTION)
+
+                val customOrderUpdate = CustomOrderUpdate(
+                        orderUpdate.id,
+                        orderUpdate.isClosed,
+                        orderUpdate.isAsk,
+                        orderUpdate.orderPrice,
+                        model.getCompanyNameFromStockId(orderUpdate.stockId),
+                        orderUpdate.stockId,
+                        orderUpdate.tradeQuantity,
+                        orderUpdate.isNewOrder,
+                        orderUpdate.orderType
+                )
+                intent.putExtra(ORDER_UPDATE_KEY, customOrderUpdate)
+                LocalBroadcastManager.getInstance(context!!).sendBroadcast(intent)
             }
 
             override fun onError(t: Throwable) {
@@ -263,11 +293,17 @@ class OrdersFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, OrderIt
     override fun onResume() {
         super.onResume()
         getMyOrdersSubscriptionId()
+
+        val intentFilter = IntentFilter(REFRESH_ORDERS_ACTION)
+        LocalBroadcastManager.getInstance(context!!).registerReceiver(ordersReceiver, intentFilter)
     }
 
     override fun onPause() {
         super.onPause()
         loadingOrdersDialog.dismiss()
+
+        LocalBroadcastManager.getInstance(context!!).unregisterReceiver(ordersReceiver)
+
         doAsync {
             if (orderSubscriptionId != null) {
                 streamServiceBlockingStub.unsubscribe(UnsubscribeRequest.newBuilder().setSubscriptionId(orderSubscriptionId).build())
@@ -276,4 +312,9 @@ class OrdersFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, OrderIt
     }
 
     override fun onRefresh() = getOpenOrdersAsynchronously()
+
+    companion object {
+        const val REFRESH_ORDERS_ACTION = "refresh-orders-action"
+        const val ORDER_UPDATE_KEY = "order-update-key"
+    }
 }

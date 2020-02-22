@@ -14,6 +14,7 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import org.pragyan.dalal18.R;
+import org.pragyan.dalal18.data.CustomOrderUpdate;
 import org.pragyan.dalal18.data.Order;
 import org.pragyan.dalal18.utils.Constants;
 import org.pragyan.dalal18.utils.OrderTypeUtils;
@@ -22,7 +23,6 @@ import java.text.DecimalFormat;
 import java.util.Collections;
 import java.util.List;
 
-import dalalstreet.api.datastreams.MyOrderUpdate;
 import dalalstreet.api.models.OrderType;
 
 public class OrdersRecyclerAdapter extends RecyclerView.Adapter<OrdersRecyclerAdapter.OrderViewHolder> {
@@ -104,28 +104,27 @@ public class OrdersRecyclerAdapter extends RecyclerView.Adapter<OrdersRecyclerAd
     }
 
     // Returns true if openOrdersList is empty
-    public boolean updateOrder(MyOrderUpdate order, String companyName) {
+    public boolean updateOrder(CustomOrderUpdate orderUpdate, String companyName) {
 
-        if (order.getIsNewOrder()) {
-            openOrdersList.add(new Order(order.getId(), !order.getIsAsk(), order.getIsClosed(), order.getOrderPrice(), order.getStockId(),
-                    companyName, order.getOrderType(), Math.abs(order.getStockQuantity()), 0));
+        if (orderUpdate.isNewOrder()) {
+            openOrdersList.add(new Order(orderUpdate.getOrderId(), !orderUpdate.isAsk(), orderUpdate.isClosed(), orderUpdate.getOrderPrice(), orderUpdate.getStockId(),
+                    companyName, orderUpdate.getOrderType(), Math.abs(orderUpdate.getStockQuantity()), 0));
             notifyItemInserted(openOrdersList.size() - 1);
         } else {
             int position = -1;
 
             for (int i = 0; i < openOrdersList.size(); ++i) {
-                Order currentOrder = openOrdersList.get(i);
-                if (currentOrder.getOrderId() == order.getId()) {
+                if (openOrdersList.get(i).getOrderId() == orderUpdate.getOrderId()) {
                     position = i;
                     break;
                 }
             }
 
-            if (position != -1 && order.getIsClosed()) {
+            if (position != -1 && orderUpdate.isClosed()) {
                 openOrdersList.remove(position);
                 notifyItemRemoved(position);
             } else if (position != -1) {
-                openOrdersList.get(position).incrementQuantityFulfilled(Math.abs(order.getStockQuantity()));
+                openOrdersList.get(position).incrementQuantityFulfilled(Math.abs(orderUpdate.getStockQuantity()));
                 notifyItemChanged(position);
             }
         }

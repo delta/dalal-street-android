@@ -98,7 +98,7 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
 
     private lateinit var networkCallback: ConnectivityManager.NetworkCallback
 
-    private val refreshCashStockReceiver = object : BroadcastReceiver() {
+    private val worthNotificationGameStateReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             when (intent.action) {
                 REFRESH_ALL_WORTH_ACTION -> {
@@ -636,7 +636,7 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
         intentFilter.addAction(REFRESH_UNREAD_NOTIFICATIONS_COUNT)
         intentFilter.addAction(GAME_STATE_UPDATE_ACTION)
 
-        LocalBroadcastManager.getInstance(this).registerReceiver(refreshCashStockReceiver, IntentFilter(intentFilter))
+        LocalBroadcastManager.getInstance(this).registerReceiver(worthNotificationGameStateReceiver, IntentFilter(intentFilter))
 
         connectivityManager.registerNetworkCallback(networkRequest, networkCallback)
     }
@@ -654,7 +654,7 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
         logoutDialog?.dismiss()
 
         connectivityManager.unregisterNetworkCallback(networkCallback)
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(refreshCashStockReceiver)
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(worthNotificationGameStateReceiver)
 
         preferences.edit().remove(LAST_TRANSACTION_ID).apply()
     }
