@@ -417,9 +417,14 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
 
         streamServiceStub.getNotificationUpdates(notificationsSubscriptionId,
                 object : StreamObserver<NotificationUpdate> {
-                    override fun onNext(value: NotificationUpdate?) {
+                    override fun onNext(value: NotificationUpdate) {
+                        val notification = value.notification
                         unreadNotificationsCount++
-                        LocalBroadcastManager.getInstance(this@MainActivity).sendBroadcast(Intent(REFRESH_UNREAD_NOTIFICATIONS_COUNT))
+                        val notificationIntent = Intent(REFRESH_UNREAD_NOTIFICATIONS_COUNT)
+                        notificationIntent.putExtra("text", notification.text)
+                        notificationIntent.putExtra("createdat", notification.createdAt)
+                        notificationIntent.putExtra("id", notification.id)
+                        LocalBroadcastManager.getInstance(this@MainActivity).sendBroadcast(Intent(notificationIntent))
                     }
 
                     override fun onError(t: Throwable?) {
@@ -782,7 +787,7 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
         const val RESERVED_STOCKS_KEY = "reserved-stocks-key"
 
         private const val REFRESH_ALL_WORTH_ACTION = "refresh-cash-worth-text-view"
-        private const val REFRESH_UNREAD_NOTIFICATIONS_COUNT = "refresh-unread-notifications-count"
+        const val REFRESH_UNREAD_NOTIFICATIONS_COUNT = "refresh-unread-notifications-count"
 
         private const val GAME_STATE_UPDATE_ACTION = "game-state-update-action"
         private const val GAME_STATE_KEY = "game-state-key"
