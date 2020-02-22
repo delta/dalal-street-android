@@ -412,7 +412,7 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
                 })
     }
 
-    // Subscribes to s stream and gets updates (TESTED)
+    // Subscribes to notifications stream and gets updates (TESTED)
     private fun subscribeToNotificationsStream(notificationsSubscriptionId: SubscriptionId) {
 
         streamServiceStub.getNotificationUpdates(notificationsSubscriptionId,
@@ -762,7 +762,7 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
             var nm = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             var mChannel = NotificationChannel(getString(R.string.notification_channel_id),getString(R.string.notification_channel_id),NotificationManager.IMPORTANCE_DEFAULT)
             mChannel.enableLights(true)
-            mChannel.description = "gi"
+            mChannel.description = getString(R.string.notification_channel_description)
             mChannel.setShowBadge(true)
             mChannel.setLightColor(Color.RED)
             nm.createNotificationChannel(mChannel)

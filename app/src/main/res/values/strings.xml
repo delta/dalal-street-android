@@ -107,7 +107,7 @@
     <string name="down_arrow">&#8595;</string>
 
     <string name="notification_channel_id">dalal_notification_channel</string>
-
+    <string name="notification_channel_description">dalal_notification_channel</string>
     <string-array name="countries_array">
         <item>Afghanistan</item>
         <item>Albania</item>
