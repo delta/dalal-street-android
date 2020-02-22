@@ -84,12 +84,12 @@ class PortfolioFragment : Fragment() {
             description.isEnabled = false
             setExtraOffsets(25f, 45f, 25f, 20f)
             isDrawHoleEnabled = true
-            holeRadius = 85f
+            holeRadius = 60f
             setHoleColor(android.graphics.Color.TRANSPARENT)
             setDrawEntryLabels(false)
             setTransparentCircleColor(android.graphics.Color.WHITE)
-            setTransparentCircleAlpha(110)
-            transparentCircleRadius = 70f
+            setTransparentCircleAlpha(95)
+            transparentCircleRadius = 55f
             setDrawCenterText(true)
             centerText = "Net Worth \n (In percentage)"
             setCenterTextColor(android.graphics.Color.WHITE)
@@ -150,8 +150,8 @@ class PortfolioFragment : Fragment() {
         } else {
             others += cashWorth
         }
-
-        entries.add(PieEntry(others.toFloat(), "Others"))
+        if(others.toFloat() > 0)
+            entries.add(PieEntry(others.toFloat(), "Others"))
 
 
         val dataSet = PieDataSet(entries.toList(), "")
