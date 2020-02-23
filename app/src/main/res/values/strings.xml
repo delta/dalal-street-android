@@ -104,7 +104,6 @@
     <string name="incrementOne">+1</string>
     <string name="bankruptSuffix">BANKRUPT</string>
     <string name="dividendSuffix">$$$</string>
-    <string name="bankruptText">THis is a BANKRUPT company </string>
 
     <string name="up_arrow">&#8593;</string>
     <string name="down_arrow">&#8595;</string>

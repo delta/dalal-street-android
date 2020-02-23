@@ -138,24 +138,28 @@ class DepthTableFragment : Fragment() {
         with(companySpinner) {
             setAdapter(arrayAdapter)
             setOnItemClickListener { _, _, _, _ ->
-                val currentCompany = companySpinner.text.toString()
-                //DepthGraphFragment.companyNameSelected = currentCompany
-                model.updateFavouriteCompanyName(currentCompany)
+                val lastStockId = model.getStockIdFromSpinnerCompanyName(
+                        companySpinner.text.toString(),
+                        getString(R.string.bankruptSuffix),
+                        getString(R.string.dividendSuffix)
+                )
+
+                model.updateFavouriteCompanyStockId(lastStockId)
 
                 bidArrayList.clear()
                 askArrayList.clear()
-                getMarketDepthSubscriptionId(currentCompany)
+                getMarketDepthSubscriptionId(lastStockId)
                 unsubscribe(prevSubscriptionId)
 
                 if (activity != null && isAdded) {
                     loadingDialog?.show()
-                    getCompanyProfileAsynchronously(currentCompany)
+                    getCompanyProfileAsynchronously(lastStockId)
                 }
             }
         }
     }
 
-    private fun getMarketDepthSubscriptionId(currentCompany: String) {
+    private fun getMarketDepthSubscriptionId(stockId: Int) {
 
         prevSubscriptionId = subscriptionId
         doAsync {
@@ -163,7 +167,7 @@ class DepthTableFragment : Fragment() {
                     SubscribeRequest
                             .newBuilder()
                             .setDataStreamType(DataStreamType.MARKET_DEPTH)
-                            .setDataStreamId(model.getStockIdFromCompanyName(currentCompany).toString())
+                            .setDataStreamId(stockId.toString())
                             .build(),
                     object : StreamObserver<SubscribeResponse> {
                         override fun onNext(value: SubscribeResponse) {
@@ -275,13 +279,13 @@ class DepthTableFragment : Fragment() {
         unsubscribe(subscriptionId)
     }
 
-    private fun getCompanyProfileAsynchronously(currentCompany: String) {
+    private fun getCompanyProfileAsynchronously(stockId: Int) {
 
         doAsync {
             if (ConnectionUtils.getConnectionInfo(context)) {
                 if (ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
                     val companyProfileResponse = actionServiceBlockingStub.getCompanyProfile(
-                            GetCompanyProfileRequest.newBuilder().setStockId(model.getStockIdFromCompanyName(currentCompany)).build())
+                            GetCompanyProfileRequest.newBuilder().setStockId(stockId).build())
                     uiThread {
                         if (activity != null && isAdded) {
                             val currentStock = companyProfileResponse.stockDetails
@@ -341,19 +345,19 @@ class DepthTableFragment : Fragment() {
         super.onResume()
         val intentFilter = IntentFilter()
 
-        val currentCompany = model.favoriteCompanyName
+        val stockId = model.favoriteCompanyStockId
 
-        if (currentCompany != null) {
+        if (stockId != null) {
             bidArrayList.clear()
             askArrayList.clear()
 
             loadingDialog?.show()
-            getMarketDepthSubscriptionId(currentCompany)
+            getMarketDepthSubscriptionId(stockId)
             unsubscribe(prevSubscriptionId)
 
             if (activity != null && isAdded) {
-                getCompanyProfileAsynchronously(currentCompany)
-                companySpinner.setText(currentCompany)
+                getCompanyProfileAsynchronously(stockId)
+                companySpinner.setText(stockId)
             }
         }
 

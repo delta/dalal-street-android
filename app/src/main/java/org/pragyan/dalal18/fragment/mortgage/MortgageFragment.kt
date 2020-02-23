@@ -47,7 +47,6 @@ class MortgageFragment : Fragment() {
     lateinit var actionServiceBlockingStub: DalalActionServiceGrpc.DalalActionServiceBlockingStub
 
     private var lastStockId = 1
-    private lateinit var selectedStockName: String
     private val decimalFormat = DecimalFormat(Constants.PRICE_FORMAT)
     private lateinit var model: DalalViewModel
 
@@ -144,23 +143,18 @@ class MortgageFragment : Fragment() {
             onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
                 override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
 
-                    lastStockId = model.getStockIdFromCompanyName(companiesArray[position])
-                    selectedStockName = mortgage_companies_spinner.selectedItem.toString()
-                    if (selectedStockName.endsWith(resources.getString(R.string.dividendSuffix))) {
-                        selectedStockName = selectedStockName.removeSuffix(resources.getString(R.string.dividendSuffix))
-                        //make all the views in fragment visible
-                        openAllMortgageOptions()
+                    lastStockId = model.getStockIdFromSpinnerCompanyName(
+                            companiesArray[position],
+                            getString(R.string.bankruptSuffix),
+                            getString(R.string.dividendSuffix)
+                    )
 
-                    } else if (selectedStockName.endsWith(resources.getString(R.string.bankruptSuffix))) {
-                        selectedStockName = selectedStockName.removeSuffix(resources.getString(R.string.bankruptSuffix))
-                        //make all the view disable in fragment
-                        closeAllMortgageOptions()
+                    changeMortgageOptions(!model.getIsBankruptFromStockId(lastStockId))
+
+                    model.updateFavouriteCompanyStockId(lastStockId)
+                    if (model.getIsBankruptFromStockId(lastStockId)) {
+                        mortgageStocksEditText.setText("0")
                     } else {
-                        openAllMortgageOptions()
-                    }
-
-                    model.updateFavouriteCompanyName(selectedStockName)
-                    if (!model.getBankruptcyStatusByCompanyName(selectedStockName)) {
                         val ownedString = " :  " + decimalFormat.format(model.getQuantityOwnedFromStockId(lastStockId)).toString()
                         stocksOwnedTextView.text = ownedString
 
@@ -171,9 +165,6 @@ class MortgageFragment : Fragment() {
 
                         val currentPriceText = " :  " + Constants.RUPEE_SYMBOL + decimalFormat.format(model.getPriceFromStockId(lastStockId)).toString()
                         currentPriceTextView.text = currentPriceText
-
-                    }else{
-                        mortgageStocksEditText.setText("0")
                     }
 
                 }
@@ -224,7 +215,7 @@ class MortgageFragment : Fragment() {
 
         val stocksTransaction = (mortgageStocksEditText.text.toString().trim { it <= ' ' }).toLong()
 
-        if (stocksTransaction <= model.getQuantityOwnedFromCompanyName(model.getCompanyNameFromStockId(lastStockId))) {
+        if (stocksTransaction <= model.getQuantityOwnedFromStockId(lastStockId)) {
             mortgageStocksAsynchronously(stocksTransaction)
         } else {
             context?.toast("Insufficient Stocks")
@@ -252,7 +243,7 @@ class MortgageFragment : Fragment() {
                                         currentDetails.stocksInBank, currentDetails.mortgagePrice))
                             }
 
-                            val ownedString = " :  " + decimalFormat.format(model.getQuantityOwnedFromCompanyName(model.getCompanyNameFromStockId(lastStockId))).toString()
+                            val ownedString = " :  " + decimalFormat.format(model.getQuantityOwnedFromStockId(lastStockId)).toString()
                             stocksOwnedTextView.text = ownedString
 
                             val tempString = " :  " + Constants.RUPEE_SYMBOL + " " + decimalFormat.format(model.getPriceFromStockId(lastStockId)).toString()
@@ -323,9 +314,7 @@ class MortgageFragment : Fragment() {
     override fun onResume() {
         super.onResume()
 
-        if (model.favoriteCompanyName != null) {
-            mortgage_companies_spinner.setSelection(model.getIndexForFavoriteCompany())
-        }
+        mortgage_companies_spinner.setSelection(model.getIndexForFavoriteCompany())
 
         val intentFilter = IntentFilter(Constants.REFRESH_STOCK_PRICES_FOR_ALL)
         intentFilter.addAction(Constants.REFRESH_STOCKS_FOR_MORTGAGE)
@@ -343,28 +332,14 @@ class MortgageFragment : Fragment() {
         const val STOCKS_PRICE_KEY = "stocks-price-key"
     }
 
-    fun closeAllMortgageOptions() {
-        if (stocksOwnedTextView.isEnabled) stocksOwnedTextView.isEnabled = false
-        if (stocksMortgagedTextView.isEnabled) stocksMortgagedTextView.isEnabled = false
-        if (currentPriceTextView.isEnabled) currentPriceTextView.isEnabled = false
-        if (depositRateTextView.isEnabled) depositRateTextView.isEnabled = false
-        if (textInputLayout.isEnabled) textInputLayout.isEnabled = false
-        if (stockIncrementFiveButton.isEnabled) stockIncrementFiveButton.isEnabled = false
-        if (stockIncrementOneButton.isEnabled) stockIncrementOneButton.isEnabled = false
-        if (mortgageButton.isEnabled) mortgageButton.isEnabled = false
-        mortgageButton.text = context?.resources?.getString(R.string.bankruptText)
-    }
-
-    fun openAllMortgageOptions() {
-
-        if (!stocksOwnedTextView.isEnabled) stocksOwnedTextView.isEnabled = true
-        if (!stocksMortgagedTextView.isEnabled) stocksMortgagedTextView.isEnabled = true
-        if (!currentPriceTextView.isEnabled) currentPriceTextView.isEnabled = true
-        if (!depositRateTextView.isEnabled) depositRateTextView.isEnabled = true
-        if (!textInputLayout.isEnabled) textInputLayout.isEnabled = true
-        if (!stockIncrementFiveButton.isEnabled) stockIncrementFiveButton.isEnabled = true
-        if (!stockIncrementOneButton.isEnabled) stockIncrementOneButton.isEnabled = true
-        if (!mortgageButton.isEnabled) mortgageButton.isEnabled = true
-        mortgageButton.text = context?.resources?.getString(R.string.mortgage)
+    fun changeMortgageOptions(openOptions: Boolean) {
+        stocksOwnedTextView.isEnabled = openOptions
+        stocksMortgagedTextView.isEnabled = openOptions
+        currentPriceTextView.isEnabled = openOptions
+        depositRateTextView.isEnabled = openOptions
+        textInputLayout.isEnabled = openOptions
+        stockIncrementFiveButton.isEnabled = openOptions
+        stockIncrementOneButton.isEnabled = openOptions
+        mortgageButton.isEnabled = openOptions
     }
 }

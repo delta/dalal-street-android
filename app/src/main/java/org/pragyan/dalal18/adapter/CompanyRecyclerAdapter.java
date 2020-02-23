@@ -42,23 +42,22 @@ public class CompanyRecyclerAdapter extends RecyclerView.Adapter<CompanyRecycler
     @Override
     public void onBindViewHolder(@NonNull CompanyRecyclerAdapter.PortfolioViewHolder holder, int position) {
 
-        CompanyDetails currentCompanyDetails = list.get(position);
+        CompanyDetails currentCompany = list.get(position);
 
-        if (currentCompanyDetails.getGivesDividend()) {
-            String temp=currentCompanyDetails.getCompanyName().concat((context.getResources().getString(R.string.dividendSuffix)));
-            holder.companyNameTextView.setText(temp);
-        } else if (currentCompanyDetails.isBankrupt()) {
-            String temp=currentCompanyDetails.getCompanyName().concat(context.getString(R.string.bankruptSuffix));
-            holder.companyNameTextView.setText(temp);
-        } else {
-            holder.companyNameTextView.setText(currentCompanyDetails.getCompanyName());
+        String temp = currentCompany.getCompanyName();
+        if (currentCompany.getGivesDividend()) {
+            temp += context.getString(R.string.dividendSuffix);
+        } else if (currentCompany.isBankrupt()) {
+            temp += context.getString(R.string.bankruptSuffix);
         }
+
+        holder.companyNameTextView.setText(temp);
         new Handler().postDelayed(() -> holder.companyNameTextView.setSelected(true), 1000);
 
-        String temporaryString = String.valueOf(new DecimalFormat(Constants.PRICE_FORMAT).format(currentCompanyDetails.getValue()));
+        String temporaryString = new DecimalFormat(Constants.PRICE_FORMAT).format(currentCompany.getValue());
         holder.priceTextView.setText(temporaryString);
 
-        double diff = (double) (currentCompanyDetails.getValue() - currentCompanyDetails.getPreviousDayClose()) / (double) currentCompanyDetails.getPreviousDayClose() * 100.0;
+        double diff = (double) (currentCompany.getValue() - currentCompany.getPreviousDayClose()) / (double) currentCompany.getPreviousDayClose() * 100.0;
         holder.differenceTextView.setText(String.format(Locale.getDefault(), "%.1f", diff));
         if (diff < 0) {
             holder.differenceTextView.setTextColor(ContextCompat.getColor(context, R.color.redTint));
@@ -81,7 +80,7 @@ public class CompanyRecyclerAdapter extends RecyclerView.Adapter<CompanyRecycler
     }
 
     public interface OnCompanyClickListener {
-        void onCompanyClick(String companyName, Boolean isBankrupt, Boolean givesDividend);
+        void onCompanyClick(int stockId);
     }
 
     class PortfolioViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -99,7 +98,7 @@ public class CompanyRecyclerAdapter extends RecyclerView.Adapter<CompanyRecycler
 
         @Override
         public void onClick(View view) {
-            listener.onCompanyClick(list.get(getAdapterPosition()).getCompanyName(), list.get(getAdapterPosition()).isBankrupt(), list.get(getAdapterPosition()).getGivesDividend());
+            listener.onCompanyClick(list.get(getAdapterPosition()).getStockId());
         }
     }
 }

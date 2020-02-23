@@ -6,9 +6,9 @@ import dalalstreet.api.models.OrderType
 import kotlinx.android.parcel.Parcelize
 import java.util.*
 
-data class CompanyDetails(var companyName: String, var shortName: String, var value: Long, var previousDayClose: Long,var isBankrupt: Boolean,var givesDividend: Boolean)
+data class CompanyDetails(var stockId: Int, var companyName: String, var shortName: String, var value: Long, var previousDayClose: Long, var isBankrupt: Boolean, var givesDividend: Boolean)
 
-data class CompanyTickerDetails(val fullName: String, val imageUrl: String?, val previousDayClose: Long, val isUp: Boolean,var isBankrupt: Boolean, var givesDividend: Boolean)
+data class CompanyTickerDetails(val stockId: Int, val fullName: String, val imageUrl: String?, val previousDayClose: Long, val isUp: Boolean, var isBankrupt: Boolean, var givesDividend: Boolean)
 
 @Parcelize
 /* Modify definition according to needs; Refer Stock.proto for more attributes */
@@ -46,4 +46,4 @@ data class Transaction(var type: String?, var stockId: Int, val companyName: Str
 
 @Parcelize
 data class GameStateDetails(val gameStateUpdateType: GameStateUpdateType, val isMarketOpen: Boolean?, val isOtpVerified: Boolean?, val dividendStockId: Int?, val givesDividend: Boolean?,
-                            val bankruptStockId: Int?, val isBankrupt: Boolean?): Parcelable
+                            val bankruptStockId: Int?, val isBankrupt: Boolean?) : Parcelable

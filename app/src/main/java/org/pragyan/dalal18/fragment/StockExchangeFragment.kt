@@ -44,7 +44,7 @@ class StockExchangeFragment : Fragment() {
 
     private var currentStock: Stock? = null
     private var lastSelectedStockId: Int = 0
-    lateinit var companiesArray: MutableList<String>
+    private lateinit var companiesArray: MutableList<String>
     private var loadingDialog: AlertDialog? = null
     private var decimalFormat = DecimalFormat(Constants.PRICE_FORMAT)
     lateinit var networkDownHandler: ConnectionUtils.OnNetworkDownHandler
@@ -97,22 +97,15 @@ class StockExchangeFragment : Fragment() {
                 }
 
                 override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                    var selectStockName = companySpinner.selectedItem.toString()
-                    val stockId = model.getStockIdFromCompanyName(selectStockName)
-                    if (selectStockName.endsWith(resources.getString(R.string.bankruptSuffix))) {
-                        selectStockName = selectStockName.removeSuffix(resources.getString(R.string.bankruptSuffix))
-                        lastSelectedStockId = model.getStockIdFromCompanyName(selectStockName)
-                        closeStockExchangeOptions()
-                    } else if (selectStockName.endsWith(resources.getString(R.string.dividendSuffix))) {
-                        selectStockName = selectStockName.removeSuffix(resources.getString(R.string.dividendSuffix))
-                        lastSelectedStockId = model.getStockIdFromCompanyName(selectStockName)
-                        openStockExchangeoptions()
-                    } else {
-                        lastSelectedStockId = model.getStockIdFromCompanyName(selectStockName)
-                        openStockExchangeoptions()
-                    }
-                    //lastSelectedStockId = stockId
-                    model.updateFavouriteCompanyName(selectStockName)
+                    lastSelectedStockId = model.getStockIdFromSpinnerCompanyName(
+                            companySpinner.selectedItem.toString(),
+                            getString(R.string.bankruptSuffix),
+                            getString(R.string.dividendSuffix)
+                    )
+                    model.updateFavouriteCompanyStockId(lastSelectedStockId)
+
+                    changeStockExchangeOptions(!model.getIsBankruptFromStockId(lastSelectedStockId))
+
                     getCompanyProfileAsynchronously(lastSelectedStockId)
                 }
             }
@@ -228,19 +221,10 @@ class StockExchangeFragment : Fragment() {
         LocalBroadcastManager.getInstance(context!!).unregisterReceiver(refreshStockPricesReceiver)
     }
 
-    fun closeStockExchangeOptions() {
-        if (stocks_exchange_input.isEnabled) stocks_exchange_input.isEnabled = false
-        if (stockIncrementOneButton.isEnabled) stockIncrementOneButton.isEnabled = false
-        if (stockIncrementFiveButton.isEnabled) stockIncrementFiveButton.isEnabled = false
-        buyExchangeButton.setText(resources.getString(R.string.bankruptText))
-        if (buyExchangeButton.isEnabled) buyExchangeButton.isEnabled = false
-    }
-
-    fun openStockExchangeoptions() {
-        if (!stocks_exchange_input.isEnabled) stocks_exchange_input.isEnabled = true
-        if (!stockIncrementOneButton.isEnabled) stockIncrementOneButton.isEnabled = true
-        if (!stockIncrementFiveButton.isEnabled) stockIncrementFiveButton.isEnabled = true
-        buyExchangeButton.setText(resources.getString(R.string.buy_stocks))
-        if (!buyExchangeButton.isEnabled) buyExchangeButton.isEnabled = true
+    fun changeStockExchangeOptions(openOptions: Boolean) {
+        stocks_exchange_input.isEnabled = openOptions
+        stockIncrementOneButton.isEnabled = openOptions
+        stockIncrementFiveButton.isEnabled = openOptions
+        buyExchangeButton.isEnabled = openOptions
     }
 }

@@ -25,20 +25,21 @@ class CompanyDescriptionFragment : Fragment() {
         model = activity?.run { ViewModelProvider(this).get(DalalViewModel::class.java) }
                 ?: throw Exception("Invalid activity")
 
-        Picasso.get().load(model.getImageUrlFromCompanyName(arguments?.getString(COMPANY_NAME_KEY))).into(companyImageView)
-        if (arguments!!.getBoolean(COMPANY_ISBANKRUPT) ) {
-            companyNameTextView.text = arguments?.getString(COMPANY_NAME_KEY) + resources.getString(R.string.bankruptSuffix)
-        } else if (arguments!!.getBoolean(COMPANY_GIVESDIVIDEND)) {
-            companyNameTextView.text = arguments?.getString(COMPANY_NAME_KEY) + resources.getString(R.string.dividendSuffix)
-        } else {
-            companyNameTextView.text = arguments?.getString(COMPANY_NAME_KEY)
+        val currentStockId = arguments?.getInt(COMPANY_STOCK_ID_KEY) ?: return
+        Picasso.get().load(model.getImageUrlFromStockId(currentStockId)).into(companyImageView)
+
+        var temp = model.getCompanyNameFromStockId(currentStockId)
+        if (model.getGivesDividendFromStockId(currentStockId)) {
+            temp += resources.getString(R.string.dividendSuffix)
+        } else if (model.getIsBankruptFromStockId(currentStockId)) {
+            temp += resources.getString(R.string.bankruptSuffix)
         }
-        companyDescriptionTextView.text = model.getDescriptionFromCompanyName(arguments?.getString(COMPANY_NAME_KEY))
+        companyNameTextView.text = temp
+
+        companyDescriptionTextView.text = model.getDescriptionFromStockId(currentStockId)
     }
 
     companion object {
-        const val COMPANY_NAME_KEY = "company-name-key"
-        const val COMPANY_ISBANKRUPT = "company-is-bankrupt"
-        const val COMPANY_GIVESDIVIDEND = "copany-gives-dividend"
+        const val COMPANY_STOCK_ID_KEY = "company-stock-id-key"
     }
 }

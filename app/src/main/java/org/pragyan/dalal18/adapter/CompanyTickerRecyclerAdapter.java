@@ -45,29 +45,27 @@ public class CompanyTickerRecyclerAdapter extends RecyclerView.Adapter<CompanyTi
 
         CompanyTickerDetails currentCompanyTickerDetails = companyTickerDetailsList.get(position);
 
+        String temp = currentCompanyTickerDetails.getFullName();
         if (currentCompanyTickerDetails.getGivesDividend()) {
-            String temp = currentCompanyTickerDetails.getFullName().concat(context.getResources().getString(R.string.dividendSuffix));
-            holder.companyNameTextView.setText(temp);
+            temp += context.getString(R.string.dividendSuffix);
         } else if (currentCompanyTickerDetails.isBankrupt()) {
-            String temp = currentCompanyTickerDetails.getFullName().concat(context.getResources().getString(R.string.bankruptSuffix));
-            holder.companyNameTextView.setText(temp);
-
-        } else {
-            holder.companyNameTextView.setText(currentCompanyTickerDetails.getFullName());
+            temp += context.getString(R.string.bankruptSuffix);
         }
+
+        holder.companyNameTextView.setText(temp);
         new Handler().postDelayed(() -> holder.companyNameTextView.setSelected(true), 1000);
 
         holder.arrowImageView.setImageResource(currentCompanyTickerDetails.isUp() ? R.drawable.arrow_up_green : R.drawable.arrow_down_red);
 
 
-        String worthString = Constants.RUPEE_SYMBOL + String.valueOf(new DecimalFormat(Constants.PRICE_FORMAT).format(currentCompanyTickerDetails.getPreviousDayClose()));
+        String worthString = Constants.RUPEE_SYMBOL + new DecimalFormat(Constants.PRICE_FORMAT).format(currentCompanyTickerDetails.getPreviousDayClose());
         holder.previousDayCloseTextView.setText(worthString);
 
         if (currentCompanyTickerDetails.getImageUrl() != null) {
             Picasso.get().load(currentCompanyTickerDetails.getImageUrl()).placeholder(R.drawable.loading_placeholder)
-                    .error(R.raw.connection_error).into(holder.companyImageView);
+                    .error(R.drawable.connection_error).into(holder.companyImageView);
         } else {
-            Picasso.get().load(R.raw.connection_error).into(holder.companyImageView);
+            Picasso.get().load(R.drawable.connection_error).into(holder.companyImageView);
         }
     }
 

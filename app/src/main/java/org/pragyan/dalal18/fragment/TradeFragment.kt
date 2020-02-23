@@ -4,7 +4,6 @@ import android.content.*
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -47,15 +46,19 @@ class TradeFragment : Fragment() {
     private var decimalFormat = DecimalFormat(Constants.PRICE_FORMAT)
 
     private var loadingDialog: AlertDialog? = null
+
     lateinit var networkDownHandler: ConnectionUtils.OnNetworkDownHandler
+
+    private var lastStockId = 1
+
     private val refreshOwnedStockDetails = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             if (intent.action != null && (intent.action == Constants.REFRESH_OWNED_STOCKS_FOR_ALL || intent.action == Constants.REFRESH_STOCK_PRICES_FOR_ALL)) {
-                val stocksOwned = model.getQuantityOwnedFromCompanyName(companySpinner.selectedItem.toString())
-                var tempString = " :" + decimalFormat.format(stocksOwned).toString()
+
+                var tempString = " :" + decimalFormat.format(model.getQuantityOwnedFromStockId(lastStockId)).toString()
                 stocksOwnedTextView.text = tempString
 
-                tempString = " : " + Constants.RUPEE_SYMBOL + " " + decimalFormat.format(model.getPriceFromCompanyName(companySpinner.selectedItem.toString())).toString()
+                tempString = " : " + Constants.RUPEE_SYMBOL + " " + decimalFormat.format(model.getPriceFromStockId(lastStockId)).toString()
                 currentStockPrice_textView.text = tempString
 
                 setOrderPriceWindow()
@@ -86,7 +89,6 @@ class TradeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         (activity as AppCompatActivity).supportActionBar?.title = resources.getString(R.string.trade)
-        val companiesAdapter = ArrayAdapter(context!!, R.layout.order_spinner_item, model.getSpinnerArray())
         val orderSelectAdapter = ArrayAdapter(context!!, R.layout.order_spinner_item, resources.getStringArray(R.array.orderType))
 
         with(order_select_spinner) {
@@ -112,7 +114,8 @@ class TradeFragment : Fragment() {
         }
 
         with(companySpinner) {
-            adapter = companiesAdapter
+            val companiesArray = model.getSpinnerArray()
+            adapter = ArrayAdapter(context!!, R.layout.order_spinner_item, model.getSpinnerArray())
 
             onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
 
@@ -120,37 +123,30 @@ class TradeFragment : Fragment() {
                 }
 
                 override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                    var selectedCompany = companySpinner.selectedItem.toString()
 
-                    //first checking the suffix and then removing it
+                    lastStockId = model.getStockIdFromSpinnerCompanyName(
+                            companiesArray[position],
+                            getString(R.string.bankruptSuffix),
+                            getString(R.string.dividendSuffix)
+                    )
 
-                    if (selectedCompany.endsWith(getString(R.string.dividendSuffix))) {
-                        selectedCompany = selectedCompany.removeSuffix(getString(R.string.dividendSuffix))
-                       // model.updateFavouriteCompanyName(selectedCompany)
-                        openAllTradingOptions()
-                    } else if (selectedCompany.endsWith(getString(R.string.bankruptSuffix))) {
-                        selectedCompany = selectedCompany.removeSuffix(getString(R.string.bankruptSuffix))
-                        //for making all treading disable for the given company with bankruptcy
-                        //model.updateFavouriteCompanyName(selectedCompany)
-                        closeAllTradeOptions()
-                    }else{
-                        openAllTradingOptions()
-                    }
-                    model.updateFavouriteCompanyName(selectedCompany)
+                    changeTradeOptions(!model.getIsBankruptFromStockId(lastStockId))
 
-                    if(!model.getBankruptcyStatusByCompanyName(selectedCompany)) {
-                        val stocksOwned = model.getQuantityOwnedFromCompanyName(selectedCompany)
+                    model.updateFavouriteCompanyStockId(lastStockId)
+
+                    if (model.getIsBankruptFromStockId(lastStockId)) {
+                        noOfStocksEditText.setText("0")
+                        orderPriceEditText.setText("0")
+                    } else {
+                        val stocksOwned = model.getQuantityOwnedFromStockId(lastStockId)
                         var tempString = " : $stocksOwned"
                         stocksOwnedTextView.text = tempString
 
-                        tempString = " : " + Constants.RUPEE_SYMBOL + " " + decimalFormat.format(model.getPriceFromCompanyName(companySpinner.selectedItem.toString())).toString()
+                        tempString = " : " + Constants.RUPEE_SYMBOL + " " + decimalFormat.format(model.getPriceFromStockId(lastStockId)).toString()
                         currentStockPrice_textView.text = tempString
 
                         calculateOrderFee()
                         setOrderPriceWindow()
-                    }else{
-                        noOfStocksEditText.setText("0")
-                        orderPriceEditText.setText("0")
                     }
                 }
             }
@@ -210,7 +206,7 @@ class TradeFragment : Fragment() {
     private fun calculateOrderFee() {
 
         val price = if (order_price_input.visibility == View.GONE) {
-            model.getPriceFromCompanyName(companySpinner.selectedItem.toString())
+            model.getPriceFromStockId(lastStockId)
         } else {
             if (orderPriceEditText.text.toString().trim { it <= ' ' }.isNotEmpty()) {
                 (orderPriceEditText.text.toString()).toLong()
@@ -232,7 +228,7 @@ class TradeFragment : Fragment() {
     }
 
     private fun setOrderPriceWindow() {
-        val currentPrice = model.getPriceFromCompanyName(companySpinner.selectedItem.toString())
+        val currentPrice = model.getPriceFromStockId(lastStockId)
         val lowerLimit = currentPrice.toDouble() * (1 - Constants.ORDER_PRICE_WINDOW.toDouble() / 100)
         val higherLimit = currentPrice.toDouble() * (1 + Constants.ORDER_PRICE_WINDOW.toDouble() / 100)
         val tempOrderPriceText = "Price must be between " + Constants.RUPEE_SYMBOL + DecimalFormat(Constants.PRICE_FORMAT).format(lowerLimit.toLong()) + " - " +
@@ -296,10 +292,7 @@ class TradeFragment : Fragment() {
     override fun onResume() {
         super.onResume()
 
-        // to manually select the element after trade fragment is opened by pressing back key from market depth frag.
-        if (model.favoriteCompanyName != null) {
-            companySpinner.setSelection(model.getIndexForFavoriteCompany())
-        }
+        companySpinner.setSelection(model.getIndexForFavoriteCompany())
 
         val intentFilter = IntentFilter(Constants.REFRESH_OWNED_STOCKS_FOR_ALL)
         intentFilter.addAction(Constants.REFRESH_STOCK_PRICES_FOR_ALL)
@@ -311,43 +304,17 @@ class TradeFragment : Fragment() {
         LocalBroadcastManager.getInstance(context!!).unregisterReceiver(refreshOwnedStockDetails)
     }
 
-    fun closeAllTradeOptions() {
-        if (order_select_spinner.isEnabled) order_select_spinner.isEnabled = false
-        if (radioGroupStock.isEnabled) radioGroupStock.isEnabled = false
-        if (stocksOwnedTextView.isEnabled) stocksOwnedTextView.isEnabled = false
-        if (order_fee_textview.isEnabled) order_fee_textview.isEnabled = false
-        if (no_of_stocks_input.isEnabled) no_of_stocks_input.isEnabled = false
-        if (btnMarketDepth.isEnabled) btnMarketDepth.isEnabled = false
-        if (order_price_input.isEnabled) order_price_input.isEnabled = false
-        if (orderPriceWindowTextView.isEnabled) orderPriceWindowTextView.isEnabled = false
-        if (bidRadioButton.isEnabled) bidRadioButton.isEnabled = false
-        if (askRadioButton.isEnabled) askRadioButton.isEnabled = false
-        bidAskButton.text = context?.resources!!.getString(R.string.bankruptText)
-        if (bidAskButton.isEnabled) bidAskButton.isEnabled = false
-        //Toast.makeText(context,"THIS IS BANKRUPT COMPANY !!!",Toast.LENGTH_LONG).show()
-        Log.d("CLOSINGTHEVIEWS", "CLOSING")
+    fun changeTradeOptions(openOptions: Boolean) {
+        if (order_select_spinner.isEnabled) order_select_spinner.isEnabled = openOptions
+        if (radioGroupStock.isEnabled) radioGroupStock.isEnabled = openOptions
+        if (stocksOwnedTextView.isEnabled) stocksOwnedTextView.isEnabled = openOptions
+        if (order_fee_textview.isEnabled) order_fee_textview.isEnabled = openOptions
+        if (no_of_stocks_input.isEnabled) no_of_stocks_input.isEnabled = openOptions
+        if (btnMarketDepth.isEnabled) btnMarketDepth.isEnabled = openOptions
+        if (order_price_input.isEnabled) order_price_input.isEnabled = openOptions
+        if (orderPriceWindowTextView.isEnabled) orderPriceWindowTextView.isEnabled = openOptions
+        if (bidRadioButton.isEnabled) bidRadioButton.isEnabled = openOptions
+        if (askRadioButton.isEnabled) askRadioButton.isEnabled = openOptions
+        if (bidAskButton.isEnabled) bidAskButton.isEnabled = openOptions
     }
-
-    fun openAllTradingOptions() {
-        if (!order_select_spinner.isEnabled) order_select_spinner.isEnabled = true
-        if (!radioGroupStock.isEnabled) radioGroupStock.isEnabled = true
-        if (!stocksOwnedTextView.isEnabled) stocksOwnedTextView.isEnabled = true
-        if (!order_fee_textview.isEnabled) order_fee_textview.isEnabled = true
-        if (!no_of_stocks_input.isEnabled) no_of_stocks_input.isEnabled = true
-        if (!btnMarketDepth.isEnabled) btnMarketDepth.isEnabled = true
-        if (!order_price_input.isEnabled) order_price_input.isEnabled = true
-        if (!orderPriceWindowTextView.isEnabled) orderPriceWindowTextView.isEnabled = true
-        if (!bidRadioButton.isEnabled) bidRadioButton.isEnabled = true
-        if (!askRadioButton.isEnabled) askRadioButton.isEnabled = true
-        bidAskButton.text = context?.resources?.getString(R.string.bid)
-        if (!bidAskButton.isEnabled) bidAskButton.isEnabled = true
-        Log.d("OPENINGTHEVIEWS", "OPEN")
-    }
-
-    fun isAllTradingOptionsClose(): Boolean {
-
-        return (!order_select_spinner.isEnabled && !radioGroupStock.isEnabled && !stocksOwnedText.isEnabled && !order_fee_textview.isEnabled && !no_of_stocks_input.isEnabled && !btnMarketDepth.isEnabled && !order_price_input.isEnabled && !orderPriceWindowTextView.isEnabled && !bidAskButton.isEnabled)
-    }
-
-
 }
