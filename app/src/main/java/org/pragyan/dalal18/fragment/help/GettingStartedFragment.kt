@@ -20,8 +20,8 @@ class GettingStartedFragment : Fragment() {
         expand_text_view1.text = resources.getText(R.string.getting_started_1a)
         expand_text_view2.text = resources.getText(R.string.getting_started_2a)
         expand_text_view3.text = resources.getText(R.string.getting_started_3a)
-        expand_text_view4.text = resources.getText(R.string.getting_started_4a)
-        expand_text_view5.text  = resources.getText(R.string.getting_started_5a)
+        expand_text_view4.text  = resources.getText(R.string.getting_started_5a)
+        expand_text_view5.text = resources.getText(R.string.getting_started_4a)
     }
 
 }
