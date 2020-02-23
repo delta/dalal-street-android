@@ -84,7 +84,7 @@ class NotificationFragment : Fragment() {
         }
 
         val intentFilter = IntentFilter(MainActivity.REFRESH_UNREAD_NOTIFICATIONS_COUNT)
-        LocalBroadcastManager.getInstance(context!!).registerReceiver(refreshNotifications, IntentFilter(intentFilter))
+        LocalBroadcastManager.getInstance(requireContext()).registerReceiver(refreshNotifications, IntentFilter(intentFilter))
 
         preferences.edit().remove(Constants.LAST_NOTIFICATION_ID).apply()
         getNotificationsAsynchronously()
@@ -152,7 +152,7 @@ class NotificationFragment : Fragment() {
 
     private val refreshNotifications = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
-            customNotificationList.add(Notification(intent.getStringExtra("text")!!, intent.getStringExtra("createdat")!!))
+            customNotificationList.add(Notification(intent.getStringExtra(TEXT_KEY), intent.getStringExtra(CREATED_AT_KEY)))
             customNotificationList.sortByDescending { it.createdAt }
             notificationRecyclerAdapter.swapData(customNotificationList)
         }
@@ -160,18 +160,27 @@ class NotificationFragment : Fragment() {
 
     override fun onPause() {
         super.onPause()
-        LocalBroadcastManager.getInstance(context!!).unregisterReceiver(refreshNotifications)
+        LocalBroadcastManager.getInstance(requireContext()).unregisterReceiver(refreshNotifications)
         preferences.edit().remove(Constants.LAST_NOTIFICATION_ID).apply()
     }
 
     override fun onResume() {
         super.onResume()
+        //IF IT IS ALIVE DUE TO SOME MISHAP IT IS UNREGISTERED
+        LocalBroadcastManager.getInstance(requireContext()).unregisterReceiver(refreshNotifications)
         val intentFilter = IntentFilter(MainActivity.REFRESH_UNREAD_NOTIFICATIONS_COUNT)
-        LocalBroadcastManager.getInstance(context!!).registerReceiver(refreshNotifications, IntentFilter(intentFilter))
+        LocalBroadcastManager.getInstance(requireContext()).registerReceiver(refreshNotifications, IntentFilter(intentFilter))
     }
 
     override fun onDestroy() {
         super.onDestroy()
+        LocalBroadcastManager.getInstance(requireContext()).unregisterReceiver(refreshNotifications)
         preferences.edit().remove(Constants.LAST_NOTIFICATION_ID).apply()
+    }
+
+    companion object {
+
+        public const val TEXT_KEY = "text-key"
+        public const val CREATED_AT_KEY = "createdat-key"
     }
 }

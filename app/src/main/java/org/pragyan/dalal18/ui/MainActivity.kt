@@ -49,6 +49,9 @@ import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent
 import org.pragyan.dalal18.data.DalalViewModel
 import org.pragyan.dalal18.data.GameStateDetails
 import org.pragyan.dalal18.data.GlobalStockDetails
+import org.pragyan.dalal18.fragment.mortgage.MortgageFragment
+import org.pragyan.dalal18.notifications.NotificationFragment
+import org.pragyan.dalal18.notifications.NotificationService
 import org.pragyan.dalal18.notifications.PushNotificationService
 import org.pragyan.dalal18.utils.*
 import org.pragyan.dalal18.utils.Constants.*
@@ -421,9 +424,8 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
                         val notification = value.notification
                         unreadNotificationsCount++
                         val notificationIntent = Intent(REFRESH_UNREAD_NOTIFICATIONS_COUNT)
-                        notificationIntent.putExtra("text", notification.text)
-                        notificationIntent.putExtra("createdat", notification.createdAt)
-                        notificationIntent.putExtra("id", notification.id)
+                        notificationIntent.putExtra(NotificationFragment.TEXT_KEY, notification.text)
+                        notificationIntent.putExtra(NotificationFragment.CREATED_AT_KEY, notification.createdAt)
                         LocalBroadcastManager.getInstance(this@MainActivity).sendBroadcast(Intent(notificationIntent))
                     }
 
