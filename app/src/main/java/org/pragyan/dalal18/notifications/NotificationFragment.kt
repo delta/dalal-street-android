@@ -83,8 +83,6 @@ class NotificationFragment : Fragment() {
             layoutManager = LinearLayoutManager(this@NotificationFragment.context)
         }
 
-        val intentFilter = IntentFilter(MainActivity.REFRESH_UNREAD_NOTIFICATIONS_COUNT)
-        LocalBroadcastManager.getInstance(requireContext()).registerReceiver(refreshNotifications, IntentFilter(intentFilter))
 
         preferences.edit().remove(Constants.LAST_NOTIFICATION_ID).apply()
         getNotificationsAsynchronously()
@@ -166,8 +164,6 @@ class NotificationFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        //IF IT IS ALIVE DUE TO SOME MISHAP IT IS UNREGISTERED
-        LocalBroadcastManager.getInstance(requireContext()).unregisterReceiver(refreshNotifications)
         val intentFilter = IntentFilter(MainActivity.REFRESH_UNREAD_NOTIFICATIONS_COUNT)
         LocalBroadcastManager.getInstance(requireContext()).registerReceiver(refreshNotifications, IntentFilter(intentFilter))
     }
