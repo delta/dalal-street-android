@@ -36,25 +36,10 @@ public class OrdersRecyclerAdapter extends RecyclerView.Adapter<OrdersRecyclerAd
 
     private Context context;
     private List<Order> openOrdersList;
-    private SwipeToCancelListener listener;
-    private SharedPreferences preferences;
 
-    private int screenWidth;
-    private OrderViewHolder firstPositionViewHolder = null;
-
-    public interface SwipeToCancelListener {
-        void showTapTargetForNewOrder(View view);
-    }
-
-    public OrdersRecyclerAdapter(Context context, List<Order> orderList, SwipeToCancelListener listener, SharedPreferences preferences) {
+    public OrdersRecyclerAdapter(Context context, List<Order> orderList) {
         this.context = context;
         this.openOrdersList = orderList;
-        this.listener = listener;
-        this.preferences = preferences;
-
-        DisplayMetrics displayMetrics = new DisplayMetrics();
-        ((Activity) context).getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
-        screenWidth = displayMetrics.widthPixels;
     }
 
     @NonNull
@@ -94,13 +79,6 @@ public class OrdersRecyclerAdapter extends RecyclerView.Adapter<OrdersRecyclerAd
             holder.priceTextView.setText(tempString);
         }
 
-        if (position == 0 && !preferences.getBoolean(CANCEL_ORDER_TOUR_KEY, false)) {
-            firstPositionViewHolder = holder;
-            ViewPropertyAnimator.animate(holder.orderViewForeground).translationXBy(-screenWidth / 2).setDuration(450);
-            listener.showTapTargetForNewOrder(holder.deleteOrderText);
-            preferences.edit().putBoolean(CANCEL_ORDER_TOUR_KEY, true).apply();
-        }
-
         holder.quantitySeekbar.setMax((int) order.getStockQuantity());
         holder.quantitySeekbar.setProgress((int) order.getStockQuantityFulfilled());
 
@@ -111,13 +89,6 @@ public class OrdersRecyclerAdapter extends RecyclerView.Adapter<OrdersRecyclerAd
     public int getItemCount() {
         if (openOrdersList == null || openOrdersList.size() == 0) return 0;
         return openOrdersList.size();
-    }
-
-    public void swipeBackFirstOrder() {
-        if (firstPositionViewHolder != null) {
-            ViewPropertyAnimator.animate(firstPositionViewHolder.orderViewForeground).translationXBy(screenWidth / 2).setDuration(450);
-            firstPositionViewHolder = null;
-        }
     }
 
     // Returns true if openOrdersList is empty

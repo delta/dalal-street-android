@@ -3,6 +3,7 @@ package org.pragyan.dalal18.fragment
 import android.content.*
 import android.graphics.Typeface
 import android.os.Bundle
+import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,6 +21,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.getkeepsafe.taptargetview.TapTarget
 import com.getkeepsafe.taptargetview.TapTargetView
+import com.nineoldandroids.view.ViewPropertyAnimator
 import dalalstreet.api.DalalActionServiceGrpc
 import dalalstreet.api.DalalStreamServiceGrpc
 import dalalstreet.api.actions.CancelOrderRequest
@@ -29,6 +31,7 @@ import dalalstreet.api.actions.GetMyOpenOrdersResponse
 import dalalstreet.api.datastreams.*
 import io.grpc.stub.StreamObserver
 import kotlinx.android.synthetic.main.fragment_my_orders.*
+import kotlinx.android.synthetic.main.order_list_item.view.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -45,10 +48,12 @@ import org.pragyan.dalal18.data.DalalViewModel
 import org.pragyan.dalal18.data.Order
 import org.pragyan.dalal18.utils.ConnectionUtils
 import org.pragyan.dalal18.utils.Constants
+import org.pragyan.dalal18.utils.Constants.CANCEL_ORDER_TOUR_KEY
 import org.pragyan.dalal18.utils.OrderItemTouchHelper
+import java.lang.NullPointerException
 import javax.inject.Inject
 
-class OrdersFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, OrderItemTouchHelper.BusItemTouchHelperListener, OrdersRecyclerAdapter.SwipeToCancelListener {
+class OrdersFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, OrderItemTouchHelper.BusItemTouchHelperListener {
 
     @Inject
     lateinit var actionServiceBlockingStub: DalalActionServiceGrpc.DalalActionServiceBlockingStub
@@ -69,6 +74,9 @@ class OrdersFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, OrderIt
 
     private var networkDownHandler: ConnectionUtils.OnNetworkDownHandler? = null
     private lateinit var loadingOrdersDialog: AlertDialog
+
+    private lateinit var orderRecyclerView: RecyclerView
+    private lateinit var cancelText: TextView
 
     private val ordersReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
@@ -99,6 +107,7 @@ class OrdersFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, OrderIt
 
         model = activity?.run { ViewModelProvider(this).get(DalalViewModel::class.java) }
                 ?: throw Exception("Invalid activity")
+        orderRecyclerView = rootView.findViewById(R.id.ordersRecyclerView)
 
         return rootView
     }
@@ -106,7 +115,7 @@ class OrdersFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, OrderIt
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         (activity as AppCompatActivity).supportActionBar?.title = resources.getString(R.string.orders_frag_label)
-        ordersRecyclerAdapter = OrdersRecyclerAdapter(context, null, this, preferences)
+        ordersRecyclerAdapter = OrdersRecyclerAdapter(context, null)
         ordersRecycler_swipeRefreshLayout.setOnRefreshListener(this)
 
         with(ordersRecyclerView) {
@@ -216,6 +225,10 @@ class OrdersFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, OrderIt
                                 }
                             }
 
+                            if(askList.size>0 || bidList.size>0) {
+                                showTutorialIfFirstTime()
+                            }
+
                             val empty = ordersRecyclerAdapter?.swapData(openOrdersList) ?: true
                             flipVisibilities(empty)
 
@@ -230,6 +243,27 @@ class OrdersFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, OrderIt
                 uiThread { networkDownHandler?.onNetworkDownError(resources.getString(R.string.error_check_internet), R.id.open_orders_dest) }
             }
             uiThread { loadingOrdersDialog.dismiss() }
+        }
+    }
+
+    private fun showTutorialIfFirstTime() {
+        if (!preferences.getBoolean(CANCEL_ORDER_TOUR_KEY, false)) {
+
+            Handler().postDelayed({
+                try {
+                    ViewPropertyAnimator.animate(orderRecyclerView.findViewHolderForAdapterPosition(0)
+                            ?.itemView?.orderViewForeground).translationXBy((-resources.configuration.screenWidthDp*1.5).toFloat()).duration = 450
+
+                    cancelText = orderRecyclerView.findViewHolderForAdapterPosition(0)
+                            ?.itemView?.deleteOrderText!!
+
+                    showTapTargetForNewOrder(cancelText)
+                } catch (e: NullPointerException) {
+                    e.printStackTrace()
+                }
+            }, 450)
+
+            preferences.edit().putBoolean(CANCEL_ORDER_TOUR_KEY, true).apply()
         }
     }
 
@@ -321,11 +355,11 @@ class OrdersFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, OrderIt
         const val ORDER_UPDATE_KEY = "order-update-key"
     }
 
-    override fun showTapTargetForNewOrder(view: View) {
+    private fun showTapTargetForNewOrder(view: View) {
         TapTargetView.showFor(activity as AppCompatActivity, TapTarget.forView(view, getString(R.string.swipe_left_to_delete))
                 .cancelable(true)
                 .tintTarget(true)
-                .outerCircleAlpha(0.96f)
+                .outerCircleAlpha(0.99f)
                 .targetCircleColor(R.color.neutral_font_color)
                 .targetCircleColor(R.color.neutral_font_color)
                 .textColor(R.color.neon_green)
@@ -340,7 +374,10 @@ class OrdersFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, OrderIt
                     }
 
                     override fun onTargetDismissed(view: TapTargetView?, userInitiated: Boolean) {
-                        ordersRecyclerAdapter?.swipeBackFirstOrder()
+                       // ordersRecyclerAdapter?.swipeBackFirstOrder()
+                        ViewPropertyAnimator.animate(orderRecyclerView.findViewHolderForAdapterPosition(0)
+                                ?.itemView?.orderViewForeground).translationXBy((resources.configuration.screenWidthDp*1.5).toFloat()).duration = 450
+
                     }
                 }
         )
