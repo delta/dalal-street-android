@@ -49,8 +49,6 @@ import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent
 import org.pragyan.dalal18.data.DalalViewModel
 import org.pragyan.dalal18.data.GameStateDetails
 import org.pragyan.dalal18.data.GlobalStockDetails
-import org.pragyan.dalal18.fragment.mortgage.MortgageFragment
-import org.pragyan.dalal18.notifications.NotificationService
 import org.pragyan.dalal18.notifications.PushNotificationService
 import org.pragyan.dalal18.utils.*
 import org.pragyan.dalal18.utils.Constants.*
@@ -58,7 +56,6 @@ import org.pragyan.dalal18.utils.CountDrawable.buildCounterDrawable
 import java.text.DecimalFormat
 import java.util.*
 import javax.inject.Inject
-import kotlin.collections.HashMap
 
 /* Subscribes to Transactions, Exchange, StockPrices and MarketEvents stream*/
 class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
@@ -117,7 +114,6 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
                 GAME_STATE_UPDATE_ACTION -> {
                     val gameStateDetails = intent.getParcelableExtra<GameStateDetails>(GAME_STATE_KEY)
 
-                    // TODO: Do something with update
                     if (gameStateDetails != null) when (gameStateDetails.gameStateUpdateType) {
                         GameStateUpdateType.MarketStateUpdate ->
                             displayMarketStatusAlert(gameStateDetails.isMarketOpen ?: true)
@@ -125,6 +121,10 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
                             model.updateDividendState(gameStateDetails.dividendStockId, gameStateDetails.givesDividend)
                         GameStateUpdateType.StockBankruptStateUpdate ->
                             model.updateBankruptState(gameStateDetails.bankruptStockId, gameStateDetails.isBankrupt)
+                        GameStateUpdateType.UserBlockStateUpdate -> {
+                            toast("Your account has been terminated")
+                            logout()
+                        }
                         else ->
                             Log.v(MainActivity::class.java.simpleName, "Game state update unused: $gameStateDetails")
                     }
@@ -194,7 +194,7 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
         totalInHandTextView.setOnClickListener(worthViewClickListener)
         totalWorthTextView.setOnClickListener(worthViewClickListener)
         createChannel()
-        var notificationIntent = Intent(this.getBaseContext(), PushNotificationService::class.java)
+        val notificationIntent = Intent(this.baseContext, PushNotificationService::class.java)
         this.startService(notificationIntent)
 
     }
@@ -282,7 +282,7 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
     }
 
     fun logout() = lifecycleScope.launch {
-        var notificationIntent = Intent(baseContext, PushNotificationService::class.java)
+        val notificationIntent = Intent(baseContext, PushNotificationService::class.java)
         this@MainActivity.stopService(notificationIntent)
         unsubscribeFromAllStreams()
 
@@ -757,14 +757,14 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
         navController.navigate(lastOpenFragmentId, null, NavOptions.Builder().setPopUpTo(R.id.home_dest, false).build())
     }
 
-    private fun createChannel(){
+    private fun createChannel() {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-            var nm = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-            var mChannel = NotificationChannel(getString(R.string.notification_channel_id),getString(R.string.notification_channel_id),NotificationManager.IMPORTANCE_DEFAULT)
+            val nm = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            val mChannel = NotificationChannel(getString(R.string.notification_channel_id), getString(R.string.notification_channel_id), NotificationManager.IMPORTANCE_DEFAULT)
             mChannel.enableLights(true)
             mChannel.description = getString(R.string.notification_channel_description)
             mChannel.setShowBadge(true)
-            mChannel.setLightColor(Color.RED)
+            mChannel.lightColor = Color.RED
             nm.createNotificationChannel(mChannel)
         }
     }

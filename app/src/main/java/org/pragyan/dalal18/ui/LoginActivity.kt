@@ -32,12 +32,10 @@ import org.pragyan.dalal18.R
 import org.pragyan.dalal18.dagger.ContextModule
 import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent
 import org.pragyan.dalal18.data.GlobalStockDetails
-import org.pragyan.dalal18.data.StockDetails
 import org.pragyan.dalal18.utils.ConnectionUtils
 import org.pragyan.dalal18.utils.Constants
 import org.pragyan.dalal18.utils.MiscellaneousUtils
 import org.pragyan.dalal18.utils.hideKeyboard
-import java.util.*
 import javax.inject.Inject
 
 class LoginActivity : AppCompatActivity() {
@@ -189,6 +187,11 @@ class LoginActivity : AppCompatActivity() {
 
                     if (loginResponse.statusCode == LoginResponse.StatusCode.OK) {
 
+                        if (loginResponse.user.isBlocked) {
+                            showBlockedDialog()
+                            return@uiThread
+                        }
+
                         MiscellaneousUtils.sessionId = loginResponse.sessionId
 
                         if (passwordEditText.text.toString() != "" || passwordEditText.text.toString().isNotEmpty())
@@ -294,6 +297,15 @@ class LoginActivity : AppCompatActivity() {
             contentView?.hideKeyboard()
             toast("Server Unreachable")
         }
+    }
+
+    private fun showBlockedDialog() {
+        AlertDialog.Builder(this, R.style.AlertDialogTheme)
+                .setTitle("Account Blocked")
+                .setMessage("Your account has been permanently block for violation of our terms. Contact admin for more information.")
+                .setPositiveButton("OKAY") { dI, _ -> dI.dismiss() }
+                .setCancelable(false)
+                .show()
     }
 
     private fun showSnackBar(message: String) {

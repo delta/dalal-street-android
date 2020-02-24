@@ -25,12 +25,10 @@ import org.pragyan.dalal18.R
 import org.pragyan.dalal18.dagger.ContextModule
 import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent
 import org.pragyan.dalal18.data.GlobalStockDetails
-import org.pragyan.dalal18.data.StockDetails
 import org.pragyan.dalal18.utils.ConnectionUtils
 import org.pragyan.dalal18.utils.Constants
 import org.pragyan.dalal18.utils.Constants.MARKET_OPEN_KEY
 import org.pragyan.dalal18.utils.MiscellaneousUtils
-import java.util.*
 import javax.inject.Inject
 
 class SplashActivity : AppCompatActivity() {
@@ -99,7 +97,7 @@ class SplashActivity : AppCompatActivity() {
 
                         uiThread {
 
-                            if (loginResponse.statusCode == LoginResponse.StatusCode.OK) {
+                            if (loginResponse.statusCode == LoginResponse.StatusCode.OK && !loginResponse.user.isBlocked) {
 
                                 MiscellaneousUtils.sessionId = loginResponse.sessionId
 
@@ -170,7 +168,7 @@ class SplashActivity : AppCompatActivity() {
                                 startActivity(intent)
                                 finish()
                             } else {
-                                toast(loginResponse.statusMessage)
+                                toast(getString(R.string.please_try_again))
                                 preferences.edit().putString(EMAIL_KEY, null).putString(PASSWORD_KEY, null).apply()
                                 startActivity(Intent(this@SplashActivity, LoginActivity::class.java))
                                 finish()
