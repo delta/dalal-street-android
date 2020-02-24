@@ -49,9 +49,7 @@ import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent
 import org.pragyan.dalal18.data.DalalViewModel
 import org.pragyan.dalal18.data.GameStateDetails
 import org.pragyan.dalal18.data.GlobalStockDetails
-import org.pragyan.dalal18.fragment.mortgage.MortgageFragment
 import org.pragyan.dalal18.notifications.NotificationFragment
-import org.pragyan.dalal18.notifications.NotificationService
 import org.pragyan.dalal18.notifications.PushNotificationService
 import org.pragyan.dalal18.utils.*
 import org.pragyan.dalal18.utils.Constants.*
@@ -199,6 +197,7 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
         createChannel()
         val notificationIntent = Intent(this.baseContext, PushNotificationService::class.java)
         this.startService(notificationIntent)
+        marketCloseIndicatorTextView.isSelected = true
 
     }
 
@@ -577,6 +576,9 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
                 .setCancelable(true)
                 .setPositiveButton(getString(R.string.close)) { dI, _ -> dI.dismiss() }
                 .show()
+
+        marketCloseIndicatorTextView.visibility = if (!isMarketOpen) View.VISIBLE else View.GONE
+
     }
 
     // Increases/decreases text view value depending on input parameters
