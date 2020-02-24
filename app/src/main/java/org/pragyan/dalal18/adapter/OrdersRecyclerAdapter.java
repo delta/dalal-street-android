@@ -1,6 +1,9 @@
 package org.pragyan.dalal18.adapter;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +15,8 @@ import androidx.annotation.NonNull;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.nineoldandroids.view.ViewPropertyAnimator;
 
 import org.pragyan.dalal18.R;
 import org.pragyan.dalal18.data.CustomOrderUpdate;
@@ -25,14 +30,31 @@ import java.util.List;
 
 import dalalstreet.api.models.OrderType;
 
+import static org.pragyan.dalal18.utils.Constants.CANCEL_ORDER_TOUR_KEY;
+
 public class OrdersRecyclerAdapter extends RecyclerView.Adapter<OrdersRecyclerAdapter.OrderViewHolder> {
 
     private Context context;
     private List<Order> openOrdersList;
+    private SwipeToCancelListener listener;
+    private SharedPreferences preferences;
 
-    public OrdersRecyclerAdapter(Context context, List<Order> orderList) {
+    private int screenWidth;
+    private OrderViewHolder firstPositionViewHolder = null;
+
+    public interface SwipeToCancelListener {
+        void showTapTargetForNewOrder(View view);
+    }
+
+    public OrdersRecyclerAdapter(Context context, List<Order> orderList, SwipeToCancelListener listener, SharedPreferences preferences) {
         this.context = context;
         this.openOrdersList = orderList;
+        this.listener = listener;
+        this.preferences = preferences;
+
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        ((Activity) context).getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        screenWidth = displayMetrics.widthPixels;
     }
 
     @NonNull
@@ -72,6 +94,13 @@ public class OrdersRecyclerAdapter extends RecyclerView.Adapter<OrdersRecyclerAd
             holder.priceTextView.setText(tempString);
         }
 
+        if (position == 0 && !preferences.getBoolean(CANCEL_ORDER_TOUR_KEY, false)) {
+            firstPositionViewHolder = holder;
+            ViewPropertyAnimator.animate(holder.orderViewForeground).translationXBy(-screenWidth / 2).setDuration(450);
+            listener.showTapTargetForNewOrder(holder.deleteOrderText);
+            preferences.edit().putBoolean(CANCEL_ORDER_TOUR_KEY, true).apply();
+        }
+
         holder.quantitySeekbar.setMax((int) order.getStockQuantity());
         holder.quantitySeekbar.setProgress((int) order.getStockQuantityFulfilled());
 
@@ -82,6 +111,13 @@ public class OrdersRecyclerAdapter extends RecyclerView.Adapter<OrdersRecyclerAd
     public int getItemCount() {
         if (openOrdersList == null || openOrdersList.size() == 0) return 0;
         return openOrdersList.size();
+    }
+
+    public void swipeBackFirstOrder() {
+        if (firstPositionViewHolder != null) {
+            ViewPropertyAnimator.animate(firstPositionViewHolder.orderViewForeground).translationXBy(screenWidth / 2).setDuration(450);
+            firstPositionViewHolder = null;
+        }
     }
 
     // Returns true if openOrdersList is empty
@@ -160,7 +196,7 @@ public class OrdersRecyclerAdapter extends RecyclerView.Adapter<OrdersRecyclerAd
 
     public class OrderViewHolder extends RecyclerView.ViewHolder {
 
-        TextView typeTextView, priceTextView, quantityTextView, companyNameTextView;
+        TextView typeTextView, priceTextView, quantityTextView, companyNameTextView, deleteOrderText;
         Button cancelButton;
         SeekBar quantitySeekbar;
         public ConstraintLayout orderViewForeground;
@@ -172,6 +208,7 @@ public class OrdersRecyclerAdapter extends RecyclerView.Adapter<OrdersRecyclerAd
             priceTextView = view.findViewById(R.id.orderPrice_textView);
             quantityTextView = view.findViewById(R.id.quantity_textView);
             companyNameTextView = view.findViewById(R.id.company_textView);
+            deleteOrderText = view.findViewById(R.id.deleteOrderText);
             cancelButton = view.findViewById(R.id.cancel_button);
             quantitySeekbar = view.findViewById(R.id.stockDisplay_seekBar);
             orderViewForeground = view.findViewById(R.id.orderViewForeground);

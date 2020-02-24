@@ -1,9 +1,7 @@
 package org.pragyan.dalal18.fragment
 
-import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
+import android.content.*
+import android.graphics.Typeface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -20,6 +18,8 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.getkeepsafe.taptargetview.TapTarget
+import com.getkeepsafe.taptargetview.TapTargetView
 import dalalstreet.api.DalalActionServiceGrpc
 import dalalstreet.api.DalalStreamServiceGrpc
 import dalalstreet.api.actions.CancelOrderRequest
@@ -48,7 +48,7 @@ import org.pragyan.dalal18.utils.Constants
 import org.pragyan.dalal18.utils.OrderItemTouchHelper
 import javax.inject.Inject
 
-class OrdersFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, OrderItemTouchHelper.BusItemTouchHelperListener {
+class OrdersFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, OrderItemTouchHelper.BusItemTouchHelperListener, OrdersRecyclerAdapter.SwipeToCancelListener {
 
     @Inject
     lateinit var actionServiceBlockingStub: DalalActionServiceGrpc.DalalActionServiceBlockingStub
@@ -58,6 +58,9 @@ class OrdersFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, OrderIt
 
     @Inject
     lateinit var streamServiceBlockingStub: DalalStreamServiceGrpc.DalalStreamServiceBlockingStub
+
+    @Inject
+    lateinit var preferences: SharedPreferences
 
     private lateinit var model: DalalViewModel
 
@@ -103,10 +106,10 @@ class OrdersFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, OrderIt
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         (activity as AppCompatActivity).supportActionBar?.title = resources.getString(R.string.orders_frag_label)
-        ordersRecyclerAdapter = OrdersRecyclerAdapter(context, null)
+        ordersRecyclerAdapter = OrdersRecyclerAdapter(context, null, this, preferences)
         ordersRecycler_swipeRefreshLayout.setOnRefreshListener(this)
 
-        with(orders_recyclerView) {
+        with(ordersRecyclerView) {
             setHasFixedSize(false)
             adapter = ordersRecyclerAdapter
             layoutManager = LinearLayoutManager(context)
@@ -213,7 +216,7 @@ class OrdersFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, OrderIt
                                 }
                             }
 
-                            val empty = ordersRecyclerAdapter?.swapData(openOrdersList)
+                            val empty = ordersRecyclerAdapter?.swapData(openOrdersList) ?: true
                             flipVisibilities(empty)
 
                         } else {
@@ -316,5 +319,30 @@ class OrdersFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, OrderIt
     companion object {
         const val REFRESH_ORDERS_ACTION = "refresh-orders-action"
         const val ORDER_UPDATE_KEY = "order-update-key"
+    }
+
+    override fun showTapTargetForNewOrder(view: View) {
+        TapTargetView.showFor(activity as AppCompatActivity, TapTarget.forView(view, getString(R.string.swipe_left_to_delete))
+                .cancelable(true)
+                .tintTarget(true)
+                .outerCircleAlpha(0.96f)
+                .targetCircleColor(R.color.neutral_font_color)
+                .targetCircleColor(R.color.neutral_font_color)
+                .textColor(R.color.neon_green)
+                .textTypeface(Typeface.MONOSPACE)
+                .drawShadow(true)
+                .transparentTarget(true)
+                .targetRadius(80),
+                object : TapTargetView.Listener() {
+                    override fun onTargetClick(view: TapTargetView?) {
+                        super.onTargetClick(view)
+                        view?.dismiss(true)
+                    }
+
+                    override fun onTargetDismissed(view: TapTargetView?, userInitiated: Boolean) {
+                        ordersRecyclerAdapter?.swipeBackFirstOrder()
+                    }
+                }
+        )
     }
 }

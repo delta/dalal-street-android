@@ -5,7 +5,6 @@ public class Constants {
     // TODO (Release): Change server IP and Port
 
     public static final String HOST = "delta.nitt.edu";
-
     public static final int PORT = 8000;
 
     // TODO (Release): Change company image base URL and how is built
@@ -58,6 +57,7 @@ public class Constants {
     public static final String PREF_MAIN = "MAINACTIVITY_TOUR";
     public static final String PREF_COMP = "COMPANYFRAG_TOUR";
     public static final String PREF_TRADE = "TRADE_TOUR";
+    public static final String CANCEL_ORDER_TOUR_KEY = "cancel-order-tour-key";
 }
 
 /*  Login response : Constants : Last Checked 02/02/2020
