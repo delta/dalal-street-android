@@ -1,8 +1,8 @@
 package org.pragyan.dalal18.notifications
 
-import android.content.Context
-import android.content.SharedPreferences
+import android.content.*
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,6 +10,8 @@ import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import dalalstreet.api.DalalActionServiceGrpc
@@ -22,6 +24,7 @@ import org.pragyan.dalal18.adapter.NotificationRecyclerAdapter
 import org.pragyan.dalal18.dagger.ContextModule
 import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent
 import org.pragyan.dalal18.data.Notification
+import org.pragyan.dalal18.ui.MainActivity
 import org.pragyan.dalal18.utils.ConnectionUtils
 import org.pragyan.dalal18.utils.Constants
 import java.util.*
@@ -79,6 +82,7 @@ class NotificationFragment : Fragment() {
             addOnScrollListener(CustomScrollListener())
             layoutManager = LinearLayoutManager(this@NotificationFragment.context)
         }
+
 
         preferences.edit().remove(Constants.LAST_NOTIFICATION_ID).apply()
         getNotificationsAsynchronously()
@@ -144,13 +148,34 @@ class NotificationFragment : Fragment() {
         }
     }
 
+    private val refreshNotifications = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            customNotificationList.add(Notification(intent.getStringExtra(TEXT_KEY), intent.getStringExtra(CREATED_AT_KEY)))
+            customNotificationList.sortByDescending { it.createdAt }
+            notificationRecyclerAdapter.swapData(customNotificationList)
+        }
+    }
+
     override fun onPause() {
         super.onPause()
+        LocalBroadcastManager.getInstance(requireContext()).unregisterReceiver(refreshNotifications)
         preferences.edit().remove(Constants.LAST_NOTIFICATION_ID).apply()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        val intentFilter = IntentFilter(MainActivity.REFRESH_UNREAD_NOTIFICATIONS_COUNT)
+        LocalBroadcastManager.getInstance(requireContext()).registerReceiver(refreshNotifications, intentFilter)
     }
 
     override fun onDestroy() {
         super.onDestroy()
         preferences.edit().remove(Constants.LAST_NOTIFICATION_ID).apply()
+    }
+
+    companion object {
+
+        public const val TEXT_KEY = "text-key"
+        public const val CREATED_AT_KEY = "createdat-key"
     }
 }
