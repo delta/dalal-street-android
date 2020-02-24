@@ -4,12 +4,12 @@ public class Constants {
 
     // TODO (Release): Change server IP and Port
 
-    public static final String HOST = "192.168.0.50";
+    public static final String HOST = "delta.nitt.edu";
 
     public static final int PORT = 8000;
 
     // TODO (Release): Change company image base URL and how is built
-    public static final String COMPANY_IMAGES_BASE_URL = "https://currents.nitt.edu/images/dalal/";
+    public static final String COMPANY_IMAGES_BASE_URL = "https://delta.nitt.edu:8081/public/src/images/companies/";
 
     public static final String REFRESH_MARKET_EVENTS_FOR_HOME_AND_NEWS = "refresh-news-action";
     public static final String REFRESH_PRICE_TICKER_FOR_HOME = "refresh-price-ticker-action";

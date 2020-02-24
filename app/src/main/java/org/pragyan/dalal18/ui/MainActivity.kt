@@ -197,6 +197,7 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
         createChannel()
         val notificationIntent = Intent(this.baseContext, PushNotificationService::class.java)
         this.startService(notificationIntent)
+        market_close_indicator.isSelected=true
 
     }
 
