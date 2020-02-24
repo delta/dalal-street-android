@@ -56,6 +56,7 @@ import org.pragyan.dalal18.notifications.PushNotificationService
 import org.pragyan.dalal18.utils.*
 import org.pragyan.dalal18.utils.Constants.*
 import org.pragyan.dalal18.utils.CountDrawable.buildCounterDrawable
+import java.lang.Exception
 import java.text.DecimalFormat
 import java.util.*
 import javax.inject.Inject
@@ -289,27 +290,31 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
         this@MainActivity.stopService(notificationIntent)
         unsubscribeFromAllStreams()
 
-        if (withContext(Dispatchers.IO) { ConnectionUtils.getConnectionInfo(this@MainActivity) }) {
-            if (withContext(Dispatchers.IO) { ConnectionUtils.isReachableByTcp(HOST, PORT) }) {
-                val logoutResponse = withContext(Dispatchers.IO) {
-                    actionServiceBlockingStub.logout(LogoutRequest.newBuilder().build())
+        try {
+            if (withContext(Dispatchers.IO) { ConnectionUtils.getConnectionInfo(this@MainActivity) }) {
+                if (withContext(Dispatchers.IO) { ConnectionUtils.isReachableByTcp(HOST, PORT) }) {
+                    val logoutResponse = withContext(Dispatchers.IO) {
+                        actionServiceBlockingStub.logout(LogoutRequest.newBuilder().build())
+                    }
+
+                    if (logoutResponse.statusCode == LogoutResponse.StatusCode.OK) {
+
+                        val stopNotificationIntent = Intent(STOP_NOTIFICATION_ACTION)
+                        LocalBroadcastManager.getInstance(this@MainActivity).sendBroadcast(stopNotificationIntent)
+
+                        preferences.edit().putString(EMAIL_KEY, null).putString(PASSWORD_KEY, null).putString(SESSION_KEY, null).apply()
+                    }
+
+                    startActivity(Intent(this@MainActivity, LoginActivity::class.java))
+                    finish()
+                } else {
+                    onNetworkDownError(resources.getString(R.string.error_server_down), R.id.home_dest)
                 }
-
-                if (logoutResponse.statusCode == LogoutResponse.StatusCode.OK) {
-
-                    val stopNotificationIntent = Intent(STOP_NOTIFICATION_ACTION)
-                    LocalBroadcastManager.getInstance(this@MainActivity).sendBroadcast(stopNotificationIntent)
-
-                    preferences.edit().putString(EMAIL_KEY, null).putString(PASSWORD_KEY, null).putString(SESSION_KEY, null).apply()
-                }
-
-                startActivity(Intent(this@MainActivity, LoginActivity::class.java))
-                finish()
             } else {
-                onNetworkDownError(resources.getString(R.string.error_server_down), R.id.home_dest)
+                onNetworkDownError(resources.getString(R.string.error_check_internet), R.id.home_dest)
             }
-        } else {
-            onNetworkDownError(resources.getString(R.string.error_check_internet), R.id.home_dest)
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
     }
 
