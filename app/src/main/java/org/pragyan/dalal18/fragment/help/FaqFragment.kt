@@ -22,17 +22,20 @@ class FaqFragment : Fragment() {
 
         expand_text_view_faq1.text = resources.getText(R.string.faq_1a)
         expand_text_view_faq2.text = resources.getText(R.string.faq_2a)
-        expand_text_view_faq3.text = resources.getText(R.string.faq_3a)
+        expand_text_view_faq3.text = resources.getText(R.string.faq_8a)
         expand_text_view_faq4.text = resources.getText(R.string.faq_4a)
         expand_text_view_faq5.text = resources.getText(R.string.faq_5a)
         expand_text_view_faq6.text = resources.getText(R.string.faq_6a)
-        expand_text_view_faq7.text = resources.getText(R.string.faq_7a)
+        expand_text_view_faq8.text = resources.getText(R.string.faq_7a)
+        expand_text_view_faq9.text = resources.getText(R.string.faq_9a)
+        expand_text_view_faq10.text = resources.getText(R.string.faq_10a)
+        expand_text_view_faq7.text = resources.getText(R.string.faq_11a)
 
         forumTextView.setOnClickListener { openForumWebPage() }
     }
 
     private fun openForumWebPage() {
-        val forumIntent = Intent(Intent.ACTION_VIEW, Uri.parse("https://forum.pragyan.org/c/dalal-street"))
+        val forumIntent = Intent(Intent.ACTION_VIEW, Uri.parse("https://forum.pragyan.org/"))
         startActivity(forumIntent)
     }
 }

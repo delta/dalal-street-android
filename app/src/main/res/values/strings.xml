@@ -362,6 +362,8 @@
     <string name="getting_started_4a"><b>Buying and Selling Stocks</b>\n\nThe Market Depth lists all open buy and sell orders. This includes orders issued by all players that have not been filled yet. By observing the Market Depth, you can see the prices at which other players are placing their orders and judge the current mood of the market.\n\nAll trading related tasks are performed in trade fragment. There are 3 different types of orders you can place - Market, Limit and Stoploss. (You can read more about these terms in our FAQ section). Once your orders are placed, we will fill the order based on a best match algorithm.\n\n<b>Open Orders</b> - These are the orders that you have placed but have not been filled yet. After you place an order, the order will appear here until it is successfully filled.\n\n<b>Depth Graph</b> - This shows how the stock price of the selected company has changed over time. You can view the chart with different time intervals by using the dropdown above the chart. This allows you to analyse the data at different levels of detail.
     \nOnce you’ve bought some stocks, you can view all the stocks you own as well as your Net Worth on the Portfolio Page.\n\nHopefully, this should be enough to get you going and start trading!\nIf you still have some questions, please read our FAQ section where we address some more common doubts that players may have.</string>
 
+    <string name="getting_started_5a"><b>Malpractices</b>\n\nWhenever we observe a user doing malpractices, the user will be blocked for a day. If the user continues to do malpractice, the user will be blocked from playing for the entire duration. Malpractices include having multiple accounts and performing cash funnelling operations between the accounts.</string>
+
     <string name="faq_1a"><b>Help! I don’t know what Market, Limit and Stoploss orders are!</b>\n\nThese are the 3 types of orders that you can place. The type of order you select can change the trade price as well as how soon your order gets filled.
     \n\n<b>Market Orders : </b>  If your primary concern is to have your order filled ASAP, and you’re not too worried about the price at which the transaction is carried out, you should use a Market Order.
     Once you place a Market Buy Order for a certain company, we will find the least priced Market Sell Order (for the same company) and execute the transaction. (vice-versa for Market Sell).\n\n<b>Limit Orders : </b>Limit Orders allow you to specify a maximum trade price in case of a Limit Buy, and a minimum trade price in case of a
@@ -394,6 +396,12 @@
         \n\nIf this happens, then the number of Stocks in Exchange will increase, and you can buy these stocks from the Exchange Page. Stay tuned to the News
         Page and look out for notifications.\n\n If you still have any queries, please feel free to ask it on our Official Forum
         and we\'ll try to get back to you as soon as possible.\n\n Happy Trading!</string>
+    <string name="faq_8a"><b>How is the winner determined?</b>\n\nThe player with the highest Total Net Worth at the end of <b>7 days </b>is declared as the winner. Your Total  Net Worth is calculated by adding - <b> Cash In Hand, Stock Worths, Reserved Cash and Reserved Stock Worth </b>. You can view these values on the Portfolio page.</string>
+    <string name="faq_9a"><b>Can a company to go bankrupt?</b>\n\nYes. A company might go bankrupt depending on their current financial situation. Stay tuned to the news page for the latest updates about companies. When a company goes bankrupt, you can no longer exchange stocks their stocks and all stocks you own of that company become worthless.
+</string>
+    <string name="faq_10a"><b>Help my account got blocked!</b>\n\nWhenever we observe a user breaking our rules of conduct, we block the user from playing. Check out our malpractice section in Getting Started for more details. Reach out to us on our forum for any clarification.</string>
+    <string name="faq_11a"><b>Can I expect a company to give dividends?</b>\n\nDuring the course of the game, some companies might offer dividends to you. Dividends are a fixed amount per stocks that you own of their company. You\'ll be notified when a company is giving dividends, till then stay tuned to the news for latest updates of a company.
+</string>
     <string name="notifications">Notifications</string>
     <string name="not_registered_click_here_to_register">Not registered? Click here to register</string>
     <string name="registering">Registering…</string>
@@ -422,7 +430,7 @@
     <string name="swipe_to_refresh">Swipe to refresh</string>
     <string name="_30_mins">30 mins</string>
     <string name="internet_connection_lost">Internet connection lost</string>
-    <string name="forum_link">https://www.allanswered.com/community/s/dalal-street/</string>
+    <string name="forum_link">https://forum.pragyan.org/</string>
     <string name="forum">Forum</string>
     <string name="owned">Owned</string>
     <string name="unread_background_circle">Unread background circle</string>
