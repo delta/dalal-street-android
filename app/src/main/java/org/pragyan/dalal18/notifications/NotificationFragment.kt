@@ -165,7 +165,7 @@ class NotificationFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         val intentFilter = IntentFilter(MainActivity.REFRESH_UNREAD_NOTIFICATIONS_COUNT)
-        LocalBroadcastManager.getInstance(requireContext()).registerReceiver(refreshNotifications, IntentFilter(intentFilter))
+        LocalBroadcastManager.getInstance(requireContext()).registerReceiver(refreshNotifications, intentFilter)
     }
 
     override fun onDestroy() {
