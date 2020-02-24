@@ -4,7 +4,6 @@
     android:id="@+id/mainDrawerLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:animateLayoutChanges="true"
     android:background="@color/black_background">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -145,11 +144,11 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintBottom_toTopOf="@id/market_close_indicator"
+            app:layout_constraintBottom_toTopOf="@id/marketCloseIndicatorTextView"
             app:layout_constraintTop_toBottomOf="@+id/stockWorthTextView"
             app:navGraph="@navigation/dalal_navigation" />
         <TextView
-            android:id="@+id/market_close_indicator"
+            android:id="@+id/marketCloseIndicatorTextView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="2dp"
@@ -161,11 +160,10 @@
             android:marqueeRepeatLimit="marquee_forever"
             android:focusable="true"
             android:gravity="center"
-            android:paddingBottom="4dp"
             android:text="@string/marketClose"
             android:visibility="gone"
             android:textColor="@color/redTint"
-            android:textSize="20sp"
+            android:textSize="18sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

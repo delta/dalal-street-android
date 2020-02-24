@@ -197,7 +197,7 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
         createChannel()
         val notificationIntent = Intent(this.baseContext, PushNotificationService::class.java)
         this.startService(notificationIntent)
-        market_close_indicator.isSelected=true
+        marketCloseIndicatorTextView.isSelected=true
 
     }
 
@@ -580,9 +580,9 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
         // TextView at the bottom of the MainActivity
         //todo check this integration works
         if (!isMarketOpen) {
-            market_close_indicator.visibility = View.VISIBLE
+            marketCloseIndicatorTextView.visibility = View.VISIBLE
         } else {
-            market_close_indicator.visibility = View.GONE
+            marketCloseIndicatorTextView.visibility = View.GONE
         }
     }
 
