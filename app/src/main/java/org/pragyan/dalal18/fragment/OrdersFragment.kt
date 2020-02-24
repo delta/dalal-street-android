@@ -221,9 +221,6 @@ class OrdersFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, OrderIt
                                 }
                             }
 
-                            if (askList.size > 0 || bidList.size > 0) {
-                                showSwipeToDeleteTour()
-                            }
 
                             val empty = ordersRecyclerAdapter?.swapData(openOrdersList)
                             flipVisibilities(empty)
@@ -242,12 +239,6 @@ class OrdersFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, OrderIt
         }
     }
 
-    private fun showSwipeToDeleteTour() {
-
-        if (preferences.getBoolean(Constants.PREF_SWIPE_TO_DELETE_ORDER, true)) {
-            preferences.edit().putBoolean(Constants.PREF_SWIPE_TO_DELETE_ORDER, false).apply()
-        }
-    }
 
     override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int, position: Int) {
 
