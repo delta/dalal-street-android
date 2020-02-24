@@ -4,10 +4,12 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -45,10 +47,12 @@ import org.pragyan.dalal18.data.DalalViewModel
 import org.pragyan.dalal18.data.Order
 import org.pragyan.dalal18.utils.ConnectionUtils
 import org.pragyan.dalal18.utils.Constants
+import org.pragyan.dalal18.utils.EndTutorialInterface
 import org.pragyan.dalal18.utils.OrderItemTouchHelper
+import org.pragyan.dalal18.views.DeleteTutorialView
 import javax.inject.Inject
 
-class OrdersFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, OrderItemTouchHelper.BusItemTouchHelperListener {
+class OrdersFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, OrderItemTouchHelper.BusItemTouchHelperListener{
 
     @Inject
     lateinit var actionServiceBlockingStub: DalalActionServiceGrpc.DalalActionServiceBlockingStub
@@ -58,6 +62,9 @@ class OrdersFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, OrderIt
 
     @Inject
     lateinit var streamServiceBlockingStub: DalalStreamServiceGrpc.DalalStreamServiceBlockingStub
+
+    @Inject
+    lateinit var preferences: SharedPreferences
 
     private lateinit var model: DalalViewModel
 
@@ -102,6 +109,7 @@ class OrdersFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, OrderIt
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         (activity as AppCompatActivity).supportActionBar?.title = resources.getString(R.string.orders_frag_label)
         ordersRecyclerAdapter = OrdersRecyclerAdapter(context, null)
         ordersRecycler_swipeRefreshLayout.setOnRefreshListener(this)
@@ -213,6 +221,10 @@ class OrdersFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, OrderIt
                                 }
                             }
 
+                            if (askList.size > 0 || bidList.size > 0) {
+                                showSwipeToDeleteTour()
+                            }
+
                             val empty = ordersRecyclerAdapter?.swapData(openOrdersList)
                             flipVisibilities(empty)
 
@@ -227,6 +239,13 @@ class OrdersFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, OrderIt
                 uiThread { networkDownHandler?.onNetworkDownError(resources.getString(R.string.error_check_internet), R.id.open_orders_dest) }
             }
             uiThread { loadingOrdersDialog.dismiss() }
+        }
+    }
+
+    private fun showSwipeToDeleteTour() {
+
+        if (preferences.getBoolean(Constants.PREF_SWIPE_TO_DELETE_ORDER, true)) {
+            preferences.edit().putBoolean(Constants.PREF_SWIPE_TO_DELETE_ORDER, false).apply()
         }
     }
 

@@ -102,8 +102,11 @@
     <string name="askdepth_tour">Ask Depth</string>
     <string name="incrementFive">+5</string>
     <string name="incrementOne">+1</string>
+
     <string name="bankruptSuffix">BANKRUPT</string>
     <string name="dividendSuffix">$$$</string>
+
+    <string name="swipe_to_delete">Swipe To Delete</string>
 
     <string name="up_arrow">&#8593;</string>
     <string name="down_arrow">&#8595;</string>

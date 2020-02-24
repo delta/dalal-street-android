@@ -77,3 +77,7 @@ object DalalTourUtils {
                 }).start()
     }
 }
+
+interface EndTutorialInterface {
+    fun removeTutorial()
+}

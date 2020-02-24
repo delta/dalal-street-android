@@ -3,8 +3,7 @@ package org.pragyan.dalal18.utils;
 public class Constants {
 
     // TODO (Release): Change server IP and Port
-
-    public static final String HOST = "192.168.0.50";
+    public static final String HOST = "delta.nitt.edu";
 
     public static final int PORT = 8000;
 
@@ -60,6 +59,7 @@ public class Constants {
     public static final String PREF_TRADE = "TRADE_TOUR";
     public static final String dividendSuffix = "$$$";
     public static final String bankruptSuffix = "BANKRUPT";
+    public static final String PREF_SWIPE_TO_DELETE_ORDER = "PREF_SWIPE_TO_DELETE_ORDER";
 }
 
 /*  Login response : Constants : Last Checked 02/02/2020
