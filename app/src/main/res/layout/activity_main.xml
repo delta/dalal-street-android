@@ -135,7 +135,6 @@
             android:background="@drawable/drawer_edge_button"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/stockWorthTextView" />
-
         <fragment
             android:id="@+id/main_host_fragment"
             android:name="androidx.navigation.fragment.NavHostFragment"
@@ -145,9 +144,27 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/market_close_indicator"
             app:layout_constraintTop_toBottomOf="@+id/stockWorthTextView"
             app:navGraph="@navigation/dalal_navigation" />
-
+        <TextView
+            android:id="@+id/market_close_indicator"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#20202C"
+            android:ellipsize="marquee"
+            android:fontFamily="@font/kreon_light"
+            android:gravity="center"
+            android:paddingBottom="4dp"
+            android:singleLine="true"
+            android:text="@string/marketClose"
+            android:visibility="gone"
+            android:textColor="@color/neon_green"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"/>
         <ImageView
             android:id="@+id/cashIndicatorImageView"
             android:layout_width="16dp"
