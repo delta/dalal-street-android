@@ -18,9 +18,12 @@ import org.pragyan.dalal18.utils.ConnectionUtils
 import org.pragyan.dalal18.utils.Constants
 import javax.inject.Inject
 import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.Context
 import android.content.ComponentName
 import org.pragyan.dalal18.R
+import org.pragyan.dalal18.ui.SplashActivity
+import org.pragyan.dalal18.ui.SplashActivity_MembersInjector
 
 
 class PushNotificationService : Service() {
@@ -129,12 +132,14 @@ class PushNotificationService : Service() {
                 object : StreamObserver<NotificationUpdate> {
                     override fun onNext(value: NotificationUpdate) {
                         val notification = value.notification
-
+                        val myIntent = Intent(applicationContext, SplashActivity::class.java)
+                        val pendingIntent = PendingIntent.getActivity(applicationContext,0,myIntent,PendingIntent.FLAG_UPDATE_CURRENT)
                         val builder = NotificationCompat.Builder(applicationContext, getString(R.string.notification_channel_id))
                                 .setSmallIcon(R.drawable.market_depth_icon)
                                 .setAutoCancel(true)
                                 .setContentText(notification.text)
                                 .setContentTitle("Dalal Street")
+                                .setContentIntent(pendingIntent)
                                 .build()
                         notificationManager.notify(notification.id, builder)
 
