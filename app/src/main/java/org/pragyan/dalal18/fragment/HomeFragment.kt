@@ -192,14 +192,7 @@ class HomeFragment : Fragment(), NewsRecyclerAdapter.NewsItemClickListener, Swip
             companyTickerDetailsList.add(CompanyTickerDetails(stock.stockId, stock.fullName, stock.imagePath, stock.price, stock.up == 1, stock.isBankrupt, stock.givesDividend))
         }
 
-        if (companyTickerDetailsList.size != 0) {
-
-            for (x in 1..3)
-                companyTickerDetailsList.addAll(companyTickerDetailsList)
-
-            companyTickerRecyclerAdapter.swapData(companyTickerDetailsList)
-        }
-
+        companyTickerRecyclerAdapter.updateData(companyTickerDetailsList)
 
         val builder = StringBuilder("")
         for ((_, currentStock) in model.globalStockDetails) {
@@ -237,7 +230,8 @@ class HomeFragment : Fragment(), NewsRecyclerAdapter.NewsItemClickListener, Swip
 
     override fun onCompanyTickerClick(view: View, position: Int) {
         val bundle = Bundle()
-        bundle.putInt(CompanyDescriptionFragment.COMPANY_STOCK_ID_KEY, companyTickerDetailsList[position].stockId)
+        bundle.putInt(CompanyDescriptionFragment.COMPANY_STOCK_ID_KEY,
+                companyTickerDetailsList[position % companyTickerDetailsList.size].stockId)
         findNavController().navigate(R.id.action_company_ticker_to_details, bundle)
     }
 

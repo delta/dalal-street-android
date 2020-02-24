@@ -71,10 +71,10 @@ public class CompanyTickerRecyclerAdapter extends RecyclerView.Adapter<CompanyTi
 
     @Override
     public int getItemCount() {
-        return (companyTickerDetailsList == null || companyTickerDetailsList.size() == 0) ? 0 : companyTickerDetailsList.size();
+        return (companyTickerDetailsList == null || companyTickerDetailsList.size() == 0)? 0 : Integer.MAX_VALUE;//companyTickerDetailsList.size();
     }
 
-    public void swapData(List<CompanyTickerDetails> companyTickerDetailsList) {
+    public void updateData(List<CompanyTickerDetails> companyTickerDetailsList) {
         this.companyTickerDetailsList = companyTickerDetailsList;
         notifyDataSetChanged();
     }
