@@ -4,7 +4,7 @@ public class Constants {
 
     // TODO (Release): Change server IP and Port
 
-    public static final String HOST = "192.168.0.50";
+    public static final String HOST = "delta.nitt.edu";
 
     public static final int PORT = 8000;
 
