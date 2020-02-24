@@ -170,7 +170,6 @@ class NotificationFragment : Fragment() {
 
     override fun onDestroy() {
         super.onDestroy()
-        LocalBroadcastManager.getInstance(requireContext()).unregisterReceiver(refreshNotifications)
         preferences.edit().remove(Constants.LAST_NOTIFICATION_ID).apply()
     }
 
