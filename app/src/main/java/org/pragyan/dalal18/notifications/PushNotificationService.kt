@@ -1,7 +1,6 @@
 package org.pragyan.dalal18.notifications
 
 import android.app.Service
-import android.content.Intent
 import android.net.ConnectivityManager
 import android.net.Network
 import android.os.IBinder
@@ -19,11 +18,10 @@ import org.pragyan.dalal18.utils.Constants
 import javax.inject.Inject
 import android.app.NotificationManager
 import android.app.PendingIntent
-import android.content.Context
-import android.content.ComponentName
+import android.content.*
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import org.pragyan.dalal18.R
 import org.pragyan.dalal18.ui.SplashActivity
-import org.pragyan.dalal18.ui.SplashActivity_MembersInjector
 
 
 class PushNotificationService : Service() {
@@ -42,16 +40,28 @@ class PushNotificationService : Service() {
     @Inject
     lateinit var connectivityManager: ConnectivityManager
 
+    var isLoggedIn = true
+
+    private val stopNotificationServiceBroadcast = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            isLoggedIn = false
+        }
+    }
 
     override fun onCreate() {
         DaggerDalalStreetApplicationComponent.builder().contextModule(ContextModule(this)).build().inject(this)
         notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        LocalBroadcastManager.getInstance(this).registerReceiver(stopNotificationServiceBroadcast, IntentFilter(Constants.STOP_NOTIFICATION_ACTION))
     }
 
     override fun onTaskRemoved(rootIntent: Intent?) {
-        Intent().also { intent ->
-            intent.setAction("android.intent.action.NotifServiceBroadcast")
-            sendImplicitBroadcast(applicationContext, intent)
+        if (!isLoggedIn) {
+            unsubscribeFromNotificationStream()
+        } else {
+            Intent().also { intent ->
+                intent.setAction("android.intent.action.NotifServiceBroadcast")
+                sendImplicitBroadcast(applicationContext, intent)
+            }
         }
     }
 
@@ -133,7 +143,7 @@ class PushNotificationService : Service() {
                     override fun onNext(value: NotificationUpdate) {
                         val notification = value.notification
                         val myIntent = Intent(applicationContext, SplashActivity::class.java)
-                        val pendingIntent = PendingIntent.getActivity(applicationContext,0,myIntent,PendingIntent.FLAG_UPDATE_CURRENT)
+                        val pendingIntent = PendingIntent.getActivity(applicationContext, 0, myIntent, PendingIntent.FLAG_UPDATE_CURRENT)
                         val builder = NotificationCompat.Builder(applicationContext, getString(R.string.notification_channel_id))
                                 .setSmallIcon(R.drawable.market_depth_icon)
                                 .setAutoCancel(true)
