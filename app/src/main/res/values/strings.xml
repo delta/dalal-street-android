@@ -104,7 +104,7 @@
     <string name="incrementOne">+1</string>
     <string name="bankruptSuffix">BANKRUPT</string>
     <string name="dividendSuffix">$$$</string>
-    <string name="marketClose">Market is Close \t\t\t Market is Close \t\t\t Market is Close</string>
+    <string name="marketClose">Market is Closed \t\t\t Market is Closed \t\t\t Market is Closed</string>
 
 
     <string name="up_arrow">&#8593;</string>
