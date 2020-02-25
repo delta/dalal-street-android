@@ -90,17 +90,13 @@ class MortgageFragment : Fragment() {
         setupMortgageDetails(lastStockId)
 
         with(mortgage_companies_spinner) {
-            val companiesArray = model.getSpinnerArray()
+            val companiesArray = model.getCompanyNamesArray()
             adapter = ArrayAdapter(context!!, R.layout.company_spinner_item, companiesArray)
 
             onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
                 override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
 
-                    lastStockId = model.getStockIdFromSpinnerCompanyName(
-                            companiesArray[position],
-                            getString(R.string.bankruptSuffix),
-                            getString(R.string.dividendSuffix)
-                    )
+                    lastStockId = model.getStockIdFromCompanyName(companiesArray[position])
 
                     changeMortgageOptions(!model.getIsBankruptFromStockId(lastStockId))
 

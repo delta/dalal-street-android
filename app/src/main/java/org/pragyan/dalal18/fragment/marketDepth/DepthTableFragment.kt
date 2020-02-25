@@ -138,11 +138,7 @@ class DepthTableFragment : Fragment() {
         with(companySpinner) {
             setAdapter(arrayAdapter)
             setOnItemClickListener { _, _, _, _ ->
-                val lastStockId = model.getStockIdFromSpinnerCompanyName(
-                        companySpinner.text.toString(),
-                        getString(R.string.bankruptSuffix),
-                        getString(R.string.dividendSuffix)
-                )
+                val lastStockId = model.getStockIdFromCompanyName(companySpinner.text.toString())
 
                 model.updateFavouriteCompanyStockId(lastStockId)
 

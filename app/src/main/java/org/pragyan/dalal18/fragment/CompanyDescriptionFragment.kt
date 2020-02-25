@@ -26,16 +26,9 @@ class CompanyDescriptionFragment : Fragment() {
                 ?: throw Exception("Invalid activity")
 
         val currentStockId = arguments?.getInt(COMPANY_STOCK_ID_KEY) ?: return
+
         Picasso.get().load(model.getImageUrlFromStockId(currentStockId)).into(companyImageView)
-
-        var temp = model.getCompanyNameFromStockId(currentStockId)
-        if (model.getGivesDividendFromStockId(currentStockId)) {
-            temp += resources.getString(R.string.dividendSuffix)
-        } else if (model.getIsBankruptFromStockId(currentStockId)) {
-            temp += resources.getString(R.string.bankruptSuffix)
-        }
-        companyNameTextView.text = temp
-
+        companyNameTextView.text = model.getCompanyNameFromStockId(currentStockId)
         companyDescriptionTextView.text = model.getDescriptionFromStockId(currentStockId)
     }
 

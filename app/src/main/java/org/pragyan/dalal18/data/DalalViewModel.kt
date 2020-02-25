@@ -1,8 +1,6 @@
 package org.pragyan.dalal18.data
 
 import androidx.lifecycle.ViewModel
-import org.pragyan.dalal18.utils.Constants.bankruptSuffix
-import org.pragyan.dalal18.utils.Constants.dividendSuffix
 
 class DalalViewModel : ViewModel() {
 
@@ -37,7 +35,8 @@ class DalalViewModel : ViewModel() {
 
     fun updateMortgagedStocks(stockId: Int, quantity: Long, price: Long) {
         val stockIdPricePair = Pair(stockId, price)
-        mortgageStockDetails[stockIdPricePair] = mortgageStockDetails[stockIdPricePair]?.plus(quantity) ?: quantity
+        mortgageStockDetails[stockIdPricePair] = mortgageStockDetails[stockIdPricePair]?.plus(quantity)
+                ?: quantity
     }
 
     fun getReservedStocksFromStockId(stockId: Int): Long {
@@ -70,12 +69,6 @@ class DalalViewModel : ViewModel() {
             if (currentStock.fullName.equals(incomingCompanyName, ignoreCase = true)) return stockId
         }
         return -1
-    }
-
-    fun getStockIdFromSpinnerCompanyName(spinnerName: String, bankruptSuffix: String, dividendSuffix: String): Int {
-        if (spinnerName.endsWith(bankruptSuffix)) spinnerName.removeSuffix(bankruptSuffix)
-        if (spinnerName.endsWith(dividendSuffix)) spinnerName.removeSuffix(dividendSuffix)
-        return getStockIdFromCompanyName(spinnerName)
     }
 
     fun getCompanyNameFromStockId(stockId: Int): String {
@@ -121,8 +114,8 @@ class DalalViewModel : ViewModel() {
     fun getMortgagedStocksFromStockId(stockId: Int): Long {
 
         var stocks = 0L
-        for((pair, quantity) in mortgageStockDetails) {
-            if(pair.first == stockId) stocks += quantity
+        for ((pair, quantity) in mortgageStockDetails) {
+            if (pair.first == stockId) stocks += quantity
         }
         return stocks
     }
@@ -140,22 +133,5 @@ class DalalViewModel : ViewModel() {
             index++
         }
         return index
-    }
-
-    fun getPreviousDayCloseFromStockId(list: List<GlobalStockDetails>, stockId: Int): Long {
-        return globalStockDetails[stockId]?.previousDayClose ?: 0
-    }
-
-    fun getSpinnerArray(): MutableList<String> {
-        val array = mutableListOf<String>()
-        for ((_, stock: GlobalStockDetails) in globalStockDetails) {
-            array.add(stock.fullName +
-                    when {
-                        stock.givesDividend -> dividendSuffix
-                        stock.isBankrupt -> bankruptSuffix
-                        else -> ""
-                    })
-        }
-        return array
     }
 }

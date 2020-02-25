@@ -44,14 +44,7 @@ public class CompanyRecyclerAdapter extends RecyclerView.Adapter<CompanyRecycler
 
         CompanyDetails currentCompany = list.get(position);
 
-        String temp = currentCompany.getCompanyName();
-        if (currentCompany.getGivesDividend()) {
-            temp += context.getString(R.string.dividendSuffix);
-        } else if (currentCompany.isBankrupt()) {
-            temp += context.getString(R.string.bankruptSuffix);
-        }
-
-        holder.companyNameTextView.setText(temp);
+        holder.companyNameTextView.setText(currentCompany.getCompanyName());
         new Handler().postDelayed(() -> holder.companyNameTextView.setSelected(true), 1000);
 
         String temporaryString = new DecimalFormat(Constants.PRICE_FORMAT).format(currentCompany.getValue());

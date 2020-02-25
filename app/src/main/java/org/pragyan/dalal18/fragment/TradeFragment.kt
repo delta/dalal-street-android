@@ -114,8 +114,8 @@ class TradeFragment : Fragment() {
         }
 
         with(companySpinner) {
-            val companiesArray = model.getSpinnerArray()
-            adapter = ArrayAdapter(context!!, R.layout.order_spinner_item, model.getSpinnerArray())
+            val companiesArray = model.getCompanyNamesArray()
+            adapter = ArrayAdapter(context!!, R.layout.order_spinner_item, companiesArray)
 
             onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
 
@@ -124,11 +124,7 @@ class TradeFragment : Fragment() {
 
                 override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
 
-                    lastStockId = model.getStockIdFromSpinnerCompanyName(
-                            companiesArray[position],
-                            getString(R.string.bankruptSuffix),
-                            getString(R.string.dividendSuffix)
-                    )
+                    lastStockId = model.getStockIdFromCompanyName(companiesArray[position])
 
                     changeTradeOptions(!model.getIsBankruptFromStockId(lastStockId))
 

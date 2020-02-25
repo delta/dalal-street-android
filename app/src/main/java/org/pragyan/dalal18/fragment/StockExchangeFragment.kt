@@ -43,7 +43,7 @@ class StockExchangeFragment : Fragment() {
     private lateinit var model: DalalViewModel
 
     private var currentStock: Stock? = null
-    private var lastSelectedStockId: Int = 0
+    private var lastSelectedStockId: Int = 1
     private lateinit var companiesArray: MutableList<String>
     private var loadingDialog: AlertDialog? = null
     private var decimalFormat = DecimalFormat(Constants.PRICE_FORMAT)
@@ -87,7 +87,7 @@ class StockExchangeFragment : Fragment() {
                 .setCancelable(false)
                 .create()
 
-        companiesArray = model.getSpinnerArray()
+        companiesArray = model.getCompanyNamesArray()
         val arrayAdapter = ArrayAdapter<String>(activity!!, R.layout.company_spinner_item, companiesArray)
         with(companySpinner) {
             adapter = arrayAdapter
@@ -97,11 +97,7 @@ class StockExchangeFragment : Fragment() {
                 }
 
                 override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                    lastSelectedStockId = model.getStockIdFromSpinnerCompanyName(
-                            companySpinner.selectedItem.toString(),
-                            getString(R.string.bankruptSuffix),
-                            getString(R.string.dividendSuffix)
-                    )
+                    lastSelectedStockId = model.getStockIdFromCompanyName(companySpinner.selectedItem.toString())
                     model.updateFavouriteCompanyStockId(lastSelectedStockId)
 
                     changeStockExchangeOptions(!model.getIsBankruptFromStockId(lastSelectedStockId))

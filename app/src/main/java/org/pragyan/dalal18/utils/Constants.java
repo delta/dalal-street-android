@@ -58,8 +58,6 @@ public class Constants {
     public static final String PREF_MAIN = "MAINACTIVITY_TOUR";
     public static final String PREF_COMP = "COMPANYFRAG_TOUR";
     public static final String PREF_TRADE = "TRADE_TOUR";
-    public static final String dividendSuffix = "$$$";
-    public static final String bankruptSuffix = "BANKRUPT";
 }
 
 /*  Login response : Constants : Last Checked 02/02/2020
