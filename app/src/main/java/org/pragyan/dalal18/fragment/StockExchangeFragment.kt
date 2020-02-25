@@ -123,12 +123,16 @@ class StockExchangeFragment : Fragment() {
     }
 
     private fun buyStocksFromExchange() {
-
+        buyExchangeButton.isEnabled = false
         if (noOfStocksEditText.text.toString().trim { it <= ' ' }.isEmpty()) {
+            buyExchangeButton.isEnabled = true
             context?.toast("Enter the number of Stocks")
         } else if (currentStock != null && dailyHigh_textView.text.isNotEmpty()) {
             if ((noOfStocksEditText.text.toString().trim { it <= ' ' }).toLong() <= currentStock!!.stocksInExchange) {
                 doAsync {
+                    uiThread {
+                        loadingDialog?.show()
+                    }
                     if (ConnectionUtils.getConnectionInfo(context!!)) {
                         if (ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
                             val response = actionServiceBlockingStub.buyStocksFromExchange(
@@ -151,11 +155,17 @@ class StockExchangeFragment : Fragment() {
                     } else {
                         uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_check_internet), R.id.exchange_dest) }
                     }
+                    uiThread {
+                        loadingDialog?.dismiss()
+                        buyExchangeButton.isEnabled = true
+                    }
                 }
             } else {
+                buyExchangeButton.isEnabled = true
                 context?.toast("Insufficient stocks in exchange")
             }
         } else {
+            buyExchangeButton.isEnabled = true
             context?.toast("Select a company")
         }
     }
