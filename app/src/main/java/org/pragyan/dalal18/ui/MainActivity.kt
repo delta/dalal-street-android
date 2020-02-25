@@ -49,7 +49,6 @@ import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent
 import org.pragyan.dalal18.data.DalalViewModel
 import org.pragyan.dalal18.data.GameStateDetails
 import org.pragyan.dalal18.data.GlobalStockDetails
-
 import org.pragyan.dalal18.notifications.NotificationFragment
 import org.pragyan.dalal18.notifications.PushNotificationService
 import org.pragyan.dalal18.utils.*

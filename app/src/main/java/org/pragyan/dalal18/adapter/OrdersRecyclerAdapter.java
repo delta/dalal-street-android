@@ -1,9 +1,6 @@
 package org.pragyan.dalal18.adapter;
 
-import android.app.Activity;
 import android.content.Context;
-import android.content.SharedPreferences;
-import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,8 +13,6 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.nineoldandroids.view.ViewPropertyAnimator;
-
 import org.pragyan.dalal18.R;
 import org.pragyan.dalal18.data.CustomOrderUpdate;
 import org.pragyan.dalal18.data.Order;
@@ -29,8 +24,6 @@ import java.util.Collections;
 import java.util.List;
 
 import dalalstreet.api.models.OrderType;
-
-import static org.pragyan.dalal18.utils.Constants.CANCEL_ORDER_TOUR_KEY;
 
 public class OrdersRecyclerAdapter extends RecyclerView.Adapter<OrdersRecyclerAdapter.OrderViewHolder> {
 
@@ -165,9 +158,9 @@ public class OrdersRecyclerAdapter extends RecyclerView.Adapter<OrdersRecyclerAd
         return openOrdersList.get(position).isBid();
     }
 
-    public class OrderViewHolder extends RecyclerView.ViewHolder {
+    public static class OrderViewHolder extends RecyclerView.ViewHolder {
 
-        TextView typeTextView, priceTextView, quantityTextView, companyNameTextView, deleteOrderText;
+        TextView typeTextView, priceTextView, quantityTextView, companyNameTextView;
         Button cancelButton;
         SeekBar quantitySeekbar;
         public ConstraintLayout orderViewForeground;
@@ -179,7 +172,6 @@ public class OrdersRecyclerAdapter extends RecyclerView.Adapter<OrdersRecyclerAd
             priceTextView = view.findViewById(R.id.orderPrice_textView);
             quantityTextView = view.findViewById(R.id.quantity_textView);
             companyNameTextView = view.findViewById(R.id.company_textView);
-            deleteOrderText = view.findViewById(R.id.deleteOrderText);
             cancelButton = view.findViewById(R.id.cancel_button);
             quantitySeekbar = view.findViewById(R.id.stockDisplay_seekBar);
             orderViewForeground = view.findViewById(R.id.orderViewForeground);
