@@ -52,7 +52,9 @@ class PortfolioFragment : Fragment() {
 
     private val refreshPortfolioDetails = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
-            if (intent.action != null && (intent.action == Constants.REFRESH_STOCK_PRICES_FOR_ALL || intent.action == Constants.REFRESH_OWNED_STOCKS_FOR_ALL || intent.action == GAME_STATE_UPDATE_ACTION)) {
+            if (intent.action != null && (intent.action == Constants.REFRESH_STOCK_PRICES_FOR_ALL ||
+                            intent.action == Constants.REFRESH_OWNED_STOCKS_FOR_ALL ||
+                            intent.action == GAME_STATE_UPDATE_ACTION)) {
                 updatePortfolioTable()
             }
         }

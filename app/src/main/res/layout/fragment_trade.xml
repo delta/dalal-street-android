@@ -2,6 +2,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:animateLayoutChanges="true"
     android:background="@color/black_background"
     android:paddingStart="8dp"
     android:paddingEnd="8dp">
@@ -18,7 +19,7 @@
         app:layout_constraintBottom_toTopOf="@+id/order_select_spinner"
         app:layout_constraintEnd_toStartOf="@id/companyStatusIndicatorImageView"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintHorizontal_weight="4.5"
+        app:layout_constraintHorizontal_weight="5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_chainStyle="spread" />
@@ -36,7 +37,7 @@
         app:layout_constraintBottom_toTopOf="@+id/radioGroupStock"
         app:layout_constraintEnd_toStartOf="@id/companyStatusIndicatorImageView"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintHorizontal_weight="4.5"
+        app:layout_constraintHorizontal_weight="5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/companySpinner" />
 
@@ -45,8 +46,9 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:contentDescription="@string/dividend_bankrupt_indicator"
-        android:padding="16dp"
+        android:padding="8dp"
         android:src="@drawable/dividend_icon"
+        android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="@id/order_select_spinner"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_weight="1"

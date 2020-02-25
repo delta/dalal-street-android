@@ -227,7 +227,7 @@ class TradeFragment : Fragment() {
             model.getGivesDividendFromStockId(lastStockId) ->
                 companyStatusIndicatorImageView.setStatusIndicator(context, View.VISIBLE, getString(R.string.this_company_gives_dividend), R.drawable.dividend_icon)
             else ->
-                companyStatusIndicatorImageView.setStatusIndicator(context, View.INVISIBLE, "", R.drawable.clear_icon)
+                companyStatusIndicatorImageView.setStatusIndicator(context, View.GONE, "", R.drawable.clear_icon)
         }
     }
 
