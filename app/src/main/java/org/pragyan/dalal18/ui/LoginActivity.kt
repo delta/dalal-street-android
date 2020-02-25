@@ -16,7 +16,6 @@ import androidx.lifecycle.lifecycleScope
 import com.google.android.material.snackbar.Snackbar
 import dalalstreet.api.DalalActionServiceGrpc
 import dalalstreet.api.actions.ForgotPasswordRequest
-import dalalstreet.api.actions.ForgotPasswordResponse
 import dalalstreet.api.actions.LoginRequest
 import dalalstreet.api.actions.LoginResponse
 import io.grpc.ManagedChannel
@@ -287,11 +286,13 @@ class LoginActivity : AppCompatActivity() {
             val forgotPasswordRequest = ForgotPasswordRequest.newBuilder().setEmail(email).build()
             val forgotPasswordResponse = withContext(Dispatchers.IO) { DalalActionServiceGrpc.newBlockingStub(channel).forgotPassword(forgotPasswordRequest) }
 
-            toast(forgotPasswordResponse.statusMessage)
-
-            if (forgotPasswordResponse.statusCode == ForgotPasswordResponse.StatusCode.InvalidCredentialsError) {
-                onForgotPasswordClick()
-            }
+            contentView?.hideKeyboard()
+            AlertDialog.Builder(this@LoginActivity, R.style.AlertDialogTheme)
+                    .setTitle("Forgot Password")
+                    .setMessage(forgotPasswordResponse.statusMessage)
+                    .setPositiveButton("OKAY") { dI, _ -> dI.dismiss() }
+                    .setCancelable(true)
+                    .show()
 
         } else {
             contentView?.hideKeyboard()
@@ -302,7 +303,7 @@ class LoginActivity : AppCompatActivity() {
     private fun showBlockedDialog() {
         AlertDialog.Builder(this, R.style.AlertDialogTheme)
                 .setTitle("Account Blocked")
-                .setMessage("Your account has been permanently block for violation of our terms. Contact admin for more information.")
+                .setMessage("Your account has been blocked for violation of our terms. Contact admin for more information.")
                 .setPositiveButton("OKAY") { dI, _ -> dI.dismiss() }
                 .setCancelable(false)
                 .show()
