@@ -50,11 +50,11 @@ public class PortfolioRecyclerAdapter extends RecyclerView.Adapter<PortfolioRecy
         if (currentPortfolioItem.isBankrupt()) {
             holder.companyStatusIndicatorImageView.setVisibility(View.VISIBLE);
             holder.companyStatusIndicatorImageView.setImageResource(R.drawable.bankrupt_icon);
-            toastMessage = "This company is bankrupt";
+            toastMessage = context.getString(R.string.this_company_is_bankrupt);
         } else if (currentPortfolioItem.getGivesDividend()) {
             holder.companyStatusIndicatorImageView.setVisibility(View.VISIBLE);
             holder.companyStatusIndicatorImageView.setImageResource(R.drawable.dividend_icon);
-            toastMessage = "This company gives dividend";
+            toastMessage = context.getString(R.string.this_company_gives_dividend);
         } else {
             holder.companyStatusIndicatorImageView.setVisibility(View.INVISIBLE);
         }

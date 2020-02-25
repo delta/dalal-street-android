@@ -469,6 +469,8 @@
     <string name="dividend_bankrupt_indicator">dividend-bankrupt-indicator</string>
     <string name="total_cash_reserved">Total Cash Reserved</string>
     <string name="total_stocks_reserved">Total Stocks Reserved</string>
+    <string name="this_company_is_bankrupt">This company is bankrupt</string>
+    <string name="this_company_gives_dividend">This company gives dividend</string>
     <string-array name="intervalType">
         <item>1 min</item>
         <item>5 mins</item>

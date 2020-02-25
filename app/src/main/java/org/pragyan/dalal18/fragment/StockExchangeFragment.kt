@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -99,8 +100,6 @@ class StockExchangeFragment : Fragment() {
                 override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                     lastSelectedStockId = model.getStockIdFromCompanyName(companySpinner.selectedItem.toString())
                     model.updateFavouriteCompanyStockId(lastSelectedStockId)
-
-                    changeStockExchangeOptions(!model.getIsBankruptFromStockId(lastSelectedStockId))
 
                     getCompanyProfileAsynchronously(lastSelectedStockId)
                 }
@@ -193,6 +192,14 @@ class StockExchangeFragment : Fragment() {
 
                         temporaryTextViewString = ": " + decimalFormat.format(currentStock?.stocksInExchange).toString()
                         stocksInExchange_textView.text = temporaryTextViewString
+
+                        if (currentStock?.isBankrupt == true) {
+                            changeStatusImageView(companyStatusIndicatorImageView, View.VISIBLE, getString(R.string.this_company_is_bankrupt), R.drawable.bankrupt_icon)
+                        } else if (currentStock?.givesDividends == true) {
+                            changeStatusImageView(companyStatusIndicatorImageView, View.VISIBLE, getString(R.string.this_company_gives_dividend), R.drawable.dividend_icon)
+                        } else {
+                            changeStatusImageView(companyStatusIndicatorImageView, View.INVISIBLE, "", R.drawable.clear_icon)
+                        }
                     }
                 } else {
                     uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_server_down), R.id.exchange_dest) }
@@ -217,10 +224,9 @@ class StockExchangeFragment : Fragment() {
         LocalBroadcastManager.getInstance(context!!).unregisterReceiver(refreshStockPricesReceiver)
     }
 
-    fun changeStockExchangeOptions(openOptions: Boolean) {
-        stocks_exchange_input.isEnabled = openOptions
-        stockIncrementOneButton.isEnabled = openOptions
-        stockIncrementFiveButton.isEnabled = openOptions
-        buyExchangeButton.isEnabled = openOptions
+    private fun changeStatusImageView(imageView: ImageView, visibility: Int, toastMessage: String, resId: Int) {
+        imageView.visibility = visibility
+        imageView.setImageResource(resId)
+        if (toastMessage.isNotBlank()) imageView.setOnClickListener { context?.toast(toastMessage) }
     }
 }
