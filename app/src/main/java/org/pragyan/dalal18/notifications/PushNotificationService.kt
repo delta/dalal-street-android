@@ -25,9 +25,9 @@ import org.pragyan.dalal18.ui.SplashActivity
 
 
 class PushNotificationService : Service() {
-    val TAG = "PushNotificationService"
-    lateinit var subscriptionId: SubscriptionId
-    lateinit var marketSubscriptionId: SubscriptionId
+    private val TAG = "PushNotificationService"
+    private lateinit var subscriptionId: SubscriptionId
+    private lateinit var marketSubscriptionId: SubscriptionId
 
     lateinit var notificationManager: NotificationManager
 
@@ -45,6 +45,8 @@ class PushNotificationService : Service() {
     private val stopNotificationServiceBroadcast = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             isLoggedIn = false
+            unsubscribeFromNotificationStream()
+            unsubscribeFromMarketEventStream()
         }
     }
 
@@ -55,9 +57,7 @@ class PushNotificationService : Service() {
     }
 
     override fun onTaskRemoved(rootIntent: Intent?) {
-        if (!isLoggedIn) {
-            unsubscribeFromNotificationStream()
-        } else {
+        if (isLoggedIn) {
             Intent().also { intent ->
                 intent.setAction("android.intent.action.NotifServiceBroadcast")
                 sendImplicitBroadcast(applicationContext, intent)
@@ -121,6 +121,15 @@ class PushNotificationService : Service() {
         doAsync {
             if (ConnectionUtils.getConnectionInfo(this@PushNotificationService) && ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
                 val unsubscribeResponse = streamServiceBlockingStub.unsubscribe(UnsubscribeRequest.newBuilder().setSubscriptionId(subscriptionId).build())
+
+            }
+        }
+    }
+
+    private fun unsubscribeFromMarketEventStream() {
+        doAsync {
+            if (ConnectionUtils.getConnectionInfo(this@PushNotificationService) && ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
+                val unsubscribeResponse = streamServiceBlockingStub.unsubscribe(UnsubscribeRequest.newBuilder().setSubscriptionId(marketSubscriptionId).build())
 
             }
         }
