@@ -5,7 +5,9 @@ import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
@@ -47,10 +49,10 @@ public class CompanyRecyclerAdapter extends RecyclerView.Adapter<CompanyRecycler
         holder.companyNameTextView.setText(currentCompany.getCompanyName());
         new Handler().postDelayed(() -> holder.companyNameTextView.setSelected(true), 1000);
 
-        String temporaryString = new DecimalFormat(Constants.PRICE_FORMAT).format(currentCompany.getValue());
+        String temporaryString = new DecimalFormat(Constants.PRICE_FORMAT).format(currentCompany.getStockPrice());
         holder.priceTextView.setText(temporaryString);
 
-        double diff = (double) (currentCompany.getValue() - currentCompany.getPreviousDayClose()) / (double) currentCompany.getPreviousDayClose() * 100.0;
+        double diff = (double) (currentCompany.getStockPrice() - currentCompany.getPreviousDayClose()) / (double) currentCompany.getPreviousDayClose() * 100.0;
         holder.differenceTextView.setText(String.format(Locale.getDefault(), "%.1f", diff));
         if (diff < 0) {
             holder.differenceTextView.setTextColor(ContextCompat.getColor(context, R.color.redTint));
@@ -58,6 +60,24 @@ public class CompanyRecyclerAdapter extends RecyclerView.Adapter<CompanyRecycler
             holder.differenceTextView.setTextColor(ContextCompat.getColor(context, R.color.neutral_font_color));
         } else {
             holder.differenceTextView.setTextColor(ContextCompat.getColor(context, R.color.neon_green));
+        }
+
+        String toastMessage = "";
+        if (currentCompany.isBankrupt()) {
+            holder.companyStatusIndicatorImageView.setVisibility(View.VISIBLE);
+            holder.companyStatusIndicatorImageView.setImageResource(R.drawable.bankrupt_icon);
+            toastMessage = context.getString(R.string.this_company_is_bankrupt);
+        } else if (currentCompany.getGivesDividend()) {
+            holder.companyStatusIndicatorImageView.setVisibility(View.VISIBLE);
+            holder.companyStatusIndicatorImageView.setImageResource(R.drawable.dividend_icon);
+            toastMessage = context.getString(R.string.this_company_gives_dividend);
+        } else {
+            holder.companyStatusIndicatorImageView.setVisibility(View.INVISIBLE);
+        }
+
+        if (!toastMessage.isEmpty()) {
+            String finalToastMessage = toastMessage;
+            holder.companyStatusIndicatorImageView.setOnClickListener(v -> Toast.makeText(context, finalToastMessage, Toast.LENGTH_SHORT).show());
         }
     }
 
@@ -79,12 +99,14 @@ public class CompanyRecyclerAdapter extends RecyclerView.Adapter<CompanyRecycler
     class PortfolioViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         TextView companyNameTextView, priceTextView, differenceTextView;
+        ImageView companyStatusIndicatorImageView;
 
         PortfolioViewHolder(View itemView) {
             super(itemView);
             priceTextView = itemView.findViewById(R.id.price_textView);
             differenceTextView = itemView.findViewById(R.id.difference_textView);
             companyNameTextView = itemView.findViewById(R.id.companyName_textView);
+            companyStatusIndicatorImageView = itemView.findViewById(R.id.companyStatusIndicatorImageView);
 
             itemView.setOnClickListener(this);
         }

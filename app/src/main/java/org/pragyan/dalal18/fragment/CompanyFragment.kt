@@ -18,7 +18,7 @@ import org.pragyan.dalal18.dagger.ContextModule
 import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent
 import org.pragyan.dalal18.data.CompanyDetails
 import org.pragyan.dalal18.data.DalalViewModel
-import org.pragyan.dalal18.data.GlobalStockDetails
+import org.pragyan.dalal18.ui.MainActivity.Companion.GAME_STATE_UPDATE_ACTION
 import org.pragyan.dalal18.utils.Constants.*
 import org.pragyan.dalal18.utils.DalalTourUtils
 import java.util.*
@@ -39,7 +39,8 @@ class CompanyFragment : Fragment(), CompanyRecyclerAdapter.OnCompanyClickListene
     private val refreshStockPricesReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             if (intent.action.equals(REFRESH_STOCK_PRICES_FOR_ALL, ignoreCase = true) ||
-                    intent.action.equals(REFRESH_STOCKS_EXCHANGE_FOR_COMPANY, ignoreCase = true)) {
+                    intent.action.equals(REFRESH_STOCKS_EXCHANGE_FOR_COMPANY, ignoreCase = true) ||
+                    intent.action.equals(GAME_STATE_UPDATE_ACTION, ignoreCase = true)) {
                 updateValues()
             }
         }
@@ -77,7 +78,7 @@ class CompanyFragment : Fragment(), CompanyRecyclerAdapter.OnCompanyClickListene
 
         for ((_, currentStock) in model.globalStockDetails) {
             companiesList.add(CompanyDetails(currentStock.stockId, currentStock.fullName, currentStock.shortName,
-                    currentStock.price, currentStock.previousDayClose,currentStock.isBankrupt,currentStock.givesDividend))
+                    currentStock.price, currentStock.previousDayClose, currentStock.isBankrupt, currentStock.givesDividend))
         }
 
         adapter.swapData(companiesList)
@@ -126,6 +127,7 @@ class CompanyFragment : Fragment(), CompanyRecyclerAdapter.OnCompanyClickListene
         super.onResume()
         val intentFilter = IntentFilter(REFRESH_STOCKS_EXCHANGE_FOR_COMPANY)
         intentFilter.addAction(REFRESH_STOCK_PRICES_FOR_ALL)
+        intentFilter.addAction(GAME_STATE_UPDATE_ACTION)
         LocalBroadcastManager.getInstance(context!!).registerReceiver(refreshStockPricesReceiver, intentFilter)
     }
 
