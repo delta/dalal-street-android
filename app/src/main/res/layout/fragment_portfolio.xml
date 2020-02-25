@@ -1,134 +1,201 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/portfolioScrollView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/black_background"
-    android:paddingTop="8dp">
+    android:background="@color/black_background">
 
-
-    <ScrollView
-        android:id="@+id/portfolioScrollView"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <LinearLayout
-                android:id="@+id/headings_tab_linearLayout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="6dp">
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="3"
-                    android:fontFamily="@font/kreon_light"
-                    android:gravity="center"
-                    android:text="@string/company"
-                    android:textAllCaps="true"
-                    android:textColor="@color/neutral_font_color"
-                    android:textSize="16sp"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="3"
-                    android:fontFamily="@font/kreon_light"
-                    android:gravity="center"
-                    android:text="@string/owned"
-                    android:textAllCaps="true"
-                    android:textColor="@color/neutral_font_color"
-                    android:textSize="16sp"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="3"
-                    android:fontFamily="@font/kreon_light"
-                    android:gravity="center"
-                    android:text="@string/reserved"
-                    android:textAllCaps="true"
-                    android:textColor="@color/neutral_font_color"
-                    android:textSize="16sp"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="4"
-                    android:fontFamily="@font/kreon_light"
-                    android:gravity="center"
-                    android:text="@string/worth"
-                    android:textAllCaps="true"
-                    android:textColor="@color/neutral_font_color"
-                    android:textSize="16sp"
-                    android:textStyle="bold" />
-
-            </LinearLayout>
-
-            <View
-                android:id="@+id/view"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_below="@+id/headings_tab_linearLayout"
-                android:layout_margin="4dp"
-                android:background="@color/neutral_font_color" />
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/portfolioRecyclerView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/view"
-                android:layout_alignParentStart="true" />
-
-            <TextView
-                android:id="@+id/reservedCashTextView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/portfolioRecyclerView"
-                android:layout_marginTop="2dp"
-                android:layout_marginBottom="2dp"
-                android:fontFamily="@font/kreon_light"
-                android:gravity="center"
-                android:textColor="@color/neon_orange"
-                android:textSize="16sp"
-                android:textStyle="bold" />
-
-            <com.github.mikephil.charting.charts.PieChart
-                android:id="@+id/portfolio_piechart"
-                android:layout_width="match_parent"
-                android:layout_height="500dp"
-                android:layout_below="@id/reservedCashTextView"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-        </RelativeLayout>
-
-    </ScrollView>
-
-    <RelativeLayout
-        android:id="@+id/emptyPortfolioRelativeLayout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="gone">
+        android:layout_height="wrap_content"
+        android:background="@color/black_background">
 
         <TextView
+            android:id="@+id/reservedCashText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="@color/colorPrimary"
+            android:fontFamily="@font/marcellus_sc"
+            android:gravity="center"
+            android:paddingTop="4dp"
+            android:text="@string/total_cash_reserved"
+            android:textColor="@color/neon_purple"
+            android:textSize="12sp"
+            app:layout_constraintBottom_toTopOf="@id/reservedCashTextView"
+            app:layout_constraintEnd_toStartOf="@+id/reservedStocksText"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/reservedStocksText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="@color/colorPrimary"
+            android:fontFamily="@font/marcellus_sc"
+            android:gravity="center"
+            android:paddingTop="4dp"
+            android:text="@string/total_stocks_reserved"
+            android:textColor="@color/neon_yellow"
+            android:textSize="12sp"
+            app:layout_constraintBottom_toTopOf="@id/reservedStocksTextView"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/reservedCashText"
+            app:layout_constraintTop_toTopOf="@id/reservedCashText" />
+
+        <TextView
+            android:id="@+id/reservedCashTextView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="@color/colorPrimary"
+            android:fontFamily="@font/kreon_light"
+            android:gravity="center"
+            android:paddingTop="4dp"
+            android:paddingBottom="8dp"
+            android:singleLine="true"
+            android:textColor="@color/neon_purple"
+            android:textSize="20sp"
+            app:layout_constraintBottom_toTopOf="@id/companyText"
+            app:layout_constraintEnd_toStartOf="@+id/reservedStocksTextView"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/reservedCashText" />
+
+        <TextView
+            android:id="@+id/reservedStocksTextView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="@color/colorPrimary"
+            android:fontFamily="@font/kreon_light"
+            android:gravity="center"
+            android:paddingTop="4dp"
+            android:paddingBottom="8dp"
+            android:textColor="@color/neon_yellow"
+            android:textSize="20sp"
+            app:layout_constraintBottom_toBottomOf="@id/reservedCashTextView"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/reservedCashTextView"
+            app:layout_constraintTop_toBottomOf="@id/reservedStocksText" />
+
+        <TextView
+            android:id="@+id/companyText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:fontFamily="@font/kreon_light"
+            android:gravity="center"
+            android:text="@string/company"
+            android:textAllCaps="true"
+            android:textColor="@color/neutral_font_color"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@id/view"
+            app:layout_constraintEnd_toStartOf="@+id/ownedText"
+            app:layout_constraintHorizontal_weight="3"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/reservedCashTextView" />
+
+        <TextView
+            android:id="@+id/ownedText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:fontFamily="@font/kreon_light"
+            android:gravity="center"
+            android:text="@string/owned"
+            android:textAllCaps="true"
+            android:textColor="@color/neutral_font_color"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@id/view"
+            app:layout_constraintEnd_toStartOf="@+id/reservedText"
+            app:layout_constraintHorizontal_weight="3"
+            app:layout_constraintStart_toEndOf="@+id/companyText"
+            app:layout_constraintTop_toBottomOf="@id/reservedCashTextView" />
+
+        <TextView
+            android:id="@+id/reservedText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:fontFamily="@font/kreon_light"
+            android:gravity="center"
+            android:text="@string/reserved"
+            android:textAllCaps="true"
+            android:textColor="@color/neutral_font_color"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@id/view"
+            app:layout_constraintEnd_toStartOf="@+id/worthText"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintHorizontal_weight="3"
+            app:layout_constraintStart_toEndOf="@+id/ownedText"
+            app:layout_constraintTop_toBottomOf="@id/reservedCashTextView" />
+
+        <TextView
+            android:id="@+id/worthText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:fontFamily="@font/kreon_light"
+            android:gravity="center"
+            android:text="@string/worth"
+            android:textAllCaps="true"
+            android:textColor="@color/neutral_font_color"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@id/view"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_weight="4"
+            app:layout_constraintStart_toEndOf="@+id/reservedText"
+            app:layout_constraintTop_toBottomOf="@id/reservedCashTextView" />
+
+        <View
+            android:id="@+id/view"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/neutral_font_color"
+            app:layout_constraintBottom_toTopOf="@id/portfolioRecyclerView"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/companyText" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/portfolioRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_marginTop="8dp"
+            app:layout_constraintBottom_toTopOf="@id/portfolio_piechart"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/view" />
+
+        <com.github.mikephil.charting.charts.PieChart
+            android:id="@+id/portfolio_piechart"
+            android:layout_width="match_parent"
+            android:layout_height="500dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/portfolioRecyclerView" />
+
+        <TextView
+            android:id="@+id/emptyPortfolioRelativeLayout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
             android:fontFamily="@font/kreon_light"
             android:text="@string/you_don_t_own_any_stocks"
             android:textColor="@color/neutral_font_color"
-            android:textSize="22sp" />
+            android:textSize="22sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    </RelativeLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
-</FrameLayout>
+</ScrollView>

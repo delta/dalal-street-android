@@ -4,7 +4,12 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 
 import org.pragyan.dalal18.R;
 import org.pragyan.dalal18.data.Portfolio;
@@ -13,14 +18,11 @@ import org.pragyan.dalal18.utils.Constants;
 import java.text.DecimalFormat;
 import java.util.List;
 
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
-
 public class PortfolioRecyclerAdapter extends RecyclerView.Adapter<PortfolioRecyclerAdapter.PortfolioViewHolder> {
 
     private Context context;
     private List<Portfolio> portfolioList;
-    private DecimalFormat decimalFormat=new DecimalFormat(Constants.PRICE_FORMAT);
+    private DecimalFormat decimalFormat = new DecimalFormat(Constants.PRICE_FORMAT);
 
     public PortfolioRecyclerAdapter(Context context, List<Portfolio> portfolioList) {
         this.context = context;
@@ -43,6 +45,24 @@ public class PortfolioRecyclerAdapter extends RecyclerView.Adapter<PortfolioRecy
         holder.reservedStocksTextView.setText(decimalFormat.format(currentPortfolioItem.getReservedStocks()));
         holder.quantityTextView.setText(decimalFormat.format(currentPortfolioItem.getQuantityOwned()));
         holder.worthTextView.setText(decimalFormat.format(currentPortfolioItem.getWorth()));
+
+        String toastMessage = "";
+        if (currentPortfolioItem.isBankrupt()) {
+            holder.companyStatusIndicatorImageView.setVisibility(View.VISIBLE);
+            holder.companyStatusIndicatorImageView.setImageResource(R.drawable.bankrupt_icon);
+            toastMessage = "This company is bankrupt";
+        } else if (currentPortfolioItem.getGivesDividend()) {
+            holder.companyStatusIndicatorImageView.setVisibility(View.VISIBLE);
+            holder.companyStatusIndicatorImageView.setImageResource(R.drawable.dividend_icon);
+            toastMessage = "This company gives dividend";
+        } else {
+            holder.companyStatusIndicatorImageView.setVisibility(View.INVISIBLE);
+        }
+
+        if (!toastMessage.isEmpty()) {
+            String finalToastMessage = toastMessage;
+            holder.companyStatusIndicatorImageView.setOnClickListener(v -> Toast.makeText(context, finalToastMessage, Toast.LENGTH_SHORT).show());
+        }
     }
 
     @Override
@@ -59,6 +79,7 @@ public class PortfolioRecyclerAdapter extends RecyclerView.Adapter<PortfolioRecy
     class PortfolioViewHolder extends RecyclerView.ViewHolder {
 
         TextView companyShortNameTextView, quantityTextView, reservedStocksTextView, worthTextView;
+        ImageView companyStatusIndicatorImageView;
 
         PortfolioViewHolder(View itemView) {
             super(itemView);
@@ -66,6 +87,7 @@ public class PortfolioRecyclerAdapter extends RecyclerView.Adapter<PortfolioRecy
             quantityTextView = itemView.findViewById(R.id.quantity_textView);
             reservedStocksTextView = itemView.findViewById(R.id.reservedStocksTextView);
             worthTextView = itemView.findViewById(R.id.worth_textView);
+            companyStatusIndicatorImageView = itemView.findViewById(R.id.companyStatusIndicatorImageView);
         }
     }
 }

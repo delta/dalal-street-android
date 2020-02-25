@@ -1,68 +1,96 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/black_background"
-    android:orientation="vertical"
-    android:paddingBottom="4dp"
-    android:paddingEnd="2dp"
     android:paddingStart="2dp"
-    android:paddingTop="6dp">
+    android:paddingTop="6dp"
+    android:paddingEnd="2dp"
+    android:paddingBottom="4dp">
 
-    <LinearLayout
-        android:layout_width="match_parent"
+    <TextView
+        android:id="@+id/companyName_textView"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="12dp">
+        android:layout_marginBottom="8dp"
+        android:fontFamily="@font/marcellus_sc"
+        android:gravity="center"
+        android:maxLength="4"
+        android:textColor="@color/neutral_font_color"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toTopOf="@id/portfolioDivider"
+        app:layout_constraintEnd_toStartOf="@+id/companyStatusIndicatorImageView"
+        app:layout_constraintHorizontal_weight="2.25"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:id="@+id/companyName_textView"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_weight="3"
-            android:fontFamily="@font/marcellus_sc"
-            android:gravity="center"
-            android:textColor="@color/neutral_font_color"
-            android:textSize="18sp" />
+    <ImageView
+        android:id="@+id/companyStatusIndicatorImageView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:contentDescription="@string/dividend_bankrupt_indicator"
+        android:src="@drawable/dividend_icon"
+        app:layout_constraintBottom_toTopOf="@id/portfolioDivider"
+        app:layout_constraintEnd_toStartOf="@id/quantity_textView"
+        app:layout_constraintHorizontal_weight="0.75"
+        app:layout_constraintStart_toEndOf="@id/companyName_textView"
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:id="@+id/quantity_textView"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="3"
-            android:fontFamily="@font/kreon_light"
-            android:gravity="center"
-            android:textColor="@color/neutral_font_color"
-            android:textSize="18sp" />
+    <TextView
+        android:id="@+id/quantity_textView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:fontFamily="@font/kreon_light"
+        android:gravity="center"
+        android:textColor="@color/neutral_font_color"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toTopOf="@id/portfolioDivider"
+        app:layout_constraintEnd_toStartOf="@+id/reservedStocksTextView"
+        app:layout_constraintHorizontal_weight="3"
+        app:layout_constraintStart_toEndOf="@+id/companyStatusIndicatorImageView"
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:id="@+id/reservedStocksTextView"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="3"
-            android:fontFamily="@font/kreon_light"
-            android:gravity="center"
-            android:textColor="@color/neon_green"
-            android:textSize="18sp" />
+    <TextView
+        android:id="@+id/reservedStocksTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:fontFamily="@font/kreon_light"
+        android:gravity="center"
+        android:textColor="@color/neon_green"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toTopOf="@id/portfolioDivider"
+        app:layout_constraintEnd_toStartOf="@+id/worth_textView"
+        app:layout_constraintHorizontal_weight="3"
+        app:layout_constraintStart_toEndOf="@+id/quantity_textView"
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:id="@+id/worth_textView"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="4"
-            android:fontFamily="@font/kreon_light"
-            android:gravity="center"
-            android:textColor="@color/neon_blue"
-            android:textSize="18sp" />
-
-    </LinearLayout>
+    <TextView
+        android:id="@+id/worth_textView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:fontFamily="@font/kreon_light"
+        android:gravity="center"
+        android:textColor="@color/neon_blue"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toTopOf="@id/portfolioDivider"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_weight="4"
+        app:layout_constraintStart_toEndOf="@+id/reservedStocksTextView"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <View
+        android:id="@+id/portfolioDivider"
         android:layout_width="match_parent"
-        android:layout_height=".75dp"
-        android:layout_marginEnd="0dp"
-        android:layout_marginStart="0dp"
-        android:background="#616161" />
+        android:layout_height="1dp"
+        android:layout_marginTop="8dp"
+        android:background="#616161"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/worth_textView" />
 
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

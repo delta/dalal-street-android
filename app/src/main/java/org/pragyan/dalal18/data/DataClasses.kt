@@ -34,7 +34,7 @@ data class Order(val orderId: Int, val isBid: Boolean, var isClosed: Boolean, va
     }
 }
 
-data class Portfolio(val shortName: String, var quantityOwned: Long, var reservedStocks: Long, var worth: Long)
+data class Portfolio(val shortName: String, val quantityOwned: Long, val reservedStocks: Long, val worth: Long, val isBankrupt: Boolean, val givesDividend: Boolean)
 
 @Parcelize
 data class StockDetails(var stockId: Int, var quantity: Long) : Parcelable

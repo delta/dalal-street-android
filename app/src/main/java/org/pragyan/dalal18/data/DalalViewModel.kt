@@ -58,8 +58,14 @@ class DalalViewModel : ViewModel() {
         globalStockDetails[stockId]?.isBankrupt = isBankrupt
     }
 
-    fun getGlobalStockPriceFromStockId(stockId: Int): Long {
-        return globalStockDetails[stockId]?.price ?: 0
+    fun getReservedStocksValue(): Long {
+        var reservedStocksValue = 0L
+
+        for((stockId, quantity) in reservedStockDetails) {
+            reservedStocksValue += (getPriceFromStockId(stockId) * quantity)
+        }
+
+        return reservedStocksValue
     }
 
     /* ============================= Stock Utils ============================= */

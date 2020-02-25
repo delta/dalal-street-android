@@ -466,6 +466,9 @@
     <string name="admin_panel">Admin Panel</string>
     <string name="updating_your_orders">Updating your orders…</string>
     <string name="please_try_again">Please try again</string>
+    <string name="dividend_bankrupt_indicator">dividend-bankrupt-indicator</string>
+    <string name="total_cash_reserved">Total Cash Reserved</string>
+    <string name="total_stocks_reserved">Total Stocks Reserved</string>
     <string-array name="intervalType">
         <item>1 min</item>
         <item>5 mins</item>
