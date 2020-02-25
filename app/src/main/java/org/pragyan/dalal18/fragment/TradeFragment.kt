@@ -85,6 +85,8 @@ class TradeFragment : Fragment() {
         model = activity?.run { ViewModelProvider(this).get(DalalViewModel::class.java) }
                 ?: throw Exception("Invalid activity")
 
+        lastStockId = model.favoriteCompanyStockId ?: 1
+
         DaggerDalalStreetApplicationComponent.builder().contextModule(ContextModule(context!!)).build().inject(this)
         return rootView
     }
@@ -229,15 +231,19 @@ class TradeFragment : Fragment() {
             else ->
                 companyStatusIndicatorImageView.setStatusIndicator(context, View.GONE, "", R.drawable.clear_icon)
         }
+
+        orderPriceWindowTextView.visibility = if (model.getIsBankruptFromStockId(lastStockId) || order_select_spinner.selectedItem.toString() == "Market Order") View.GONE else View.VISIBLE
     }
 
     private fun setOrderPriceWindow() {
         val currentPrice = model.getPriceFromStockId(lastStockId)
         val lowerLimit = currentPrice.toDouble() * (1 - Constants.ORDER_PRICE_WINDOW.toDouble() / 100)
         val higherLimit = currentPrice.toDouble() * (1 + Constants.ORDER_PRICE_WINDOW.toDouble() / 100)
-        val tempOrderPriceText = "Price must be between " + Constants.RUPEE_SYMBOL + DecimalFormat(Constants.PRICE_FORMAT).format(lowerLimit.toLong()) + " - " +
+        val tempOrderPriceText = "Between " + Constants.RUPEE_SYMBOL + DecimalFormat(Constants.PRICE_FORMAT).format(lowerLimit.toLong()) + " - " +
                 Constants.RUPEE_SYMBOL + DecimalFormat(Constants.PRICE_FORMAT).format(higherLimit.toLong())
         orderPriceWindowTextView.text = tempOrderPriceText
+
+        orderPriceWindowTextView.visibility = if(lowerLimit == 0.0 && higherLimit == 0.0) View.GONE else View.VISIBLE
     }
 
     private fun onBidAskButtonClick() {

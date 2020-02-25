@@ -221,7 +221,7 @@
         android:layout_marginEnd="8dp"
         android:textColorHint="@color/neutral_font_color"
         android:visibility="visible"
-        app:layout_constraintBottom_toTopOf="@+id/orderPriceWindowTextView"
+        app:layout_constraintBottom_toTopOf="@id/bidAskButton"
         app:layout_constraintEnd_toEndOf="@id/guideline"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/no_of_stocks_input">
@@ -248,23 +248,23 @@
         android:text="@string/market_depth_trade_frag"
         android:textColor="#FFFFFF"
         android:textSize="16sp"
-        app:layout_constraintBottom_toBottomOf="@+id/order_price_input"
+        app:layout_constraintBottom_toBottomOf="@+id/no_of_stocks_input"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/guideline"
         app:layout_constraintTop_toTopOf="@+id/no_of_stocks_input" />
 
     <TextView
         android:id="@+id/orderPriceWindowTextView"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
         android:textColor="@color/neon_orange"
         android:textStyle="italic"
-        app:layout_constraintBottom_toTopOf="@+id/bidAskButton"
+        app:layout_constraintBottom_toBottomOf="@id/order_price_input"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/order_price_input" />
+        app:layout_constraintStart_toEndOf="@id/guideline"
+        app:layout_constraintTop_toTopOf="@+id/order_price_input" />
 
     <Button
         android:id="@+id/bidAskButton"
@@ -279,7 +279,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/orderPriceWindowTextView" />
+        app:layout_constraintTop_toBottomOf="@id/order_price_input" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline"
