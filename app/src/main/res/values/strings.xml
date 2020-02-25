@@ -61,7 +61,7 @@
     <string name="daily_low">Daily Low</string>
     <string name="stocks_in_market">Stocks in Market</string>
     <string name="stocks_in_exchange">Stocks in Exchange</string>
-    <string name="n_a">N/A</string>
+    <string name="n_a">: N/A</string>
     <string name="quantity">Quantity</string>
     <string name="price">Price(₹)</string>
     <string name="current_price">Current Price</string>

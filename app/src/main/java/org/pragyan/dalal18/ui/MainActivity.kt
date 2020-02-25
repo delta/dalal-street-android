@@ -793,7 +793,7 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
         private const val REFRESH_ALL_WORTH_ACTION = "refresh-cash-worth-text-view"
         const val REFRESH_UNREAD_NOTIFICATIONS_COUNT = "refresh-unread-notifications-count"
 
-        private const val GAME_STATE_UPDATE_ACTION = "game-state-update-action"
+        const val GAME_STATE_UPDATE_ACTION = "game-state-update-action"
         private const val GAME_STATE_KEY = "game-state-key"
     }
 }

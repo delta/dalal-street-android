@@ -29,6 +29,7 @@ import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent
 import org.pragyan.dalal18.data.DalalViewModel
 import org.pragyan.dalal18.data.Portfolio
 import org.pragyan.dalal18.data.StockDetails
+import org.pragyan.dalal18.ui.MainActivity.Companion.GAME_STATE_UPDATE_ACTION
 import org.pragyan.dalal18.utils.Constants
 import java.text.DecimalFormat
 import java.util.*
@@ -51,7 +52,7 @@ class PortfolioFragment : Fragment() {
 
     private val refreshPortfolioDetails = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
-            if (intent.action != null && (intent.action == Constants.REFRESH_STOCK_PRICES_FOR_ALL || intent.action == Constants.REFRESH_OWNED_STOCKS_FOR_ALL)) {
+            if (intent.action != null && (intent.action == Constants.REFRESH_STOCK_PRICES_FOR_ALL || intent.action == Constants.REFRESH_OWNED_STOCKS_FOR_ALL || intent.action == GAME_STATE_UPDATE_ACTION)) {
                 updatePortfolioTable()
             }
         }
@@ -189,6 +190,7 @@ class PortfolioFragment : Fragment() {
 
         val intentFilter = IntentFilter(Constants.REFRESH_OWNED_STOCKS_FOR_ALL)
         intentFilter.addAction(Constants.REFRESH_STOCK_PRICES_FOR_ALL)
+        intentFilter.addAction(GAME_STATE_UPDATE_ACTION)
         LocalBroadcastManager.getInstance(context!!).registerReceiver(refreshPortfolioDetails, intentFilter)
     }
 

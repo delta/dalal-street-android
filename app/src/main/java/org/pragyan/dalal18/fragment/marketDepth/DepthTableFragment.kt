@@ -353,7 +353,7 @@ class DepthTableFragment : Fragment() {
 
             if (activity != null && isAdded) {
                 getCompanyProfileAsynchronously(stockId)
-                companySpinner.setText(stockId)
+                companySpinner.setText(model.getCompanyNameFromStockId(stockId))
             }
         }
 

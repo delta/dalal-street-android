@@ -10,7 +10,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -30,9 +29,11 @@ import org.pragyan.dalal18.R
 import org.pragyan.dalal18.dagger.ContextModule
 import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent
 import org.pragyan.dalal18.data.DalalViewModel
+import org.pragyan.dalal18.ui.MainActivity.Companion.GAME_STATE_UPDATE_ACTION
 import org.pragyan.dalal18.utils.ConnectionUtils
 import org.pragyan.dalal18.utils.Constants
 import org.pragyan.dalal18.utils.hideKeyboard
+import org.pragyan.dalal18.utils.setStatusIndicator
 import java.text.DecimalFormat
 import javax.inject.Inject
 
@@ -52,7 +53,8 @@ class StockExchangeFragment : Fragment() {
 
     private val refreshStockPricesReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
-            if (activity != null && intent.action != null && intent.action!!.equals(Constants.REFRESH_STOCK_PRICES_FOR_ALL, ignoreCase = true)) {
+            if (activity != null && intent.action != null && (intent.action.equals(Constants.REFRESH_STOCK_PRICES_FOR_ALL, ignoreCase = true)
+                            || intent.action.equals(GAME_STATE_UPDATE_ACTION, ignoreCase = true))) {
                 getCompanyProfileAsynchronously(lastSelectedStockId)
             }
         }
@@ -193,12 +195,13 @@ class StockExchangeFragment : Fragment() {
                         temporaryTextViewString = ": " + decimalFormat.format(currentStock?.stocksInExchange).toString()
                         stocksInExchange_textView.text = temporaryTextViewString
 
-                        if (currentStock?.isBankrupt == true) {
-                            changeStatusImageView(companyStatusIndicatorImageView, View.VISIBLE, getString(R.string.this_company_is_bankrupt), R.drawable.bankrupt_icon)
-                        } else if (currentStock?.givesDividends == true) {
-                            changeStatusImageView(companyStatusIndicatorImageView, View.VISIBLE, getString(R.string.this_company_gives_dividend), R.drawable.dividend_icon)
-                        } else {
-                            changeStatusImageView(companyStatusIndicatorImageView, View.INVISIBLE, "", R.drawable.clear_icon)
+                        when {
+                            currentStock?.isBankrupt == true ->
+                                companyStatusIndicatorImageView.setStatusIndicator(context, View.VISIBLE, getString(R.string.this_company_is_bankrupt), R.drawable.bankrupt_icon)
+                            currentStock?.givesDividends == true ->
+                                companyStatusIndicatorImageView.setStatusIndicator(context, View.VISIBLE, getString(R.string.this_company_gives_dividend), R.drawable.dividend_icon)
+                            else ->
+                                companyStatusIndicatorImageView.setStatusIndicator(context, View.INVISIBLE, "", R.drawable.clear_icon)
                         }
                     }
                 } else {
@@ -216,17 +219,13 @@ class StockExchangeFragment : Fragment() {
 
         companySpinner.setSelection(model.getIndexForFavoriteCompany())
 
-        LocalBroadcastManager.getInstance(context!!).registerReceiver(refreshStockPricesReceiver, IntentFilter(Constants.REFRESH_STOCK_PRICES_FOR_ALL))
+        val intentFilter = IntentFilter(GAME_STATE_UPDATE_ACTION)
+        intentFilter.addAction(Constants.REFRESH_STOCK_PRICES_FOR_ALL)
+        LocalBroadcastManager.getInstance(context!!).registerReceiver(refreshStockPricesReceiver, intentFilter)
     }
 
     override fun onPause() {
         super.onPause()
         LocalBroadcastManager.getInstance(context!!).unregisterReceiver(refreshStockPricesReceiver)
-    }
-
-    private fun changeStatusImageView(imageView: ImageView, visibility: Int, toastMessage: String, resId: Int) {
-        imageView.visibility = visibility
-        imageView.setImageResource(resId)
-        if (toastMessage.isNotBlank()) imageView.setOnClickListener { context?.toast(toastMessage) }
     }
 }
