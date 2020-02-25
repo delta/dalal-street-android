@@ -27,6 +27,7 @@ import org.pragyan.dalal18.R
 import org.pragyan.dalal18.dagger.ContextModule
 import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent
 import org.pragyan.dalal18.data.DalalViewModel
+import org.pragyan.dalal18.ui.MainActivity.Companion.GAME_STATE_UPDATE_ACTION
 import org.pragyan.dalal18.utils.*
 import org.pragyan.dalal18.utils.Constants.ORDER_FEE_RATE
 import org.pragyan.dalal18.utils.Constants.PREF_TRADE
@@ -62,6 +63,8 @@ class TradeFragment : Fragment() {
                 currentStockPrice_textView.text = tempString
 
                 setOrderPriceWindow()
+            } else if (intent.action != null && (intent.action == GAME_STATE_UPDATE_ACTION)) {
+                updateCompanyIndicators()
             }
         }
     }
@@ -114,8 +117,8 @@ class TradeFragment : Fragment() {
         }
 
         with(companySpinner) {
-            val companiesArray = model.getSpinnerArray()
-            adapter = ArrayAdapter(context!!, R.layout.order_spinner_item, model.getSpinnerArray())
+            val companiesArray = model.getCompanyNamesArray()
+            adapter = ArrayAdapter(context!!, R.layout.order_spinner_item, companiesArray)
 
             onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
 
@@ -124,30 +127,20 @@ class TradeFragment : Fragment() {
 
                 override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
 
-                    lastStockId = model.getStockIdFromSpinnerCompanyName(
-                            companiesArray[position],
-                            getString(R.string.bankruptSuffix),
-                            getString(R.string.dividendSuffix)
-                    )
-
-                    changeTradeOptions(!model.getIsBankruptFromStockId(lastStockId))
+                    lastStockId = model.getStockIdFromCompanyName(companiesArray[position])
 
                     model.updateFavouriteCompanyStockId(lastStockId)
 
-                    if (model.getIsBankruptFromStockId(lastStockId)) {
-                        noOfStocksEditText.setText("0")
-                        orderPriceEditText.setText("0")
-                    } else {
-                        val stocksOwned = model.getQuantityOwnedFromStockId(lastStockId)
-                        var tempString = " : $stocksOwned"
-                        stocksOwnedTextView.text = tempString
+                    val stocksOwned = model.getQuantityOwnedFromStockId(lastStockId)
+                    var tempString = " : $stocksOwned"
+                    stocksOwnedTextView.text = tempString
 
-                        tempString = " : " + Constants.RUPEE_SYMBOL + " " + decimalFormat.format(model.getPriceFromStockId(lastStockId)).toString()
-                        currentStockPrice_textView.text = tempString
+                    tempString = " : " + Constants.RUPEE_SYMBOL + " " + decimalFormat.format(model.getPriceFromStockId(lastStockId)).toString()
+                    currentStockPrice_textView.text = tempString
 
-                        calculateOrderFee()
-                        setOrderPriceWindow()
-                    }
+                    calculateOrderFee()
+                    setOrderPriceWindow()
+                    updateCompanyIndicators()
                 }
             }
         }
@@ -227,6 +220,17 @@ class TradeFragment : Fragment() {
         order_fee_textview.text = temp
     }
 
+    private fun updateCompanyIndicators() {
+        when {
+            model.getIsBankruptFromStockId(lastStockId) ->
+                companyStatusIndicatorImageView.setStatusIndicator(context, View.VISIBLE, getString(R.string.this_company_is_bankrupt), R.drawable.bankrupt_icon)
+            model.getGivesDividendFromStockId(lastStockId) ->
+                companyStatusIndicatorImageView.setStatusIndicator(context, View.VISIBLE, getString(R.string.this_company_gives_dividend), R.drawable.dividend_icon)
+            else ->
+                companyStatusIndicatorImageView.setStatusIndicator(context, View.GONE, "", R.drawable.clear_icon)
+        }
+    }
+
     private fun setOrderPriceWindow() {
         val currentPrice = model.getPriceFromStockId(lastStockId)
         val lowerLimit = currentPrice.toDouble() * (1 - Constants.ORDER_PRICE_WINDOW.toDouble() / 100)
@@ -296,25 +300,12 @@ class TradeFragment : Fragment() {
 
         val intentFilter = IntentFilter(Constants.REFRESH_OWNED_STOCKS_FOR_ALL)
         intentFilter.addAction(Constants.REFRESH_STOCK_PRICES_FOR_ALL)
+        intentFilter.addAction(GAME_STATE_UPDATE_ACTION)
         LocalBroadcastManager.getInstance(context!!).registerReceiver(refreshOwnedStockDetails, intentFilter)
     }
 
     override fun onPause() {
         super.onPause()
         LocalBroadcastManager.getInstance(context!!).unregisterReceiver(refreshOwnedStockDetails)
-    }
-
-    fun changeTradeOptions(openOptions: Boolean) {
-        if (order_select_spinner.isEnabled) order_select_spinner.isEnabled = openOptions
-        if (radioGroupStock.isEnabled) radioGroupStock.isEnabled = openOptions
-        if (stocksOwnedTextView.isEnabled) stocksOwnedTextView.isEnabled = openOptions
-        if (order_fee_textview.isEnabled) order_fee_textview.isEnabled = openOptions
-        if (no_of_stocks_input.isEnabled) no_of_stocks_input.isEnabled = openOptions
-        if (btnMarketDepth.isEnabled) btnMarketDepth.isEnabled = openOptions
-        if (order_price_input.isEnabled) order_price_input.isEnabled = openOptions
-        if (orderPriceWindowTextView.isEnabled) orderPriceWindowTextView.isEnabled = openOptions
-        if (bidRadioButton.isEnabled) bidRadioButton.isEnabled = openOptions
-        if (askRadioButton.isEnabled) askRadioButton.isEnabled = openOptions
-        if (bidAskButton.isEnabled) bidAskButton.isEnabled = openOptions
     }
 }

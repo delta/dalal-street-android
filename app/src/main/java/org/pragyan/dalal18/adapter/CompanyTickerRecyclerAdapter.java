@@ -45,18 +45,16 @@ public class CompanyTickerRecyclerAdapter extends RecyclerView.Adapter<CompanyTi
 
         CompanyTickerDetails currentCompanyTickerDetails = companyTickerDetailsList.get(position);
 
-        String temp = currentCompanyTickerDetails.getFullName();
-        if (currentCompanyTickerDetails.getGivesDividend()) {
-            temp += context.getString(R.string.dividendSuffix);
-        } else if (currentCompanyTickerDetails.isBankrupt()) {
-            temp += context.getString(R.string.bankruptSuffix);
-        }
-
-        holder.companyNameTextView.setText(temp);
+        holder.companyNameTextView.setText(currentCompanyTickerDetails.getFullName());
         new Handler().postDelayed(() -> holder.companyNameTextView.setSelected(true), 1000);
 
-        holder.arrowImageView.setImageResource(currentCompanyTickerDetails.isUp() ? R.drawable.arrow_up_green : R.drawable.arrow_down_red);
-
+        if (currentCompanyTickerDetails.isBankrupt()) {
+            holder.arrowImageView.setImageResource(R.drawable.bankrupt_icon);
+        } else if (currentCompanyTickerDetails.getGivesDividend()) {
+            holder.arrowImageView.setImageResource(R.drawable.dividend_icon);
+        } else {
+            holder.arrowImageView.setImageResource(currentCompanyTickerDetails.isUp() ? R.drawable.arrow_up_green : R.drawable.arrow_down_red);
+        }
 
         String worthString = Constants.RUPEE_SYMBOL + new DecimalFormat(Constants.PRICE_FORMAT).format(currentCompanyTickerDetails.getPreviousDayClose());
         holder.previousDayCloseTextView.setText(worthString);
@@ -71,7 +69,7 @@ public class CompanyTickerRecyclerAdapter extends RecyclerView.Adapter<CompanyTi
 
     @Override
     public int getItemCount() {
-        return (companyTickerDetailsList == null || companyTickerDetailsList.size() == 0)? 0 : Integer.MAX_VALUE;//companyTickerDetailsList.size();
+        return (companyTickerDetailsList == null || companyTickerDetailsList.size() == 0) ? 0 : Integer.MAX_VALUE;//companyTickerDetailsList.size();
     }
 
     public void updateData(List<CompanyTickerDetails> companyTickerDetailsList) {

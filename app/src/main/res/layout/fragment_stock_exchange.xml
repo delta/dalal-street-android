@@ -2,13 +2,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:animateLayoutChanges="true"
     android:background="@color/black_background"
     android:paddingStart="4dp"
     android:paddingEnd="4dp">
 
     <Spinner
         android:id="@+id/companySpinner"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="4dp"
@@ -17,11 +18,25 @@
         android:hint="@string/pick_a_company"
         android:textColorHint="@color/neutral_font_color"
         app:layout_constraintBottom_toTopOf="@+id/currentPriceText"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/companyStatusIndicatorImageView"
         app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_weight="4"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_chainStyle="spread" />
+
+    <ImageView
+        android:id="@+id/companyStatusIndicatorImageView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:src="@drawable/dividend_icon"
+        app:layout_constraintBottom_toBottomOf="@id/companySpinner"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_weight="1"
+        app:layout_constraintStart_toEndOf="@id/companySpinner"
+        app:layout_constraintTop_toTopOf="@id/companySpinner"
+        android:contentDescription="@string/dividend_bankrupt_indicator" />
 
     <TextView
         android:id="@+id/currentPriceText"

@@ -29,9 +29,11 @@ import org.pragyan.dalal18.R
 import org.pragyan.dalal18.dagger.ContextModule
 import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent
 import org.pragyan.dalal18.data.DalalViewModel
+import org.pragyan.dalal18.ui.MainActivity.Companion.GAME_STATE_UPDATE_ACTION
 import org.pragyan.dalal18.utils.ConnectionUtils
 import org.pragyan.dalal18.utils.Constants
 import org.pragyan.dalal18.utils.hideKeyboard
+import org.pragyan.dalal18.utils.setStatusIndicator
 import java.text.DecimalFormat
 import javax.inject.Inject
 
@@ -43,7 +45,7 @@ class StockExchangeFragment : Fragment() {
     private lateinit var model: DalalViewModel
 
     private var currentStock: Stock? = null
-    private var lastSelectedStockId: Int = 0
+    private var lastSelectedStockId: Int = 1
     private lateinit var companiesArray: MutableList<String>
     private var loadingDialog: AlertDialog? = null
     private var decimalFormat = DecimalFormat(Constants.PRICE_FORMAT)
@@ -51,7 +53,8 @@ class StockExchangeFragment : Fragment() {
 
     private val refreshStockPricesReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
-            if (activity != null && intent.action != null && intent.action!!.equals(Constants.REFRESH_STOCK_PRICES_FOR_ALL, ignoreCase = true)) {
+            if (activity != null && intent.action != null && (intent.action.equals(Constants.REFRESH_STOCK_PRICES_FOR_ALL, ignoreCase = true)
+                            || intent.action.equals(GAME_STATE_UPDATE_ACTION, ignoreCase = true))) {
                 getCompanyProfileAsynchronously(lastSelectedStockId)
             }
         }
@@ -87,7 +90,7 @@ class StockExchangeFragment : Fragment() {
                 .setCancelable(false)
                 .create()
 
-        companiesArray = model.getSpinnerArray()
+        companiesArray = model.getCompanyNamesArray()
         val arrayAdapter = ArrayAdapter<String>(activity!!, R.layout.company_spinner_item, companiesArray)
         with(companySpinner) {
             adapter = arrayAdapter
@@ -97,14 +100,8 @@ class StockExchangeFragment : Fragment() {
                 }
 
                 override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                    lastSelectedStockId = model.getStockIdFromSpinnerCompanyName(
-                            companySpinner.selectedItem.toString(),
-                            getString(R.string.bankruptSuffix),
-                            getString(R.string.dividendSuffix)
-                    )
+                    lastSelectedStockId = model.getStockIdFromCompanyName(companySpinner.selectedItem.toString())
                     model.updateFavouriteCompanyStockId(lastSelectedStockId)
-
-                    changeStockExchangeOptions(!model.getIsBankruptFromStockId(lastSelectedStockId))
 
                     getCompanyProfileAsynchronously(lastSelectedStockId)
                 }
@@ -197,6 +194,15 @@ class StockExchangeFragment : Fragment() {
 
                         temporaryTextViewString = ": " + decimalFormat.format(currentStock?.stocksInExchange).toString()
                         stocksInExchange_textView.text = temporaryTextViewString
+
+                        when {
+                            currentStock?.isBankrupt == true ->
+                                companyStatusIndicatorImageView.setStatusIndicator(context, View.VISIBLE, getString(R.string.this_company_is_bankrupt), R.drawable.bankrupt_icon)
+                            currentStock?.givesDividends == true ->
+                                companyStatusIndicatorImageView.setStatusIndicator(context, View.VISIBLE, getString(R.string.this_company_gives_dividend), R.drawable.dividend_icon)
+                            else ->
+                                companyStatusIndicatorImageView.setStatusIndicator(context, View.GONE, "", R.drawable.clear_icon)
+                        }
                     }
                 } else {
                     uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_server_down), R.id.exchange_dest) }
@@ -213,18 +219,13 @@ class StockExchangeFragment : Fragment() {
 
         companySpinner.setSelection(model.getIndexForFavoriteCompany())
 
-        LocalBroadcastManager.getInstance(context!!).registerReceiver(refreshStockPricesReceiver, IntentFilter(Constants.REFRESH_STOCK_PRICES_FOR_ALL))
+        val intentFilter = IntentFilter(GAME_STATE_UPDATE_ACTION)
+        intentFilter.addAction(Constants.REFRESH_STOCK_PRICES_FOR_ALL)
+        LocalBroadcastManager.getInstance(context!!).registerReceiver(refreshStockPricesReceiver, intentFilter)
     }
 
     override fun onPause() {
         super.onPause()
         LocalBroadcastManager.getInstance(context!!).unregisterReceiver(refreshStockPricesReceiver)
-    }
-
-    fun changeStockExchangeOptions(openOptions: Boolean) {
-        stocks_exchange_input.isEnabled = openOptions
-        stockIncrementOneButton.isEnabled = openOptions
-        stockIncrementFiveButton.isEnabled = openOptions
-        buyExchangeButton.isEnabled = openOptions
     }
 }

@@ -487,7 +487,7 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
     private fun updateStockWorthViaStreamUpdates() {
         var netStockWorth = 0L
         for ((stockId, quantity) in model.ownedStockDetails) {
-            netStockWorth += quantity * model.getGlobalStockPriceFromStockId(stockId)
+            netStockWorth += quantity * model.getPriceFromStockId(stockId)
         }
         stockWorth = netStockWorth
 
@@ -495,7 +495,7 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
 
         // We need to add reserved stocks worth to calculate total worth
         for ((stockId, quantity) in model.reservedStockDetails) {
-            netStockWorth += quantity * model.getGlobalStockPriceFromStockId(stockId)
+            netStockWorth += quantity * model.getPriceFromStockId(stockId)
         }
         // Backend has it the way TotalWorth = CashWorth + OwnedStockWorth + ReservedStockWorth
         totalWorth = netStockWorth + cashWorth + model.reservedCash
@@ -793,7 +793,7 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
         private const val REFRESH_ALL_WORTH_ACTION = "refresh-cash-worth-text-view"
         const val REFRESH_UNREAD_NOTIFICATIONS_COUNT = "refresh-unread-notifications-count"
 
-        private const val GAME_STATE_UPDATE_ACTION = "game-state-update-action"
+        const val GAME_STATE_UPDATE_ACTION = "game-state-update-action"
         private const val GAME_STATE_KEY = "game-state-key"
     }
 }

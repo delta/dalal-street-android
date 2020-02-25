@@ -29,6 +29,7 @@ import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent
 import org.pragyan.dalal18.data.DalalViewModel
 import org.pragyan.dalal18.data.Portfolio
 import org.pragyan.dalal18.data.StockDetails
+import org.pragyan.dalal18.ui.MainActivity.Companion.GAME_STATE_UPDATE_ACTION
 import org.pragyan.dalal18.utils.Constants
 import java.text.DecimalFormat
 import java.util.*
@@ -51,7 +52,9 @@ class PortfolioFragment : Fragment() {
 
     private val refreshPortfolioDetails = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
-            if (intent.action != null && (intent.action == Constants.REFRESH_STOCK_PRICES_FOR_ALL || intent.action == Constants.REFRESH_OWNED_STOCKS_FOR_ALL)) {
+            if (intent.action != null && (intent.action == Constants.REFRESH_STOCK_PRICES_FOR_ALL ||
+                            intent.action == Constants.REFRESH_OWNED_STOCKS_FOR_ALL ||
+                            intent.action == GAME_STATE_UPDATE_ACTION)) {
                 updatePortfolioTable()
             }
         }
@@ -124,7 +127,7 @@ class PortfolioFragment : Fragment() {
         val currentPriceList = ArrayList<Long>()
 
         for ((stockId, quantity) in model.ownedStockDetails) {
-            currentPrice = model.getGlobalStockPriceFromStockId(stockId)
+            currentPrice = model.getPriceFromStockId(stockId)
 
             if (quantity > 0L) {
                 currentPriceList.add(currentPrice)
@@ -150,7 +153,7 @@ class PortfolioFragment : Fragment() {
         } else {
             others += cashWorth
         }
-        if(others.toFloat() > 0)
+        if (others.toFloat() > 0)
             entries.add(PieEntry(others.toFloat(), "Others"))
 
 
@@ -189,6 +192,7 @@ class PortfolioFragment : Fragment() {
 
         val intentFilter = IntentFilter(Constants.REFRESH_OWNED_STOCKS_FOR_ALL)
         intentFilter.addAction(Constants.REFRESH_STOCK_PRICES_FOR_ALL)
+        intentFilter.addAction(GAME_STATE_UPDATE_ACTION)
         LocalBroadcastManager.getInstance(context!!).registerReceiver(refreshPortfolioDetails, intentFilter)
     }
 
@@ -202,14 +206,16 @@ class PortfolioFragment : Fragment() {
         val portfolioList = mutableListOf<Portfolio>()
         for ((stockId, quantity) in model.ownedStockDetails) {
 
-            val currentPrice = model.getGlobalStockPriceFromStockId(stockId)
+            val currentPrice = model.getPriceFromStockId(stockId)
 
             if (quantity != 0L) {
                 portfolioList.add(Portfolio(
                         model.getShortNameFromStockId(stockId),
                         quantity,
                         model.getReservedStocksFromStockId(stockId),
-                        currentPrice * quantity
+                        currentPrice * quantity,
+                        model.getIsBankruptFromStockId(stockId),
+                        model.getGivesDividendFromStockId(stockId)
                 ))
             }
         }
@@ -217,8 +223,8 @@ class PortfolioFragment : Fragment() {
         if (portfolioList.size > 0) {
             portfolioRecyclerAdapter.swapData(portfolioList)
 
-            val tempString = "Reserved Cash: " + Constants.RUPEE_SYMBOL + DecimalFormat(Constants.PRICE_FORMAT).format(model.reservedCash)
-            reservedCashTextView.text = tempString
+            reservedCashTextView.text = DecimalFormat(Constants.PRICE_FORMAT).format(model.reservedCash)
+            reservedStocksTextView.text = DecimalFormat(Constants.PRICE_FORMAT).format(model.getReservedStocksValue())
 
             portfolioScrollView.visibility = View.VISIBLE
             emptyPortfolioRelativeLayout.visibility = View.GONE

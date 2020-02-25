@@ -61,7 +61,7 @@
     <string name="daily_low">Daily Low</string>
     <string name="stocks_in_market">Stocks in Market</string>
     <string name="stocks_in_exchange">Stocks in Exchange</string>
-    <string name="n_a">N/A</string>
+    <string name="n_a">: N/A</string>
     <string name="quantity">Quantity</string>
     <string name="price">Price(₹)</string>
     <string name="current_price">Current Price</string>
@@ -102,10 +102,7 @@
     <string name="askdepth_tour">Ask Depth</string>
     <string name="incrementFive">+5</string>
     <string name="incrementOne">+1</string>
-    <string name="bankruptSuffix">BANKRUPT</string>
-    <string name="dividendSuffix">$$$</string>
     <string name="marketClose">Market is Closed \t\t\t Market is Closed \t\t\t Market is Closed</string>
-
 
     <string name="up_arrow">&#8593;</string>
     <string name="down_arrow">&#8595;</string>
@@ -469,6 +466,11 @@
     <string name="admin_panel">Admin Panel</string>
     <string name="updating_your_orders">Updating your orders…</string>
     <string name="please_try_again">Please try again</string>
+    <string name="dividend_bankrupt_indicator">dividend-bankrupt-indicator</string>
+    <string name="total_cash_reserved">Total Cash Reserved</string>
+    <string name="total_stocks_reserved">Total Stocks Reserved</string>
+    <string name="this_company_is_bankrupt">This company is bankrupt</string>
+    <string name="this_company_gives_dividend">This company gives dividend</string>
     <string-array name="intervalType">
         <item>1 min</item>
         <item>5 mins</item>
