@@ -158,7 +158,7 @@ public class OrdersRecyclerAdapter extends RecyclerView.Adapter<OrdersRecyclerAd
         return openOrdersList.get(position).isBid();
     }
 
-    public class OrderViewHolder extends RecyclerView.ViewHolder {
+    public static class OrderViewHolder extends RecyclerView.ViewHolder {
 
         TextView typeTextView, priceTextView, quantityTextView, companyNameTextView;
         Button cancelButton;

@@ -1,10 +1,11 @@
 package org.pragyan.dalal18.fragment
 
-import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
+import android.app.Activity
+import android.content.*
+import android.graphics.Typeface
 import android.os.Bundle
+import android.os.Handler
+import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,6 +21,9 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.getkeepsafe.taptargetview.TapTarget
+import com.getkeepsafe.taptargetview.TapTargetView
+import com.nineoldandroids.view.ViewPropertyAnimator
 import dalalstreet.api.DalalActionServiceGrpc
 import dalalstreet.api.DalalStreamServiceGrpc
 import dalalstreet.api.actions.CancelOrderRequest
@@ -29,6 +33,7 @@ import dalalstreet.api.actions.GetMyOpenOrdersResponse
 import dalalstreet.api.datastreams.*
 import io.grpc.stub.StreamObserver
 import kotlinx.android.synthetic.main.fragment_my_orders.*
+import kotlinx.android.synthetic.main.order_list_item.view.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -45,6 +50,7 @@ import org.pragyan.dalal18.data.DalalViewModel
 import org.pragyan.dalal18.data.Order
 import org.pragyan.dalal18.utils.ConnectionUtils
 import org.pragyan.dalal18.utils.Constants
+import org.pragyan.dalal18.utils.Constants.CANCEL_ORDER_TOUR_KEY
 import org.pragyan.dalal18.utils.OrderItemTouchHelper
 import javax.inject.Inject
 
@@ -59,6 +65,9 @@ class OrdersFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, OrderIt
     @Inject
     lateinit var streamServiceBlockingStub: DalalStreamServiceGrpc.DalalStreamServiceBlockingStub
 
+    @Inject
+    lateinit var preferences: SharedPreferences
+
     private lateinit var model: DalalViewModel
 
     private var ordersRecyclerAdapter: OrdersRecyclerAdapter? = null
@@ -66,6 +75,8 @@ class OrdersFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, OrderIt
 
     private var networkDownHandler: ConnectionUtils.OnNetworkDownHandler? = null
     private lateinit var loadingOrdersDialog: AlertDialog
+
+    private var screenWidth = 0
 
     private val ordersReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
@@ -91,12 +102,10 @@ class OrdersFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, OrderIt
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
         val rootView = inflater.inflate(R.layout.fragment_my_orders, container, false)
-
         DaggerDalalStreetApplicationComponent.builder().contextModule(ContextModule(context!!)).build().inject(this)
 
         model = activity?.run { ViewModelProvider(this).get(DalalViewModel::class.java) }
                 ?: throw Exception("Invalid activity")
-
         return rootView
     }
 
@@ -106,7 +115,7 @@ class OrdersFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, OrderIt
         ordersRecyclerAdapter = OrdersRecyclerAdapter(context, null)
         ordersRecycler_swipeRefreshLayout.setOnRefreshListener(this)
 
-        with(orders_recyclerView) {
+        with(ordersRecyclerView) {
             setHasFixedSize(false)
             adapter = ordersRecyclerAdapter
             layoutManager = LinearLayoutManager(context)
@@ -119,6 +128,10 @@ class OrdersFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, OrderIt
         val dialogView = LayoutInflater.from(context).inflate(R.layout.progress_dialog, null)
         (dialogView.findViewById<View>(R.id.progressDialog_textView) as TextView).setText(R.string.updating_your_orders)
         loadingOrdersDialog = AlertDialog.Builder(context!!).setView(dialogView).setCancelable(false).create()
+
+        val displayMetrics = DisplayMetrics()
+        (context as Activity).windowManager.defaultDisplay.getMetrics(displayMetrics)
+        screenWidth = displayMetrics.widthPixels
 
         getOpenOrdersAsynchronously()
 
@@ -213,7 +226,11 @@ class OrdersFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, OrderIt
                                 }
                             }
 
-                            val empty = ordersRecyclerAdapter?.swapData(openOrdersList)
+                            if (openOrdersList.size > 0) {
+                                showTutorialIfFirstTime()
+                            }
+
+                            val empty = ordersRecyclerAdapter?.swapData(openOrdersList) ?: true
                             flipVisibilities(empty)
 
                         } else {
@@ -227,6 +244,29 @@ class OrdersFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, OrderIt
                 uiThread { networkDownHandler?.onNetworkDownError(resources.getString(R.string.error_check_internet), R.id.open_orders_dest) }
             }
             uiThread { loadingOrdersDialog.dismiss() }
+        }
+    }
+
+    private fun showTutorialIfFirstTime() {
+        if (!preferences.getBoolean(CANCEL_ORDER_TOUR_KEY, false)) {
+
+            Handler().postDelayed({
+                try {
+                    ViewPropertyAnimator.animate(ordersRecyclerView.findViewHolderForAdapterPosition(0)
+                            ?.itemView?.orderViewForeground).translationXBy((-screenWidth * 0.5).toFloat()).duration = 450
+
+                    val cancelTextView = ordersRecyclerView.findViewHolderForAdapterPosition(0)?.itemView?.deleteOrderText
+
+                    if (cancelTextView != null) {
+                        showTapTargetForNewOrder(cancelTextView)
+                    }
+
+                } catch (e: NullPointerException) {
+                    e.printStackTrace()
+                }
+            }, 450)
+
+            preferences.edit().putBoolean(CANCEL_ORDER_TOUR_KEY, true).apply()
         }
     }
 
@@ -316,5 +356,31 @@ class OrdersFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, OrderIt
     companion object {
         const val REFRESH_ORDERS_ACTION = "refresh-orders-action"
         const val ORDER_UPDATE_KEY = "order-update-key"
+    }
+
+    private fun showTapTargetForNewOrder(view: View) {
+        TapTargetView.showFor(activity as AppCompatActivity, TapTarget.forView(view, getString(R.string.swipe_left_to_delete))
+                .cancelable(true)
+                .tintTarget(true)
+                .targetCircleColor(R.color.neutral_font_color)
+                .targetCircleColor(R.color.neutral_font_color)
+                .textColor(R.color.neon_green)
+                .textTypeface(Typeface.MONOSPACE)
+                .drawShadow(true)
+                .transparentTarget(true)
+                .targetRadius(80),
+                object : TapTargetView.Listener() {
+                    override fun onTargetClick(view: TapTargetView?) {
+                        super.onTargetClick(view)
+                        view?.dismiss(true)
+                    }
+
+                    override fun onTargetDismissed(view: TapTargetView?, userInitiated: Boolean) {
+                        ViewPropertyAnimator.animate(ordersRecyclerView.findViewHolderForAdapterPosition(0)
+                                ?.itemView?.orderViewForeground).translationXBy((screenWidth * 0.5).toFloat()).duration = 450
+
+                    }
+                }
+        )
     }
 }
