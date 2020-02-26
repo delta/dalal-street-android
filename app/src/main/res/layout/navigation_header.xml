@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="@dimen/nav_header_height"
-    android:background="@raw/dalalcover2">
+    android:background="@drawable/dalalcover2">
 
     <TextView
         android:layout_width="wrap_content"
@@ -14,7 +14,8 @@
         android:fontFamily="@font/marcellus_sc"
         android:text="@string/app_name"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
-        android:textColor="@color/neon_green"
+        android:textColor="@color/neutral_font_color"
+        android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/usernameTextView"
         app:layout_constraintStart_toStartOf="parent" />
 
@@ -29,8 +30,9 @@
         android:fontFamily="@font/kreon_light"
         android:text="@string/username"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-        android:textColor="@color/neon_blue"
+        android:textColor="@color/neutral_font_color"
         android:textSize="20sp"
+        android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/madeWithLoveText"
         app:layout_constraintStart_toStartOf="parent" />
 
@@ -46,6 +48,7 @@
         android:text="@string/made_with_u2661_by_delta_force"
         android:textColor="@color/neutral_font_color"
         android:textSize="12sp"
+        android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />

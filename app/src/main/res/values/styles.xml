@@ -19,6 +19,7 @@
         <item name="colorAccent">@color/colorAccent</item>
         <item name="windowNoTitle">true</item>
         <item name="windowActionBar">false</item>
+        <item name="android:listDivider">@color/neutral_font_color</item>
     </style>
 
     <style name="TabHeadingStyle" parent="@android:style/TextAppearance.Widget.TabWidget">

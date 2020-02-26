@@ -472,6 +472,7 @@
     <string name="this_company_is_bankrupt">This company is bankrupt</string>
     <string name="this_company_gives_dividend">This company gives dividend</string>
     <string name="swipe_left_to_delete">Swipe left to delete the order</string>
+    <string name="company_details">Company Details</string>
     <string-array name="intervalType">
         <item>1 min</item>
         <item>5 mins</item>

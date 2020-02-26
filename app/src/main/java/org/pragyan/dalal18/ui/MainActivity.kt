@@ -19,7 +19,6 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.ViewModelProvider
@@ -28,6 +27,8 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.navigation.NavOptions
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.ui.AppBarConfiguration
+import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import dalalstreet.api.DalalActionServiceGrpc
 import dalalstreet.api.DalalStreamServiceGrpc
@@ -150,9 +151,6 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
 
         setSupportActionBar(mainToolbar)
 
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        supportActionBar?.setHomeAsUpIndicator(ContextCompat.getDrawable(this, R.drawable.hamburger_icon))
-
         setupNavigationDrawer()
 
         model.ownedStockDetails = intent.getSerializableExtra(STOCKS_OWNED_KEY) as HashMap<Int, Long>
@@ -194,11 +192,11 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
         stockWorthTextView.setOnClickListener(worthViewClickListener)
         totalInHandTextView.setOnClickListener(worthViewClickListener)
         totalWorthTextView.setOnClickListener(worthViewClickListener)
-        createChannel()
-        val notificationIntent = Intent(this.baseContext, PushNotificationService::class.java)
-        this.startService(notificationIntent)
-        marketCloseIndicatorTextView.isSelected = true
 
+        createChannel()
+        this.startService(Intent(this.baseContext, PushNotificationService::class.java))
+
+        marketCloseIndicatorTextView.isSelected = true
     }
 
 
@@ -206,6 +204,14 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
     private fun setupNavigationDrawer() {
 
         val host = supportFragmentManager.findFragmentById(R.id.main_host_fragment) as NavHostFragment
+
+        val appBarConfig = AppBarConfiguration.Builder(setOf(R.id.home_dest, R.id.companies_dest, R.id.portfolio_dest,
+                R.id.exchange_dest, R.id.market_depth_dest, R.id.trade_dest, R.id.main_mortgage_dest, R.id.news_dest,
+                R.id.leaderboard_dest, R.id.open_orders_dest, R.id.transactions_dest, R.id.notifications_dest))
+                .setDrawerLayout(mainDrawerLayout)
+                .build()
+
+        setupActionBarWithNavController(host.navController, appBarConfig)
         navigationViewLeft.setupWithNavController(host.navController)
 
         MiscellaneousUtils.username = intent.getStringExtra(USERNAME_KEY)
@@ -275,7 +281,11 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
             }
 
             android.R.id.home -> {
-                mainDrawerLayout!!.openDrawer(GravityCompat.START)  // OPEN DRAWER
+                if (NavHostFragment.findNavController(main_host_fragment).currentDestination?.id in listOf(R.id.company_description_dest, R.id.nav_news_details, R.id.help_dest)) {
+                    onBackPressed()
+                } else {
+                    mainDrawerLayout?.openDrawer(GravityCompat.START)
+                }
                 return true
             }
         }
