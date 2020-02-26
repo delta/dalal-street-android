@@ -1,101 +1,105 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/retrieveRecyclerViewParentLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/black_background">
 
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/retrieveRecyclerViewParentLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/black_background">
+
+        <TextView
+            android:id="@+id/companyNameTextView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:gravity="center"
+            android:text="@string/company"
+            android:textColor="@color/neutral_font_color"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@+id/stockQuantityTextView"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintHorizontal_chainStyle="packed"
+            app:layout_constraintHorizontal_weight="3"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/stockQuantityTextView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:gravity="center"
+            android:text="@string/quantity"
+            android:textColor="@color/neutral_font_color"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@+id/mortgagePriceTextView"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintHorizontal_weight="3"
+            app:layout_constraintStart_toEndOf="@+id/companyNameTextView"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/mortgagePriceTextView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:gravity="center"
+            android:text="@string/price"
+            android:textColor="@color/neutral_font_color"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@+id/retrieveRateTextView"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintHorizontal_weight="3"
+            app:layout_constraintStart_toEndOf="@+id/stockQuantityTextView"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/retrieveRateTextView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:gravity="center"
+            android:text="(Retrieve Rate: 90%)"
+            android:textColor="@color/neon_orange"
+            android:textStyle="italic"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintHorizontal_weight="6"
+            app:layout_constraintStart_toEndOf="@+id/mortgagePriceTextView"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <View
+            android:id="@+id/retrieveDivider"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="8dp"
+            android:background="@color/neutral_font_color"
+            app:layout_constraintTop_toBottomOf="@+id/stockQuantityTextView" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/retrieveRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="4dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/retrieveDivider" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
     <TextView
         android:id="@+id/messageStocksMortgagedTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:fontFamily="@font/kreon_light"
+        android:gravity="center"
         android:text="@string/no_stocks_mortgaged"
         android:textColor="@color/neutral_font_color"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:textSize="20sp" />
 
-    <TextView
-        android:id="@+id/companyNameTextView"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:gravity="center"
-        android:text="@string/company"
-        android:textColor="@color/neutral_font_color"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toStartOf="@+id/stockQuantityTextView"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintHorizontal_chainStyle="packed"
-        app:layout_constraintHorizontal_weight="3"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/stockQuantityTextView"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:gravity="center"
-        android:text="@string/quantity"
-        android:textColor="@color/neutral_font_color"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toStartOf="@+id/mortgagePriceTextView"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintHorizontal_weight="3"
-        app:layout_constraintStart_toEndOf="@+id/companyNameTextView"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/mortgagePriceTextView"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:gravity="center"
-        android:text="@string/price"
-        android:textColor="@color/neutral_font_color"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toStartOf="@+id/retrieveRateTextView"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintHorizontal_weight="3"
-        app:layout_constraintStart_toEndOf="@+id/stockQuantityTextView"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/retrieveRateTextView"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:gravity="center"
-        android:text="(Retrieve Rate: 90%)"
-        android:textColor="@color/neon_orange"
-        android:textStyle="italic"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintHorizontal_weight="6"
-        app:layout_constraintStart_toEndOf="@+id/mortgagePriceTextView"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <View
-        android:id="@+id/retrieveDivider"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginTop="8dp"
-        android:background="@color/neutral_font_color"
-        app:layout_constraintTop_toBottomOf="@+id/stockQuantityTextView" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/retrieveRecyclerView"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginTop="4dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/retrieveDivider" />
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+</FrameLayout>

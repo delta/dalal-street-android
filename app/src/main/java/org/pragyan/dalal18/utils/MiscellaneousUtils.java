@@ -22,6 +22,7 @@ public class MiscellaneousUtils {
         try {
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(inputFormat.parse(time));
+            calendar.add(Calendar.MINUTE, 330); /* Adding +05:30 GMT */
             str = outputFormat.format(calendar.getTime());
         } catch (ParseException e) {
             e.printStackTrace();

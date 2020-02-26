@@ -44,7 +44,7 @@ public class RetrieveRecyclerAdapter extends RecyclerView.Adapter<RetrieveRecycl
     public void onBindViewHolder(@NonNull RetrieveViewHolder holder, int position) {
 
         MortgageDetails currentDetails = mortgageDetailsList.get(position);
-        holder.companyNameTextView.setText(currentDetails.getCompanyName());
+        holder.companyNameTextView.setText(currentDetails.getShortName());
         holder.mortgagePriceTextView.setText(new DecimalFormat(Constants.PRICE_FORMAT).format(currentDetails.getMortgagePrice()));
         holder.stockQuantityTextView.setText(String.valueOf(currentDetails.getStockQuantity()));
         holder.retrieveQuantityEditText.setText("");

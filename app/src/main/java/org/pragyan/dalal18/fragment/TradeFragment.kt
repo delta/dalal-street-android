@@ -243,7 +243,8 @@ class TradeFragment : Fragment() {
                 Constants.RUPEE_SYMBOL + DecimalFormat(Constants.PRICE_FORMAT).format(higherLimit.toLong())
         orderPriceWindowTextView.text = tempOrderPriceText
 
-        orderPriceWindowTextView.visibility = if(lowerLimit == 0.0 && higherLimit == 0.0) View.GONE else View.VISIBLE
+        orderPriceWindowTextView.visibility = if ((lowerLimit == 0.0 && higherLimit == 0.0)
+                || order_select_spinner.selectedItem.toString() == "Market Order") View.GONE else View.VISIBLE
     }
 
     private fun onBidAskButtonClick() {

@@ -227,10 +227,10 @@ class PortfolioFragment : Fragment() {
             reservedStocksTextView.text = DecimalFormat(Constants.PRICE_FORMAT).format(model.getReservedStocksValue())
 
             portfolioScrollView.visibility = View.VISIBLE
-            emptyPortfolioRelativeLayout.visibility = View.GONE
+            emptyPortfolioTextView.visibility = View.GONE
         } else {
             portfolioScrollView.visibility = View.GONE
-            emptyPortfolioRelativeLayout.visibility = View.VISIBLE
+            emptyPortfolioTextView.visibility = View.VISIBLE
         }
     }
 }

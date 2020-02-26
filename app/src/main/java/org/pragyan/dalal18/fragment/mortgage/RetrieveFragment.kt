@@ -88,13 +88,12 @@ class RetrieveFragment : Fragment(), RetrieveRecyclerAdapter.OnRetrieveButtonCli
     }
 
     private fun updateMortgageDetailsListFromViewModel() {
-        messageStocksMortgagedTextView.visibility = View.VISIBLE
         retrieveRecyclerViewParentLayout.visibility = View.GONE
-        messageStocksMortgagedTextView.text = getString(R.string.swipe_to_refresh)
 
         mortgageDetailsList.clear()
         for ((pair, quantity) in model.mortgageStockDetails) {
-            mortgageDetailsList.add(MortgageDetails(pair.first, model.getCompanyNameFromStockId(pair.first), quantity, pair.second))
+            mortgageDetailsList.add(MortgageDetails(pair.first, model.getShortNameFromStockId(pair.first),
+                    model.getCompanyNameFromStockId(pair.first), quantity, pair.second))
         }
 
         if (mortgageDetailsList.size == 0) {

@@ -43,7 +43,10 @@ import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.jetbrains.anko.*
+import org.jetbrains.anko.contentView
+import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.find
+import org.jetbrains.anko.toast
 import org.pragyan.dalal18.R
 import org.pragyan.dalal18.dagger.ContextModule
 import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent
@@ -86,14 +89,11 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
 
     private var helpDialog: AlertDialog? = null
     private var logoutDialog: AlertDialog? = null
-    private var errorDialog: AlertDialog? = null
 
     private var cashWorth: Long = 0
     private var stockWorth: Long = 0
     private var totalWorth: Long = 0
     private var unreadNotificationsCount = 0
-    private var lastOpenFragmentId = R.id.home_dest
-    private var lostOnce = false
 
     private lateinit var networkCallback: ConnectivityManager.NetworkCallback
 
@@ -526,38 +526,6 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
         updateStockWorthViaStreamUpdates()
     }
 
-    // Creates a new networkCallback object
-    private fun createNetworkCallbackObject() {
-        networkCallback = object : ConnectivityManager.NetworkCallback() {
-
-            override fun onAvailable(network: Network) {
-                super.onAvailable(network)
-                doAsync {
-                    if (ConnectionUtils.isReachableByTcp(HOST, PORT)) {
-                        uiThread {
-                            if (lostOnce) {
-                                navigateToLastOpenFragment()
-                                subscribeToStreamsAsynchronously()
-                            }
-
-                            errorDialog?.dismiss()
-                        }
-                    } else {
-                        uiThread { errorDialog?.setMessage(getString(R.string.error_server_down)) }
-                    }
-                }
-            }
-
-            override fun onLost(network: Network) {
-                super.onLost(network)
-                toast(getString(R.string.internet_connection_lost))
-                lostOnce = true
-                lastOpenFragmentId = findNavController(R.id.main_host_fragment).currentDestination?.id
-                        ?: R.id.home_dest
-            }
-        }
-    }
-
     private fun getMortgageDetailsAsynchronously() = lifecycleScope.launch {
 
         val dialogView = LayoutInflater.from(this@MainActivity).inflate(R.layout.progress_dialog, null)
@@ -648,7 +616,6 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
     public override fun onResume() {
         super.onResume()
 
-        lostOnce = false
         subscribeToStreamsAsynchronously()
 
         val intentFilter = IntentFilter(REFRESH_ALL_WORTH_ACTION)
@@ -664,8 +631,6 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
         super.onPause()
 
         unsubscribeFromAllStreams()
-        lastOpenFragmentId = findNavController(R.id.main_host_fragment).currentDestination?.id
-                ?: R.id.home_dest
 
         preferences.edit().remove(LAST_TRANSACTION_ID).apply()
 
@@ -728,52 +693,21 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
     }
 
     override fun onNetworkDownError(message: String, fragment: Int) {
-
-        lastOpenFragmentId = fragment
-
-        errorDialog = AlertDialog.Builder(this, R.style.AlertDialogTheme)
-                .setMessage(message)
-                .setPositiveButton(getString(R.string.retry), null)
-                .setTitle(getString(R.string.error))
-                .setCancelable(false)
-                .create()
-
-        errorDialog?.setOnShowListener {
-            val positiveButton = errorDialog?.getButton(AlertDialog.BUTTON_POSITIVE)
-            positiveButton?.setOnClickListener {
-                onRetryButtonDialogClick()
-            }
-        }
-        errorDialog?.show()
+        startActivity(Intent(this@MainActivity, SplashActivity::class.java))
+        finish()
         contentView?.hideKeyboard()
     }
 
-    private fun onRetryButtonDialogClick() {
-        errorDialog?.getButton(AlertDialog.BUTTON_POSITIVE)?.isEnabled = false
-        doAsync {
-            if (ConnectionUtils.getConnectionInfo(this@MainActivity)) {
-                if (ConnectionUtils.isReachableByTcp(HOST, PORT)) {
-                    uiThread {
-                        errorDialog?.dismiss()
-                        navigateToLastOpenFragment()
-                    }
-                } else {
-                    uiThread { errorDialog?.setMessage(getString(R.string.error_server_down)) }
-                }
-            } else {
-                uiThread { errorDialog?.setMessage(getString(R.string.error_check_internet)) }
-            }
-            uiThread { errorDialog?.getButton(AlertDialog.BUTTON_POSITIVE)?.isEnabled = true }
-        }
-    }
+    // Creates a new networkCallback object
+    private fun createNetworkCallbackObject() {
+        networkCallback = object : ConnectivityManager.NetworkCallback() {
 
-    private fun navigateToLastOpenFragment() {
-        val navController = findNavController(R.id.main_host_fragment)
-        when (lastOpenFragmentId) { // Otherwise it crashes as these details fragment require arguments to be passed
-            R.id.nav_news_details -> lastOpenFragmentId = R.id.news_dest
-            R.id.company_description_dest -> lastOpenFragmentId = R.id.home_dest
+            override fun onLost(network: Network) {
+                super.onLost(network)
+                startActivity(Intent(this@MainActivity, SplashActivity::class.java))
+                finish()
+            }
         }
-        navController.navigate(lastOpenFragmentId, null, NavOptions.Builder().setPopUpTo(R.id.home_dest, false).build())
     }
 
     private fun createChannel() {
