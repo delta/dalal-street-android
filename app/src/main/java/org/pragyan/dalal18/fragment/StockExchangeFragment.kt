@@ -15,6 +15,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import dalalstreet.api.DalalActionServiceGrpc
 import dalalstreet.api.actions.BuyStocksFromExchangeRequest
@@ -22,6 +23,9 @@ import dalalstreet.api.actions.BuyStocksFromExchangeResponse
 import dalalstreet.api.actions.GetCompanyProfileRequest
 import dalalstreet.api.models.Stock
 import kotlinx.android.synthetic.main.fragment_stock_exchange.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.toast
 import org.jetbrains.anko.uiThread
@@ -122,42 +126,39 @@ class StockExchangeFragment : Fragment() {
         noOfStocksEditText.setText(noOfStocks.toString())
     }
 
-    private fun buyStocksFromExchange() {
+    private fun buyStocksFromExchange() = lifecycleScope.launch {
+        buyExchangeButton.isEnabled = false
 
         if (noOfStocksEditText.text.toString().trim { it <= ' ' }.isEmpty()) {
             context?.toast("Enter the number of Stocks")
-        } else if (currentStock != null && dailyHigh_textView.text.isNotEmpty()) {
-            if ((noOfStocksEditText.text.toString().trim { it <= ' ' }).toLong() <= currentStock!!.stocksInExchange) {
-                doAsync {
-                    if (ConnectionUtils.getConnectionInfo(context!!)) {
-                        if (ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
-                            val response = actionServiceBlockingStub.buyStocksFromExchange(
-                                    BuyStocksFromExchangeRequest.newBuilder().setStockId(lastSelectedStockId)
-                                            .setStockQuantity(noOfStocksEditText.text.toString().toLong()).build()
-                            )
-
-                            uiThread {
-                                if (response.statusCode == BuyStocksFromExchangeResponse.StatusCode.OK) {
-                                    context?.toast("Stocks bought")
-                                    noOfStocksEditText.setText("0")
-                                    getCompanyProfileAsynchronously(lastSelectedStockId)
-                                    view?.hideKeyboard()
-                                } else
-                                    context?.toast(response.statusMessage)
-                            }
-                        } else {
-                            uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_server_down), R.id.exchange_dest) }
-                        }
-                    } else {
-                        uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_check_internet), R.id.exchange_dest) }
+        } else if (currentStock != null) {
+            loadingDialog?.show()
+            if (withContext(Dispatchers.IO) { ConnectionUtils.getConnectionInfo(context!!) }) {
+                if (withContext(Dispatchers.IO) { ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT) }) {
+                    val response = withContext(Dispatchers.IO) {
+                        actionServiceBlockingStub.buyStocksFromExchange(BuyStocksFromExchangeRequest.newBuilder()
+                                .setStockId(lastSelectedStockId).setStockQuantity(noOfStocksEditText.text.toString().toLong()).build())
                     }
+
+                    if (response.statusCode == BuyStocksFromExchangeResponse.StatusCode.OK) {
+                        context?.toast("Stocks bought")
+                        noOfStocksEditText.setText("0")
+                        getCompanyProfileAsynchronously(lastSelectedStockId)
+                        view?.hideKeyboard()
+                    } else
+                        context?.toast(response.statusMessage)
+                } else {
+                    networkDownHandler.onNetworkDownError(resources.getString(R.string.error_server_down), R.id.exchange_dest)
                 }
             } else {
-                context?.toast("Insufficient stocks in exchange")
+                networkDownHandler.onNetworkDownError(resources.getString(R.string.error_check_internet), R.id.exchange_dest)
             }
+            loadingDialog?.dismiss()
         } else {
             context?.toast("Select a company")
         }
+
+        buyExchangeButton.isEnabled = true
     }
 
     private fun getCompanyProfileAsynchronously(stockId: Int) {
