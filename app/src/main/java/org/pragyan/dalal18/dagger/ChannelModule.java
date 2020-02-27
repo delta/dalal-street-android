@@ -8,10 +8,13 @@ import com.google.android.gms.security.ProviderInstaller;
 import com.squareup.okhttp.ConnectionSpec;
 
 import org.pragyan.dalal18.utils.Constants;
-import org.pragyan.dalal18.utils.MiscellaneousUtils;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.security.KeyManagementException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
@@ -33,7 +36,7 @@ import dagger.Provides;
 import io.grpc.ManagedChannel;
 import io.grpc.okhttp.OkHttpChannelBuilder;
 
-@Module (includes = ContextModule.class)
+@Module(includes = ContextModule.class)
 class ChannelModule {
 
     @Provides
@@ -57,7 +60,7 @@ class ChannelModule {
 
     private SSLSocketFactory getSocketFactory(Context context) throws KeyStoreException, CertificateException, NoSuchAlgorithmException, IOException, KeyManagementException, UnrecoverableKeyException, GooglePlayServicesNotAvailableException, GooglePlayServicesRepairableException {
 
-        byte[] der = MiscellaneousUtils.SERVER_CERT.getBytes();
+        byte[] der = getServerCrtString(context).getBytes();
         ByteArrayInputStream crtInputStream = new ByteArrayInputStream(der);
 
         KeyStore trustStore = KeyStore.getInstance(KeyStore.getDefaultType());
@@ -67,7 +70,8 @@ class ChannelModule {
         Certificate cert = cert_factory.generateCertificate(crtInputStream);
         trustStore.setCertificateEntry("cert", cert);
 
-        TrustManagerFactory trust_manager_factory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());trust_manager_factory.init(trustStore);
+        TrustManagerFactory trust_manager_factory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+        trust_manager_factory.init(trustStore);
         TrustManager[] trust_manager = trust_manager_factory.getTrustManagers();
 
         KeyManagerFactory kmf = KeyManagerFactory.getInstance("X509");
@@ -79,5 +83,17 @@ class ChannelModule {
         tlsContext.init(keyManagers, trust_manager, null);
 
         return tlsContext.getSocketFactory();
+    }
+
+    private String getServerCrtString(Context context) throws IOException {
+        StringBuilder sb = new StringBuilder();
+        InputStream is = context.getAssets().open("server.crt");
+        BufferedReader br = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
+        String str;
+        while ((str = br.readLine()) != null) {
+            sb.append(str).append("\n");
+        }
+        br.close();
+        return sb.toString();
     }
 }
