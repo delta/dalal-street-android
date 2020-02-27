@@ -29,6 +29,7 @@ import org.pragyan.dalal18.utils.ConnectionUtils
 import org.pragyan.dalal18.utils.Constants
 import org.pragyan.dalal18.utils.Constants.MARKET_OPEN_KEY
 import org.pragyan.dalal18.utils.MiscellaneousUtils
+import java.util.*
 import javax.inject.Inject
 
 class SplashActivity : AppCompatActivity() {
@@ -130,7 +131,7 @@ class SplashActivity : AppCompatActivity() {
                                             if (currentStock.upOrDown) 1 else 0,
                                             currentStock.isBankrupt,
                                             currentStock.givesDividends,
-                                            Constants.COMPANY_IMAGES_BASE_URL + currentStock.shortName.toUpperCase() + ".png")
+                                            Constants.COMPANY_IMAGES_BASE_URL + currentStock.shortName.toUpperCase(Locale.ROOT) + ".png")
                                 }
 
                                 val intent: Intent = if (loginResponse.user.isPhoneVerified)
