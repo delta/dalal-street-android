@@ -2,6 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
     android:background="@color/black_background"
     android:paddingLeft="10dp"
     android:paddingRight="10dp"
@@ -15,6 +16,7 @@
         android:fontFamily="@font/kreon_light"
         android:textAllCaps="true"
         android:textColor="@color/neutral_font_color"
+        tools:text="AMAZON"
         android:textSize="20sp" />
 
     <TextView
@@ -25,7 +27,9 @@
         android:layout_below="@id/transactionCompany_textView"
         android:fontFamily="@font/kreon_light"
         android:textColor="@color/neutral_font_color"
-        android:textSize="20sp" />
+        android:textSize="20sp"
+        tools:text="ORDER FILL"
+        />
 
     <TextView
         android:id="@+id/noOfStocks_textView"
@@ -35,17 +39,57 @@
         android:layout_below="@id/transactionType_textView"
         android:fontFamily="@font/kreon_light"
         android:textColor="@color/neutral_font_color"
-        android:textSize="20sp" />
+        android:textSize="20sp"
+        tools:text="5"
+        />
+
+    <TextView
+        android:id="@+id/cashTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="5dp"
+        android:layout_below="@id/noOfStocks_textView"
+        android:fontFamily="@font/kreon_light"
+        android:textColor="@color/neutral_font_color"
+        android:textSize="20sp"
+        tools:text="cash - 1000"
+        />
+
+    <TextView
+        android:id="@+id/resCashTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="5dp"
+        android:layout_below="@id/cashTextView"
+        android:fontFamily="@font/kreon_light"
+        android:textColor="@color/neutral_font_color"
+        android:textSize="20sp"
+        tools:text="res cash - 10000"
+        />
+
+    <TextView
+        android:id="@+id/resStockTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="5dp"
+        android:layout_below="@id/resCashTextView"
+        android:fontFamily="@font/kreon_light"
+        android:textColor="@color/neutral_font_color"
+        android:textSize="20sp"
+        tools:text="res cash - 10000"
+        />
 
     <TextView
         android:id="@+id/time_textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/noOfStocks_textView"
+        android:layout_below="@id/resStockTextView"
         android:layout_marginBottom="10dp"
         android:fontFamily="@font/kreon_light"
         android:textColor="@color/neutral_font_color"
-        android:textSize="16sp" />
+        android:textSize="16sp"
+        tools:text="an hour ago"
+        />
 
     <TextView
         android:id="@+id/buySell_textView"
@@ -61,7 +105,9 @@
         android:textAllCaps="true"
         android:layout_alignParentEnd="true"
         android:background="@drawable/green_buy_circle"
-        android:layout_alignParentTop="true"/>
+        android:layout_alignParentTop="true"
+        tools:text="BUY"
+        />
 
     <View
         android:layout_width="match_parent"

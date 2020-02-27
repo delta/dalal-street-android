@@ -122,6 +122,10 @@ public class TransactionRecyclerAdapter extends RecyclerView.Adapter<Transaction
                 break;
         }
 
+        holder.resCashTextView.setText("Reserved Cash: "+currentTransaction.getReservedCash());
+        holder.resStockTextView.setText("Reserved Stock: "+currentTransaction.getReservedStocks());
+        holder.cashTextView.setText("Cash: "+currentTransaction.getTotalMoney());
+        //todo todo
         GradientDrawable buySellDrawable = (GradientDrawable) holder.buySellTextView.getBackground();
         if (currentTransaction.getTotalMoney() < 0) {
             holder.buySellTextView.setTextColor(ContextCompat.getColor(context, R.color.neon_green));
@@ -148,6 +152,7 @@ public class TransactionRecyclerAdapter extends RecyclerView.Adapter<Transaction
     class MyViewHolder extends RecyclerView.ViewHolder {
 
         TextView typeTextView, companyTextView, noOfStocksTextView, timeTextView, buySellTextView;
+        TextView cashTextView, resCashTextView, resStockTextView;
 
         MyViewHolder(View itemView) {
 
@@ -158,6 +163,10 @@ public class TransactionRecyclerAdapter extends RecyclerView.Adapter<Transaction
             noOfStocksTextView = itemView.findViewById(R.id.noOfStocks_textView);
             timeTextView = itemView.findViewById(R.id.time_textView);
             buySellTextView = itemView.findViewById(R.id.buySell_textView);
+
+            cashTextView = itemView.findViewById(R.id.cashTextView);
+            resCashTextView = itemView.findViewById(R.id.resCashTextView);
+            resStockTextView = itemView.findViewById(R.id.resStockTextView);
         }
     }
 }

@@ -119,7 +119,9 @@ class TransactionsFragment : Fragment() {
                                     currentTransaction.stockQuantity,
                                     currentTransaction.price,
                                     currentTransaction.createdAt,
-                                    currentTransaction.total
+                                    currentTransaction.total,
+                                    currentTransaction.reservedCashTotal,
+                                    currentTransaction.reservedStockQuantity
                             ))
                             preferences.edit()
                                     .putInt(Constants.LAST_TRANSACTION_ID, currentTransaction.id)
