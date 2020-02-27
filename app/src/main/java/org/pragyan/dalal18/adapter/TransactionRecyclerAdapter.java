@@ -1,21 +1,21 @@
 package org.pragyan.dalal18.adapter;
 
 import android.content.Context;
-import android.graphics.drawable.GradientDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import org.pragyan.dalal18.R;
-import org.pragyan.dalal18.data.Transaction;
-import org.pragyan.dalal18.utils.Constants;
+import org.pragyan.dalal18.data.GlobalStockDetails;
 
+import java.util.HashMap;
 import java.util.List;
+
+import dalalstreet.api.models.Transaction;
 
 import static org.pragyan.dalal18.utils.MiscellaneousUtils.parseDate;
 
@@ -23,10 +23,14 @@ public class TransactionRecyclerAdapter extends RecyclerView.Adapter<Transaction
 
     private Context context;
     private List<Transaction> transactionList;
+    private HashMap<Integer, GlobalStockDetails> globalStockDetailsHashMap;
 
-    public TransactionRecyclerAdapter(Context context, List<Transaction> transactionList) {
+    private static final String COLON_SEPARATOR = " : ";
+
+    public TransactionRecyclerAdapter(Context context, List<Transaction> transactionList, HashMap<Integer, GlobalStockDetails> map) {
         this.context = context;
         this.transactionList = transactionList;
+        globalStockDetailsHashMap = map;
     }
 
     @NonNull
@@ -40,97 +44,33 @@ public class TransactionRecyclerAdapter extends RecyclerView.Adapter<Transaction
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
 
-        String tempAssigningString;
         Transaction currentTransaction = transactionList.get(position);
+        GlobalStockDetails currentStock = globalStockDetailsHashMap.get(currentTransaction.getStockId());
 
-        if (currentTransaction.getType() == null) return;
+        if (currentTransaction.getType() == null || currentStock == null) return;
 
-        switch (currentTransaction.getType()) {
-            case "FROM_EXCHANGE_TRANSACTION":
-                tempAssigningString = "Exchange";
-                holder.typeTextView.setText(tempAssigningString);
-                break;
+        holder.typeTextView.setText(currentTransaction.getType().name());
+        holder.companyTextView.setText(currentStock.getFullName());
+        holder.timeTextView.setText(parseDate(currentTransaction.getCreatedAt()));
 
-            case "ORDER_FILL_TRANSACTION":
-                tempAssigningString = "OrderFill";
-                holder.typeTextView.setText(tempAssigningString);
-                break;
+        String tempString = COLON_SEPARATOR + currentTransaction.getStockQuantity();
+        holder.quantityTextView.setText(tempString);
 
-            case "MORTGAGE_TRANSACTION":
-                if (currentTransaction.getNoOfStocks() > 0)
-                    tempAssigningString = "Retrieve Mortgage";
-                else
-                    tempAssigningString = "Mortgage";
-                holder.typeTextView.setText(tempAssigningString);
-                break;
+        tempString = COLON_SEPARATOR + currentTransaction.getPrice();
+        holder.tradePriceTextView.setText(tempString);
 
-            case "DIVIDEND_TRANSACTION":
-                tempAssigningString = "Dividend";
-                holder.typeTextView.setText(tempAssigningString);
-                break;
+        tempString = COLON_SEPARATOR + currentTransaction.getTotal();
+        holder.cashTextView.setText(tempString);
 
-            case "TAX_TRANSACTION":
-                tempAssigningString = "Tax";
-                holder.typeTextView.setText(tempAssigningString);
-                break;
-
-            case "ORDER_FEE_TRANSACTION":
-                tempAssigningString = "Order Fee";
-                holder.typeTextView.setText(tempAssigningString);
-                break;
-        }
-
-        tempAssigningString = currentTransaction.getCompanyName();
-        holder.companyTextView.setText(tempAssigningString);
-
-        tempAssigningString = parseDate(currentTransaction.getTime());
-        if (tempAssigningString != null)
-            holder.timeTextView.setText(tempAssigningString);
-
-        switch (currentTransaction.getType()) {
-            case "TAX_TRANSACTION":
-            case "ORDER_FEE_TRANSACTION":
-                tempAssigningString = Constants.RUPEE_SYMBOL + " " + -currentTransaction.getTotalMoney();
-                holder.noOfStocksTextView.setText(tempAssigningString);
-                break;
-            case "PLACE_ORDER_TRANSACTION":
-                if (currentTransaction.getTotalMoney() != 0) {
-                    holder.typeTextView.setText(R.string.cash_reserved);
-                    tempAssigningString = Constants.RUPEE_SYMBOL + " " + -currentTransaction.getTotalMoney();
-                    holder.noOfStocksTextView.setText(tempAssigningString);
-                } else {
-                    holder.typeTextView.setText(R.string.stocks_reserved);
-                    tempAssigningString = -currentTransaction.getNoOfStocks() + " stocks";
-                    holder.noOfStocksTextView.setText(tempAssigningString);
-                }
-                break;
-            case "CANCEL_ORDER_TRANSACTION":
-                if (currentTransaction.getTotalMoney() != 0) {
-                    holder.typeTextView.setText(R.string.cash_restored);
-                    tempAssigningString = Constants.RUPEE_SYMBOL + " " + currentTransaction.getTotalMoney();
-                    holder.noOfStocksTextView.setText(tempAssigningString);
-                } else {
-                    holder.typeTextView.setText(R.string.stocks_restored);
-                    tempAssigningString = currentTransaction.getNoOfStocks() + " stock" + (currentTransaction.getNoOfStocks() > 1 ? "s" : "");
-                    holder.noOfStocksTextView.setText(tempAssigningString);
-                }
-                break;
-            default:
-                tempAssigningString = Math.abs(currentTransaction.getNoOfStocks())
-                        + " stocks @ " + Constants.RUPEE_SYMBOL + " " + Math.abs(currentTransaction.getStockPrice());
-                holder.noOfStocksTextView.setText(tempAssigningString);
-                break;
-        }
-
-        GradientDrawable buySellDrawable = (GradientDrawable) holder.buySellTextView.getBackground();
-        if (currentTransaction.getTotalMoney() < 0) {
-            holder.buySellTextView.setTextColor(ContextCompat.getColor(context, R.color.neon_green));
-            buySellDrawable.setStroke(2, ContextCompat.getColor(context, R.color.neon_green));
-            holder.buySellTextView.setText(context.getString(R.string.buy));
+        if (currentTransaction.getReservedStockQuantity() != 0) {
+            tempString = COLON_SEPARATOR + currentTransaction.getReservedStockQuantity();
+            holder.reservedAssetsText.setText(context.getString(R.string.stocks_reserved));
+            holder.reservedAssetsTextView.setText(tempString);
         } else {
-            holder.buySellTextView.setTextColor(ContextCompat.getColor(context, R.color.redTint));
-            buySellDrawable.setStroke(2, ContextCompat.getColor(context, R.color.redTint));
-            holder.buySellTextView.setText(context.getString(R.string.sell));
+            tempString = COLON_SEPARATOR +
+                    (currentTransaction.getReservedCashTotal() != 0 ? currentTransaction.getReservedCashTotal() : "-");
+            holder.reservedAssetsText.setText(context.getString(R.string.cash_reserved));
+            holder.reservedAssetsTextView.setText(tempString);
         }
     }
 
@@ -145,19 +85,23 @@ public class TransactionRecyclerAdapter extends RecyclerView.Adapter<Transaction
         notifyDataSetChanged();
     }
 
-    class MyViewHolder extends RecyclerView.ViewHolder {
+    static class MyViewHolder extends RecyclerView.ViewHolder {
 
-        TextView typeTextView, companyTextView, noOfStocksTextView, timeTextView, buySellTextView;
+        TextView typeTextView, companyTextView, quantityTextView, timeTextView, reservedAssetsText,
+                reservedAssetsTextView, cashTextView, tradePriceTextView;
 
         MyViewHolder(View itemView) {
 
             super(itemView);
 
             typeTextView = itemView.findViewById(R.id.transactionType_textView);
-            companyTextView = itemView.findViewById(R.id.transactionCompany_textView);
-            noOfStocksTextView = itemView.findViewById(R.id.noOfStocks_textView);
+            companyTextView = itemView.findViewById(R.id.transactionCompanyTextView);
+            quantityTextView = itemView.findViewById(R.id.quantityTextView);
             timeTextView = itemView.findViewById(R.id.time_textView);
-            buySellTextView = itemView.findViewById(R.id.buySell_textView);
+            reservedAssetsText = itemView.findViewById(R.id.reservedAssetsText);
+            reservedAssetsTextView = itemView.findViewById(R.id.reservedAssetsTextView);
+            cashTextView = itemView.findViewById(R.id.cashTextView);
+            tradePriceTextView = itemView.findViewById(R.id.tradePriceTextView);
         }
     }
 }

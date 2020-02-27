@@ -27,7 +27,7 @@ public class MiscellaneousUtils {
         SimpleDateFormat inputFormat = new SimpleDateFormat(inputPattern, Locale.US);
         SimpleDateFormat outputFormat = new SimpleDateFormat(outputPattern, Locale.US);
 
-        String str = null;
+        String str = "";
 
         try {
             Calendar calendar = Calendar.getInstance();

@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import dalalstreet.api.DalalActionServiceGrpc
 import dalalstreet.api.actions.GetTransactionsRequest
+import dalalstreet.api.models.Transaction
 import kotlinx.android.synthetic.main.fragment_transactions.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
@@ -23,7 +24,6 @@ import org.pragyan.dalal18.adapter.TransactionRecyclerAdapter
 import org.pragyan.dalal18.dagger.ContextModule
 import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent
 import org.pragyan.dalal18.data.DalalViewModel
-import org.pragyan.dalal18.data.Transaction
 import org.pragyan.dalal18.utils.ConnectionUtils
 import org.pragyan.dalal18.utils.Constants
 import java.util.*
@@ -70,7 +70,7 @@ class TransactionsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         (activity as AppCompatActivity).supportActionBar?.title = resources.getString(R.string.transactions)
-        transactionsAdapter = TransactionRecyclerAdapter(context, null)
+        transactionsAdapter = TransactionRecyclerAdapter(context, null, model.globalStockDetails)
 
         with(transactionsRecyclerView) {
             adapter = transactionsAdapter
@@ -111,18 +111,9 @@ class TransactionsFragment : Fragment() {
                         paginate = transactionsResponse.transactionsCount == 10
 
                         for (i in 0 until transactionsResponse.transactionsCount) {
-                            val currentTransaction = transactionsResponse.getTransactions(i)
-                            transactionList.add(Transaction(
-                                    currentTransaction.type.name,
-                                    currentTransaction.stockId,
-                                    model.getCompanyNameFromStockId(currentTransaction.stockId),
-                                    currentTransaction.stockQuantity,
-                                    currentTransaction.price,
-                                    currentTransaction.createdAt,
-                                    currentTransaction.total
-                            ))
+                            transactionList.addAll(transactionsResponse.transactionsList)
                             preferences.edit()
-                                    .putInt(Constants.LAST_TRANSACTION_ID, currentTransaction.id)
+                                    .putInt(Constants.LAST_TRANSACTION_ID, transactionsResponse.transactionsList.last().id)
                                     .apply()
                         }
 
