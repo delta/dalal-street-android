@@ -111,9 +111,6 @@ class TransactionsFragment : Fragment() {
                         paginate = transactionsResponse.transactionsCount == 10
 
                         transactionList.addAll(transactionsResponse.transactionsList)
-                        preferences.edit()
-                                .putInt(Constants.LAST_TRANSACTION_ID, transactionsResponse.transactionsList.last().id)
-                                .apply()
 
                         if (transactionList.size == 0) {
                             transactionsRecyclerView.visibility = View.GONE
@@ -122,6 +119,10 @@ class TransactionsFragment : Fragment() {
                             transactionsAdapter?.swapData(transactionList)
                             transactionsRecyclerView.visibility = View.VISIBLE
                             noTransactionsTextView.visibility = View.GONE
+
+                            preferences.edit()
+                                    .putInt(Constants.LAST_TRANSACTION_ID, transactionsResponse.transactionsList.last().id)
+                                    .apply()
                         }
                     }
                 } else {
