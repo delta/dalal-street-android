@@ -10,14 +10,16 @@ import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import dalalstreet.api.DalalActionServiceGrpc
 import dalalstreet.api.actions.GetLeaderboardRequest
 import dalalstreet.api.actions.GetLeaderboardResponse
 import kotlinx.android.synthetic.main.fragment_leaderboard.*
-import org.jetbrains.anko.doAsync
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.jetbrains.anko.longToast
-import org.jetbrains.anko.uiThread
 import org.pragyan.dalal18.R
 import org.pragyan.dalal18.adapter.LeaderboardRecyclerAdapter
 import org.pragyan.dalal18.dagger.ContextModule
@@ -86,46 +88,41 @@ class LeaderboardFragment : Fragment() {
         }
     }
 
-    private fun getRankListAsynchronously() {
-        leaderBoardDetailsList.clear();
+    private fun getRankListAsynchronously() = lifecycleScope.launch {
+        leaderBoardDetailsList.clear()
         loadingDialog.show()
         leaderboard_recyclerView.visibility = View.GONE
-        doAsync {
-            if (ConnectionUtils.getConnectionInfo(context)) {
-                if (ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
-                    val rankListResponses = mutableListOf<GetLeaderboardResponse>()
+        if (withContext(Dispatchers.IO) { ConnectionUtils.getConnectionInfo(context) }) {
+            if (withContext(Dispatchers.IO) { ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT) }) {
+                val rankListResponses = mutableListOf<GetLeaderboardResponse>()
 
-                    for (i in 1..LEADER_BOARD_SIZE step 10) {
-                        rankListResponses.add(actionServiceBlockingStub.getLeaderboard(GetLeaderboardRequest.newBuilder().setStartingId(i).build()))
-                    }
-
-                    uiThread {
-
-                        for (rankListResponse in rankListResponses) {
-                            if (rankListResponse.statusCode == GetLeaderboardResponse.StatusCode.OK) {
-                                personal_rank_textView.text = rankListResponse.myRank.toString()
-                                personal_wealth_textView.text = totalWorthTextView.text.toString()
-                                personal_name_textView.text = MiscellaneousUtils.username
-                                for (currentRow in rankListResponse.rankListList) {
-                                    leaderBoardDetailsList.add(LeaderBoardDetails(currentRow.rank, currentRow.userName, currentRow.stockWorth, currentRow.totalWorth))
-                                }
-                                leaderboard_recyclerView.visibility = View.VISIBLE
-                            } else {
-                                context?.longToast("Server internal error")
-                                return@uiThread
-                            }
-                        }
-
-                        leaderBoardRecyclerAdapter.swapData(leaderBoardDetailsList)
-                    }
-                } else {
-                    uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_server_down), R.id.leaderboard_dest) }
+                for (i in 1..LEADER_BOARD_SIZE step 10) {
+                    rankListResponses.add(withContext(Dispatchers.IO) {
+                        actionServiceBlockingStub.getLeaderboard(GetLeaderboardRequest.newBuilder().setStartingId(i).build()) })
                 }
+
+                for (rankListResponse in rankListResponses) {
+                    if (rankListResponse.statusCode == GetLeaderboardResponse.StatusCode.OK) {
+                        personal_rank_textView.text = rankListResponse.myRank.toString()
+                        personal_wealth_textView.text = totalWorthTextView.text.toString()
+                        personal_name_textView.text = MiscellaneousUtils.username
+                        for (currentRow in rankListResponse.rankListList) {
+                            leaderBoardDetailsList.add(LeaderBoardDetails(currentRow.rank, currentRow.userName, currentRow.stockWorth, currentRow.totalWorth, currentRow.isBlocked))
+                        }
+                        leaderboard_recyclerView.visibility = View.VISIBLE
+                    } else {
+                        context?.longToast("Server internal error")
+                    }
+                }
+
+                leaderBoardRecyclerAdapter.swapData(leaderBoardDetailsList)
             } else {
-                uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_check_internet), R.id.leaderboard_dest) }
+                networkDownHandler.onNetworkDownError(resources.getString(R.string.error_server_down), R.id.leaderboard_dest)
             }
-            uiThread { loadingDialog.dismiss() }
+        } else {
+            networkDownHandler.onNetworkDownError(resources.getString(R.string.error_check_internet), R.id.leaderboard_dest)
         }
+        loadingDialog.dismiss()
     }
 
     override fun onPause() {

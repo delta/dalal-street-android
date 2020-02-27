@@ -1,18 +1,18 @@
 package org.pragyan.dalal18.adapter;
 
 import android.content.Context;
-
-import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
-import androidx.recyclerview.widget.RecyclerView;
-
+import android.graphics.Paint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import org.pragyan.dalal18.data.LeaderBoardDetails;
+import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.RecyclerView;
+
 import org.pragyan.dalal18.R;
+import org.pragyan.dalal18.data.LeaderBoardDetails;
 import org.pragyan.dalal18.utils.Constants;
 
 import java.text.DecimalFormat;
@@ -33,7 +33,7 @@ public class LeaderboardRecyclerAdapter extends RecyclerView.Adapter<Leaderboard
     @Override
     public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(context).inflate(R.layout.leaderboard_list_item, parent, false);
-        return new LeaderboardRecyclerAdapter.MyViewHolder(itemView);
+        return new MyViewHolder(itemView);
     }
 
     @Override
@@ -43,8 +43,8 @@ public class LeaderboardRecyclerAdapter extends RecyclerView.Adapter<Leaderboard
 
         holder.rankTextView.setText(String.valueOf(currentLeaderBoardDetails.getRank()));
         holder.nameTextView.setText(currentLeaderBoardDetails.getName());
-        holder.wealthTextView.setText(String.valueOf(new DecimalFormat(Constants.PRICE_FORMAT).format(currentLeaderBoardDetails.getWealth())));
-        holder.stockWorthTextView.setText(String.valueOf(new DecimalFormat(Constants.PRICE_FORMAT).format(currentLeaderBoardDetails.getStockWorth())));
+        holder.wealthTextView.setText(new DecimalFormat(Constants.PRICE_FORMAT).format(currentLeaderBoardDetails.getWealth()));
+        holder.stockWorthTextView.setText(new DecimalFormat(Constants.PRICE_FORMAT).format(currentLeaderBoardDetails.getStockWorth()));
 
         if (position == 0) {
             holder.nameTextView.setTextColor(ContextCompat.getColor(context, R.color.gold_medal));
@@ -63,6 +63,23 @@ public class LeaderboardRecyclerAdapter extends RecyclerView.Adapter<Leaderboard
             holder.rankTextView.setTextColor(ContextCompat.getColor(context, R.color.neutral_font_color));
             holder.wealthTextView.setTextColor(ContextCompat.getColor(context, R.color.neutral_font_color));
         }
+
+        if (currentLeaderBoardDetails.isBlocked()) {
+            strikeOutTextView(holder.nameTextView, true);
+            strikeOutTextView(holder.rankTextView, true);
+            strikeOutTextView(holder.wealthTextView, true);
+            strikeOutTextView(holder.stockWorthTextView, true);
+        } else {
+            strikeOutTextView(holder.nameTextView, false);
+            strikeOutTextView(holder.rankTextView, false);
+            strikeOutTextView(holder.wealthTextView, false);
+            strikeOutTextView(holder.stockWorthTextView, false);
+        }
+    }
+
+    private void strikeOutTextView(TextView view, boolean strikeOut) {
+        if (strikeOut) view.setPaintFlags(view.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+        else view.setPaintFlags(view.getPaintFlags() & (~Paint.STRIKE_THRU_TEXT_FLAG));
     }
 
     @Override
@@ -76,7 +93,7 @@ public class LeaderboardRecyclerAdapter extends RecyclerView.Adapter<Leaderboard
         notifyDataSetChanged();
     }
 
-    class MyViewHolder extends RecyclerView.ViewHolder {
+    static class MyViewHolder extends RecyclerView.ViewHolder {
 
         TextView rankTextView, nameTextView, wealthTextView, stockWorthTextView;
 
