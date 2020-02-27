@@ -9,7 +9,10 @@ import android.graphics.drawable.Drawable
 import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkRequest
+import android.os.Build
 import android.os.Bundle
+import android.os.VibrationEffect
+import android.os.Vibrator
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
@@ -57,7 +60,7 @@ import org.pragyan.dalal18.notifications.NotificationFragment
 import org.pragyan.dalal18.notifications.PushNotificationService
 import org.pragyan.dalal18.utils.*
 import org.pragyan.dalal18.utils.Constants.*
-import org.pragyan.dalal18.utils.CountDrawable.buildCounterDrawable
+import org.pragyan.dalal18.utils.MiscellaneousUtils.buildCounterDrawable
 import java.text.DecimalFormat
 import java.util.*
 import javax.inject.Inject
@@ -588,6 +591,8 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
 
         if (newValue == oldValue) return
 
+        shortBurstVibrate()
+
         val formatter = DecimalFormat(PRICE_FORMAT)
         val valueAnimator = ValueAnimator.ofObject(LongEvaluator(), oldValue, newValue)
         valueAnimator.duration = 450
@@ -603,6 +608,16 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
         alphaAnimator.repeatMode = ValueAnimator.REVERSE
         alphaAnimator.addUpdateListener { indicatorImageView.imageAlpha = it.animatedValue as Int }
         alphaAnimator.start()
+    }
+
+    /* Total vibration duration is 400 ms */
+    private fun shortBurstVibrate() {
+        val vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+        val pattern = longArrayOf(0, 100, 100, 100, 100)
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            vibrator.vibrate(VibrationEffect.createWaveform(pattern, -1))
+        }
     }
 
     override fun onBackPressed() {
@@ -701,7 +716,6 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
     // Creates a new networkCallback object
     private fun createNetworkCallbackObject() {
         networkCallback = object : ConnectivityManager.NetworkCallback() {
-
             override fun onLost(network: Network) {
                 super.onLost(network)
                 startActivity(Intent(this@MainActivity, SplashActivity::class.java))
