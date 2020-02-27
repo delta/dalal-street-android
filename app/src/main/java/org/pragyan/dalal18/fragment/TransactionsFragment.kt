@@ -110,12 +110,10 @@ class TransactionsFragment : Fragment() {
 
                         paginate = transactionsResponse.transactionsCount == 10
 
-                        for (i in 0 until transactionsResponse.transactionsCount) {
-                            transactionList.addAll(transactionsResponse.transactionsList)
-                            preferences.edit()
-                                    .putInt(Constants.LAST_TRANSACTION_ID, transactionsResponse.transactionsList.last().id)
-                                    .apply()
-                        }
+                        transactionList.addAll(transactionsResponse.transactionsList)
+                        preferences.edit()
+                                .putInt(Constants.LAST_TRANSACTION_ID, transactionsResponse.transactionsList.last().id)
+                                .apply()
 
                         if (transactionList.size == 0) {
                             transactionsRecyclerView.visibility = View.GONE

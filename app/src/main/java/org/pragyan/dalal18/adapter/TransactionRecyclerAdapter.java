@@ -1,6 +1,7 @@
 package org.pragyan.dalal18.adapter;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +18,7 @@ import java.util.List;
 
 import dalalstreet.api.models.Transaction;
 
+import static org.pragyan.dalal18.utils.LongEvaluatorKt.formatTransactionType;
 import static org.pragyan.dalal18.utils.MiscellaneousUtils.parseDate;
 
 public class TransactionRecyclerAdapter extends RecyclerView.Adapter<TransactionRecyclerAdapter.MyViewHolder> {
@@ -49,17 +51,25 @@ public class TransactionRecyclerAdapter extends RecyclerView.Adapter<Transaction
 
         if (currentTransaction.getType() == null || currentStock == null) return;
 
-        holder.typeTextView.setText(currentTransaction.getType().name());
+        holder.typeTextView.setText(formatTransactionType(currentTransaction.getType().name()));
         holder.companyTextView.setText(currentStock.getFullName());
         holder.timeTextView.setText(parseDate(currentTransaction.getCreatedAt()));
 
         String tempString = COLON_SEPARATOR + currentTransaction.getStockQuantity();
+        if(currentTransaction.getStockQuantity() > 0)
+            holder.quantityTextView.setTextColor(Color.GREEN);
+        else if(currentTransaction.getStockQuantity() < 0)
+            holder.quantityTextView.setTextColor(Color.RED);
         holder.quantityTextView.setText(tempString);
 
         tempString = COLON_SEPARATOR + currentTransaction.getPrice();
         holder.tradePriceTextView.setText(tempString);
 
         tempString = COLON_SEPARATOR + currentTransaction.getTotal();
+        if(currentTransaction.getTotal() > 0)
+            holder.cashTextView.setTextColor(Color.GREEN);
+        else if(currentTransaction.getTotal() < 0)
+            holder.cashTextView.setTextColor(Color.RED);
         holder.cashTextView.setText(tempString);
 
         if (currentTransaction.getReservedStockQuantity() != 0) {

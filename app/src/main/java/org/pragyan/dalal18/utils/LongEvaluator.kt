@@ -6,6 +6,8 @@ import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.ImageView
 import org.jetbrains.anko.toast
+import java.lang.StringBuilder
+import java.util.*
 
 class LongEvaluator : TypeEvaluator<Long> {
     override fun evaluate(fraction: Float, startValue: Long, endValue: Long): Long {
@@ -22,4 +24,14 @@ fun ImageView.setStatusIndicator(context: Context?, viewVisibility: Int, toastMe
     visibility = viewVisibility
     setImageResource(resId)
     if (toastMessage.isNotBlank()) setOnClickListener { context?.toast(toastMessage) }
+}
+
+fun formatTransactionType(type: String): String {
+    val formatted = StringBuilder(type)
+    for(i in formatted.indices) {
+        formatted[i] = formatted[i].toLowerCase()
+        if(formatted[i] == '_') formatted[i] = ' '
+        if(formatted[i].isLowerCase() && (i==0 || formatted[i-1] == ' ')) formatted[i] = formatted[i].toUpperCase()
+    }
+    return formatted.toString()
 }
