@@ -164,16 +164,12 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
 
         setupWorthTextViews()
 
-        startMakingButtonsTransparent()
-
         createNetworkCallbackObject()
 
         getMortgageDetailsAsynchronously()
 
         if (!intent.getBooleanExtra(MARKET_OPEN_KEY, false))
             displayMarketStatusAlert(false)
-
-        drawerEdgeButton.setOnClickListener { mainDrawerLayout.openDrawer(GravityCompat.START, true) }
 
         if (preferences.getBoolean(PREF_MAIN, true)) {
             preferences.edit()
@@ -566,24 +562,6 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
     private fun changeTextViewValue(textView: TextView, indicatorImageView: ImageView, newValue: Long) {
         val oldValue = textView.text.toString().replace(",", "").toLong()
         animateWorthChange(oldValue, newValue, textView, indicatorImageView)
-    }
-
-    // Starts making drawer button translucent
-    private fun startMakingButtonsTransparent() {
-
-        object : Thread() {
-            override fun run() {
-
-                while (drawerEdgeButton!!.alpha > 0.70) {
-                    try {
-                        sleep(175)
-                        runOnUiThread { drawerEdgeButton!!.alpha = (drawerEdgeButton!!.alpha - 0.01).toFloat() }
-                    } catch (e: InterruptedException) {
-                        e.printStackTrace()
-                    }
-                }
-            }
-        }.start()
     }
 
     @Synchronized

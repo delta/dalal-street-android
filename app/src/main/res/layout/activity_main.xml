@@ -125,17 +125,6 @@
             app:layout_constraintTop_toBottomOf="@+id/totalInHandTextView"
             app:layout_constraintVertical_bias="0.0" />
 
-        <Button
-            android:id="@+id/drawerEdgeButton"
-            android:layout_width="12dp"
-            android:layout_height="150dp"
-            android:layout_below="@+id/stockWorthTextView"
-            android:layout_alignParentStart="true"
-            android:layout_marginTop="9dp"
-            android:background="@drawable/drawer_edge_button"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/stockWorthTextView" />
-
         <fragment
             android:id="@+id/main_host_fragment"
             android:name="androidx.navigation.fragment.NavHostFragment"
