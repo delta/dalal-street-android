@@ -53,11 +53,11 @@
 
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <!-- Accepts URIs that begin with "http://dalal.pragyan.org/changepassword” -->
+                <!-- Accepts URIs that begin with "https://dalal.pragyan.org/changepassword” -->
                 <data
                     android:host="dalal.pragyan.org"
                     android:pathPrefix="/changepassword"
-                    android:scheme="http" />
+                    android:scheme="https" />
                 <!-- note that the leading "/" is required for pathPrefix -->
             </intent-filter>
         </activity>

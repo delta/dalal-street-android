@@ -35,6 +35,7 @@ import org.pragyan.dalal18.utils.ConnectionUtils
 import org.pragyan.dalal18.utils.Constants
 import org.pragyan.dalal18.utils.MiscellaneousUtils
 import org.pragyan.dalal18.utils.hideKeyboard
+import java.util.*
 import javax.inject.Inject
 
 class LoginActivity : AppCompatActivity() {
@@ -94,20 +95,16 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
-    private fun onLoginButtonClick() {
-        doAsync {
-            if (ConnectionUtils.getConnectionInfo(this@LoginActivity)) {
-                uiThread {
-                    if (validateEmail(emailEditText) && validatePassword()) {
-                        val email = emailEditText.text.toString()
-                        val password = passwordEditText.text.toString()
-                        signingInAlertDialog?.show()
-                        loginAsynchronously(email, password)
-                    }
-                }
-            } else {
-                uiThread { startLoginProcess(false) }
+    private fun onLoginButtonClick() = lifecycleScope.launch {
+        if (withContext(Dispatchers.IO) { ConnectionUtils.getConnectionInfo(this@LoginActivity) }) {
+            if (validateEmail(emailEditText) && validatePassword()) {
+                val email = emailEditText.text.toString()
+                val password = passwordEditText.text.toString()
+                signingInAlertDialog?.show()
+                loginAsynchronously(email, password)
             }
+        } else {
+            startLoginProcess(false)
         }
     }
 
@@ -165,7 +162,7 @@ class LoginActivity : AppCompatActivity() {
         return true
     }
 
-    private fun loginAsynchronously(email: String, password: String) {
+    private fun loginAsynchronously(email: String, password: String) = lifecycleScope.launch {
 
         val loginRequest = LoginRequest
                 .newBuilder()
@@ -175,118 +172,113 @@ class LoginActivity : AppCompatActivity() {
 
         val stub = DalalActionServiceGrpc.newBlockingStub(channel)
 
-        doAsync {
-            if (ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
+        if (withContext(Dispatchers.IO) { ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT) }) {
 
-                val loginResponse = stub.login(loginRequest)
+            val loginResponse = withContext(Dispatchers.IO) { stub.login(loginRequest) }
 
-                uiThread {
+            signingInAlertDialog?.dismiss()
 
-                    signingInAlertDialog?.dismiss()
+            if (loginResponse.statusCode == LoginResponse.StatusCode.OK) {
 
-                    if (loginResponse.statusCode == LoginResponse.StatusCode.OK) {
+                if (loginResponse.user.isBlocked) {
+                    showBlockedDialog()
+                    return@launch
+                }
 
-                        if (loginResponse.user.isBlocked) {
-                            showBlockedDialog()
-                            return@uiThread
-                        }
+                MiscellaneousUtils.sessionId = loginResponse.sessionId
 
-                        MiscellaneousUtils.sessionId = loginResponse.sessionId
+                if (passwordEditText.text.toString() != "" || passwordEditText.text.toString().isNotEmpty())
+                    preferences.edit()
+                            .putString(Constants.EMAIL_KEY, loginResponse.user.email)
+                            .putString(Constants.PASSWORD_KEY, passwordEditText.text.toString())
+                            .putString(Constants.SESSION_KEY, loginResponse.sessionId)
+                            .apply()
 
-                        if (passwordEditText.text.toString() != "" || passwordEditText.text.toString().isNotEmpty())
-                            preferences.edit()
-                                    .putString(Constants.EMAIL_KEY, loginResponse.user.email)
-                                    .putString(Constants.PASSWORD_KEY, passwordEditText.text.toString())
-                                    .putString(Constants.SESSION_KEY, loginResponse.sessionId)
-                                    .apply()
+                // Adding user's stock details
+                val ownedStockDetailsMap = hashMapOf<Int, Long>()
+                for ((stockId, quantity) in loginResponse.stocksOwnedMap) {
+                    ownedStockDetailsMap[stockId] = quantity
+                }
 
-                        // Adding user's stock details
-                        val ownedStockDetailsMap = hashMapOf<Int, Long>()
-                        for ((stockId, quantity) in loginResponse.stocksOwnedMap) {
-                            ownedStockDetailsMap[stockId] = quantity
-                        }
+                // Adding user's reserved assets details
+                val reservedStockDetailsMap = hashMapOf<Int, Long>()
+                for ((stockId, quantity) in loginResponse.reservedStocksOwnedMap) {
+                    reservedStockDetailsMap[stockId] = quantity
+                }
 
-                        // Adding user's reserved assets details
-                        val reservedStockDetailsMap = hashMapOf<Int, Long>()
-                        for ((stockId, quantity) in loginResponse.reservedStocksOwnedMap) {
-                            reservedStockDetailsMap[stockId] = quantity
-                        }
+                // Adding global stock details
+                val globalStockDetailsMap = hashMapOf<Int, GlobalStockDetails>()
 
-                        // Adding global stock details
-                        val globalStockDetailsMap = hashMapOf<Int, GlobalStockDetails>()
+                for ((stockId, currentStock) in loginResponse.stockListMap) {
+                    globalStockDetailsMap[stockId] = GlobalStockDetails(
+                            currentStock.fullName,
+                            currentStock.shortName,
+                            stockId,
+                            currentStock.description,
+                            currentStock.currentPrice,
+                            currentStock.stocksInMarket,
+                            currentStock.stocksInExchange,
+                            currentStock.previousDayClose,
+                            if (currentStock.upOrDown) 1 else 0,
+                            currentStock.isBankrupt,
+                            currentStock.givesDividends,
+                            Constants.COMPANY_IMAGES_BASE_URL + currentStock.shortName.toUpperCase(Locale.ROOT) + ".png")
+                }
 
-                        for ((stockId, currentStock) in loginResponse.stockListMap) {
+                val intent: Intent = if (loginResponse.user.isPhoneVerified) {
+                    Intent(this@LoginActivity, MainActivity::class.java)
+                } else {
+                    Intent(this@LoginActivity, VerifyPhoneActivity::class.java)
+                }
 
-                            globalStockDetailsMap[stockId] = GlobalStockDetails(
-                                    currentStock.fullName,
-                                    currentStock.shortName,
-                                    stockId,
-                                    currentStock.description,
-                                    currentStock.currentPrice,
-                                    currentStock.stocksInMarket,
-                                    currentStock.stocksInExchange,
-                                    currentStock.previousDayClose,
-                                    if (currentStock.upOrDown) 1 else 0,
-                                    currentStock.isBankrupt,
-                                    currentStock.givesDividends,
-                                    Constants.COMPANY_IMAGES_BASE_URL + currentStock.shortName.toUpperCase() + ".png")
-                        }
+                intent.putExtra(Constants.USERNAME_KEY, loginResponse.user.name)
+                intent.putExtra(MainActivity.CASH_WORTH_KEY, loginResponse.user.cash)
+                intent.putExtra(MainActivity.TOTAL_WORTH_KEY, loginResponse.user.total)
+                intent.putExtra(MainActivity.RESERVED_CASH_KEY, loginResponse.user.reservedCash)
+                intent.putExtra(Constants.MARKET_OPEN_KEY, loginResponse.isMarketOpen)
 
-                        val intent: Intent = if (loginResponse.user.isPhoneVerified) {
-                            Intent(this@LoginActivity, MainActivity::class.java)
-                        } else {
-                            Intent(this@LoginActivity, VerifyPhoneActivity::class.java)
-                        }
+                intent.putExtra(MainActivity.STOCKS_OWNED_KEY, ownedStockDetailsMap)
+                intent.putExtra(MainActivity.GLOBAL_STOCKS_KEY, globalStockDetailsMap)
+                intent.putExtra(MainActivity.RESERVED_STOCKS_KEY, reservedStockDetailsMap)
 
-                        intent.putExtra(Constants.USERNAME_KEY, loginResponse.user.name)
-                        intent.putExtra(MainActivity.CASH_WORTH_KEY, loginResponse.user.cash)
-                        intent.putExtra(MainActivity.TOTAL_WORTH_KEY, loginResponse.user.total)
-                        intent.putExtra(MainActivity.RESERVED_CASH_KEY, loginResponse.user.reservedCash)
-                        intent.putExtra(Constants.MARKET_OPEN_KEY, loginResponse.isMarketOpen)
-
-                        intent.putExtra(MainActivity.STOCKS_OWNED_KEY, ownedStockDetailsMap)
-                        intent.putExtra(MainActivity.GLOBAL_STOCKS_KEY, globalStockDetailsMap)
-                        intent.putExtra(MainActivity.RESERVED_STOCKS_KEY, reservedStockDetailsMap)
-
-                        for ((key, value) in loginResponse.constantsMap) {
-                            when (key) {
-                                "MORTGAGE_DEPOSIT_RATE" -> Constants.MORTGAGE_DEPOSIT_RATE = value.toDouble()
-                                "MORTGAGE_RETRIEVE_RATE" -> Constants.MORTGAGE_RETRIEVE_RATE = value.toDouble()
-                                "ORDER_FEE_PERCENT" -> Constants.ORDER_FEE_RATE = (value.toDouble() / 100)
-                                "ORDER_PRICE_WINDOW" -> Constants.ORDER_PRICE_WINDOW = value
-                                "ASK_LIMIT" -> Constants.ASK_LIMIT = value
-                                "BID_LIMIT" -> Constants.BID_LIMIT = value
-                            }
-                        }
-
-                        preferences.edit()
-                                .putString(Constants.MARKET_OPEN_TEXT_KEY, loginResponse.marketIsOpenHackyNotif)
-                                .putString(Constants.MARKET_CLOSED_TEXT_KEY, loginResponse.marketIsClosedHackyNotif)
-                                .apply()
-                        startActivity(intent)
-                        finish()
-                    } else {
-                        toast(loginResponse.statusMessage)
-                        passwordEditText.setText("")
+                for ((key, value) in loginResponse.constantsMap) {
+                    when (key) {
+                        "MORTGAGE_DEPOSIT_RATE" -> Constants.MORTGAGE_DEPOSIT_RATE = value.toDouble()
+                        "MORTGAGE_RETRIEVE_RATE" -> Constants.MORTGAGE_RETRIEVE_RATE = value.toDouble()
+                        "ORDER_FEE_PERCENT" -> Constants.ORDER_FEE_RATE = (value.toDouble() / 100)
+                        "ORDER_PRICE_WINDOW" -> Constants.ORDER_PRICE_WINDOW = value
+                        "ASK_LIMIT" -> Constants.ASK_LIMIT = value
+                        "BID_LIMIT" -> Constants.BID_LIMIT = value
                     }
                 }
+
+                preferences.edit()
+                        .putString(Constants.MARKET_OPEN_TEXT_KEY, loginResponse.marketIsOpenHackyNotif)
+                        .putString(Constants.MARKET_CLOSED_TEXT_KEY, loginResponse.marketIsClosedHackyNotif)
+                        .apply()
+                startActivity(intent)
+                finish()
             } else {
-                uiThread {
-                    signingInAlertDialog?.dismiss()
-                    contentView?.hideKeyboard()
-                    showSnackBar("Server Unreachable")
-                }
+                toast(loginResponse.statusMessage)
+                passwordEditText.setText("")
             }
+        } else {
+            signingInAlertDialog?.dismiss()
+            contentView?.hideKeyboard()
+            showSnackBar("Server Unreachable")
         }
     }
 
     private fun sendForgotPasswordRequestAsynchronously(email: String) = lifecycleScope.launch {
 
+        signingInAlertDialog?.show()
+        contentView?.hideKeyboard()
+
         if (withContext(Dispatchers.IO) { ConnectionUtils.getConnectionInfo(this@LoginActivity) }) {
             val forgotPasswordRequest = ForgotPasswordRequest.newBuilder().setEmail(email).build()
             val forgotPasswordResponse = withContext(Dispatchers.IO) { DalalActionServiceGrpc.newBlockingStub(channel).forgotPassword(forgotPasswordRequest) }
 
-            contentView?.hideKeyboard()
+            signingInAlertDialog?.dismiss()
             AlertDialog.Builder(this@LoginActivity, R.style.AlertDialogTheme)
                     .setTitle("Forgot Password")
                     .setMessage(forgotPasswordResponse.statusMessage)
@@ -295,7 +287,7 @@ class LoginActivity : AppCompatActivity() {
                     .show()
 
         } else {
-            contentView?.hideKeyboard()
+            signingInAlertDialog?.dismiss()
             toast("Server Unreachable")
         }
     }
