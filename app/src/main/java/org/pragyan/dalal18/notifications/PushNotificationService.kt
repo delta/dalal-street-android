@@ -98,12 +98,15 @@ class PushNotificationService : Service() {
                 object : StreamObserver<MarketEventUpdate> {
                     override fun onNext(value: MarketEventUpdate) {
                         val event = value.marketEvent
+                        val myIntent = Intent(applicationContext, SplashActivity::class.java)
+                        val pendingIntent = PendingIntent.getActivity(applicationContext, 0, myIntent, PendingIntent.FLAG_UPDATE_CURRENT)
                         val builder = NotificationCompat.Builder(applicationContext, getString(R.string.notification_channel_id))
                                 .setSmallIcon(R.drawable.market_depth_icon)
                                 // todo change icon if needed
                                 .setAutoCancel(true)
                                 .setContentText(event.headline)
                                 .setContentTitle("Dalal Street")
+                                .setContentIntent(pendingIntent)
                                 .build()
                         notificationManager.notify(event.id, builder)
                     }
