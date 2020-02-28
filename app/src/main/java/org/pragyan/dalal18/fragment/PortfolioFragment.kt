@@ -35,7 +35,6 @@ import java.text.DecimalFormat
 import java.util.*
 import javax.inject.Inject
 
-
 class PortfolioFragment : Fragment() {
 
     @Inject
@@ -208,7 +207,7 @@ class PortfolioFragment : Fragment() {
 
             val currentPrice = model.getPriceFromStockId(stockId)
 
-            if (quantity != 0L) {
+            if (quantity != 0L || model.getReservedStocksFromStockId(stockId) != 0L) {
                 portfolioList.add(Portfolio(
                         model.getShortNameFromStockId(stockId),
                         quantity,
