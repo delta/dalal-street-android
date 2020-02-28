@@ -77,8 +77,8 @@
     <string name="biddepth">Bid Depth</string>
     <string name="worth">Worth</string>
     <string name="made_with_u2661_by_delta_force">Made with ♡ by Delta Force</string>
-    <string name="sell">Sell</string>
-    <string name="buy">Buy</string>
+    <string name="sell">SELL</string>
+    <string name="buy">BUY</string>
     <string name="name_lowercase">Name</string>
     <string name="email_address">Email Address</string>
     <string name="password">Password</string>

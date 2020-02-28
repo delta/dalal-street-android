@@ -75,7 +75,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:fontFamily="@font/marcellus_sc"
-            android:text="@string/bid"
+            android:text="@string/buy"
             android:textColor="@color/neon_green"
             android:textSize="20sp"
             android:textStyle="bold" />
@@ -86,7 +86,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:fontFamily="@font/marcellus"
-            android:text="@string/ask"
+            android:text="@string/sell"
             android:textColor="@color/neon_blue"
             android:textSize="20sp"
             android:textStyle="bold" />
@@ -273,7 +273,7 @@
         android:background="@drawable/black_white_rounded_button"
         android:fontFamily="@font/marcellus_sc"
         android:padding="8dp"
-        android:text="@string/bid"
+        android:text="@string/buy"
         android:textColor="@color/neutral_font_color"
         android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="parent"

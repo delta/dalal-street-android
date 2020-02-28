@@ -56,7 +56,7 @@ class TradeFragment : Fragment() {
         override fun onReceive(context: Context, intent: Intent) {
             if (intent.action != null && (intent.action == Constants.REFRESH_OWNED_STOCKS_FOR_ALL || intent.action == Constants.REFRESH_STOCK_PRICES_FOR_ALL)) {
 
-                var tempString = " :" + decimalFormat.format(model.getQuantityOwnedFromStockId(lastStockId)).toString()
+                var tempString = " : " + decimalFormat.format(model.getQuantityOwnedFromStockId(lastStockId)).toString()
                 stocksOwnedTextView.text = tempString
 
                 tempString = " : " + Constants.RUPEE_SYMBOL + " " + decimalFormat.format(model.getPriceFromStockId(lastStockId)).toString()
@@ -148,7 +148,7 @@ class TradeFragment : Fragment() {
         }
 
         radioGroupStock.setOnCheckedChangeListener { _, id ->
-            bidAskButton.text = if (id == R.id.bidRadioButton) "BID" else "ASK"
+            bidAskButton.text = if (id == R.id.bidRadioButton) "BUY" else "SELL"
         }
 
         val dialogView = LayoutInflater.from(context).inflate(R.layout.progress_dialog, null)
@@ -195,6 +195,7 @@ class TradeFragment : Fragment() {
     }
 
     private fun onMarketDepthButtonPressed() {
+        view?.hideKeyboard()
         findNavController().navigate(R.id.market_depth_dest)
     }
 
