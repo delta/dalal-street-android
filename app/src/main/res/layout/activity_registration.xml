@@ -1,213 +1,218 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/black_background">
 
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/registrationToolBar"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="?colorPrimary"
-        android:theme="@style/Base.ThemeOverlay.AppCompat.Dark"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:background="@color/black_background">
 
-    <androidx.cardview.widget.CardView
-        android:id="@+id/login_cardView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:layout_margin="10dp"
-        android:clickable="true"
-        android:elevation="10dp"
-        android:focusable="true"
-        app:cardCornerRadius="12dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/registrationToolBar">
-
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/registrationToolBar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="#20202C"
-            android:paddingStart="10dp"
-            android:paddingTop="20dp"
-            android:paddingEnd="10dp"
-            android:paddingBottom="20dp">
+            android:background="?colorPrimary"
+            android:theme="@style/Base.ThemeOverlay.AppCompat.Dark"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-            <TextView
-                android:id="@+id/register_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="12dp"
-                android:fontFamily="@font/marcellus_sc"
-                android:text="@string/register"
-                android:textColor="@color/neutral_font_color"
-                android:textSize="36sp"
-                app:layout_constraintBottom_toTopOf="@+id/register_name_input"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+        <androidx.cardview.widget.CardView
+            android:id="@+id/login_cardView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_margin="10dp"
+            android:clickable="true"
+            android:elevation="10dp"
+            android:focusable="true"
+            app:cardCornerRadius="12dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/registrationToolBar">
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/register_name_input"
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/register_text"
-                android:layout_marginTop="24dp"
-                android:paddingStart="12dp"
-                android:paddingEnd="2dp"
-                android:textColorHint="@color/neutral_font_color"
-                app:layout_constraintBottom_toTopOf="@+id/register_email_input"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/register_text">
+                android:background="#20202C"
+                android:paddingStart="10dp"
+                android:paddingTop="20dp"
+                android:paddingEnd="10dp"
+                android:paddingBottom="20dp">
 
-                <EditText
-                    android:id="@+id/nameEditText"
+                <TextView
+                    android:id="@+id/register_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="12dp"
+                    android:fontFamily="@font/marcellus_sc"
+                    android:text="@string/register"
+                    android:textColor="@color/neutral_font_color"
+                    android:textSize="36sp"
+                    app:layout_constraintBottom_toTopOf="@+id/register_name_input"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/register_name_input"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:backgroundTint="@color/neutral_font_color"
-                    android:ems="10"
-                    android:fontFamily="@font/kreon_light"
-                    android:hint="@string/name_lowercase"
-                    android:inputType="textPersonName"
-                    android:maxLength="30"
-                    android:maxLines="1"
-                    android:textColor="@color/neutral_font_color" />
+                    android:layout_below="@+id/register_text"
+                    android:layout_marginTop="24dp"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="2dp"
+                    android:textColorHint="@color/neutral_font_color"
+                    app:layout_constraintBottom_toTopOf="@+id/register_email_input"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/register_text">
 
-            </com.google.android.material.textfield.TextInputLayout>
+                    <EditText
+                        android:id="@+id/nameEditText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:backgroundTint="@color/neutral_font_color"
+                        android:ems="10"
+                        android:fontFamily="@font/kreon_light"
+                        android:hint="@string/name_lowercase"
+                        android:inputType="textPersonName"
+                        android:maxLength="30"
+                        android:maxLines="1"
+                        android:textColor="@color/neutral_font_color" />
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/register_email_input"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/register_name_input"
-                android:layout_marginTop="24dp"
-                android:paddingStart="12dp"
-                android:paddingEnd="2dp"
-                android:textColorHint="@color/neutral_font_color"
-                app:layout_constraintBottom_toTopOf="@+id/register_password_input"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/register_name_input">
+                </com.google.android.material.textfield.TextInputLayout>
 
-                <EditText
-                    android:id="@+id/emailEditText"
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/register_email_input"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:backgroundTint="@color/neutral_font_color"
-                    android:ems="10"
-                    android:fontFamily="@font/kreon_light"
-                    android:hint="@string/email_address"
-                    android:inputType="textEmailAddress"
-                    android:maxLength="45"
-                    android:maxLines="1"
-                    android:textColor="@color/neutral_font_color" />
+                    android:layout_below="@+id/register_name_input"
+                    android:layout_marginTop="24dp"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="2dp"
+                    android:textColorHint="@color/neutral_font_color"
+                    app:layout_constraintBottom_toTopOf="@+id/register_password_input"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/register_name_input">
 
-            </com.google.android.material.textfield.TextInputLayout>
+                    <EditText
+                        android:id="@+id/emailEditText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:backgroundTint="@color/neutral_font_color"
+                        android:ems="10"
+                        android:fontFamily="@font/kreon_light"
+                        android:hint="@string/email_address"
+                        android:inputType="textEmailAddress"
+                        android:maxLength="45"
+                        android:maxLines="1"
+                        android:textColor="@color/neutral_font_color" />
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/register_password_input"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/register_email_input"
-                android:layout_marginTop="24dp"
-                android:hint="@string/password"
-                android:paddingStart="12dp"
-                android:paddingEnd="2dp"
-                android:textColorHint="@color/neutral_font_color"
-                app:layout_constraintBottom_toTopOf="@+id/register_password_confirm_input"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/register_email_input"
-                app:passwordToggleEnabled="true"
-                app:passwordToggleTint="@color/neutral_font_color">
+                </com.google.android.material.textfield.TextInputLayout>
 
-                <EditText
-                    android:id="@+id/passwordEditText"
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/register_password_input"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:backgroundTint="@color/neutral_font_color"
-                    android:ems="10"
-                    android:fontFamily="@font/kreon_light"
-                    android:inputType="textPassword"
-                    android:maxLength="20"
-                    android:maxLines="1"
-                    android:textColor="@color/neon_orange" />
+                    android:layout_below="@id/register_email_input"
+                    android:layout_marginTop="24dp"
+                    android:hint="@string/password"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="2dp"
+                    android:textColorHint="@color/neutral_font_color"
+                    app:layout_constraintBottom_toTopOf="@+id/register_password_confirm_input"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/register_email_input"
+                    app:passwordToggleEnabled="true"
+                    app:passwordToggleTint="@color/neutral_font_color">
 
-            </com.google.android.material.textfield.TextInputLayout>
+                    <EditText
+                        android:id="@+id/passwordEditText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:backgroundTint="@color/neutral_font_color"
+                        android:ems="10"
+                        android:fontFamily="@font/kreon_light"
+                        android:inputType="textPassword"
+                        android:maxLength="20"
+                        android:maxLines="1"
+                        android:textColor="@color/neon_orange" />
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/register_password_confirm_input"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
-                android:hint="@string/confirm_password"
-                android:paddingStart="12dp"
-                android:paddingEnd="2dp"
-                android:textColorHint="@color/neutral_font_color"
-                app:layout_constraintBottom_toTopOf="@+id/countrySpinner"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/register_password_input"
-                app:passwordToggleEnabled="true"
-                app:passwordToggleTint="@color/neutral_font_color">
+                </com.google.android.material.textfield.TextInputLayout>
 
-                <EditText
-                    android:id="@+id/confirmPasswordEditText"
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/register_password_confirm_input"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    android:hint="@string/confirm_password"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="2dp"
+                    android:textColorHint="@color/neutral_font_color"
+                    app:layout_constraintBottom_toTopOf="@+id/countrySpinner"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/register_password_input"
+                    app:passwordToggleEnabled="true"
+                    app:passwordToggleTint="@color/neutral_font_color">
+
+                    <EditText
+                        android:id="@+id/confirmPasswordEditText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:backgroundTint="@color/neutral_font_color"
+                        android:ems="10"
+                        android:fontFamily="@font/kreon_light"
+                        android:inputType="textPassword"
+                        android:maxLength="20"
+                        android:maxLines="1"
+                        android:textColor="@color/neon_orange" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <Spinner
+                    android:id="@+id/countrySpinner"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/register_password_confirm_input"
+                    android:layout_marginTop="24dp"
                     android:backgroundTint="@color/neutral_font_color"
-                    android:ems="10"
-                    android:fontFamily="@font/kreon_light"
-                    android:inputType="textPassword"
-                    android:maxLength="20"
-                    android:maxLines="1"
-                    android:textColor="@color/neon_orange" />
+                    android:textColorHint="@color/neutral_font_color"
+                    app:layout_constraintBottom_toTopOf="@id/registerButton"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/register_password_confirm_input" />
 
-            </com.google.android.material.textfield.TextInputLayout>
+                <Button
+                    android:id="@+id/registerButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/countrySpinner"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="20dp"
+                    android:background="@drawable/black_green_rounded_button"
+                    android:fontFamily="@font/marcellus_sc"
+                    android:paddingTop="10dp"
+                    android:paddingBottom="10dp"
+                    android:text="@string/register"
+                    android:textColor="@color/neutral_font_color"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/countrySpinner" />
 
-            <Spinner
-                android:id="@+id/countrySpinner"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/register_password_confirm_input"
-                android:layout_marginTop="24dp"
-                android:backgroundTint="@color/neutral_font_color"
-                android:textColorHint="@color/neutral_font_color"
-                app:layout_constraintBottom_toTopOf="@id/registerButton"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/register_password_confirm_input" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <Button
-                android:id="@+id/registerButton"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/countrySpinner"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="20dp"
-                android:background="@drawable/black_green_rounded_button"
-                android:fontFamily="@font/marcellus_sc"
-                android:paddingTop="10dp"
-                android:paddingBottom="10dp"
-                android:text="@string/register"
-                android:textColor="@color/neutral_font_color"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/countrySpinner" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-    </androidx.cardview.widget.CardView>
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.cardview.widget.CardView>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>
