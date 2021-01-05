@@ -126,6 +126,7 @@ dependencies {
     implementation (Libs.navigationArchUIKtx)
 
     // Lifecycle
+    implementation (Libs.lifecycleCommon)
     implementation (Libs.lifecycleExtensions)
     implementation (Libs.lifecycleRuntime)
 
