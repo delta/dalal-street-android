@@ -68,7 +68,7 @@ import javax.inject.Inject
 /* Subscribes to Transactions, Exchange, StockPrices and MarketEvents stream*/
 class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
 
-    private lateinit var binding: ActivityMainBinding
+    private val binding by viewLifecycle(ActivityMainBinding::inflate)
 
     @Inject
     lateinit var actionServiceBlockingStub: DalalActionServiceGrpc.DalalActionServiceBlockingStub
@@ -142,7 +142,6 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         model = ViewModelProvider(this).get(DalalViewModel::class.java)

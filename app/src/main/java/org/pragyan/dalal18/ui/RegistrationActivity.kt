@@ -24,11 +24,12 @@ import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent
 import org.pragyan.dalal18.databinding.ActivityRegistrationBinding
 import org.pragyan.dalal18.utils.ConnectionUtils
 import org.pragyan.dalal18.utils.Constants
+import org.pragyan.dalal18.utils.viewLifecycle
 import javax.inject.Inject
 
 class RegistrationActivity : AppCompatActivity() {
 
-    private lateinit var binding: ActivityRegistrationBinding
+    private val binding by viewLifecycle(ActivityRegistrationBinding::inflate)
 
     /* Not injecting stub directly into this context to prevent empty/null metadata attached to stub since user has not logged in. */
     @Inject
@@ -38,7 +39,6 @@ class RegistrationActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityRegistrationBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         DaggerDalalStreetApplicationComponent.builder().contextModule(ContextModule(this)).build().inject(this)

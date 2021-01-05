@@ -40,11 +40,12 @@ import org.pragyan.dalal18.utils.ConnectionUtils
 import org.pragyan.dalal18.utils.Constants
 import org.pragyan.dalal18.utils.Constants.SMS_KEY
 import org.pragyan.dalal18.utils.MiscellaneousUtils.convertDpToPixel
+import org.pragyan.dalal18.utils.viewLifecycle
 import javax.inject.Inject
 
 class VerifyPhoneActivity : AppCompatActivity(), ConnectionUtils.SmsVerificationHandler, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
-    private lateinit var binding: ActivityVerifyPhoneBinding
+    private val binding by viewLifecycle(ActivityVerifyPhoneBinding::inflate)
 
     @Inject
     lateinit var actionServiceBlockingStub: DalalActionServiceGrpc.DalalActionServiceBlockingStub
@@ -74,7 +75,6 @@ class VerifyPhoneActivity : AppCompatActivity(), ConnectionUtils.SmsVerification
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityVerifyPhoneBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         DaggerDalalStreetApplicationComponent.builder().contextModule(ContextModule(this)).build().inject(this)

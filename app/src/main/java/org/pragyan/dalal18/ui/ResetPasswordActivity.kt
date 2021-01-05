@@ -23,11 +23,12 @@ import org.pragyan.dalal18.databinding.ActivityResetPasswordBinding
 import org.pragyan.dalal18.utils.ConnectionUtils
 import org.pragyan.dalal18.utils.Constants
 import org.pragyan.dalal18.utils.hideKeyboard
+import org.pragyan.dalal18.utils.viewLifecycle
 import javax.inject.Inject
 
 class ResetPasswordActivity : AppCompatActivity() {
 
-    private lateinit var binding: ActivityResetPasswordBinding
+    private val binding by viewLifecycle(ActivityResetPasswordBinding::inflate)
 
     @Inject
     lateinit var channel: ManagedChannel
@@ -37,7 +38,6 @@ class ResetPasswordActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityResetPasswordBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         DaggerDalalStreetApplicationComponent.builder().contextModule(ContextModule(this)).build().inject(this)
