@@ -23,7 +23,6 @@ import com.google.android.gms.common.api.GoogleApiClient
 import dalalstreet.api.DalalActionServiceGrpc
 import dalalstreet.api.actions.LogoutRequest
 import dalalstreet.api.actions.LogoutResponse
-import kotlinx.android.synthetic.main.activity_verify_phone.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -34,6 +33,7 @@ import org.pragyan.dalal18.adapter.pagerAdapters.SmsVerificationPagerAdapter.Com
 import org.pragyan.dalal18.adapter.pagerAdapters.SmsVerificationPagerAdapter.Companion.OTP_VERIFICATION
 import org.pragyan.dalal18.dagger.ContextModule
 import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent
+import org.pragyan.dalal18.databinding.ActivityVerifyPhoneBinding
 import org.pragyan.dalal18.fragment.smsVerification.AddPhoneFragment
 import org.pragyan.dalal18.fragment.smsVerification.OTPVerificationFragment
 import org.pragyan.dalal18.utils.ConnectionUtils
@@ -43,6 +43,8 @@ import org.pragyan.dalal18.utils.MiscellaneousUtils.convertDpToPixel
 import javax.inject.Inject
 
 class VerifyPhoneActivity : AppCompatActivity(), ConnectionUtils.SmsVerificationHandler, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+
+    private lateinit var binding: ActivityVerifyPhoneBinding
 
     @Inject
     lateinit var actionServiceBlockingStub: DalalActionServiceGrpc.DalalActionServiceBlockingStub
@@ -62,7 +64,7 @@ class VerifyPhoneActivity : AppCompatActivity(), ConnectionUtils.SmsVerification
 
                 val otp = extractOtpFromMessage(message)
                 val page = supportFragmentManager.findFragmentByTag(
-                        "android:switcher:" + R.id.smsViewPager + ":" + smsViewPager.currentItem) as OTPVerificationFragment
+                        "android:switcher:" + R.id.smsViewPager + ":" + binding.smsViewPager.currentItem) as OTPVerificationFragment
 
                 Log.v(LOG_TAG, "Extracted OTP: $otp")
                 page.checkIfOtpIsCorrect(otp, phoneNumber)
@@ -72,7 +74,8 @@ class VerifyPhoneActivity : AppCompatActivity(), ConnectionUtils.SmsVerification
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_verify_phone)
+        binding = ActivityVerifyPhoneBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         DaggerDalalStreetApplicationComponent.builder().contextModule(ContextModule(this)).build().inject(this)
 
@@ -80,13 +83,15 @@ class VerifyPhoneActivity : AppCompatActivity(), ConnectionUtils.SmsVerification
         setSupportActionBar(toolbar)
         title = getString(R.string.otp_verification)
 
-        smsViewPager.adapter = SmsVerificationPagerAdapter(supportFragmentManager)
-        smsTabLayout.setupWithViewPager(smsViewPager)
+        binding.apply {
+            smsViewPager.adapter = SmsVerificationPagerAdapter(supportFragmentManager)
+            smsTabLayout.setupWithViewPager(smsViewPager)
 
-        smsTabLayout.setBackgroundColor(Color.parseColor("#20202C"))
+            smsTabLayout.setBackgroundColor(Color.parseColor("#20202C"))
+        }
 
-        for (i in 0 until smsTabLayout.tabCount) {
-            val tab: View = (smsTabLayout.getChildAt(0) as ViewGroup).getChildAt(i)
+        for (i in 0 until binding.smsTabLayout.tabCount) {
+            val tab: View = (binding.smsTabLayout.getChildAt(0) as ViewGroup).getChildAt(i)
             val marginLayoutParams = tab.layoutParams as MarginLayoutParams
 
             val pixels = convertDpToPixel(8.0f, this)
@@ -132,7 +137,7 @@ class VerifyPhoneActivity : AppCompatActivity(), ConnectionUtils.SmsVerification
                     startListeningToSMS()
 
                     val page = supportFragmentManager.findFragmentByTag(
-                            "android:switcher:" + R.id.smsViewPager + ":" + smsViewPager.currentItem) as AddPhoneFragment
+                            "android:switcher:" + R.id.smsViewPager + ":" + binding.smsViewPager.currentItem) as AddPhoneFragment
 
                     phoneNumber = phoneNumberWithExtension.id
                     page.sendAddPhoneNumberAsynchronously(phoneNumberWithExtension.id)
@@ -177,12 +182,12 @@ class VerifyPhoneActivity : AppCompatActivity(), ConnectionUtils.SmsVerification
 
     override fun navigateToOtpVerification(phoneNumber: String) {
         this.phoneNumber = phoneNumber
-        smsViewPager.currentItem = OTP_VERIFICATION
+        binding.smsViewPager.currentItem = OTP_VERIFICATION
     }
 
     override fun navigateToAddPhone() {
         this.phoneNumber = ""
-        smsViewPager.currentItem = ADD_PHONE
+        binding.smsViewPager.currentItem = ADD_PHONE
     }
 
     override fun getPhoneNumber(): String {

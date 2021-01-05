@@ -10,7 +10,6 @@ import dalalstreet.api.DalalActionServiceGrpc
 import dalalstreet.api.actions.ChangePasswordRequest
 import dalalstreet.api.actions.ChangePasswordResponse
 import io.grpc.ManagedChannel
-import kotlinx.android.synthetic.main.activity_reset_password.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -20,12 +19,15 @@ import org.jetbrains.anko.toast
 import org.pragyan.dalal18.R
 import org.pragyan.dalal18.dagger.ContextModule
 import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent
+import org.pragyan.dalal18.databinding.ActivityResetPasswordBinding
 import org.pragyan.dalal18.utils.ConnectionUtils
 import org.pragyan.dalal18.utils.Constants
 import org.pragyan.dalal18.utils.hideKeyboard
 import javax.inject.Inject
 
 class ResetPasswordActivity : AppCompatActivity() {
+
+    private lateinit var binding: ActivityResetPasswordBinding
 
     @Inject
     lateinit var channel: ManagedChannel
@@ -35,7 +37,8 @@ class ResetPasswordActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_reset_password)
+        binding = ActivityResetPasswordBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         DaggerDalalStreetApplicationComponent.builder().contextModule(ContextModule(this)).build().inject(this)
 
@@ -43,7 +46,7 @@ class ResetPasswordActivity : AppCompatActivity() {
         setSupportActionBar(toolbar)
         title = getString(R.string.app_name)
 
-        resetPasswordButton.setOnClickListener { onResetPasswordButtonClick() }
+        binding.resetPasswordButton.setOnClickListener { onResetPasswordButtonClick() }
 
         if (preferences.getString(Constants.EMAIL_KEY, null) != null) {
             longToast("User already logged in")
@@ -52,18 +55,17 @@ class ResetPasswordActivity : AppCompatActivity() {
     }
 
     private fun onResetPasswordButtonClick() {
-        if (temporaryPasswordEditText.text.toString().isBlank() || temporaryPasswordEditText.text.toString().isEmpty()) {
-            toast("Enter temporary password from email")
-        } else if (newPasswordEditText.text.toString().isBlank() || newPasswordEditText.text.toString().isEmpty()) {
-            toast("Enter new password")
-        } else if (confirmPasswordEditText.text.toString().isBlank() || confirmPasswordEditText.text.toString().isEmpty() ||
-                confirmPasswordEditText.text.toString() != newPasswordEditText.text.toString()) {
-            toast("Confirm password failed")
-        } else {
-            sendChangePasswordRequestAsynchronously(
-                    temporaryPasswordEditText.text.toString(),
-                    newPasswordEditText.text.toString(),
-                    confirmPasswordEditText.text.toString())
+        binding.apply {
+            when {
+                temporaryPasswordEditText.text.toString().isBlank() || temporaryPasswordEditText.text.toString().isEmpty() -> toast("Enter temporary password from email")
+                newPasswordEditText.text.toString().isBlank() || newPasswordEditText.text.toString().isEmpty() -> toast("Enter new password")
+                confirmPasswordEditText.text.toString().isBlank() || confirmPasswordEditText.text.toString().isEmpty() ||
+                        confirmPasswordEditText.text.toString() != newPasswordEditText.text.toString() -> toast("Confirm password failed")
+                else -> sendChangePasswordRequestAsynchronously(
+                        temporaryPasswordEditText.text.toString(),
+                        newPasswordEditText.text.toString(),
+                        confirmPasswordEditText.text.toString())
+            }
         }
     }
 

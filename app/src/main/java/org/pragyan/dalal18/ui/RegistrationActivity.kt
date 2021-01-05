@@ -15,18 +15,20 @@ import dalalstreet.api.DalalActionServiceGrpc
 import dalalstreet.api.actions.RegisterRequest
 import dalalstreet.api.actions.RegisterResponse
 import io.grpc.ManagedChannel
-import kotlinx.android.synthetic.main.activity_registration.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.toast
 import org.jetbrains.anko.uiThread
 import org.pragyan.dalal18.R
 import org.pragyan.dalal18.dagger.ContextModule
 import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent
+import org.pragyan.dalal18.databinding.ActivityRegistrationBinding
 import org.pragyan.dalal18.utils.ConnectionUtils
 import org.pragyan.dalal18.utils.Constants
 import javax.inject.Inject
 
 class RegistrationActivity : AppCompatActivity() {
+
+    private lateinit var binding: ActivityRegistrationBinding
 
     /* Not injecting stub directly into this context to prevent empty/null metadata attached to stub since user has not logged in. */
     @Inject
@@ -36,7 +38,8 @@ class RegistrationActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_registration)
+        binding = ActivityRegistrationBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         DaggerDalalStreetApplicationComponent.builder().contextModule(ContextModule(this)).build().inject(this)
 
@@ -44,30 +47,30 @@ class RegistrationActivity : AppCompatActivity() {
         (dialogView.findViewById<View>(R.id.progressDialog_textView) as TextView).setText(R.string.registering)
         registrationAlertDialog = AlertDialog.Builder(this).setView(dialogView).setCancelable(false).create()
 
-        setSupportActionBar(registrationToolBar)
+        setSupportActionBar(binding.registrationToolBar)
         supportActionBar?.setHomeAsUpIndicator(R.drawable.clear_icon)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         title = "One-Time Registration"
 
         val countries = resources.getStringArray(R.array.countries_array)
         val arrayAdapter = ArrayAdapter(this, R.layout.company_spinner_item, countries)
-        countrySpinner.adapter = arrayAdapter
-        countrySpinner.setSelection(98)
+        binding.apply {
+            countrySpinner.adapter = arrayAdapter
+            countrySpinner.setSelection(98)
 
-        registerButton.setOnClickListener { startRegistration() }
+            registerButton.setOnClickListener { startRegistration() }
+        }
     }
 
     private fun startRegistration() {
-        if (nameEditText.text.toString().isEmpty() || nameEditText.text.toString() == "") {
-            toast("Please enter your full name")
-        } else if (passwordEditText.text.toString().length < 6) {
-            toast("Password must be at least 6 characters")
-        } else if (passwordEditText.text.toString() != confirmPasswordEditText.text.toString()) {
-            toast("Confirm password mismatch")
-        } else if (emailEditText.text.toString().isEmpty() || emailEditText.text.toString() == "") {
-            toast("Please enter valid email ID")
-        } else {
-            registerAsynchronously()
+        binding.apply {
+            when {
+                nameEditText.text.toString().isEmpty() || nameEditText.text.toString() == "" -> toast("Please enter your full name")
+                passwordEditText.text.toString().length < 6 -> toast("Password must be at least 6 characters")
+                passwordEditText.text.toString() != confirmPasswordEditText.text.toString() -> toast("Confirm password mismatch")
+                emailEditText.text.toString().isEmpty() || emailEditText.text.toString() == "" -> toast("Please enter valid email ID")
+                else -> registerAsynchronously()
+            }
         }
     }
 
@@ -80,13 +83,16 @@ class RegistrationActivity : AppCompatActivity() {
                 if (ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
                     val stub = DalalActionServiceGrpc.newBlockingStub(channel)
 
-                    val response = stub.register(RegisterRequest.newBuilder()
-                            .setCountry(countrySpinner.selectedItem.toString())
-                            .setEmail(emailEditText.text.toString())
-                            .setFullName(nameEditText.text.toString())
-                            .setPassword(passwordEditText.text.toString())
-                            .setUserName(nameEditText.text.toString())
-                            .build())
+                    val response: RegisterResponse
+                    binding.apply {
+                        response = stub.register(RegisterRequest.newBuilder()
+                                .setCountry(countrySpinner.selectedItem.toString())
+                                .setEmail(emailEditText.text.toString())
+                                .setFullName(nameEditText.text.toString())
+                                .setPassword(passwordEditText.text.toString())
+                                .setUserName(nameEditText.text.toString())
+                                .build())
+                    }
 
                     val message = when (response.statusCode) {
                         RegisterResponse.StatusCode.OK -> "Successfully Registered! Please check your inbox to verify email."
@@ -111,7 +117,7 @@ class RegistrationActivity : AppCompatActivity() {
         }
     }
 
-    private fun showErrorSnackBar(message : String){
+    private fun showErrorSnackBar(message: String) {
         val snackBar = Snackbar.make(findViewById(android.R.id.content), message, Snackbar.LENGTH_INDEFINITE)
                 .setAction("RETRY") { startRegistration() }
 

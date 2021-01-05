@@ -17,7 +17,6 @@ import dalalstreet.api.actions.LoginResponse
 import io.grpc.ManagedChannel
 import io.grpc.Metadata
 import io.grpc.stub.MetadataUtils
-import kotlinx.android.synthetic.main.activity_splash.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.toast
 import org.jetbrains.anko.uiThread
@@ -25,6 +24,7 @@ import org.pragyan.dalal18.R
 import org.pragyan.dalal18.dagger.ContextModule
 import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent
 import org.pragyan.dalal18.data.GlobalStockDetails
+import org.pragyan.dalal18.databinding.ActivitySplashBinding
 import org.pragyan.dalal18.utils.ConnectionUtils
 import org.pragyan.dalal18.utils.Constants
 import org.pragyan.dalal18.utils.Constants.MARKET_OPEN_KEY
@@ -33,6 +33,8 @@ import java.util.*
 import javax.inject.Inject
 
 class SplashActivity : AppCompatActivity() {
+
+    private lateinit var binding: ActivitySplashBinding
 
     /* Not injecting stub directly into this context to prevent empty/null metadata attached to stub since user has not logged in. */
     @Inject
@@ -51,7 +53,8 @@ class SplashActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_splash)
+        binding = ActivitySplashBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         if (isGooglePlayServicesAvailable) {
             DaggerDalalStreetApplicationComponent.builder().contextModule(ContextModule(this)).build().inject(this)
@@ -70,13 +73,13 @@ class SplashActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
-        drawingThread = Thread(graph_drawer)
+        drawingThread = Thread(binding.graphDrawer)
         drawingThread?.start()
     }
 
     private fun startLoginProcess(email: String?, password: String?) {
 
-        splashTextView.text = getString(R.string.signing_in)
+        binding.splashTextView.text = getString(R.string.signing_in)
 
         if (email != null && password != null && email != "") {
             loginAsynchronously(email, password)
@@ -188,7 +191,7 @@ class SplashActivity : AppCompatActivity() {
                     snackBar.setActionTextColor(ContextCompat.getColor(this@SplashActivity, R.color.neon_green))
                     snackBar.view.setBackgroundColor(Color.parseColor("#20202C"))
                     snackBar.show()
-                    splashTextView.setText(R.string.error_signing_in)
+                    binding.splashTextView.setText(R.string.error_signing_in)
                 }
 
             } else /* No internet available */ {
@@ -197,13 +200,13 @@ class SplashActivity : AppCompatActivity() {
                     val snackBar = Snackbar.make(findViewById<View>(android.R.id.content), "Please check internet connection", Snackbar.LENGTH_INDEFINITE)
                             .setAction("RETRY") {
                                 startLoginProcess(email, password)
-                                splashTextView.setText(R.string.error_signing_in)
+                                binding.splashTextView.setText(R.string.error_signing_in)
                             }
 
                     snackBar.setActionTextColor(ContextCompat.getColor(this@SplashActivity, R.color.neon_green))
                     snackBar.view.setBackgroundColor(Color.parseColor("#20202C"))
                     snackBar.show()
-                    splashTextView.setText(R.string.error_signing_in)
+                    binding.splashTextView.setText(R.string.error_signing_in)
                 }
             }
         }
