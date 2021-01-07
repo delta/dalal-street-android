@@ -128,11 +128,16 @@ dependencies {
     //expandable Textview
     implementation (Libs.expandableTextView)
 
-    //app tour
+    // app tour
     implementation (Libs.tapTargetSafeView)
 
+    // firebase BOM
     implementation platform(Libs.firebaseBom)
+
+    // firebase analytics
     implementation (Libs.firebaseAnalytics)
+
+    // firebase crashanalytics
     implementation (Libs.crashAnalytics)
 
 }
