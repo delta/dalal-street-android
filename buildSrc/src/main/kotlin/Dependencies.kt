@@ -32,7 +32,7 @@ object Versions {
 
     // google services versions
     const val Gson = "2.8.5"
-    const val GoogleServices = "4.3.3"
+    const val GoogleServices = "4.3.4"
     const val FirebaseBom = "26.2.0"
     const val FirebaseAnalytics = "18.0.0"
     const val FirebaseCrashanalyticsGradle = "2.4.1"
@@ -139,8 +139,8 @@ object Libs {
     const val daggerCompiler = "com.google.dagger:dagger-compiler:${Versions.DaggerCompiler}"
 
     const val firebaseBom = "com.google.firebase:firebase-bom:${Versions.FirebaseBom}"
-    const val firebaseAnalytics = "com.google.firebase:firebase-analytics-ktx:${Versions.FirebaseAnalytics}"
-    const val crashAnalytics = "com.google.firebase:firebase-crashlytics-ktx:${Versions.Crashlytics}"
+    const val firebaseAnalytics = "com.google.firebase:firebase-analytics-ktx"
+    const val crashAnalytics = "com.google.firebase:firebase-crashlytics-ktx"
 
     const val gmsServiceAuth = "com.google.android.gms:play-services-auth:${Versions.GmsServiceAuth}"
 

@@ -3,6 +3,9 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'com.google.protobuf'
+apply plugin: 'com.google.gms.google-services'
+apply plugin: 'com.google.firebase.crashlytics'
+
 
 android {
 
@@ -125,6 +128,16 @@ dependencies {
     //expandable Textview
     implementation (Libs.expandableTextView)
 
-    //app tour
+    // app tour
     implementation (Libs.tapTargetSafeView)
+
+    // firebase BOM
+    implementation platform(Libs.firebaseBom)
+
+    // firebase analytics
+    implementation (Libs.firebaseAnalytics)
+
+    // firebase crashanalytics
+    implementation (Libs.crashAnalytics)
+
 }
