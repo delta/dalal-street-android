@@ -127,4 +127,5 @@ dependencies {
 
     //app tour
     implementation (Libs.tapTargetSafeView)
+    implementation(Libs.security)
 }
