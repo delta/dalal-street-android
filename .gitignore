@@ -9,3 +9,4 @@
 .externalNativeBuild
 /.idea/modules.xml
 app/src/main/assets/server.crt
+app/google-services.json
