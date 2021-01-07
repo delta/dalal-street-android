@@ -4,8 +4,8 @@ public class Constants {
 
     // TODO (Release): Change server IP and Port
 
-    public static final String HOST = "dalal.pragyan.org";
-    public static final int PORT = 8080;
+    public static final String HOST = "192.168.43.14";
+    public static final int PORT = 8000;
 
     // TODO (Release): Change company image base URL and how is built
     public static final String COMPANY_IMAGES_BASE_URL = "https://dalal.pragyan.org/public/src/images/companies/";
@@ -58,6 +58,8 @@ public class Constants {
     public static final String PREF_COMP = "COMPANYFRAG_TOUR";
     public static final String PREF_TRADE = "TRADE_TOUR";
     public static final String CANCEL_ORDER_TOUR_KEY = "cancel-order-tour-key";
+
+    public static final String ENCRYPTED_SHARED_PREF_NAME = "encrypted_shared_pref";
 }
 
 /*  Login response : Constants : Last Checked 02/02/2020
