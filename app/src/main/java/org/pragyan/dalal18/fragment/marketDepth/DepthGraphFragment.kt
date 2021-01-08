@@ -22,7 +22,6 @@ import com.github.mikephil.charting.formatter.ValueFormatter
 import dalalstreet.api.DalalActionServiceGrpc
 import dalalstreet.api.actions.GetStockHistoryRequest
 import dalalstreet.api.actions.StockHistoryResolution
-import kotlinx.android.synthetic.main.fragment_depth_graph.*
 import org.jetbrains.anko.backgroundColor
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.toast
@@ -32,9 +31,11 @@ import org.pragyan.dalal18.dagger.ContextModule
 import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent
 import org.pragyan.dalal18.data.DalalViewModel
 import org.pragyan.dalal18.data.StockHistory
+import org.pragyan.dalal18.databinding.FragmentDepthGraphBinding
 import org.pragyan.dalal18.utils.ConnectionUtils
 import org.pragyan.dalal18.utils.Constants
 import org.pragyan.dalal18.utils.MiscellaneousUtils.parseDate
+import org.pragyan.dalal18.utils.viewLifecycle
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
@@ -42,6 +43,8 @@ import javax.inject.Inject
 import kotlin.collections.ArrayList
 
 class DepthGraphFragment : Fragment() {
+
+    private var binding by viewLifecycle<FragmentDepthGraphBinding>()
 
     @Inject
     lateinit var actionServiceBlockingStub: DalalActionServiceGrpc.DalalActionServiceBlockingStub
@@ -68,13 +71,13 @@ class DepthGraphFragment : Fragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val rootView = inflater.inflate(R.layout.fragment_depth_graph, container, false)
+        binding = FragmentDepthGraphBinding.inflate(inflater, container, false)
         DaggerDalalStreetApplicationComponent.builder().contextModule(ContextModule(context!!)).build().inject(this)
 
         model = activity?.run { ViewModelProvider(this).get(DalalViewModel::class.java) }
                 ?: throw Exception("Invalid activity")
 
-        return rootView
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -87,7 +90,7 @@ class DepthGraphFragment : Fragment() {
                 .create()
 
         stockHistoryList = ArrayList()
-        with(market_depth_chart) {
+        with(binding.marketDepthChart) {
             backgroundColor = ContextCompat.getColor(this@DepthGraphFragment.context!!, R.color.black_background)
             setTouchEnabled(false)
             setNoDataText("Select a company to view depth chart")
@@ -100,19 +103,21 @@ class DepthGraphFragment : Fragment() {
         }
 
         val arrayAdapter = ArrayAdapter(activity!!, R.layout.company_spinner_item, model.getCompanyNamesArray())
-        with(graph_company_spinner) {
+        with(binding.graphCompanySpinner) {
             setAdapter(arrayAdapter)
             isSelected = false
             setOnItemClickListener { _, _, _, _ ->
-                currentCompany = graph_company_spinner.text.toString()
+                currentCompany = text.toString()
                 stockHistoryList.clear()
                 xVals.clear()
                 yVals.clear()
-                if (!market_depth_chart.isEmpty) {
-                    market_depth_chart.invalidate()
-                    market_depth_chart.clear()
+                binding.marketDepthChart.apply {
+                    if (!isEmpty) {
+                        invalidate()
+                        clear()
+                    }
+                    clearFocus()
                 }
-                market_depth_chart.clearFocus()
                 if (activity != null && isAdded) {
                     loadStockHistoryAsynchronously()
                 }
@@ -121,20 +126,22 @@ class DepthGraphFragment : Fragment() {
 
         val intervalAdapter = ArrayAdapter(activity!!, R.layout.interval_spinner_item, resources.getStringArray(R.array.intervalType))
         currentInterval = "30 mins"
-        with(graph_time_spinner) {
+        with(binding.graphTimeSpinner) {
             setAdapter(intervalAdapter)
             isSelected = false
             setOnItemClickListener { _, _, _, _ ->
-                currentInterval = graph_time_spinner.text.toString()
+                currentInterval = text.toString()
                 hint = "30 mins"
                 stockHistoryList.clear()
                 xVals.clear()
                 yVals.clear()
-                if (!market_depth_chart.isEmpty) {
-                    market_depth_chart.invalidate()
-                    market_depth_chart.clear()
+                binding.marketDepthChart.apply {
+                    if (!isEmpty) {
+                        invalidate()
+                        clear()
+                    }
+                    clearFocus()
                 }
-                market_depth_chart.clearFocus()
                 if (activity != null && isAdded) {
                     loadStockHistoryAsynchronously()
                 }
@@ -143,38 +150,17 @@ class DepthGraphFragment : Fragment() {
     }
 
     private fun loadStockHistoryAsynchronously() {
+        if (currentCompany == null || currentInterval == null) return
 
-        if (currentCompany == null || currentInterval == null) {
-            return
+        val resolution = when (currentInterval) {
+            "1 min" -> StockHistoryResolution.OneMinute
+            "5 mins" -> StockHistoryResolution.FiveMinutes
+            "15 mins" -> StockHistoryResolution.FifteenMinutes
+            "30 mins" -> StockHistoryResolution.ThirtyMinutes
+            "60 mins" -> StockHistoryResolution.SixtyMinutes
+            else -> StockHistoryResolution.OneMinute
         }
 
-        lateinit var resolution: StockHistoryResolution
-        when (currentInterval) {
-
-            "1 min" -> {
-                resolution = StockHistoryResolution.OneMinute
-            }
-
-            "5 mins" -> {
-                resolution = StockHistoryResolution.FiveMinutes
-            }
-
-            "15 mins" -> {
-                resolution = StockHistoryResolution.FifteenMinutes
-            }
-
-            "30 mins" -> {
-                resolution = StockHistoryResolution.ThirtyMinutes
-            }
-
-            "60 mins" -> {
-                resolution = StockHistoryResolution.SixtyMinutes
-            }
-
-            else -> {
-                resolution = StockHistoryResolution.OneMinute
-            }
-        }
         loadingDialog?.show()
         doAsync {
 
@@ -218,8 +204,7 @@ class DepthGraphFragment : Fragment() {
                                     }
                                 }
                             }
-                            val xAxis = market_depth_chart.xAxis
-                            with(xAxis) {
+                            with(binding.marketDepthChart.xAxis) {
                                 position = XAxis.XAxisPosition.BOTTOM
                                 setDrawGridLines(false)
                                 valueFormatter = formatter
@@ -231,10 +216,9 @@ class DepthGraphFragment : Fragment() {
                                 setAvoidFirstLastClipping(true)
                             }
 
-                            val leftAxis = market_depth_chart.axisLeft
+                            val leftAxis = binding.marketDepthChart.axisLeft
                             leftAxis.isEnabled = false
-                            val yAxis = market_depth_chart.axisRight
-                            with(yAxis) {
+                            with(binding.marketDepthChart.axisRight) {
                                 setLabelCount(7, false)
                                 setDrawGridLines(false)
                                 setDrawAxisLine(true)
@@ -259,11 +243,13 @@ class DepthGraphFragment : Fragment() {
                             }
 
                             val data = CandleData(set1)
-                            market_depth_chart.data = data
-                            market_depth_chart.invalidate()
-                            market_depth_chart.description.text = "($currentInterval)"
-                            graph_time_spinner.requestFocus()
-                            graph_company_spinner.requestFocus()
+                            binding.apply {
+                                marketDepthChart.data = data
+                                marketDepthChart.invalidate()
+                                marketDepthChart.description.text = "($currentInterval)"
+                                graphTimeSpinner.requestFocus()
+                                graphCompanySpinner.requestFocus()
+                            }
                         } else {
                             context?.toast("No data available for this interval")
                         }
