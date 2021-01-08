@@ -140,4 +140,7 @@ dependencies {
     // firebase crashanalytics
     implementation (Libs.crashAnalytics)
 
+    //security
+    implementation(Libs.security)
+
 }
