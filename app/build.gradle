@@ -142,5 +142,4 @@ dependencies {
 
     //security
     implementation(Libs.security)
-
 }
