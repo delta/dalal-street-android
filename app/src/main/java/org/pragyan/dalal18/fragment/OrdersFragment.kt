@@ -32,7 +32,6 @@ import dalalstreet.api.actions.GetMyOpenOrdersRequest
 import dalalstreet.api.actions.GetMyOpenOrdersResponse
 import dalalstreet.api.datastreams.*
 import io.grpc.stub.StreamObserver
-import kotlinx.android.synthetic.main.fragment_my_orders.*
 import kotlinx.android.synthetic.main.order_list_item.view.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -48,13 +47,17 @@ import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent
 import org.pragyan.dalal18.data.CustomOrderUpdate
 import org.pragyan.dalal18.data.DalalViewModel
 import org.pragyan.dalal18.data.Order
+import org.pragyan.dalal18.databinding.FragmentMyOrdersBinding
 import org.pragyan.dalal18.utils.ConnectionUtils
 import org.pragyan.dalal18.utils.Constants
 import org.pragyan.dalal18.utils.Constants.CANCEL_ORDER_TOUR_KEY
 import org.pragyan.dalal18.utils.OrderItemTouchHelper
+import org.pragyan.dalal18.utils.viewLifecycle
 import javax.inject.Inject
 
 class OrdersFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, OrderItemTouchHelper.BusItemTouchHelperListener {
+
+    private var binding by viewLifecycle<FragmentMyOrdersBinding>()
 
     @Inject
     lateinit var actionServiceBlockingStub: DalalActionServiceGrpc.DalalActionServiceBlockingStub
@@ -100,29 +103,32 @@ class OrdersFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, OrderIt
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        binding = FragmentMyOrdersBinding.inflate(inflater, container, false)
 
-        val rootView = inflater.inflate(R.layout.fragment_my_orders, container, false)
         DaggerDalalStreetApplicationComponent.builder().contextModule(ContextModule(context!!)).build().inject(this)
 
         model = activity?.run { ViewModelProvider(this).get(DalalViewModel::class.java) }
                 ?: throw Exception("Invalid activity")
-        return rootView
+
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         (activity as AppCompatActivity).supportActionBar?.title = resources.getString(R.string.orders_frag_label)
         ordersRecyclerAdapter = OrdersRecyclerAdapter(context, null)
-        ordersRecycler_swipeRefreshLayout.setOnRefreshListener(this)
+        binding.apply {
+            ordersRecyclerSwipeRefreshLayout.setOnRefreshListener(this@OrdersFragment)
 
-        with(ordersRecyclerView) {
-            setHasFixedSize(false)
-            adapter = ordersRecyclerAdapter
-            layoutManager = LinearLayoutManager(context)
+            with(ordersRecyclerView) {
+                setHasFixedSize(false)
+                adapter = ordersRecyclerAdapter
+                layoutManager = LinearLayoutManager(context)
 
-            val itemTouchHelper =
-                    ItemTouchHelper(OrderItemTouchHelper(0, ItemTouchHelper.LEFT, this@OrdersFragment))
-            itemTouchHelper.attachToRecyclerView(this)
+                val itemTouchHelper =
+                        ItemTouchHelper(OrderItemTouchHelper(0, ItemTouchHelper.LEFT, this@OrdersFragment))
+                itemTouchHelper.attachToRecyclerView(this)
+            }
         }
 
         val dialogView = LayoutInflater.from(context).inflate(R.layout.progress_dialog, null)
@@ -135,7 +141,7 @@ class OrdersFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, OrderIt
 
         getOpenOrdersAsynchronously()
 
-        tradeFloatingActionButton.setOnClickListener {
+        binding.tradeFloatingActionButton.setOnClickListener {
             findNavController().navigate(R.id.trade_dest)
         }
     }
@@ -187,7 +193,7 @@ class OrdersFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, OrderIt
                     uiThread {
 
                         if (openOrdersResponse?.statusCode == GetMyOpenOrdersResponse.StatusCode.OK) {
-                            ordersRecycler_swipeRefreshLayout.isRefreshing = false
+                            binding.ordersRecyclerSwipeRefreshLayout.isRefreshing = false
 
                             val openOrdersList = mutableListOf<Order>()
 
@@ -250,12 +256,13 @@ class OrdersFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, OrderIt
     private fun showTutorialIfFirstTime() {
         if (!preferences.getBoolean(CANCEL_ORDER_TOUR_KEY, false)) {
 
+            // TODO: Replace Kotlin Synthetics for ViewHolder Item after adding ViewBinding in OrderViewHolder
             Handler().postDelayed({
                 try {
-                    ViewPropertyAnimator.animate(ordersRecyclerView.findViewHolderForAdapterPosition(0)
+                    ViewPropertyAnimator.animate(binding.ordersRecyclerView.findViewHolderForAdapterPosition(0)
                             ?.itemView?.orderViewForeground).translationXBy((-screenWidth * 0.5).toFloat()).duration = 450
 
-                    val cancelTextView = ordersRecyclerView.findViewHolderForAdapterPosition(0)?.itemView?.deleteOrderText
+                    val cancelTextView = binding.ordersRecyclerView.findViewHolderForAdapterPosition(0)?.itemView?.deleteOrderText
 
                     if (cancelTextView != null) {
                         showTapTargetForNewOrder(cancelTextView)
@@ -321,12 +328,14 @@ class OrdersFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, OrderIt
     }
 
     private fun flipVisibilities(empty: Boolean?) {
-        if (empty != null && !empty) {
-            ordersRecycler_swipeRefreshLayout.visibility = View.VISIBLE
-            emptyOrders_relativeLayout.visibility = View.GONE
-        } else {
-            ordersRecycler_swipeRefreshLayout.visibility = View.GONE
-            emptyOrders_relativeLayout.visibility = View.VISIBLE
+        binding.apply {
+            if (empty != null && !empty) {
+                ordersRecyclerSwipeRefreshLayout.visibility = View.VISIBLE
+                emptyOrdersRelativeLayout.visibility = View.GONE
+            } else {
+                ordersRecyclerSwipeRefreshLayout.visibility = View.GONE
+                emptyOrdersRelativeLayout.visibility = View.VISIBLE
+            }
         }
     }
 
@@ -376,7 +385,8 @@ class OrdersFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, OrderIt
                     }
 
                     override fun onTargetDismissed(view: TapTargetView?, userInitiated: Boolean) {
-                        ViewPropertyAnimator.animate(ordersRecyclerView.findViewHolderForAdapterPosition(0)
+                        // TODO: Replace Kotlin Synthetics for ViewHolder Item after adding ViewBinding in OrderViewHolder
+                        ViewPropertyAnimator.animate(binding.ordersRecyclerView.findViewHolderForAdapterPosition(0)
                                 ?.itemView?.orderViewForeground).translationXBy((screenWidth * 0.5).toFloat()).duration = 450
 
                     }
