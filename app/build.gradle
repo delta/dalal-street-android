@@ -126,7 +126,10 @@ dependencies {
     implementation (Libs.navigationArchUIKtx)
 
     // Lifecycle
+<<<<<<< HEAD
     implementation (Libs.lifecycleCommon)
+=======
+>>>>>>> dalal-street-21
     implementation (Libs.lifecycleExtensions)
     implementation (Libs.lifecycleRuntime)
 
@@ -145,4 +148,9 @@ dependencies {
     // firebase crashanalytics
     implementation (Libs.crashAnalytics)
 
+<<<<<<< HEAD
+=======
+    //security
+    implementation(Libs.security)
+>>>>>>> dalal-street-21
 }

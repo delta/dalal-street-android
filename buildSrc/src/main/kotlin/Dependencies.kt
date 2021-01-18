@@ -10,7 +10,11 @@ object AndroidSdk {
 }
 
 object Versions {
+<<<<<<< HEAD
     const val Gradle = "4.0.1"
+=======
+    const val Gradle = "3.6.0"
+>>>>>>> dalal-street-21
     const val Kotlin = "1.3.61"
     const val CoreKtx = "1.3.1"
     const val Coroutine = "1.3.3"

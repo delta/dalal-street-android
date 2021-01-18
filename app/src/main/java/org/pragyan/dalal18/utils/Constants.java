@@ -58,6 +58,8 @@ public class Constants {
     public static final String PREF_COMP = "COMPANYFRAG_TOUR";
     public static final String PREF_TRADE = "TRADE_TOUR";
     public static final String CANCEL_ORDER_TOUR_KEY = "cancel-order-tour-key";
+
+    public static final String ENCRYPTED_SHARED_PREF_NAME = "encrypted_shared_pref";
 }
 
 /*  Login response : Constants : Last Checked 02/02/2020
