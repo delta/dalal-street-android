@@ -19,7 +19,6 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import dalalstreet.api.DalalActionServiceGrpc
 import dalalstreet.api.actions.MortgageStocksRequest
 import dalalstreet.api.actions.MortgageStocksResponse
-import kotlinx.android.synthetic.main.fragment_mortgage.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.toast
 import org.jetbrains.anko.uiThread
@@ -27,15 +26,15 @@ import org.pragyan.dalal18.R
 import org.pragyan.dalal18.dagger.ContextModule
 import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent
 import org.pragyan.dalal18.data.DalalViewModel
+import org.pragyan.dalal18.databinding.FragmentMortgageBinding
 import org.pragyan.dalal18.ui.MainActivity.Companion.GAME_STATE_UPDATE_ACTION
-import org.pragyan.dalal18.utils.ConnectionUtils
-import org.pragyan.dalal18.utils.Constants
-import org.pragyan.dalal18.utils.hideKeyboard
-import org.pragyan.dalal18.utils.setStatusIndicator
+import org.pragyan.dalal18.utils.*
 import java.text.DecimalFormat
 import javax.inject.Inject
 
 class MortgageFragment : Fragment() {
+
+    private var binding by viewLifecycle<FragmentMortgageBinding>()
 
     @Inject
     lateinit var actionServiceBlockingStub: DalalActionServiceGrpc.DalalActionServiceBlockingStub
@@ -68,15 +67,14 @@ class MortgageFragment : Fragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-
-        val rootView = inflater.inflate(R.layout.fragment_mortgage, container, false)
+        binding = FragmentMortgageBinding.inflate(inflater, container, false)
 
         model = activity?.run { ViewModelProvider(this).get(DalalViewModel::class.java) }
                 ?: throw Exception("Invalid activity")
         lastStockId = model.favoriteCompanyStockId ?: 1
         DaggerDalalStreetApplicationComponent.builder().contextModule(ContextModule(context!!)).build().inject(this)
 
-        return rootView
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -91,46 +89,48 @@ class MortgageFragment : Fragment() {
 
         setupMortgageDetails(lastStockId)
 
-        with(mortgage_companies_spinner) {
-            val companiesArray = model.getCompanyNamesArray()
-            adapter = ArrayAdapter(context!!, R.layout.company_spinner_item, companiesArray)
+        binding.apply {
+            with(mortgageCompaniesSpinner) {
+                val companiesArray = model.getCompanyNamesArray()
+                adapter = ArrayAdapter(context!!, R.layout.company_spinner_item, companiesArray)
 
-            onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-                override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
+                onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+                    override fun onItemSelected(parent: AdapterView<*>, view: View, position: Int, id: Long) {
 
-                    lastStockId = model.getStockIdFromCompanyName(companiesArray[position])
+                        lastStockId = model.getStockIdFromCompanyName(companiesArray[position])
 
-                    model.updateFavouriteCompanyStockId(lastStockId)
+                        model.updateFavouriteCompanyStockId(lastStockId)
 
-                    setupMortgageDetails(lastStockId)
-                }
+                        setupMortgageDetails(lastStockId)
+                    }
 
-                override fun onNothingSelected(parent: AdapterView<*>) {
+                    override fun onNothingSelected(parent: AdapterView<*>) {
 
+                    }
                 }
             }
+
+            mortgageButton.setOnClickListener { onMortgageButtonClick() }
+            stockIncrementFiveButton.setOnClickListener { addToMortgageInput(5) }
+            stockIncrementOneButton.setOnClickListener { addToMortgageInput(1) }
+
+            val tempText = " :  ${Constants.MORTGAGE_DEPOSIT_RATE}%"
+            depositRateTextView.text = tempText
         }
-
-        mortgageButton.setOnClickListener { onMortgageButtonClick() }
-        stockIncrementFiveButton.setOnClickListener { addToMortgageInput(5) }
-        stockIncrementOneButton.setOnClickListener { addToMortgageInput(1) }
-
-        val tempText = " :  ${Constants.MORTGAGE_DEPOSIT_RATE}%"
-        depositRateTextView.text = tempText
     }
 
     private fun addToMortgageInput(increment: Int) {
-        if (mortgageStocksEditText.text.isBlank()) {
-            mortgageStocksEditText.setText("0")
+        binding.apply {
+            if (mortgageStocksEditText.text.isBlank())
+                mortgageStocksEditText.setText("0")
+            var noOfStocks = mortgageStocksEditText.text.toString().toInt()
+            noOfStocks = (noOfStocks + increment).coerceAtMost(Constants.ASK_LIMIT)
+            mortgageStocksEditText.setText(noOfStocks.toString())
         }
-        var noOfStocks = mortgageStocksEditText.text.toString().toInt()
-        noOfStocks = (noOfStocks + increment).coerceAtMost(Constants.ASK_LIMIT)
-        mortgageStocksEditText.setText(noOfStocks.toString())
     }
 
     private fun onMortgageButtonClick() {
-
-        with(mortgageStocksEditText) {
+        with(binding.mortgageStocksEditText) {
             when {
                 text.toString().trim { it <= ' ' }.isEmpty() -> {
                     error = "Stocks quantity missing"
@@ -149,29 +149,29 @@ class MortgageFragment : Fragment() {
             }
         }
 
-        val stocksTransaction = (mortgageStocksEditText.text.toString().trim { it <= ' ' }).toLong()
+        val stocksTransaction = (binding.mortgageStocksEditText.text.toString().trim { it <= ' ' }).toLong()
 
-        if (stocksTransaction <= model.getQuantityOwnedFromStockId(lastStockId)) {
+        if (stocksTransaction <= model.getQuantityOwnedFromStockId(lastStockId))
             mortgageStocksAsynchronously(stocksTransaction)
-        } else {
-            context?.toast("Insufficient Stocks")
-        }
+        else context?.toast("Insufficient Stocks")
     }
 
     private fun setupMortgageDetails(stockId: Int) {
-        val ownedString = " :  " + decimalFormat.format(model.getQuantityOwnedFromStockId(stockId))
-        stocksOwnedTextView.text = ownedString
+        binding.apply {
+            val ownedString = " :  " + decimalFormat.format(model.getQuantityOwnedFromStockId(stockId))
+            stocksOwnedTextView.text = ownedString
 
-        val tempString = " :  " + Constants.RUPEE_SYMBOL + " " + decimalFormat.format(model.getPriceFromStockId(stockId))
-        currentPriceTextView.text = tempString
+            val tempString = " :  " + Constants.RUPEE_SYMBOL + " " + decimalFormat.format(model.getPriceFromStockId(stockId))
+            currentPriceTextView.text = tempString
 
-        val mortgagedString = " :  " + decimalFormat.format(model.getMortgagedStocksFromStockId(stockId))
-        stocksMortgagedTextView.text = mortgagedString
+            val mortgagedString = " :  " + decimalFormat.format(model.getMortgagedStocksFromStockId(stockId))
+            stocksMortgagedTextView.text = mortgagedString
 
-        when {
-            model.getIsBankruptFromStockId(lastStockId) -> companyStatusIndicatorImageView.setStatusIndicator(context, View.VISIBLE, getString(R.string.this_company_is_bankrupt), R.drawable.bankrupt_icon)
-            model.getGivesDividendFromStockId(lastStockId) -> companyStatusIndicatorImageView.setStatusIndicator(context, View.VISIBLE, getString(R.string.this_company_gives_dividend), R.drawable.dividend_icon)
-            else -> companyStatusIndicatorImageView.setStatusIndicator(context, View.GONE, "", R.drawable.clear_icon)
+            when {
+                model.getIsBankruptFromStockId(lastStockId) -> companyStatusIndicatorImageView.setStatusIndicator(context, View.VISIBLE, getString(R.string.this_company_is_bankrupt), R.drawable.bankrupt_icon)
+                model.getGivesDividendFromStockId(lastStockId) -> companyStatusIndicatorImageView.setStatusIndicator(context, View.VISIBLE, getString(R.string.this_company_gives_dividend), R.drawable.dividend_icon)
+                else -> companyStatusIndicatorImageView.setStatusIndicator(context, View.GONE, "", R.drawable.clear_icon)
+            }
         }
     }
 
@@ -192,7 +192,7 @@ class MortgageFragment : Fragment() {
                     uiThread {
                         if (mortgageStocksResponse.statusCode == MortgageStocksResponse.StatusCode.OK) {
                             context?.toast("Transaction successful")
-                            mortgageStocksEditText.setText("0")
+                            binding.mortgageStocksEditText.setText("0")
                             view?.hideKeyboard()
                         } else {
                             context?.toast(mortgageStocksResponse.statusMessage)
@@ -211,7 +211,7 @@ class MortgageFragment : Fragment() {
     override fun onResume() {
         super.onResume()
 
-        mortgage_companies_spinner.setSelection(model.getIndexForFavoriteCompany())
+        binding.mortgageCompaniesSpinner.setSelection(model.getIndexForFavoriteCompany())
 
         val intentFilter = IntentFilter(Constants.REFRESH_STOCK_PRICES_FOR_ALL)
         intentFilter.addAction(Constants.REFRESH_STOCKS_FOR_MORTGAGE)
