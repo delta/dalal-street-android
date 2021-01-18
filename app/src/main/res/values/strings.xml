@@ -476,6 +476,7 @@
     <string name="cash">Cash</string>
     <string name="reserved_cash">Reserved Cash</string>
     <string name="trade_price">Trade Price</string>
+    <string name="referral_code">Referral Code</string>
     <string-array name="intervalType">
         <item>1 min</item>
         <item>5 mins</item>
