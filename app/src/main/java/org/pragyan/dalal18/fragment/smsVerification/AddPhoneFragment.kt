@@ -12,7 +12,6 @@ import androidx.lifecycle.lifecycleScope
 import dalalstreet.api.DalalActionServiceGrpc
 import dalalstreet.api.actions.AddPhoneRequest
 import dalalstreet.api.actions.AddPhoneResponse
-import kotlinx.android.synthetic.main.fragment_add_phone.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -20,11 +19,15 @@ import org.jetbrains.anko.toast
 import org.pragyan.dalal18.R
 import org.pragyan.dalal18.dagger.ContextModule
 import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent
+import org.pragyan.dalal18.databinding.FragmentAddPhoneBinding
 import org.pragyan.dalal18.utils.ConnectionUtils
 import org.pragyan.dalal18.utils.hideKeyboard
+import org.pragyan.dalal18.utils.viewLifecycle
 import javax.inject.Inject
 
 class AddPhoneFragment : Fragment() {
+
+    private var binding by viewLifecycle<FragmentAddPhoneBinding>()
 
     @Inject
     lateinit var actionServiceBlockingStub: DalalActionServiceGrpc.DalalActionServiceBlockingStub
@@ -33,23 +36,23 @@ class AddPhoneFragment : Fragment() {
     private lateinit var smsVerificationHandler: ConnectionUtils.SmsVerificationHandler
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-
-        val rootView = inflater.inflate(R.layout.fragment_add_phone, container, false)
+        binding = FragmentAddPhoneBinding.inflate(inflater, container, false)
         DaggerDalalStreetApplicationComponent.builder().contextModule(ContextModule(context!!)).build().inject(this)
-        return rootView
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         DaggerDalalStreetApplicationComponent.builder().contextModule(ContextModule(context!!)).build().inject(this)
 
-        verifyButton.setOnClickListener {
-            if (extensionEditText.text.toString().isEmpty() || extensionEditText.text.toString().isBlank())
-                context?.toast("Enter valid country code")
-            else if (mobileNumberEditText.text.toString().isEmpty() || mobileNumberEditText.text.toString().isBlank())
-                context?.toast("Enter valid mobile number")
-            else
-                sendAddPhoneNumberAsynchronously(extensionEditText.text.toString() + mobileNumberEditText.text.toString())
+        binding.apply {
+            verifyButton.setOnClickListener {
+                when {
+                    extensionEditText.text.toString().isEmpty() || extensionEditText.text.toString().isBlank() -> context?.toast("Enter valid country code")
+                    mobileNumberEditText.text.toString().isEmpty() || mobileNumberEditText.text.toString().isBlank() -> context?.toast("Enter valid mobile number")
+                    else -> sendAddPhoneNumberAsynchronously(extensionEditText.text.toString() + mobileNumberEditText.text.toString())
+                }
+            }
         }
     }
 

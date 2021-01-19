@@ -20,7 +20,6 @@ import dalalstreet.api.DalalStreamServiceGrpc
 import dalalstreet.api.actions.GetCompanyProfileRequest
 import dalalstreet.api.datastreams.*
 import io.grpc.stub.StreamObserver
-import kotlinx.android.synthetic.main.fragment_depth_table.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.toast
 import org.jetbrains.anko.uiThread
@@ -30,15 +29,19 @@ import org.pragyan.dalal18.dagger.ContextModule
 import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent
 import org.pragyan.dalal18.data.DalalViewModel
 import org.pragyan.dalal18.data.MarketDepth
+import org.pragyan.dalal18.databinding.FragmentDepthTableBinding
 import org.pragyan.dalal18.utils.ConnectionUtils
 import org.pragyan.dalal18.utils.Constants
 import org.pragyan.dalal18.utils.Constants.REFRESH_MARKET_DEPTH_FOR_TABLE
+import org.pragyan.dalal18.utils.viewLifecycle
 import java.text.DecimalFormat
 import java.util.*
 import javax.inject.Inject
 import kotlin.math.abs
 
 class DepthTableFragment : Fragment() {
+
+    private var binding by viewLifecycle<FragmentDepthTableBinding>()
 
     @Inject
     lateinit var actionServiceBlockingStub: DalalActionServiceGrpc.DalalActionServiceBlockingStub
@@ -62,21 +65,22 @@ class DepthTableFragment : Fragment() {
     private val refreshMarketDepth = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             if (activity != null && isAdded && intent.action == REFRESH_MARKET_DEPTH_FOR_TABLE) {
-                if (askArrayList.size == 0) {
-                    ask_depth_holder.visibility = View.VISIBLE
-                } else if (askArrayList.size > 0) {
-                    ask_depth_holder.visibility = View.GONE
-                }
+                binding.apply {
+                    if (askArrayList.size == 0)
+                        askDepthHolder.visibility = View.VISIBLE
+                    else if (askArrayList.size > 0)
+                        askDepthHolder.visibility = View.GONE
 
-                if (bidArrayList.size == 0) {
-                    bid_depth_holder.visibility = View.VISIBLE
-                } else if (bidArrayList.size > 0) {
-                    bid_depth_holder.visibility = View.GONE
+                    if (bidArrayList.size == 0)
+                        bidDepthHolder.visibility = View.VISIBLE
+                    else if (bidArrayList.size > 0)
+                        bidDepthHolder.visibility = View.GONE
+
+                    askDepthHolder.visibility = View.VISIBLE
+                    bidDepthHolder.visibility = View.VISIBLE
+                    marketOrderText.visibility = View.VISIBLE
+                    depthTableHolder.visibility = View.INVISIBLE
                 }
-                ask_depth_layout.visibility = View.VISIBLE
-                bid_depth_layout.visibility = View.VISIBLE
-                market_order_text.visibility = View.VISIBLE
-                depth_table_holder.visibility = View.INVISIBLE
                 bidArrayList.sortWith(Comparator { (price1), (price2) -> price1.compareTo(price2) })
                 bidArrayList.reverse()
                 askArrayList.sortWith(Comparator { (price1), (price2) -> price1.compareTo(price2) })
@@ -97,13 +101,13 @@ class DepthTableFragment : Fragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val rootView = inflater.inflate(R.layout.fragment_depth_table, container, false)
+        binding = FragmentDepthTableBinding.inflate(inflater, container, false)
         model = activity?.run {
             ViewModelProvider(this)[DalalViewModel::class.java]
         } ?: throw Exception("Invalid Activity")
 
         DaggerDalalStreetApplicationComponent.builder().contextModule(ContextModule(context!!)).build().inject(this)
-        return rootView
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -119,14 +123,14 @@ class DepthTableFragment : Fragment() {
         bidDepthAdapter = MarketDepthRecyclerAdapter(context, bidArrayList)
         askDepthAdapter = MarketDepthRecyclerAdapter(context, askArrayList)
 
-        with(bid_depth_rv) {
+        with(binding.bidDepthRv) {
             layoutManager = LinearLayoutManager(context)
             setHasFixedSize(false)
             adapter = bidDepthAdapter
             isNestedScrollingEnabled = false
         }
 
-        with(ask_depth_rv) {
+        with(binding.askDepthRv) {
             layoutManager = LinearLayoutManager(context)
             setHasFixedSize(false)
             adapter = askDepthAdapter
@@ -135,10 +139,10 @@ class DepthTableFragment : Fragment() {
 
         val arrayAdapter = ArrayAdapter(activity!!, R.layout.company_spinner_item, model.getCompanyNamesArray())
 
-        with(companySpinner) {
+        with(binding.companySpinner) {
             setAdapter(arrayAdapter)
             setOnItemClickListener { _, _, _, _ ->
-                val lastStockId = model.getStockIdFromCompanyName(companySpinner.text.toString())
+                val lastStockId = model.getStockIdFromCompanyName(binding.companySpinner.text.toString())
 
                 model.updateFavouriteCompanyStockId(lastStockId)
 
@@ -289,15 +293,14 @@ class DepthTableFragment : Fragment() {
                             val currentPrice = currentStock.currentPrice
                             val prevDayClose = currentStock.previousDayClose
 
-                            current_stock_price_layout.visibility = View.VISIBLE
-                            val currentStockPrice = "Current Stock Price : " + Constants.RUPEE_SYMBOL + df.format(currentPrice).toString()
-                            current_stock_price_textView.text = currentStockPrice
-                            val prevDayClosePrice = Constants.RUPEE_SYMBOL + df.format(abs(currentPrice - prevDayClose)).toString()
-                            prev_day_close_stock_price.text = prevDayClosePrice
-                            if (currentPrice >= prevDayClose) {
-                                arrow_image_view.setImageResource(R.drawable.arrow_up_green)
-                            } else {
-                                arrow_image_view.setImageResource(R.drawable.arrow_down_red)
+                            binding.apply {
+                                currentStockPriceLayout.visibility = View.VISIBLE
+                                val currentStockPrice = "Current Stock Price : " + Constants.RUPEE_SYMBOL + df.format(currentPrice).toString()
+                                currentStockPriceTextView.text = currentStockPrice
+                                val prevDayClosePrice = Constants.RUPEE_SYMBOL + df.format(abs(currentPrice - prevDayClose)).toString()
+                                prevDayCloseStockPrice.text = prevDayClosePrice
+                                if (currentPrice >= prevDayClose) arrowImageView.setImageResource(R.drawable.arrow_up_green)
+                                else arrowImageView.setImageResource(R.drawable.arrow_down_red)
                             }
                         }
                     }
@@ -308,7 +311,7 @@ class DepthTableFragment : Fragment() {
                 uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_check_internet), R.id.market_depth_dest) }
             }
             uiThread {
-                companySpinner.clearFocus()
+                binding.companySpinner.clearFocus()
                 loadingDialog?.dismiss()
             }
         }
@@ -353,7 +356,7 @@ class DepthTableFragment : Fragment() {
 
             if (activity != null && isAdded) {
                 getCompanyProfileAsynchronously(stockId)
-                companySpinner.setText(model.getCompanyNameFromStockId(stockId))
+                binding.companySpinner.setText(model.getCompanyNameFromStockId(stockId))
             }
         }
 
@@ -366,6 +369,3 @@ class DepthTableFragment : Fragment() {
         LocalBroadcastManager.getInstance(context!!).unregisterReceiver(refreshMarketDepth)
     }
 }
-
-
-

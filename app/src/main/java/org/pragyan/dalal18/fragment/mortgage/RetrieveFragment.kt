@@ -16,7 +16,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import dalalstreet.api.DalalActionServiceGrpc
 import dalalstreet.api.actions.RetrieveMortgageStocksRequest
 import dalalstreet.api.actions.RetrieveMortgageStocksResponse
-import kotlinx.android.synthetic.main.fragment_retrieve.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.toast
 import org.jetbrains.anko.uiThread
@@ -26,12 +25,16 @@ import org.pragyan.dalal18.dagger.ContextModule
 import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent
 import org.pragyan.dalal18.data.DalalViewModel
 import org.pragyan.dalal18.data.MortgageDetails
+import org.pragyan.dalal18.databinding.FragmentRetrieveBinding
 import org.pragyan.dalal18.utils.ConnectionUtils
 import org.pragyan.dalal18.utils.Constants
 import org.pragyan.dalal18.utils.hideKeyboard
+import org.pragyan.dalal18.utils.viewLifecycle
 import javax.inject.Inject
 
 class RetrieveFragment : Fragment(), RetrieveRecyclerAdapter.OnRetrieveButtonClickListener {
+
+    private var binding by viewLifecycle<FragmentRetrieveBinding>()
 
     @Inject
     lateinit var actionServiceBlockingStub: DalalActionServiceGrpc.DalalActionServiceBlockingStub
@@ -61,15 +64,14 @@ class RetrieveFragment : Fragment(), RetrieveRecyclerAdapter.OnRetrieveButtonCli
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-
-        val rootView = inflater.inflate(R.layout.fragment_retrieve, container, false)
+        binding = FragmentRetrieveBinding.inflate(inflater, container, false)
 
         DaggerDalalStreetApplicationComponent.builder().contextModule(ContextModule(context!!)).build().inject(this)
         retrieveAdapter = RetrieveRecyclerAdapter(context, null, this)
 
         model = activity?.run { ViewModelProvider(this).get(DalalViewModel::class.java) }
                 ?: throw Exception("Invalid activity")
-        return rootView
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -77,18 +79,20 @@ class RetrieveFragment : Fragment(), RetrieveRecyclerAdapter.OnRetrieveButtonCli
 
         (activity as AppCompatActivity).supportActionBar?.title = resources.getString(R.string.mortgage)
 
-        retrieveRecyclerView.layoutManager = LinearLayoutManager(context)
-        retrieveRecyclerView.adapter = retrieveAdapter
-        retrieveRecyclerView.setHasFixedSize(false)
+        binding.apply {
+            retrieveRecyclerView.layoutManager = LinearLayoutManager(context)
+            retrieveRecyclerView.adapter = retrieveAdapter
+            retrieveRecyclerView.setHasFixedSize(false)
 
-        val tempString = "(Retrieve Rate: ${Constants.MORTGAGE_RETRIEVE_RATE}%)"
-        retrieveRateTextView.text = tempString
+            val tempString = "(Retrieve Rate: ${Constants.MORTGAGE_RETRIEVE_RATE}%)"
+            retrieveRateTextView.text = tempString
+        }
 
         updateMortgageDetailsListFromViewModel()
     }
 
     private fun updateMortgageDetailsListFromViewModel() {
-        retrieveRecyclerViewParentLayout.visibility = View.GONE
+        binding.retrieveRecyclerViewParentLayout.visibility = View.GONE
 
         mortgageDetailsList.clear()
         for ((pair, quantity) in model.mortgageStockDetails) {
@@ -136,9 +140,11 @@ class RetrieveFragment : Fragment(), RetrieveRecyclerAdapter.OnRetrieveButtonCli
     }
 
     private fun flipVisibilities(noStocksMortgaged: Boolean) {
-        messageStocksMortgagedTextView.text = getString(R.string.no_stocks_mortgaged)
-        messageStocksMortgagedTextView.visibility = if (noStocksMortgaged) View.VISIBLE else View.GONE
-        retrieveRecyclerViewParentLayout.visibility = if (noStocksMortgaged) View.GONE else View.VISIBLE
+        binding.apply {
+            messageStocksMortgagedTextView.text = getString(R.string.no_stocks_mortgaged)
+            messageStocksMortgagedTextView.visibility = if (noStocksMortgaged) View.VISIBLE else View.GONE
+            retrieveRecyclerViewParentLayout.visibility = if (noStocksMortgaged) View.GONE else View.VISIBLE
+        }
     }
 
     override fun onResume() {
