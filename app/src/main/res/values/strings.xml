@@ -40,6 +40,7 @@
     <string name="mortgage">Mortgage</string>
     <string name="my_orders">Open Orders</string>
     <string name="transactions">Transactions</string>
+    <string name="refer_and_earn">Refer and Earn</string>
     <string name="leaderboard">Leaderboard</string>
     <string name="stock_worth">Stock Worth</string>
     <string name="total_worth">Total Worth</string>
@@ -476,6 +477,7 @@
     <string name="cash">Cash</string>
     <string name="reserved_cash">Reserved Cash</string>
     <string name="trade_price">Trade Price</string>
+    <string name="referral_code">Have a referral Code? Enter it here.</string>
     <string-array name="intervalType">
         <item>1 min</item>
         <item>5 mins</item>

@@ -91,6 +91,7 @@ class RegistrationActivity : AppCompatActivity() {
                                 .setFullName(nameEditText.text.toString())
                                 .setPassword(passwordEditText.text.toString())
                                 .setUserName(nameEditText.text.toString())
+                                .setReferralCode(referralCodeEditText.text.toString())
                                 .build())
                     }
 

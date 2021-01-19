@@ -54,7 +54,6 @@
                     android:text="@string/register"
                     android:textColor="@color/neutral_font_color"
                     android:textSize="36sp"
-                    app:layout_constraintBottom_toTopOf="@+id/register_name_input"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -68,7 +67,6 @@
                     android:paddingStart="12dp"
                     android:paddingEnd="2dp"
                     android:textColorHint="@color/neutral_font_color"
-                    app:layout_constraintBottom_toTopOf="@+id/register_email_input"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/register_text">
@@ -97,7 +95,6 @@
                     android:paddingStart="12dp"
                     android:paddingEnd="2dp"
                     android:textColorHint="@color/neutral_font_color"
-                    app:layout_constraintBottom_toTopOf="@+id/register_password_input"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/register_name_input">
@@ -127,7 +124,6 @@
                     android:paddingStart="12dp"
                     android:paddingEnd="2dp"
                     android:textColorHint="@color/neutral_font_color"
-                    app:layout_constraintBottom_toTopOf="@+id/register_password_confirm_input"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/register_email_input"
@@ -157,7 +153,6 @@
                     android:paddingStart="12dp"
                     android:paddingEnd="2dp"
                     android:textColorHint="@color/neutral_font_color"
-                    app:layout_constraintBottom_toTopOf="@+id/countrySpinner"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/register_password_input"
@@ -178,18 +173,43 @@
 
                 </com.google.android.material.textfield.TextInputLayout>
 
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/register_referral_code_input"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    android:hint="@string/referral_code"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="2dp"
+                    android:textColorHint="@color/neutral_font_color"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/register_password_confirm_input"
+                    >
+
+                    <EditText
+                        android:id="@+id/referralCodeEditText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:backgroundTint="@color/neutral_font_color"
+                        android:ems="10"
+                        android:fontFamily="@font/kreon_light"
+                        android:maxLength="20"
+                        android:maxLines="1"
+                        android:textColor="@color/neon_orange" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
                 <Spinner
                     android:id="@+id/countrySpinner"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/register_password_confirm_input"
                     android:layout_marginTop="24dp"
                     android:backgroundTint="@color/neutral_font_color"
                     android:textColorHint="@color/neutral_font_color"
-                    app:layout_constraintBottom_toTopOf="@id/registerButton"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/register_password_confirm_input" />
+                    app:layout_constraintTop_toBottomOf="@+id/register_referral_code_input" />
 
                 <Button
                     android:id="@+id/registerButton"
