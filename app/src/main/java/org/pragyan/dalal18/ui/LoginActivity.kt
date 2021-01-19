@@ -19,6 +19,7 @@ import dalalstreet.api.actions.ForgotPasswordRequest
 import dalalstreet.api.actions.LoginRequest
 import dalalstreet.api.actions.LoginResponse
 import io.grpc.ManagedChannel
+import kotlinx.android.synthetic.main.activity_login.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -30,18 +31,14 @@ import org.pragyan.dalal18.R
 import org.pragyan.dalal18.dagger.ContextModule
 import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent
 import org.pragyan.dalal18.data.GlobalStockDetails
-import org.pragyan.dalal18.databinding.ActivityLoginBinding
 import org.pragyan.dalal18.utils.ConnectionUtils
 import org.pragyan.dalal18.utils.Constants
 import org.pragyan.dalal18.utils.MiscellaneousUtils
 import org.pragyan.dalal18.utils.hideKeyboard
-import org.pragyan.dalal18.utils.viewLifecycle
 import java.util.*
 import javax.inject.Inject
 
 class LoginActivity : AppCompatActivity() {
-
-    private val binding by viewLifecycle(ActivityLoginBinding::inflate)
 
     @Inject
     lateinit var channel: ManagedChannel
@@ -53,7 +50,7 @@ class LoginActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(binding.root)
+        setContentView(R.layout.activity_login)
 
         DaggerDalalStreetApplicationComponent.builder().contextModule(ContextModule(this)).build().inject(this)
 
@@ -72,11 +69,9 @@ class LoginActivity : AppCompatActivity() {
                     .show()
         }
 
-        binding.apply {
-            clickRegisterTextView.setOnClickListener { onRegisterButtonClick() }
-            playButton.setOnClickListener { onLoginButtonClick() }
-            forgotPasswordTextView.setOnClickListener { onForgotPasswordClick() }
-        }
+        clickRegisterTextView.setOnClickListener { onRegisterButtonClick() }
+        play_button.setOnClickListener { onLoginButtonClick() }
+        forgotPasswordTextView.setOnClickListener { onForgotPasswordClick() }
 
         startLoginProcess(false)
     }
@@ -86,14 +81,14 @@ class LoginActivity : AppCompatActivity() {
         doAsync {
             if (ConnectionUtils.getConnectionInfo(this@LoginActivity)) {
                 uiThread {
-                    binding.playButton.isEnabled = true
+                    play_button.isEnabled = true
 
                     if (startedFromServerDown)
                         onLoginButtonClick()
                 }
             } else {
                 uiThread {
-                    binding.playButton.isEnabled = false
+                    play_button.isEnabled = false
                     showSnackBar(resources.getString(R.string.error_check_internet))
                 }
             }
@@ -102,9 +97,9 @@ class LoginActivity : AppCompatActivity() {
 
     private fun onLoginButtonClick() = lifecycleScope.launch {
         if (withContext(Dispatchers.IO) { ConnectionUtils.getConnectionInfo(this@LoginActivity) }) {
-            if (validateEmail(binding.emailEditText) && validatePassword()) {
-                val email = binding.emailEditText.text.toString()
-                val password = binding.passwordEditText.text.toString()
+            if (validateEmail(emailEditText) && validatePassword()) {
+                val email = emailEditText.text.toString()
+                val password = passwordEditText.text.toString()
                 signingInAlertDialog?.show()
                 loginAsynchronously(email, password)
             }
@@ -159,9 +154,9 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun validatePassword(): Boolean {
-        if (binding.passwordEditText.text.toString().trim { it <= ' ' }.isEmpty()) {
-            binding.passwordEditText.error = "Enter password"
-            binding.passwordEditText.requestFocus()
+        if (passwordEditText.text.toString().trim { it <= ' ' }.isEmpty()) {
+            passwordEditText.error = "Enter password"
+            passwordEditText.requestFocus()
             return false
         }
         return true
@@ -192,10 +187,10 @@ class LoginActivity : AppCompatActivity() {
 
                 MiscellaneousUtils.sessionId = loginResponse.sessionId
 
-                if (binding.passwordEditText.text.toString() != "" || binding.passwordEditText.text.toString().isNotEmpty())
+                if (passwordEditText.text.toString() != "" || passwordEditText.text.toString().isNotEmpty())
                     preferences.edit()
                             .putString(Constants.EMAIL_KEY, loginResponse.user.email)
-                            .putString(Constants.PASSWORD_KEY, binding.passwordEditText.text.toString())
+                            .putString(Constants.PASSWORD_KEY, passwordEditText.text.toString())
                             .putString(Constants.SESSION_KEY, loginResponse.sessionId)
                             .apply()
 
@@ -265,7 +260,7 @@ class LoginActivity : AppCompatActivity() {
                 finish()
             } else {
                 toast(loginResponse.statusMessage)
-                binding.passwordEditText.setText("")
+                passwordEditText.setText("")
             }
         } else {
             signingInAlertDialog?.dismiss()

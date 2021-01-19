@@ -7,19 +7,16 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.squareup.picasso.Picasso
+import kotlinx.android.synthetic.main.fragment_company_description.*
+import org.pragyan.dalal18.R
 import org.pragyan.dalal18.data.DalalViewModel
-import org.pragyan.dalal18.databinding.FragmentCompanyDescriptionBinding
-import org.pragyan.dalal18.utils.viewLifecycle
 
 class CompanyDescriptionFragment : Fragment() {
-
-    private var binding by viewLifecycle<FragmentCompanyDescriptionBinding>()
 
     private lateinit var model: DalalViewModel
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        binding = FragmentCompanyDescriptionBinding.inflate(inflater, container, false)
-        return binding.root
+        return inflater.inflate(R.layout.fragment_company_description, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -30,11 +27,9 @@ class CompanyDescriptionFragment : Fragment() {
 
         val currentStockId = arguments?.getInt(COMPANY_STOCK_ID_KEY) ?: return
 
-        binding.apply {
-            Picasso.get().load(model.getImageUrlFromStockId(currentStockId)).into(companyImageView)
-            companyNameTextView.text = model.getCompanyNameFromStockId(currentStockId)
-            companyDescriptionTextView.text = model.getDescriptionFromStockId(currentStockId)
-        }
+        Picasso.get().load(model.getImageUrlFromStockId(currentStockId)).into(companyImageView)
+        companyNameTextView.text = model.getCompanyNameFromStockId(currentStockId)
+        companyDescriptionTextView.text = model.getDescriptionFromStockId(currentStockId)
     }
 
     companion object {

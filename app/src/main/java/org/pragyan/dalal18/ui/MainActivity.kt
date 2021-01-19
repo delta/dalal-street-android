@@ -42,6 +42,7 @@ import dalalstreet.api.datastreams.*
 import dalalstreet.api.models.GameStateUpdateType
 import dalalstreet.api.models.TransactionType
 import io.grpc.stub.StreamObserver
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -55,7 +56,6 @@ import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent
 import org.pragyan.dalal18.data.DalalViewModel
 import org.pragyan.dalal18.data.GameStateDetails
 import org.pragyan.dalal18.data.GlobalStockDetails
-import org.pragyan.dalal18.databinding.ActivityMainBinding
 import org.pragyan.dalal18.notifications.NotificationFragment
 import org.pragyan.dalal18.notifications.PushNotificationService
 import org.pragyan.dalal18.utils.*
@@ -67,8 +67,6 @@ import javax.inject.Inject
 
 /* Subscribes to Transactions, Exchange, StockPrices and MarketEvents stream*/
 class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
-
-    private val binding by viewLifecycle(ActivityMainBinding::inflate)
 
     @Inject
     lateinit var actionServiceBlockingStub: DalalActionServiceGrpc.DalalActionServiceBlockingStub
@@ -109,7 +107,7 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
 
                     cashWorth += intent.getLongExtra(TRANSACTION_TOTAL_KEY, 0)
                     updateStockWorthViaStreamUpdates()
-                    changeTextViewValue(binding.cashWorthTextView, binding.cashIndicatorImageView, cashWorth)
+                    changeTextViewValue(cashWorthTextView, cashIndicatorImageView, cashWorth)
                 }
 
                 REFRESH_UNREAD_NOTIFICATIONS_COUNT -> {
@@ -142,7 +140,7 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(binding.root)
+        setContentView(R.layout.activity_main)
 
         model = ViewModelProvider(this).get(DalalViewModel::class.java)
 
@@ -187,20 +185,19 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
         }
 
         // Tried to use single view didn't work; It took up toolbar space also
-        binding.apply {
-            cashInHandTextView.setOnClickListener(worthViewClickListener)
-            cashWorthTextView.setOnClickListener(worthViewClickListener)
-            stocksInHandTextView.setOnClickListener(worthViewClickListener)
-            stockWorthTextView.setOnClickListener(worthViewClickListener)
-            totalInHandTextView.setOnClickListener(worthViewClickListener)
-            totalWorthTextView.setOnClickListener(worthViewClickListener)
-        }
+        cashInHandTextView.setOnClickListener(worthViewClickListener)
+        cashWorthTextView.setOnClickListener(worthViewClickListener)
+        stocksInHandTextView.setOnClickListener(worthViewClickListener)
+        stockWorthTextView.setOnClickListener(worthViewClickListener)
+        totalInHandTextView.setOnClickListener(worthViewClickListener)
+        totalWorthTextView.setOnClickListener(worthViewClickListener)
 
         createChannel()
         this.startService(Intent(this.baseContext, PushNotificationService::class.java))
 
-        binding.marketCloseIndicatorTextView.isSelected = true
+        marketCloseIndicatorTextView.isSelected = true
     }
+
 
     // Adding and setting up Navigation drawer
     private fun setupNavigationDrawer() {
@@ -210,17 +207,17 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
         val appBarConfig = AppBarConfiguration.Builder(setOf(R.id.home_dest, R.id.companies_dest, R.id.portfolio_dest,
                 R.id.exchange_dest, R.id.market_depth_dest, R.id.trade_dest, R.id.main_mortgage_dest, R.id.news_dest,
                 R.id.leaderboard_dest, R.id.open_orders_dest, R.id.transactions_dest, R.id.notifications_dest))
-                .setDrawerLayout(binding.mainDrawerLayout)
+                .setDrawerLayout(mainDrawerLayout)
                 .build()
 
         setupActionBarWithNavController(host.navController, appBarConfig)
-        binding.navigationViewLeft.setupWithNavController(host.navController)
+        navigationViewLeft.setupWithNavController(host.navController)
 
         MiscellaneousUtils.username = intent.getStringExtra(USERNAME_KEY)
-        val header = binding.navigationViewLeft.getHeaderView(0)
+        val header = navigationViewLeft.getHeaderView(0)
         header.find<TextView>(R.id.usernameTextView).text = MiscellaneousUtils.username
 
-        binding.mainDrawerLayout.addDrawerListener(object : DrawerLayout.DrawerListener {
+        mainDrawerLayout.addDrawerListener(object : DrawerLayout.DrawerListener {
             override fun onDrawerStateChanged(newState: Int) {
             }
 
@@ -248,13 +245,13 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        val navController = findNavController(R.id.main_host_fragment)
 
         val id = item.itemId
         contentView?.hideKeyboard()
 
         when (id) {
             R.id.action_notifications -> {
+                val navController = findNavController(R.id.main_host_fragment)
                 unreadNotificationsCount = 0
                 invalidateOptionsMenu()
                 navController.navigate(R.id.notifications_dest, null, NavOptions.Builder().setPopUpTo(R.id.home_dest, false).build())
@@ -262,6 +259,7 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
             }
 
             R.id.action_help -> {
+                val navController = findNavController(R.id.main_host_fragment)
                 navController.navigate(R.id.help_dest, null, NavOptions.Builder().setPopUpTo(R.id.home_dest, false).build())
                 return true
             }
@@ -282,10 +280,10 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
             }
 
             android.R.id.home -> {
-                if (navController.currentDestination?.id in listOf(R.id.company_description_dest, R.id.nav_news_details, R.id.help_dest)) {
+                if (NavHostFragment.findNavController(main_host_fragment).currentDestination?.id in listOf(R.id.company_description_dest, R.id.nav_news_details, R.id.help_dest)) {
                     onBackPressed()
                 } else {
-                    binding.mainDrawerLayout.openDrawer(GravityCompat.START)
+                    mainDrawerLayout?.openDrawer(GravityCompat.START)
                 }
                 return true
             }
@@ -502,7 +500,7 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
         }
         stockWorth = netStockWorth
 
-        changeTextViewValue(binding.stockWorthTextView, binding.stockIndicatorImageView, netStockWorth)
+        changeTextViewValue(stockWorthTextView, stockIndicatorImageView, netStockWorth)
 
         // We need to add reserved stocks worth to calculate total worth
         for ((stockId, quantity) in model.reservedStockDetails) {
@@ -511,7 +509,7 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
         // Backend has it the way TotalWorth = CashWorth + OwnedStockWorth + ReservedStockWorth
         totalWorth = netStockWorth + cashWorth + model.reservedCash
 
-        changeTextViewValue(binding.totalWorthTextView, binding.totalIndicatorImageView, totalWorth)
+        changeTextViewValue(totalWorthTextView, totalIndicatorImageView, totalWorth)
     }
 
     // Initial setup, called in activity's onCreate()
@@ -519,7 +517,7 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
 
         // Initial old value is 0; Zero is placeholder
         cashWorth = intent.getLongExtra(CASH_WORTH_KEY, -1)
-        animateWorthChange(0, cashWorth, binding.cashWorthTextView, binding.cashIndicatorImageView)
+        animateWorthChange(0, cashWorth, cashWorthTextView, cashIndicatorImageView)
 
         totalWorth = intent.getLongExtra(TOTAL_WORTH_KEY, -1)
 
@@ -556,7 +554,8 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
                 .setPositiveButton(getString(R.string.close)) { dI, _ -> dI.dismiss() }
                 .show()
 
-        binding.marketCloseIndicatorTextView.visibility = if (!isMarketOpen) View.VISIBLE else View.GONE
+        marketCloseIndicatorTextView.visibility = if (!isMarketOpen) View.VISIBLE else View.GONE
+
     }
 
     // Increases/decreases text view value depending on input parameters
@@ -600,8 +599,8 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
     }
 
     override fun onBackPressed() {
-        if (binding.mainDrawerLayout.isDrawerOpen(GravityCompat.START)) {
-            binding.mainDrawerLayout.closeDrawer(GravityCompat.START)
+        if (mainDrawerLayout.isDrawerOpen(GravityCompat.START)) {
+            mainDrawerLayout.closeDrawer(GravityCompat.START)
         } else {
             super.onBackPressed()
         }

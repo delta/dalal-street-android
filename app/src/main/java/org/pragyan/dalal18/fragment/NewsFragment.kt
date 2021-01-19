@@ -22,6 +22,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import dalalstreet.api.DalalActionServiceGrpc
 import dalalstreet.api.actions.GetMarketEventsRequest
 import dalalstreet.api.actions.GetMarketEventsResponse
+import kotlinx.android.synthetic.main.fragment_news.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -31,15 +32,12 @@ import org.pragyan.dalal18.adapter.NewsRecyclerAdapter
 import org.pragyan.dalal18.dagger.ContextModule
 import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent
 import org.pragyan.dalal18.data.NewsDetails
-import org.pragyan.dalal18.databinding.FragmentNewsBinding
 import org.pragyan.dalal18.utils.ConnectionUtils
 import org.pragyan.dalal18.utils.Constants
-import org.pragyan.dalal18.utils.viewLifecycle
 import javax.inject.Inject
 
-class NewsFragment : Fragment(), NewsRecyclerAdapter.NewsItemClickListener, SwipeRefreshLayout.OnRefreshListener {
 
-    private var binding by viewLifecycle<FragmentNewsBinding>()
+class NewsFragment : Fragment(), NewsRecyclerAdapter.NewsItemClickListener, SwipeRefreshLayout.OnRefreshListener {
 
     @Inject
     lateinit var actionServiceBlockingStub: DalalActionServiceGrpc.DalalActionServiceBlockingStub
@@ -71,7 +69,7 @@ class NewsFragment : Fragment(), NewsRecyclerAdapter.NewsItemClickListener, Swip
                     actionServiceBlockingStub.getMarketEvents(GetMarketEventsRequest.newBuilder().setCount(0).setLastEventId(0).build())
                 }
 
-                binding.newsSwipeRefreshLayout.isRefreshing = false
+                newsSwipeRefreshLayout?.isRefreshing = false
 
                 if (marketEventsResponse.statusCode == GetMarketEventsResponse.StatusCode.OK) {
 
@@ -81,15 +79,13 @@ class NewsFragment : Fragment(), NewsRecyclerAdapter.NewsItemClickListener, Swip
                         newsDetailsList.add(NewsDetails(currentMarketEvent.createdAt, currentMarketEvent.headline, currentMarketEvent.text, currentMarketEvent.imagePath))
                     }
 
-                    binding.apply {
-                        if (newsDetailsList.size != 0) {
-                            newsRecyclerAdapter?.swapData(newsDetailsList)
-                            noNewsTextView.visibility = View.GONE
-                            newsRecyclerView.visibility = View.VISIBLE
-                        } else {
-                            noNewsTextView.visibility = View.VISIBLE
-                            newsRecyclerView.visibility = View.GONE
-                        }
+                    if (newsDetailsList.size != 0) {
+                        newsRecyclerAdapter?.swapData(newsDetailsList)
+                        noNewsTextView?.visibility = View.GONE
+                        newsRecyclerView?.visibility = View.VISIBLE
+                    } else {
+                        noNewsTextView.visibility = View.VISIBLE
+                        newsRecyclerView.visibility = View.GONE
                     }
 
                 } else {
@@ -115,11 +111,10 @@ class NewsFragment : Fragment(), NewsRecyclerAdapter.NewsItemClickListener, Swip
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        binding = FragmentNewsBinding.inflate(inflater, container, false)
 
+        val rootView = inflater.inflate(R.layout.fragment_news, container, false)
         DaggerDalalStreetApplicationComponent.builder().contextModule(ContextModule(context!!)).build().inject(this)
-
-        return binding.root
+        return rootView
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -127,15 +122,13 @@ class NewsFragment : Fragment(), NewsRecyclerAdapter.NewsItemClickListener, Swip
         (activity as AppCompatActivity).supportActionBar?.title = resources.getString(R.string.news)
         newsRecyclerAdapter = NewsRecyclerAdapter(context, null, this)
 
-        binding.apply {
-            with(newsRecyclerView) {
-                layoutManager = LinearLayoutManager(context)
-                setHasFixedSize(false)
-                adapter = newsRecyclerAdapter
-            }
-
-            newsSwipeRefreshLayout.setOnRefreshListener(this@NewsFragment)
+        with(newsRecyclerView) {
+            layoutManager = LinearLayoutManager(context)
+            setHasFixedSize(false)
+            adapter = newsRecyclerAdapter
         }
+
+        newsSwipeRefreshLayout.setOnRefreshListener(this)
 
         val dialogView = LayoutInflater.from(context).inflate(R.layout.progress_dialog, null)
         (dialogView.findViewById<View>(R.id.progressDialog_textView) as TextView).setText(R.string.getting_latest_news)

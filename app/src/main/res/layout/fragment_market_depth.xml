@@ -9,16 +9,14 @@
         android:layout_height="wrap_content"
         android:background="#20202C"
         app:tabGravity="fill"
-        app:tabSelectedTextColor="@color/neon_blue"
-        app:tabTextAppearance="@style/TabHeadingStyle"
-        app:tabTextColor="@color/neutral_font_color" />
+        app:tabTextAppearance="@style/TabHeadingStyle" />
 
     <androidx.viewpager.widget.ViewPager
         android:id="@+id/content_viewPager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/tab_headings"
         android:layout_alignParentStart="true"
+        android:layout_below="@+id/tab_headings"
         android:layout_marginBottom="0dp"
         android:background="@color/black_background" />
 

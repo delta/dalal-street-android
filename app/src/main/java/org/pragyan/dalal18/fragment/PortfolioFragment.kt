@@ -21,6 +21,7 @@ import com.github.mikephil.charting.data.PieData
 import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.data.PieEntry
 import com.github.mikephil.charting.formatter.PercentFormatter
+import kotlinx.android.synthetic.main.fragment_portfolio.*
 import org.pragyan.dalal18.R
 import org.pragyan.dalal18.adapter.PortfolioRecyclerAdapter
 import org.pragyan.dalal18.dagger.ContextModule
@@ -28,17 +29,13 @@ import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent
 import org.pragyan.dalal18.data.DalalViewModel
 import org.pragyan.dalal18.data.Portfolio
 import org.pragyan.dalal18.data.StockDetails
-import org.pragyan.dalal18.databinding.FragmentPortfolioBinding
 import org.pragyan.dalal18.ui.MainActivity.Companion.GAME_STATE_UPDATE_ACTION
 import org.pragyan.dalal18.utils.Constants
-import org.pragyan.dalal18.utils.viewLifecycle
 import java.text.DecimalFormat
 import java.util.*
 import javax.inject.Inject
 
 class PortfolioFragment : Fragment() {
-
-    private var binding by viewLifecycle<FragmentPortfolioBinding>()
 
     @Inject
     lateinit var portfolioRecyclerAdapter: PortfolioRecyclerAdapter
@@ -63,20 +60,19 @@ class PortfolioFragment : Fragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        binding = FragmentPortfolioBinding.inflate(inflater, container, false)
 
+        val rootView = inflater.inflate(R.layout.fragment_portfolio, container, false)
         model = activity?.run { ViewModelProvider(this).get(DalalViewModel::class.java) }
                 ?: throw Exception("Invalid activity")
         cashWorth = container?.rootView?.findViewById<TextView>(R.id.cashWorthTextView)?.text.toString().replace(",", "").toLong()
         DaggerDalalStreetApplicationComponent.builder().contextModule(ContextModule(context!!)).build().inject(this)
-
-        return binding.root
+        return rootView
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         (activity as AppCompatActivity).supportActionBar?.title = resources.getString(R.string.portfolio)
-        with(binding.portfolioRecyclerView) {
+        with(portfolioRecyclerView) {
             layoutManager = LinearLayoutManager(context)
             adapter = portfolioRecyclerAdapter
             setHasFixedSize(false)
@@ -85,7 +81,7 @@ class PortfolioFragment : Fragment() {
         updatePortfolioTable()
 
         kreonLightTypeFace = ResourcesCompat.getFont(context!!, R.font.kreon_light)!!
-        with(binding.portfolioPiechart) {
+        with(portfolio_piechart) {
             setUsePercentValues(true)
             description.isEnabled = false
             setExtraOffsets(25f, 45f, 25f, 20f)
@@ -105,7 +101,7 @@ class PortfolioFragment : Fragment() {
             isRotationEnabled = false
         }
 
-        val legend = binding.portfolioPiechart.legend
+        val legend = portfolio_piechart.legend
         with(legend) {
             textSize = 18f
             verticalAlignment = com.github.mikephil.charting.components.Legend.LegendVerticalAlignment.TOP
@@ -180,16 +176,14 @@ class PortfolioFragment : Fragment() {
         dataSet.colors = colors
         dataSet.selectionShift = 5f
         dataSet.sliceSpace = 1f
-        val pieData = PieData(dataSet)
-        pieData.setValueFormatter(PercentFormatter())
-        pieData.setValueTextSize(8f)
-        pieData.setValueTypeface(kreonLightTypeFace)
-        pieData.setValueTextColor(android.graphics.Color.WHITE)
-        binding.portfolioPiechart.apply {
-            data = pieData
-            highlightValues(null)
-            invalidate()
-        }
+        val data = PieData(dataSet)
+        data.setValueFormatter(PercentFormatter())
+        data.setValueTextSize(8f)
+        data.setValueTypeface(kreonLightTypeFace)
+        data.setValueTextColor(android.graphics.Color.WHITE)
+        portfolio_piechart.data = data
+        portfolio_piechart.highlightValues(null)
+        portfolio_piechart.invalidate()
     }
 
     override fun onResume() {
@@ -225,19 +219,17 @@ class PortfolioFragment : Fragment() {
             }
         }
 
-        binding.apply {
-            if (portfolioList.size > 0) {
-                portfolioRecyclerAdapter.swapData(portfolioList)
+        if (portfolioList.size > 0) {
+            portfolioRecyclerAdapter.swapData(portfolioList)
 
-                reservedCashTextView.text = DecimalFormat(Constants.PRICE_FORMAT).format(model.reservedCash)
-                reservedStocksTextView.text = DecimalFormat(Constants.PRICE_FORMAT).format(model.getReservedStocksValue())
+            reservedCashTextView.text = DecimalFormat(Constants.PRICE_FORMAT).format(model.reservedCash)
+            reservedStocksTextView.text = DecimalFormat(Constants.PRICE_FORMAT).format(model.getReservedStocksValue())
 
-                portfolioScrollView.visibility = View.VISIBLE
-                emptyPortfolioTextView.visibility = View.GONE
-            } else {
-                portfolioScrollView.visibility = View.GONE
-                emptyPortfolioTextView.visibility = View.VISIBLE
-            }
+            portfolioScrollView.visibility = View.VISIBLE
+            emptyPortfolioTextView.visibility = View.GONE
+        } else {
+            portfolioScrollView.visibility = View.GONE
+            emptyPortfolioTextView.visibility = View.VISIBLE
         }
     }
 }

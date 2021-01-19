@@ -7,41 +7,34 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.SharedElementCallback
 import androidx.core.view.ViewCompat
 import androidx.fragment.app.Fragment
 import androidx.transition.TransitionInflater
 import com.squareup.picasso.Picasso
+import kotlinx.android.synthetic.main.fragment_news_details.*
 import org.pragyan.dalal18.R
-import org.pragyan.dalal18.databinding.FragmentNewsDetailsBinding
 import org.pragyan.dalal18.utils.Constants
 import org.pragyan.dalal18.utils.MiscellaneousUtils.parseDate
-import org.pragyan.dalal18.utils.viewLifecycle
 
 class NewsDetailsFragment : Fragment() {
 
-    private var binding by viewLifecycle<FragmentNewsDetailsBinding>()
-
     private lateinit var loadingDialog: AlertDialog
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        binding = FragmentNewsDetailsBinding.inflate(inflater, container, false)
-        return binding.root
-    }
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
+            inflater.inflate(R.layout.fragment_news_details, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         (activity as AppCompatActivity).supportActionBar?.title = resources.getString(R.string.news_details)
 
-        binding.apply {
-            newsDetailsHead.text = arguments?.getString(Constants.NEWS_HEAD_KEY)
-            newsDetailsContent.text = arguments?.getString(Constants.NEWS_CONTENT_KEY)
-            newsDetailsCreatedAt.text = parseDate(arguments?.getString(Constants.NEWS_CREATED_AT_KEY))
-            Picasso.get().load("https://dalal.pragyan.org/public/src/images/news/" + arguments?.getString(Constants.NEWS_IMAGE_PATH_KEY)).into(newsDetailsImage)
+        news_details_head.text = arguments?.getString(Constants.NEWS_HEAD_KEY)
+        news_details_content.text = arguments?.getString(Constants.NEWS_CONTENT_KEY)
+        news_details_created_at.text = parseDate(arguments?.getString(Constants.NEWS_CREATED_AT_KEY))
+        Picasso.get().load("https://dalal.pragyan.org/public/src/images/news/" + arguments?.getString(Constants.NEWS_IMAGE_PATH_KEY)).into(news_details_image)
 
-            ViewCompat.setTransitionName(newsDetailsHead, arguments?.getString(Constants.HEAD_TRANSITION_KEY))
-            ViewCompat.setTransitionName(newsDetailsContent, arguments?.getString(Constants.CONTENT_TRANSITION_KEY))
-            ViewCompat.setTransitionName(newsDetailsCreatedAt, arguments?.getString(Constants.CREATED_AT_TRANSITION_KEY))
-        }
+        ViewCompat.setTransitionName(news_details_head, arguments?.getString(Constants.HEAD_TRANSITION_KEY))
+        ViewCompat.setTransitionName(news_details_content, arguments?.getString(Constants.CONTENT_TRANSITION_KEY))
+        ViewCompat.setTransitionName(news_details_created_at, arguments?.getString(Constants.CREATED_AT_TRANSITION_KEY))
 
         activity?.title = getString(R.string.news_details)
         loadingDialog.dismiss()
@@ -58,4 +51,5 @@ class NewsDetailsFragment : Fragment() {
         loadingDialog = AlertDialog.Builder(activity).setView(dialogBox).setCancelable(false).create()
         loadingDialog.show()
     }
+
 }

@@ -44,10 +44,6 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
         sourceCompatibility JavaVersion.VERSION_1_8
     }
-
-    buildFeatures {
-        viewBinding true
-    }
 }
 
 protobuf {
@@ -126,7 +122,6 @@ dependencies {
     implementation (Libs.navigationArchUIKtx)
 
     // Lifecycle
-    implementation (Libs.lifecycleCommon)
     implementation (Libs.lifecycleExtensions)
     implementation (Libs.lifecycleRuntime)
 

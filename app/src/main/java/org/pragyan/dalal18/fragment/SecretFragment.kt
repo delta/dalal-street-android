@@ -10,6 +10,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import dalalstreet.api.DalalActionServiceGrpc
 import dalalstreet.api.actions.*
+import kotlinx.android.synthetic.main.fragment_secret.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -18,11 +19,9 @@ import org.pragyan.dalal18.R
 import org.pragyan.dalal18.dagger.ContextModule
 import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent
 import org.pragyan.dalal18.data.DalalViewModel
-import org.pragyan.dalal18.databinding.FragmentSecretBinding
 import org.pragyan.dalal18.utils.ConnectionUtils
 import org.pragyan.dalal18.utils.Constants
 import org.pragyan.dalal18.utils.hideKeyboard
-import org.pragyan.dalal18.utils.viewLifecycle
 import javax.inject.Inject
 
 /**
@@ -31,8 +30,6 @@ import javax.inject.Inject
 
 class SecretFragment : Fragment() {
 
-    private var binding by viewLifecycle<FragmentSecretBinding>()
-
     @Inject
     lateinit var actionServiceBlockingStub: DalalActionServiceGrpc.DalalActionServiceBlockingStub
 
@@ -40,29 +37,27 @@ class SecretFragment : Fragment() {
     private var message = ""
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        binding = FragmentSecretBinding.inflate(inflater, container, false)
+        val rootView = inflater.inflate(R.layout.fragment_secret, container, false)
 
         model = activity?.run { ViewModelProvider(this).get(DalalViewModel::class.java) }
                 ?: throw Exception("Invalid activity")
         DaggerDalalStreetApplicationComponent.builder().contextModule(ContextModule(context!!)).build().inject(this)
 
-        return binding.root
+        return rootView
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         (activity as AppCompatActivity).supportActionBar?.title = resources.getString(R.string.admin_panel)
 
-        binding.apply {
-            openMarketButton.setOnClickListener { openMarket() }
-            closeMarketButton.setOnClickListener { closeMarket() }
-            sendNotificationButton.setOnClickListener { sendNotification() }
-            setBankruptButton.setOnClickListener { setCompanyBankrupt(bankruptSwitch.isChecked) }
-            setDividendButton.setOnClickListener { setCompanyDividends(dividendSwitch.isChecked) }
-            stocksToExchangeButton.setOnClickListener { addStocksToExchange() }
-            updateStockPriceButton.setOnClickListener { updateStockPrice() }
-            sendNewsButton.setOnClickListener { sendNews() }
-        }
+        openMarketButton.setOnClickListener { openMarket() }
+        closeMarketButton.setOnClickListener { closeMarket() }
+        sendNotificationButton.setOnClickListener { sendNotification() }
+        setBankruptButton.setOnClickListener { setCompanyBankrupt(bankruptSwitch.isChecked) }
+        setDividendButton.setOnClickListener { setCompanyDividends(dividendSwitch.isChecked) }
+        stocksToExchangeButton.setOnClickListener { addStocksToExchange() }
+        updateStockPriceButton.setOnClickListener { updateStockPrice() }
+        sendNewsButton.setOnClickListener { sendNews() }
     }
 
     private fun openMarket() = lifecycleScope.launch {
@@ -94,16 +89,14 @@ class SecretFragment : Fragment() {
 
         withContext(Dispatchers.IO) {
             if (ConnectionUtils.getConnectionInfo(context!!) && ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
-                binding.apply {
-                    if (userIdEditText.text.toString().isNotBlank() && notificationEditText.text.toString().isNotBlank()) {
-                        val response = actionServiceBlockingStub.sendNotifications(SendNotifications.SendNotificationsRequest.newBuilder()
-                                .setText(notificationEditText.text.toString())
-                                .setUserId(userIdEditText.text.toString().toInt())
-                                .setIsGlobal(isGlobalSwitch.isChecked)
-                                .build())
+                if (userIdEditText.text.toString().isNotBlank() && notificationEditText.text.toString().isNotBlank()) {
+                    val response = actionServiceBlockingStub.sendNotifications(SendNotifications.SendNotificationsRequest.newBuilder()
+                            .setText(notificationEditText.text.toString())
+                            .setUserId(userIdEditText.text.toString().toInt())
+                            .setIsGlobal(isGlobalSwitch.isChecked)
+                            .build())
 
-                        message = response.statusMessage
-                    }
+                    message = response.statusMessage
                 }
             }
         }
@@ -115,9 +108,9 @@ class SecretFragment : Fragment() {
 
         withContext(Dispatchers.IO) {
             if (ConnectionUtils.getConnectionInfo(context!!) && ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
-                if (binding.stockIdEditText2.text.toString().isNotBlank()) {
+                if (stockIdEditText2.text.toString().isNotBlank()) {
                     val response = actionServiceBlockingStub.setBankruptcy(SetBankruptcyRequest.newBuilder()
-                            .setStockId(binding.stockIdEditText2.text.toString().toInt())
+                            .setStockId(stockIdEditText2.text.toString().toInt())
                             .setIsBankrupt(isBankrupt)
                             .build())
                     message = response.statusMessage
@@ -132,9 +125,9 @@ class SecretFragment : Fragment() {
 
         withContext(Dispatchers.IO) {
             if (ConnectionUtils.getConnectionInfo(context!!) && ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
-                if (binding.stockIdEditText2.text.toString().isNotBlank()) {
+                if (stockIdEditText2.text.toString().isNotBlank()) {
                     val response = actionServiceBlockingStub.setGivesDividends(SetGivesDividendsRequest.newBuilder()
-                            .setStockId(binding.stockIdEditText2.text.toString().toInt())
+                            .setStockId(stockIdEditText2.text.toString().toInt())
                             .setGivesDividends(givesDividends)
                             .build())
                     message = response.statusMessage
@@ -149,10 +142,10 @@ class SecretFragment : Fragment() {
 
         withContext(Dispatchers.IO) {
             if (ConnectionUtils.getConnectionInfo(context!!) && ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
-                if (binding.stockIdEditText.text.toString().isNotBlank() && binding.stocksToExchangeEditText.text.toString().isNotBlank()) {
+                if (stockIdEditText.text.toString().isNotBlank() && stocksToExchangeEditText.text.toString().isNotBlank()) {
                     val response = actionServiceBlockingStub.addStocksToExchange(AddStocksToExchange.AddStocksToExchangeRequest.newBuilder()
-                            .setStockId(binding.stockIdEditText.text.toString().toInt())
-                            .setNewStocks(binding.stocksToExchangeEditText.text.toString().toLong())
+                            .setStockId(stockIdEditText.text.toString().toInt())
+                            .setNewStocks(stocksToExchangeEditText.text.toString().toLong())
                             .build())
                     message = response.statusMessage
                 }
@@ -166,10 +159,10 @@ class SecretFragment : Fragment() {
 
         withContext(Dispatchers.IO) {
             if (ConnectionUtils.getConnectionInfo(context!!) && ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
-                if (binding.stockIdEditText.text.toString().isNotBlank() && binding.newStockPriceEditText.text.toString().isNotBlank()) {
+                if (stockIdEditText.text.toString().isNotBlank() && newStockPriceEditText.text.toString().isNotBlank()) {
                     val response = actionServiceBlockingStub.updateStockPrice(UpdateStockPrice.UpdateStockPriceRequest.newBuilder()
-                            .setStockId(binding.stockIdEditText.text.toString().toInt())
-                            .setNewPrice(binding.newStockPriceEditText.text.toString().toLong())
+                            .setStockId(stockIdEditText.text.toString().toInt())
+                            .setNewPrice(newStockPriceEditText.text.toString().toLong())
                             .build())
                     message = response.statusMessage
                 }
@@ -183,18 +176,16 @@ class SecretFragment : Fragment() {
 
         withContext(Dispatchers.IO) {
             if (ConnectionUtils.getConnectionInfo(context!!) && ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
-                binding.apply {
-                    if (headlinesEditText.text.toString().isNotBlank() && newsDescriptionEditText.text.toString().isNotBlank() &&
-                            newsImageUrlEditText.text.toString().isNotBlank()) {
-                        val response = actionServiceBlockingStub.addMarketEvent(AddMarketEvent.AddMarketEventRequest.newBuilder()
-                                .setHeadline(headlinesEditText.text.toString())
-                                .setText(newsDescriptionEditText.text.toString())
-                                .setStockId(stockIdEditText3.text.toString().toInt())
-                                .setImageUrl(newsImageUrlEditText.text.toString())
-                                .setIsGlobal(isGlobalNewsSwitch.isChecked)
-                                .build())
-                        message = response.statusMessage
-                    }
+                if (headlinesEditText.text.toString().isNotBlank() && newsDescriptionEditText.text.toString().isNotBlank() &&
+                        newsImageUrlEditText.text.toString().isNotBlank()) {
+                    val response = actionServiceBlockingStub.addMarketEvent(AddMarketEvent.AddMarketEventRequest.newBuilder()
+                            .setHeadline(headlinesEditText.text.toString())
+                            .setText(newsDescriptionEditText.text.toString())
+                            .setStockId(stockIdEditText3.text.toString().toInt())
+                            .setImageUrl(newsImageUrlEditText.text.toString())
+                            .setIsGlobal(isGlobalNewsSwitch.isChecked)
+                            .build())
+                    message = response.statusMessage
                 }
             }
         }

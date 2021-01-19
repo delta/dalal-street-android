@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import dalalstreet.api.DalalActionServiceGrpc
 import dalalstreet.api.actions.GetLeaderboardRequest
 import dalalstreet.api.actions.GetLeaderboardResponse
+import kotlinx.android.synthetic.main.fragment_leaderboard.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -24,18 +25,14 @@ import org.pragyan.dalal18.adapter.LeaderboardRecyclerAdapter
 import org.pragyan.dalal18.dagger.ContextModule
 import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent
 import org.pragyan.dalal18.data.LeaderBoardDetails
-import org.pragyan.dalal18.databinding.FragmentLeaderboardBinding
 import org.pragyan.dalal18.utils.ConnectionUtils
 import org.pragyan.dalal18.utils.Constants
 import org.pragyan.dalal18.utils.MiscellaneousUtils
-import org.pragyan.dalal18.utils.viewLifecycle
 import java.util.*
 import javax.inject.Inject
 
 /* Uses GetLeaderBoard() to set leader board table and to set user's current rank */
 class LeaderboardFragment : Fragment() {
-
-    private var binding by viewLifecycle<FragmentLeaderboardBinding>()
 
     @Inject
     lateinit var actionServiceBlockingStub: DalalActionServiceGrpc.DalalActionServiceBlockingStub
@@ -61,12 +58,13 @@ class LeaderboardFragment : Fragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        binding = FragmentLeaderboardBinding.inflate(inflater, container, false)
+        // Inflate the layout for this fragment
+        val rootView = inflater.inflate(R.layout.fragment_leaderboard, container, false)
 
         totalWorthTextView = container!!.rootView.findViewById(R.id.totalWorthTextView)
 
         DaggerDalalStreetApplicationComponent.builder().contextModule(ContextModule(context!!)).build().inject(this)
-        return binding.root
+        return rootView
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -83,7 +81,7 @@ class LeaderboardFragment : Fragment() {
         getRankListAsynchronously()
         leaderBoardRecyclerAdapter = LeaderboardRecyclerAdapter(context, leaderBoardDetailsList)
 
-        with(binding.leaderboardRecyclerView) {
+        with(leaderboard_recyclerView) {
             layoutManager = LinearLayoutManager(context)
             setHasFixedSize(false)
             adapter = leaderBoardRecyclerAdapter
@@ -93,27 +91,25 @@ class LeaderboardFragment : Fragment() {
     private fun getRankListAsynchronously() = lifecycleScope.launch {
         leaderBoardDetailsList.clear()
         loadingDialog.show()
-        binding.leaderboardRecyclerView.visibility = View.GONE
+        leaderboard_recyclerView.visibility = View.GONE
         if (withContext(Dispatchers.IO) { ConnectionUtils.getConnectionInfo(context) }) {
             if (withContext(Dispatchers.IO) { ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT) }) {
                 val rankListResponses = mutableListOf<GetLeaderboardResponse>()
 
                 for (i in 1..LEADER_BOARD_SIZE step 10) {
                     rankListResponses.add(withContext(Dispatchers.IO) {
-                        actionServiceBlockingStub.getLeaderboard(GetLeaderboardRequest.newBuilder().setStartingId(i).build())
-                    })
+                        actionServiceBlockingStub.getLeaderboard(GetLeaderboardRequest.newBuilder().setStartingId(i).build()) })
                 }
 
                 for (rankListResponse in rankListResponses) {
                     if (rankListResponse.statusCode == GetLeaderboardResponse.StatusCode.OK) {
-                        binding.apply {
-                            personalRankTextView.text = rankListResponse.myRank.toString()
-                            personalWealthTextView.text = totalWorthTextView.text.toString()
-                            personalNameTextView.text = MiscellaneousUtils.username
-                            for (currentRow in rankListResponse.rankListList)
-                                leaderBoardDetailsList.add(LeaderBoardDetails(currentRow.rank, currentRow.userName, currentRow.stockWorth, currentRow.totalWorth, currentRow.isBlocked))
-                            leaderboardRecyclerView.visibility = View.VISIBLE
+                        personal_rank_textView.text = rankListResponse.myRank.toString()
+                        personal_wealth_textView.text = totalWorthTextView.text.toString()
+                        personal_name_textView.text = MiscellaneousUtils.username
+                        for (currentRow in rankListResponse.rankListList) {
+                            leaderBoardDetailsList.add(LeaderBoardDetails(currentRow.rank, currentRow.userName, currentRow.stockWorth, currentRow.totalWorth, currentRow.isBlocked))
                         }
+                        leaderboard_recyclerView.visibility = View.VISIBLE
                     } else {
                         context?.longToast("Server internal error")
                     }

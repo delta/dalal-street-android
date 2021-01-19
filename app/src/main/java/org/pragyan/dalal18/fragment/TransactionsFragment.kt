@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView
 import dalalstreet.api.DalalActionServiceGrpc
 import dalalstreet.api.actions.GetTransactionsRequest
 import dalalstreet.api.models.Transaction
+import kotlinx.android.synthetic.main.fragment_transactions.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
 import org.pragyan.dalal18.R
@@ -23,16 +24,12 @@ import org.pragyan.dalal18.adapter.TransactionRecyclerAdapter
 import org.pragyan.dalal18.dagger.ContextModule
 import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent
 import org.pragyan.dalal18.data.DalalViewModel
-import org.pragyan.dalal18.databinding.FragmentTransactionsBinding
 import org.pragyan.dalal18.utils.ConnectionUtils
 import org.pragyan.dalal18.utils.Constants
-import org.pragyan.dalal18.utils.viewLifecycle
 import java.util.*
 import javax.inject.Inject
 
 class TransactionsFragment : Fragment() {
-
-    private var binding by viewLifecycle<FragmentTransactionsBinding>()
 
     @Inject
     lateinit var actionServiceBlockingStub: DalalActionServiceGrpc.DalalActionServiceBlockingStub
@@ -61,12 +58,12 @@ class TransactionsFragment : Fragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        binding = FragmentTransactionsBinding.inflate(inflater, container, false)
+        val rootView = inflater.inflate(R.layout.fragment_transactions, container, false)
         DaggerDalalStreetApplicationComponent.builder().contextModule(ContextModule(context!!)).build().inject(this)
 
         model = activity?.run { ViewModelProvider(this).get(DalalViewModel::class.java) }
                 ?: throw Exception("Invalid activity")
-        return binding.root
+        return rootView
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -75,7 +72,7 @@ class TransactionsFragment : Fragment() {
         (activity as AppCompatActivity).supportActionBar?.title = resources.getString(R.string.transactions)
         transactionsAdapter = TransactionRecyclerAdapter(context, null, model.globalStockDetails)
 
-        with(binding.transactionsRecyclerView) {
+        with(transactionsRecyclerView) {
             adapter = transactionsAdapter
             setHasFixedSize(false)
             layoutManager = LinearLayoutManager(context)
@@ -115,19 +112,17 @@ class TransactionsFragment : Fragment() {
 
                         transactionList.addAll(transactionsResponse.transactionsList)
 
-                        binding.apply {
-                            if (transactionList.size == 0) {
-                                transactionsRecyclerView.visibility = View.GONE
-                                noTransactionsTextView.visibility = View.VISIBLE
-                            } else {
-                                transactionsAdapter?.swapData(transactionList)
-                                transactionsRecyclerView.visibility = View.VISIBLE
-                                noTransactionsTextView.visibility = View.GONE
+                        if (transactionList.size == 0) {
+                            transactionsRecyclerView.visibility = View.GONE
+                            noTransactionsTextView.visibility = View.VISIBLE
+                        } else {
+                            transactionsAdapter?.swapData(transactionList)
+                            transactionsRecyclerView.visibility = View.VISIBLE
+                            noTransactionsTextView.visibility = View.GONE
 
-                                preferences.edit()
-                                        .putInt(Constants.LAST_TRANSACTION_ID, transactionsResponse.transactionsList.last().id)
-                                        .apply()
-                            }
+                            preferences.edit()
+                                    .putInt(Constants.LAST_TRANSACTION_ID, transactionsResponse.transactionsList.last().id)
+                                    .apply()
                         }
                     }
                 } else {

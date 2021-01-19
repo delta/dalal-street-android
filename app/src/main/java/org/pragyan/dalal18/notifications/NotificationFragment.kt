@@ -2,6 +2,7 @@ package org.pragyan.dalal18.notifications
 
 import android.content.*
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,10 +11,12 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import dalalstreet.api.DalalActionServiceGrpc
 import dalalstreet.api.actions.GetNotificationsRequest
+import kotlinx.android.synthetic.main.fragment_notification.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
 import org.pragyan.dalal18.R
@@ -21,17 +24,13 @@ import org.pragyan.dalal18.adapter.NotificationRecyclerAdapter
 import org.pragyan.dalal18.dagger.ContextModule
 import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent
 import org.pragyan.dalal18.data.Notification
-import org.pragyan.dalal18.databinding.FragmentNotificationBinding
 import org.pragyan.dalal18.ui.MainActivity
 import org.pragyan.dalal18.utils.ConnectionUtils
 import org.pragyan.dalal18.utils.Constants
-import org.pragyan.dalal18.utils.viewLifecycle
 import java.util.*
 import javax.inject.Inject
 
 class NotificationFragment : Fragment() {
-
-    private var binding by viewLifecycle<FragmentNotificationBinding>()
 
     @Inject
     lateinit var actionServiceBlockingStub: DalalActionServiceGrpc.DalalActionServiceBlockingStub
@@ -58,9 +57,9 @@ class NotificationFragment : Fragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        binding = FragmentNotificationBinding.inflate(inflater, container, false)
+        val rootView = inflater.inflate(R.layout.fragment_notification, container, false)
         DaggerDalalStreetApplicationComponent.builder().contextModule(ContextModule(context!!)).build().inject(this)
-        return binding.root
+        return rootView
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -77,7 +76,7 @@ class NotificationFragment : Fragment() {
                 .create()
 
         notificationRecyclerAdapter = NotificationRecyclerAdapter(context, null)
-        with(binding.notificationsRecyclerView) {
+        with(notifications_recyclerView) {
             adapter = notificationRecyclerAdapter
             setHasFixedSize(false)
             addOnScrollListener(CustomScrollListener())
@@ -113,12 +112,12 @@ class NotificationFragment : Fragment() {
                             }
 
                             notificationRecyclerAdapter.swapData(customNotificationList)
-                            binding.noNotificationTextView.visibility = View.GONE
-                            binding.notificationsRecyclerView.visibility = View.VISIBLE
+                            noNotification_textView.visibility = View.GONE
+                            notifications_recyclerView.visibility = View.VISIBLE
 
                         } else {
-                            binding.noNotificationTextView.visibility = View.VISIBLE
-                            binding.notificationsRecyclerView.visibility = View.GONE
+                            noNotification_textView.visibility = View.VISIBLE
+                            notifications_recyclerView.visibility = View.GONE
                         }
                     }
                 } else {
