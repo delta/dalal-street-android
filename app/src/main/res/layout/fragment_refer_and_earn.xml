@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/black_background">
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:clickable="true"
+        android:background="@color/black_background"
+        android:elevation="10dp"
+        android:focusable="true"
+        app:cardCornerRadius="12dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/black_background"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/referralName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/neon_yellow"
+                android:layout_marginTop="12dp"
+                android:textSize="35sp"
+                android:text="Referral Code"
+                android:gravity="center"
+                android:fontFamily="@font/marcellus_sc"/>
+
+            <LinearLayout
+                android:id="@+id/code_layout"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:orientation="horizontal"
+                android:layout_below="@+id/referralName"
+                android:weightSum="5">
+
+                <EditText
+                    android:id="@+id/userReferralCodeEditText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_margin="10dp"
+                    android:textAlignment="center"
+                    android:enabled="false"
+                    android:layout_weight="4"
+                    android:fontFamily="@font/marcellus_sc"
+                    android:background="@color/black_background"
+                    android:hint="abcdefghijklmno"
+                    android:textColorHint="@color/bronze_medal" />
+
+                <ImageButton
+                    android:id="@+id/referralCodeButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_margin="8dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/black_green_rounded_button"
+                    android:elevation="10dp"
+                    android:layout_gravity="center"
+                   android:src="@drawable/code_copy" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/code_layout">
+
+                <Button
+                    android:id="@+id/shareButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:background="@drawable/black_green_rounded_button"
+                    android:text="share your code"
+                    android:textColor="#ffffff" />
+
+            </LinearLayout>
+
+        </RelativeLayout>
+
+    </androidx.cardview.widget.CardView>
+</androidx.constraintlayout.widget.ConstraintLayout>

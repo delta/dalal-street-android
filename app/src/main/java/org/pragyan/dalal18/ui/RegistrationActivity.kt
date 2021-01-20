@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -15,6 +16,7 @@ import dalalstreet.api.DalalActionServiceGrpc
 import dalalstreet.api.actions.RegisterRequest
 import dalalstreet.api.actions.RegisterResponse
 import io.grpc.ManagedChannel
+import kotlinx.coroutines.Dispatchers
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.toast
 import org.jetbrains.anko.uiThread
@@ -91,21 +93,31 @@ class RegistrationActivity : AppCompatActivity() {
                                 .setFullName(nameEditText.text.toString())
                                 .setPassword(passwordEditText.text.toString())
                                 .setUserName(nameEditText.text.toString())
+                                .setReferralCode(referralCodeEditText.text.toString())
                                 .build())
                     }
 
-                    val message = when (response.statusCode) {
-                        RegisterResponse.StatusCode.OK -> "Successfully Registered! Please check your inbox to verify email."
-                        RegisterResponse.StatusCode.AlreadyRegisteredError -> "You have already registered."
-                        else -> response.statusMessage
-                    }
+                    if (response.statusCode == RegisterResponse.StatusCode.InvalidReferralCodeError) {
+                        registrationAlertDialog?.dismiss()
 
-                    uiThread {
-                        val loginIntent = Intent(this@RegistrationActivity, LoginActivity::class.java)
-                        loginIntent.putExtra(REGISTER_MESSAGE_KEY, message)
-                        loginIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                        startActivity(loginIntent)
-                        finish()
+                        // notify user in the UI thread about this error !
+                        Toast.makeText(this@RegistrationActivity, "Invalid Referral Code !", Toast.LENGTH_LONG).show()
+
+                    } else {
+                        val message = when (response.statusCode) {
+                            RegisterResponse.StatusCode.OK -> "Successfully Registered! Please check your inbox to verify email."
+                            RegisterResponse.StatusCode.AlreadyRegisteredError -> "You have already registered."
+                            //RegisterResponse.StatusCode.InvalidReferralCodeError -> "Invalid Referral Code"
+                            else -> response.statusMessage
+                        }
+
+                        uiThread {
+                            val loginIntent = Intent(this@RegistrationActivity, LoginActivity::class.java)
+                            loginIntent.putExtra(REGISTER_MESSAGE_KEY, message)
+                            loginIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                            startActivity(loginIntent)
+                            finish()
+                        }
                     }
                 } else {
                     uiThread { showErrorSnackBar(resources.getString(R.string.error_server_down)) }
@@ -129,4 +141,5 @@ class RegistrationActivity : AppCompatActivity() {
     companion object {
         const val REGISTER_MESSAGE_KEY = "register-message-key"
     }
+
 }

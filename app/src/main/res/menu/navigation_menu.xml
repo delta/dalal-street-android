@@ -16,7 +16,7 @@
         <item
             android:id="@+id/portfolio_dest"
             android:icon="@drawable/portfolio_icon"
-            android:title="@string/portfolio"/>
+            android:title="@string/portfolio" />
 
     </group>
 
@@ -50,7 +50,7 @@
             android:id="@+id/news_dest"
             android:icon="@drawable/news_icon"
             android:title="@string/news" />
-        
+
         <item
             android:id="@+id/leaderboard_dest"
             android:icon="@drawable/trophy_icon"
@@ -67,5 +67,15 @@
             android:title="@string/transactions" />
 
     </group>
+
+    <group android:id="@+id/referral_code">
+
+        <item
+            android:id="@+id/refer_and_earn_dest"
+            android:icon="@drawable/refer_and_earn_icon"
+            android:title="@string/refer_and_earn" />
+
+    </group>
+
 
 </menu>
