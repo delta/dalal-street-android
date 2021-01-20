@@ -71,7 +71,7 @@
     <group android:id="@+id/referral_code">
 
         <item
-            android:id="@+id/refer_and_earn"
+            android:id="@+id/refer_and_earn_dest"
             android:icon="@drawable/refer_and_earn_icon"
             android:title="@string/refer_and_earn" />
 

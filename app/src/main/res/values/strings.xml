@@ -407,6 +407,7 @@
     <string name="notifications">Notifications</string>
     <string name="not_registered_click_here_to_register">Not registered? Click here to register</string>
     <string name="registering">Registering…</string>
+    <string name="get_referral_code">getting referral code ...</string>
     <string name="retrieval_rate_per_stock">Retrieval Rate/Stock</string>
     <string name="mortgage_uppercase">MORTGAGE</string>
     <string name="retrieve_uppercase">RETRIEVE</string>
