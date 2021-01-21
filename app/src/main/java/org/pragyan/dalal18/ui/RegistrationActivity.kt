@@ -1,8 +1,10 @@
 package org.pragyan.dalal18.ui
 
+import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.ArrayAdapter
@@ -37,7 +39,9 @@ class RegistrationActivity : AppCompatActivity() {
     @Inject
     lateinit var channel: ManagedChannel
 
+    private val invalidReferralCodeMessage = "Invalid Referral Code"
     private var registrationAlertDialog: AlertDialog? = null
+    private var invalidReferralAlertDialog: AlertDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,6 +56,18 @@ class RegistrationActivity : AppCompatActivity() {
         setSupportActionBar(binding.registrationToolBar)
         supportActionBar?.setHomeAsUpIndicator(R.drawable.clear_icon)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+        val invalidReferralAlertDialogBuilder = AlertDialog.Builder(this, R.style.AlertDialogTheme)
+        invalidReferralAlertDialogBuilder.setTitle(invalidReferralCodeMessage)
+                .setMessage("Your referral code is incorrect, recheck it or keep it empty.")
+                .setPositiveButton("OK") { p0, p1 ->
+                    Log.i("Invalid Referral Code", "Cliced OK.")
+                    invalidReferralAlertDialog?.dismiss()
+                }
+
+
+        invalidReferralAlertDialog = invalidReferralAlertDialogBuilder.create()
+
         title = "One-Time Registration"
 
         val countries = resources.getStringArray(R.array.countries_array)
@@ -97,21 +113,17 @@ class RegistrationActivity : AppCompatActivity() {
                                 .build())
                     }
 
-                    if (response.statusCode == RegisterResponse.StatusCode.InvalidReferralCodeError) {
-                        registrationAlertDialog?.dismiss()
+                    val message = when (response.statusCode) {
+                        RegisterResponse.StatusCode.OK -> "Successfully Registered! Please check your inbox to verify email."
+                        RegisterResponse.StatusCode.AlreadyRegisteredError -> "You have already registered."
+                        RegisterResponse.StatusCode.InvalidReferralCodeError -> invalidReferralCodeMessage
+                        else -> response.statusMessage
+                    }
 
-                        // notify user in the UI thread about this error !
-                        Toast.makeText(this@RegistrationActivity, "Invalid Referral Code !", Toast.LENGTH_LONG).show()
-
-                    } else {
-                        val message = when (response.statusCode) {
-                            RegisterResponse.StatusCode.OK -> "Successfully Registered! Please check your inbox to verify email."
-                            RegisterResponse.StatusCode.AlreadyRegisteredError -> "You have already registered."
-                            //RegisterResponse.StatusCode.InvalidReferralCodeError -> "Invalid Referral Code"
-                            else -> response.statusMessage
-                        }
-
-                        uiThread {
+                    uiThread {
+                        if(message == invalidReferralCodeMessage) {
+                            invalidReferralAlertDialog?.show()
+                        } else {
                             val loginIntent = Intent(this@RegistrationActivity, LoginActivity::class.java)
                             loginIntent.putExtra(REGISTER_MESSAGE_KEY, message)
                             loginIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
