@@ -10,6 +10,9 @@ public class Constants {
     // TODO (Release): Change company image base URL and how is built
     public static final String COMPANY_IMAGES_BASE_URL = "https://dalal.pragyan.org/public/src/images/companies/";
 
+    public static final String PLAYSTORE_URL = "http://bit.ly/Dalal-Street-app";
+    public static final String DALAL_SHARE_MESSAGE = "Install Dalal Street app from playstore - " + PLAYSTORE_URL + "\n\nUse this Referral Code - ";
+
     public static final String REFRESH_MARKET_EVENTS_FOR_HOME_AND_NEWS = "refresh-news-action";
     public static final String REFRESH_PRICE_TICKER_FOR_HOME = "refresh-price-ticker-action";
     public static final String REFRESH_STOCK_PRICES_FOR_ALL = "refresh-stock-prices-action";
@@ -58,6 +61,7 @@ public class Constants {
     public static final String PREF_COMP = "COMPANYFRAG_TOUR";
     public static final String PREF_TRADE = "TRADE_TOUR";
     public static final String CANCEL_ORDER_TOUR_KEY = "cancel-order-tour-key";
+    public static final String USER_REFERRAL_CODE = "";
 
     public static final String ENCRYPTED_SHARED_PREF_NAME = "encrypted_shared_pref";
 }
