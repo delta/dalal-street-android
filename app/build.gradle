@@ -119,7 +119,6 @@ dependencies {
 
     // Kotlin libraries
     implementation (Libs.kotlinStd)
-    implementation (Libs.anko)
     implementation (Libs.kotlinCoroutine)
 
     // Navigation

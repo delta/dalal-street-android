@@ -22,10 +22,7 @@ import com.github.mikephil.charting.formatter.ValueFormatter
 import dalalstreet.api.DalalActionServiceGrpc
 import dalalstreet.api.actions.GetStockHistoryRequest
 import dalalstreet.api.actions.StockHistoryResolution
-import org.jetbrains.anko.backgroundColor
-import org.jetbrains.anko.doAsync
-import org.jetbrains.anko.toast
-import org.jetbrains.anko.uiThread
+import kotlinx.coroutines.*
 import org.pragyan.dalal18.R
 import org.pragyan.dalal18.dagger.ContextModule
 import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent
@@ -35,6 +32,7 @@ import org.pragyan.dalal18.databinding.FragmentDepthGraphBinding
 import org.pragyan.dalal18.utils.ConnectionUtils
 import org.pragyan.dalal18.utils.Constants
 import org.pragyan.dalal18.utils.MiscellaneousUtils.parseDate
+import org.pragyan.dalal18.utils.toast
 import org.pragyan.dalal18.utils.viewLifecycle
 import java.text.ParseException
 import java.text.SimpleDateFormat
@@ -91,7 +89,7 @@ class DepthGraphFragment : Fragment() {
 
         stockHistoryList = ArrayList()
         with(binding.marketDepthChart) {
-            backgroundColor = ContextCompat.getColor(this@DepthGraphFragment.context!!, R.color.black_background)
+            setBackgroundColor(ContextCompat.getColor(this@DepthGraphFragment.context!!, R.color.black_background))
             setTouchEnabled(false)
             setNoDataText("Select a company to view depth chart")
             description.isEnabled = true
@@ -162,7 +160,7 @@ class DepthGraphFragment : Fragment() {
         }
 
         loadingDialog?.show()
-        doAsync {
+        GlobalScope.async (Dispatchers.Default){
 
             if (ConnectionUtils.getConnectionInfo(context)) {
                 if (ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
@@ -172,7 +170,7 @@ class DepthGraphFragment : Fragment() {
                             .setResolution(resolution)
                             .build())
 
-                    uiThread {
+                    withContext(Dispatchers.Main) {
 
                         for (map in stockHistoryResponse.stockHistoryMapMap.entries) {
                             val tempStockHistory = StockHistory(convertToDate(map.key), map.value.high, map.value.low, map.value.open, map.value.close)
@@ -255,12 +253,12 @@ class DepthGraphFragment : Fragment() {
                         }
                     }
                 } else {
-                    uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_server_down), R.id.market_depth_dest) }
+                    withContext(Dispatchers.Main) { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_server_down), R.id.market_depth_dest) }
                 }
             } else {
-                uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_check_internet), R.id.market_depth_dest) }
+                withContext(Dispatchers.Main) { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_check_internet), R.id.market_depth_dest) }
             }
-            uiThread { loadingDialog?.dismiss() }
+            withContext(Dispatchers.Main) { loadingDialog?.dismiss() }
         }
     }
 

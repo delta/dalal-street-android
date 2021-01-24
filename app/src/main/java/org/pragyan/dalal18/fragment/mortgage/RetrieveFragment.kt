@@ -16,9 +16,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import dalalstreet.api.DalalActionServiceGrpc
 import dalalstreet.api.actions.RetrieveMortgageStocksRequest
 import dalalstreet.api.actions.RetrieveMortgageStocksResponse
-import org.jetbrains.anko.doAsync
-import org.jetbrains.anko.toast
-import org.jetbrains.anko.uiThread
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.withContext
 import org.pragyan.dalal18.R
 import org.pragyan.dalal18.adapter.RetrieveRecyclerAdapter
 import org.pragyan.dalal18.dagger.ContextModule
@@ -26,10 +27,7 @@ import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent
 import org.pragyan.dalal18.data.DalalViewModel
 import org.pragyan.dalal18.data.MortgageDetails
 import org.pragyan.dalal18.databinding.FragmentRetrieveBinding
-import org.pragyan.dalal18.utils.ConnectionUtils
-import org.pragyan.dalal18.utils.Constants
-import org.pragyan.dalal18.utils.hideKeyboard
-import org.pragyan.dalal18.utils.viewLifecycle
+import org.pragyan.dalal18.utils.*
 import javax.inject.Inject
 
 class RetrieveFragment : Fragment(), RetrieveRecyclerAdapter.OnRetrieveButtonClickListener {
@@ -114,13 +112,13 @@ class RetrieveFragment : Fragment(), RetrieveRecyclerAdapter.OnRetrieveButtonCli
             retrieveQuantity.toInt() == 0 -> context?.toast("Enter valid number of stocks")
             retrieveQuantity.toLong() > stocksQuantity.toLong() -> context?.toast("Insufficient stocks to retrieve")
             else -> {
-                doAsync {
+                GlobalScope.async (Dispatchers.Default){
                     if (ConnectionUtils.getConnectionInfo(context)) {
                         if (ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
                             val retrieveStocksResponse = actionServiceBlockingStub.retrieveMortgageStocks(
                                     RetrieveMortgageStocksRequest.newBuilder().setStockId(mortgageDetailsList[position].stockId)
                                             .setStockQuantity(retrieveQuantity.toLong()).setRetrievePrice(mortgageDetailsList[position].mortgagePrice).build())
-                            uiThread {
+                            withContext(Dispatchers.Main) {
                                 if (retrieveStocksResponse.statusCode == RetrieveMortgageStocksResponse.StatusCode.OK)
                                     context?.toast("Transaction successful")
                                 else
@@ -129,10 +127,10 @@ class RetrieveFragment : Fragment(), RetrieveRecyclerAdapter.OnRetrieveButtonCli
                                 view?.hideKeyboard()
                             }
                         } else {
-                            uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_server_down), R.id.main_mortgage_dest) }
+                            withContext(Dispatchers.Main) { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_server_down), R.id.main_mortgage_dest) }
                         }
                     } else {
-                        uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_check_internet), R.id.main_mortgage_dest) }
+                        withContext(Dispatchers.Main) { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_check_internet), R.id.main_mortgage_dest) }
                     }
                 }
             }

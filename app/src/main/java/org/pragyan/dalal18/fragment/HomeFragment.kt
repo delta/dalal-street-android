@@ -23,9 +23,10 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import dalalstreet.api.DalalActionServiceGrpc
 import dalalstreet.api.actions.GetMarketEventsRequest
 import dalalstreet.api.actions.GetMarketEventsResponse
-import org.jetbrains.anko.doAsync
-import org.jetbrains.anko.toast
-import org.jetbrains.anko.uiThread
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.withContext
 import org.pragyan.dalal18.R
 import org.pragyan.dalal18.adapter.CompanyTickerRecyclerAdapter
 import org.pragyan.dalal18.adapter.NewsRecyclerAdapter
@@ -37,6 +38,7 @@ import org.pragyan.dalal18.data.NewsDetails
 import org.pragyan.dalal18.databinding.FragmentHomeBinding
 import org.pragyan.dalal18.utils.ConnectionUtils
 import org.pragyan.dalal18.utils.Constants
+import org.pragyan.dalal18.utils.toast
 import org.pragyan.dalal18.utils.viewLifecycle
 import java.text.DecimalFormat
 import javax.inject.Inject
@@ -133,13 +135,13 @@ class HomeFragment : Fragment(), NewsRecyclerAdapter.NewsItemClickListener, Swip
         binding.loadingNewsHomeFragmentProgressBar.visibility = View.VISIBLE
         binding.loadingNewsTextView.text = getString(R.string.getting_latest_news)
 
-        doAsync {
+        GlobalScope.async (Dispatchers.Default){
             if (ConnectionUtils.getConnectionInfo(context)) {
                 if (ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
 
                     val marketEventsResponse = actionServiceBlockingStub.getMarketEvents(GetMarketEventsRequest.newBuilder().setCount(0).setLastEventId(0).build())
 
-                    uiThread {
+                    withContext(Dispatchers.Main) {
                         binding.newsSwipeRefreshLayout.isRefreshing = false
                         if (marketEventsResponse.statusCode == GetMarketEventsResponse.StatusCode.OK) {
 
@@ -161,10 +163,10 @@ class HomeFragment : Fragment(), NewsRecyclerAdapter.NewsItemClickListener, Swip
                         }
                     }
                 } else {
-                    uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_server_down), R.id.home_dest) }
+                    withContext(Dispatchers.Main) { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_server_down), R.id.home_dest) }
                 }
             } else {
-                uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_check_internet), R.id.home_dest) }
+                withContext(Dispatchers.Main) { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_check_internet), R.id.home_dest) }
             }
         }
     }

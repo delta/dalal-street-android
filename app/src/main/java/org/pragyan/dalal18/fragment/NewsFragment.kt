@@ -24,7 +24,6 @@ import dalalstreet.api.actions.GetMarketEventsResponse
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.jetbrains.anko.toast
 import org.pragyan.dalal18.R
 import org.pragyan.dalal18.adapter.NewsRecyclerAdapter
 import org.pragyan.dalal18.dagger.ContextModule
@@ -33,6 +32,7 @@ import org.pragyan.dalal18.data.NewsDetails
 import org.pragyan.dalal18.databinding.FragmentNewsBinding
 import org.pragyan.dalal18.utils.ConnectionUtils
 import org.pragyan.dalal18.utils.Constants
+import org.pragyan.dalal18.utils.toast
 import org.pragyan.dalal18.utils.viewLifecycle
 import javax.inject.Inject
 

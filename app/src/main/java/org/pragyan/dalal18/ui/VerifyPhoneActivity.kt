@@ -26,7 +26,6 @@ import dalalstreet.api.actions.LogoutResponse
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.jetbrains.anko.toast
 import org.pragyan.dalal18.R
 import org.pragyan.dalal18.adapter.pagerAdapters.SmsVerificationPagerAdapter
 import org.pragyan.dalal18.adapter.pagerAdapters.SmsVerificationPagerAdapter.Companion.ADD_PHONE
@@ -40,6 +39,7 @@ import org.pragyan.dalal18.utils.ConnectionUtils
 import org.pragyan.dalal18.utils.Constants
 import org.pragyan.dalal18.utils.Constants.SMS_KEY
 import org.pragyan.dalal18.utils.MiscellaneousUtils.convertDpToPixel
+import org.pragyan.dalal18.utils.toast
 import org.pragyan.dalal18.utils.viewLifecycle
 import javax.inject.Inject
 

@@ -23,7 +23,6 @@ object Versions {
     const val Picasso = "2.71828"
     const val Browser = "1.0.0"
     const val Preference = "1.1.0"
-    const val Anko = "0.10.5"
     const val JavaxAnnotation = "1.2"
 
     // dagger dependency versions
@@ -86,7 +85,6 @@ object TestLibs {
 
 
 object Libs {
-    const val anko = "org.jetbrains.anko:anko:${Versions.Anko}"
 
     const val kotlinStd = "org.jetbrains.kotlin:kotlin-stdlib:${Versions.Kotlin}"
     const val kotlinCoroutine = "org.jetbrains.kotlinx:kotlinx-coroutines-android:${Versions.Coroutine}"

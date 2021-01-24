@@ -9,8 +9,6 @@ import androidx.core.app.NotificationCompat
 import dalalstreet.api.DalalStreamServiceGrpc
 import dalalstreet.api.datastreams.*
 import io.grpc.stub.StreamObserver
-import org.jetbrains.anko.doAsync
-import org.jetbrains.anko.uiThread
 import org.pragyan.dalal18.dagger.ContextModule
 import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent
 import org.pragyan.dalal18.utils.ConnectionUtils
@@ -20,6 +18,9 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.*
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
 import org.pragyan.dalal18.R
 import org.pragyan.dalal18.ui.SplashActivity
 
@@ -73,12 +74,12 @@ class PushNotificationService : Service() {
     }
 
 
-    private fun subscribeToStreamsAsynchronously() = doAsync {
+    private fun subscribeToStreamsAsynchronously() = GlobalScope.async (Dispatchers.Default){
         if (ConnectionUtils.getConnectionInfo(this@PushNotificationService))
             if (!ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT))
                 Log.d(TAG, "Not Reachable")
 
-        doAsync {
+        GlobalScope.async (Dispatchers.Default){
             val notificationsResponse = streamServiceBlockingStub.subscribe(SubscribeRequest.newBuilder().setDataStreamType(DataStreamType.NOTIFICATIONS).setDataStreamId("").build())
             subscriptionId = notificationsResponse.subscriptionId
             subscribeToNotificationsStream(notificationsResponse.subscriptionId)
@@ -121,7 +122,7 @@ class PushNotificationService : Service() {
     }
 
     private fun unsubscribeFromNotificationStream() {
-        doAsync {
+        GlobalScope.async (Dispatchers.Default){
             if (ConnectionUtils.getConnectionInfo(this@PushNotificationService) && ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
                 val unsubscribeResponse = streamServiceBlockingStub.unsubscribe(UnsubscribeRequest.newBuilder().setSubscriptionId(subscriptionId).build())
 
@@ -130,7 +131,7 @@ class PushNotificationService : Service() {
     }
 
     private fun unsubscribeFromMarketEventStream() {
-        doAsync {
+        GlobalScope.async (Dispatchers.Default){
             if (ConnectionUtils.getConnectionInfo(this@PushNotificationService) && ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
                 val unsubscribeResponse = streamServiceBlockingStub.unsubscribe(UnsubscribeRequest.newBuilder().setSubscriptionId(marketSubscriptionId).build())
 
@@ -139,7 +140,7 @@ class PushNotificationService : Service() {
     }
 
     private fun debugService() {
-        doAsync {
+        GlobalScope.async (Dispatchers.Default){
             for (i in 1..100) {
                 Thread.sleep(1000)
                 Log.d("Alive", "Service is Alive" + i.toString())

@@ -13,8 +13,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import dalalstreet.api.DalalActionServiceGrpc
 import dalalstreet.api.actions.GetNotificationsRequest
-import org.jetbrains.anko.doAsync
-import org.jetbrains.anko.uiThread
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.withContext
 import org.pragyan.dalal18.R
 import org.pragyan.dalal18.adapter.NotificationRecyclerAdapter
 import org.pragyan.dalal18.dagger.ContextModule
@@ -91,13 +93,13 @@ class NotificationFragment : Fragment() {
         loadingDialog?.show()
         lastId = preferences.getInt(Constants.LAST_NOTIFICATION_ID, 0)
 
-        doAsync {
+        GlobalScope.async (Dispatchers.Default){
             if (ConnectionUtils.getConnectionInfo(context)) {
                 if (ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
                     val notificationsResponse = actionServiceBlockingStub.getNotifications(
                             GetNotificationsRequest.newBuilder().setLastNotificationId(lastId).setCount(10).build())
 
-                    uiThread {
+                    withContext(Dispatchers.Main) {
                         paginate = notificationsResponse.notificationsCount == 10
 
                         if (notificationsResponse.notificationsList.size > 0) {
@@ -119,12 +121,12 @@ class NotificationFragment : Fragment() {
                         }
                     }
                 } else {
-                    uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_server_down), R.id.notifications_dest) }
+                    withContext(Dispatchers.Main) { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_server_down), R.id.notifications_dest) }
                 }
             } else {
-                uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_check_internet), R.id.notifications_dest) }
+                withContext(Dispatchers.Main) { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_check_internet), R.id.notifications_dest) }
             }
-            uiThread { loadingDialog?.dismiss() }
+            withContext(Dispatchers.Main) { loadingDialog?.dismiss() }
         }
     }
 

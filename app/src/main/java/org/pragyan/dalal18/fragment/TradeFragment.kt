@@ -19,9 +19,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.navigation.fragment.findNavController
 import dalalstreet.api.DalalActionServiceGrpc
 import dalalstreet.api.actions.PlaceOrderRequest
-import org.jetbrains.anko.doAsync
-import org.jetbrains.anko.toast
-import org.jetbrains.anko.uiThread
+import kotlinx.coroutines.*
 import org.pragyan.dalal18.R
 import org.pragyan.dalal18.dagger.ContextModule
 import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent
@@ -286,12 +284,12 @@ class TradeFragment : Fragment() {
                     .setStockQuantity((noOfStocksEditText.text.toString()).toLong())
                     .build()
 
-            doAsync {
+            GlobalScope.async (Dispatchers.Default) {
                 if (ConnectionUtils.getConnectionInfo(context)) {
                     if (ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
                         val orderResponse = actionServiceBlockingStub.placeOrder(orderRequest)
 
-                        uiThread {
+                        withContext(Dispatchers.Main) {
                             if (orderResponse.statusCodeValue == 0) {
                                 context?.toast("Order Placed")
                                 noOfStocksEditText.setText("")
@@ -302,12 +300,12 @@ class TradeFragment : Fragment() {
                             }
                         }
                     } else {
-                        uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_server_down), R.id.trade_dest) }
+                        withContext(Dispatchers.Main) { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_server_down), R.id.trade_dest) }
                     }
                 } else {
-                    uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_check_internet), R.id.trade_dest) }
+                    withContext(Dispatchers.Main) { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_check_internet), R.id.trade_dest) }
                 }
-                uiThread { loadingDialog?.dismiss() }
+                withContext(Dispatchers.Main) { loadingDialog?.dismiss() }
             }
         }
     }

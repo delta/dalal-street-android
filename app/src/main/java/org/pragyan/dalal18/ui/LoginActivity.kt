@@ -1,5 +1,6 @@
 package org.pragyan.dalal18.ui
 
+import MainActivity
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
@@ -19,23 +20,13 @@ import dalalstreet.api.actions.ForgotPasswordRequest
 import dalalstreet.api.actions.LoginRequest
 import dalalstreet.api.actions.LoginResponse
 import io.grpc.ManagedChannel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import org.jetbrains.anko.contentView
-import org.jetbrains.anko.doAsync
-import org.jetbrains.anko.toast
-import org.jetbrains.anko.uiThread
+import kotlinx.coroutines.*
 import org.pragyan.dalal18.R
 import org.pragyan.dalal18.dagger.ContextModule
 import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent
 import org.pragyan.dalal18.data.GlobalStockDetails
 import org.pragyan.dalal18.databinding.ActivityLoginBinding
-import org.pragyan.dalal18.utils.ConnectionUtils
-import org.pragyan.dalal18.utils.Constants
-import org.pragyan.dalal18.utils.MiscellaneousUtils
-import org.pragyan.dalal18.utils.hideKeyboard
-import org.pragyan.dalal18.utils.viewLifecycle
+import org.pragyan.dalal18.utils.*
 import java.util.*
 import javax.inject.Inject
 
@@ -83,16 +74,16 @@ class LoginActivity : AppCompatActivity() {
 
     private fun startLoginProcess(startedFromServerDown: Boolean) {
 
-        doAsync {
+        GlobalScope.async (Dispatchers.Default){
             if (ConnectionUtils.getConnectionInfo(this@LoginActivity)) {
-                uiThread {
+                withContext(Dispatchers.Main) {
                     binding.playButton.isEnabled = true
 
                     if (startedFromServerDown)
                         onLoginButtonClick()
                 }
             } else {
-                uiThread {
+                withContext(Dispatchers.Main) {
                     binding.playButton.isEnabled = false
                     showSnackBar(resources.getString(R.string.error_check_internet))
                 }
@@ -269,7 +260,7 @@ class LoginActivity : AppCompatActivity() {
             }
         } else {
             signingInAlertDialog?.dismiss()
-            contentView?.hideKeyboard()
+            binding.root.hideKeyboard()
             showSnackBar("Server Unreachable")
         }
     }
@@ -277,7 +268,7 @@ class LoginActivity : AppCompatActivity() {
     private fun sendForgotPasswordRequestAsynchronously(email: String) = lifecycleScope.launch {
 
         signingInAlertDialog?.show()
-        contentView?.hideKeyboard()
+        binding.root.hideKeyboard()
 
         if (withContext(Dispatchers.IO) { ConnectionUtils.getConnectionInfo(this@LoginActivity) }) {
             val forgotPasswordRequest = ForgotPasswordRequest.newBuilder().setEmail(email).build()
