@@ -4,6 +4,17 @@
     android:layout_height="match_parent"
     android:background="@color/black_background">
 
+    <Spinner
+        android:id="@+id/leaderboard_spinner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/leaderboard_cardview"
+        android:layout_alignParentRight="true"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="12dp" />
+
     <LinearLayout
         android:id="@+id/leaderboard_linearLayout"
         android:layout_width="match_parent"
@@ -124,5 +135,7 @@
         </LinearLayout>
 
     </androidx.cardview.widget.CardView>
+
+
 
 </RelativeLayout>

@@ -3,9 +3,13 @@ package org.pragyan.dalal18.fragment
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.util.Log.d
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import android.widget.Spinner
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -13,6 +17,8 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import dalalstreet.api.DalalActionServiceGrpc
+import dalalstreet.api.actions.GetDailyLeaderboardRequest
+import dalalstreet.api.actions.GetDailyLeaderboardResponse
 import dalalstreet.api.actions.GetLeaderboardRequest
 import dalalstreet.api.actions.GetLeaderboardResponse
 import kotlinx.coroutines.Dispatchers
@@ -25,6 +31,7 @@ import org.pragyan.dalal18.dagger.ContextModule
 import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent
 import org.pragyan.dalal18.data.LeaderBoardDetails
 import org.pragyan.dalal18.databinding.FragmentLeaderboardBinding
+import org.pragyan.dalal18.ui.MainActivity
 import org.pragyan.dalal18.utils.ConnectionUtils
 import org.pragyan.dalal18.utils.Constants
 import org.pragyan.dalal18.utils.MiscellaneousUtils
@@ -33,7 +40,7 @@ import java.util.*
 import javax.inject.Inject
 
 /* Uses GetLeaderBoard() to set leader board table and to set user's current rank */
-class LeaderboardFragment : Fragment() {
+class LeaderboardFragment : Fragment() , AdapterView.OnItemSelectedListener {
 
     private var binding by viewLifecycle<FragmentLeaderboardBinding>()
 
@@ -73,6 +80,17 @@ class LeaderboardFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         (activity as AppCompatActivity).supportActionBar?.title = resources.getString(R.string.leaderboard)
 
+        val spinner: Spinner = view.findViewById(R.id.leaderboard_spinner)
+        ArrayAdapter.createFromResource(
+                activity as MainActivity,
+                R.array.leaderboard_array,
+                android.R.layout.simple_spinner_item
+        ).also { adapter ->
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            spinner.adapter = adapter
+        }
+
+
         val dialogView = LayoutInflater.from(context).inflate(R.layout.progress_dialog, null)
         (dialogView.findViewById<View>(R.id.progressDialog_textView) as TextView).setText(R.string.loading_leaderboard)
         loadingDialog = AlertDialog.Builder(context!!)
@@ -80,14 +98,14 @@ class LeaderboardFragment : Fragment() {
                 .setCancelable(false)
                 .create()
 
-        getRankListAsynchronously()
-        leaderBoardRecyclerAdapter = LeaderboardRecyclerAdapter(context, leaderBoardDetailsList)
-
-        with(binding.leaderboardRecyclerView) {
-            layoutManager = LinearLayoutManager(context)
-            setHasFixedSize(false)
-            adapter = leaderBoardRecyclerAdapter
-        }
+//        getRankListAsynchronously()
+//        leaderBoardRecyclerAdapter = LeaderboardRecyclerAdapter(context, leaderBoardDetailsList)
+//
+//        with(binding.leaderboardRecyclerView) {
+//            layoutManager = LinearLayoutManager(context)
+//            setHasFixedSize(false)
+//            adapter = leaderBoardRecyclerAdapter
+//        }
     }
 
     private fun getRankListAsynchronously() = lifecycleScope.launch {
@@ -105,7 +123,47 @@ class LeaderboardFragment : Fragment() {
                 }
 
                 for (rankListResponse in rankListResponses) {
+                    d("SPD", rankListResponse.statusCode.toString())
                     if (rankListResponse.statusCode == GetLeaderboardResponse.StatusCode.OK) {
+                        binding.apply {
+                            personalRankTextView.text = rankListResponse.myRank.toString()
+                            personalWealthTextView.text = totalWorthTextView.text.toString()
+                            personalNameTextView.text = MiscellaneousUtils.username
+                            for (currentRow in rankListResponse.rankListList)
+                                leaderBoardDetailsList.add(LeaderBoardDetails(currentRow.rank, currentRow.userName, currentRow.stockWorth, currentRow.totalWorth, currentRow.isBlocked))
+                            leaderboardRecyclerView.visibility = View.VISIBLE
+                        }
+                    } else {
+                        context?.longToast("Server internal error")
+                    }
+                }
+
+                leaderBoardRecyclerAdapter.swapData(leaderBoardDetailsList)
+            } else {
+                networkDownHandler.onNetworkDownError(resources.getString(R.string.error_server_down), R.id.leaderboard_dest)
+            }
+        } else {
+            networkDownHandler.onNetworkDownError(resources.getString(R.string.error_check_internet), R.id.leaderboard_dest)
+        }
+        loadingDialog.dismiss()
+    }
+
+    private fun getDailyLeaderBoardRankListAsynchronously() = lifecycleScope.launch {
+        leaderBoardDetailsList.clear()
+        loadingDialog.show()
+        binding.leaderboardRecyclerView.visibility = View.GONE
+        if (withContext(Dispatchers.IO) { ConnectionUtils.getConnectionInfo(context) }) {
+            if (withContext(Dispatchers.IO) { ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT) }) {
+                val rankListResponses = mutableListOf<GetDailyLeaderboardResponse>()
+
+                for (i in 1..LEADER_BOARD_SIZE step 10) {
+                    rankListResponses.add(withContext(Dispatchers.IO) {
+                        actionServiceBlockingStub.getDailyLeaderboard(GetDailyLeaderboardRequest.newBuilder().setStartingId(i).build())
+                    })
+                }
+
+                for (rankListResponse in rankListResponses) {
+                    if (rankListResponse.statusCode == GetDailyLeaderboardResponse.StatusCode.OK) {
                         binding.apply {
                             personalRankTextView.text = rankListResponse.myRank.toString()
                             personalWealthTextView.text = totalWorthTextView.text.toString()
@@ -136,5 +194,32 @@ class LeaderboardFragment : Fragment() {
 
     companion object {
         private const val LEADER_BOARD_SIZE = 100
+    }
+
+    override fun onNothingSelected(p0: AdapterView<*>?) {
+        TODO("Not yet implemented")
+    }
+
+    override fun onItemSelected(p0:     AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
+        if (p2 == 1){
+            getDailyLeaderBoardRankListAsynchronously()
+            leaderBoardRecyclerAdapter = LeaderboardRecyclerAdapter(context, leaderBoardDetailsList)
+
+            with(binding.leaderboardRecyclerView) {
+                layoutManager = LinearLayoutManager(context)
+                setHasFixedSize(false)
+                adapter = leaderBoardRecyclerAdapter
+            }
+        }
+        else{
+            getRankListAsynchronously()
+            leaderBoardRecyclerAdapter = LeaderboardRecyclerAdapter(context, leaderBoardDetailsList)
+
+            with(binding.leaderboardRecyclerView) {
+                layoutManager = LinearLayoutManager(context)
+                setHasFixedSize(false)
+                adapter = leaderBoardRecyclerAdapter
+            }
+        }
     }
 }
