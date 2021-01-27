@@ -17,7 +17,12 @@ import org.pragyan.dalal18.R
 import org.pragyan.dalal18.dagger.ContextModule
 import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent
 import org.pragyan.dalal18.databinding.ActivityResetPasswordBinding
-import org.pragyan.dalal18.utils.*
+import org.pragyan.dalal18.utils.ConnectionUtils
+import org.pragyan.dalal18.utils.Constants.*
+import org.pragyan.dalal18.utils.hideKeyboard
+import org.pragyan.dalal18.utils.longToast
+import org.pragyan.dalal18.utils.toast
+import org.pragyan.dalal18.utils.viewLifecycle
 import javax.inject.Inject
 
 class ResetPasswordActivity : AppCompatActivity() {
@@ -42,7 +47,7 @@ class ResetPasswordActivity : AppCompatActivity() {
 
         binding.resetPasswordButton.setOnClickListener { onResetPasswordButtonClick() }
 
-        if (preferences.getString(Constants.EMAIL_KEY, null) != null) {
+        if (preferences.getString(EMAIL_KEY, null) != null) {
             longToast("User already logged in")
             finish()
         }

@@ -21,14 +21,23 @@ import dalalstreet.api.actions.BuyStocksFromExchangeRequest
 import dalalstreet.api.actions.BuyStocksFromExchangeResponse
 import dalalstreet.api.actions.GetCompanyProfileRequest
 import dalalstreet.api.models.Stock
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
 import org.pragyan.dalal18.R
 import org.pragyan.dalal18.dagger.ContextModule
 import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent
 import org.pragyan.dalal18.data.DalalViewModel
 import org.pragyan.dalal18.databinding.FragmentStockExchangeBinding
 import org.pragyan.dalal18.ui.MainActivity.Companion.GAME_STATE_UPDATE_ACTION
-import org.pragyan.dalal18.utils.*
+import org.pragyan.dalal18.utils.ConnectionUtils
+import org.pragyan.dalal18.utils.Constants
+import org.pragyan.dalal18.utils.hideKeyboard
+import org.pragyan.dalal18.utils.toast
+import org.pragyan.dalal18.utils.viewLifecycle
+import org.pragyan.dalal18.utils.setStatusIndicator
 import java.text.DecimalFormat
 import javax.inject.Inject
 

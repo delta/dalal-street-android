@@ -8,6 +8,7 @@ import android.view.View
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.material.snackbar.Snackbar
@@ -26,8 +27,12 @@ import org.pragyan.dalal18.dagger.ContextModule
 import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent
 import org.pragyan.dalal18.data.GlobalStockDetails
 import org.pragyan.dalal18.databinding.ActivitySplashBinding
-import org.pragyan.dalal18.utils.*
+import org.pragyan.dalal18.utils.ConnectionUtils
+import org.pragyan.dalal18.utils.Constants
 import org.pragyan.dalal18.utils.Constants.MARKET_OPEN_KEY
+import org.pragyan.dalal18.utils.MiscellaneousUtils
+import org.pragyan.dalal18.utils.toast
+import org.pragyan.dalal18.utils.viewLifecycle
 import java.util.*
 import javax.inject.Inject
 

@@ -1,6 +1,5 @@
 package org.pragyan.dalal18.ui
 
-import org.pragyan.dalal18.ui.LoginActivity
 import org.pragyan.dalal18.utils.toast
 import android.animation.ValueAnimator
 import android.app.NotificationChannel
@@ -59,7 +58,11 @@ import dalalstreet.api.datastreams.UnsubscribeRequest
 import dalalstreet.api.models.GameStateUpdateType
 import dalalstreet.api.models.TransactionType
 import io.grpc.stub.StreamObserver
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
 import org.pragyan.dalal18.R
 import org.pragyan.dalal18.dagger.ContextModule
 import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent
@@ -92,10 +95,10 @@ import org.pragyan.dalal18.utils.Constants.USERNAME_KEY
 import org.pragyan.dalal18.utils.DalalTourUtils
 import org.pragyan.dalal18.utils.LongEvaluator
 import org.pragyan.dalal18.utils.MiscellaneousUtils
-import org.pragyan.dalal18.utils.MiscellaneousUtils.buildCounterDrawable
-import org.pragyan.dalal18.utils.TinyDB
 import org.pragyan.dalal18.utils.hideKeyboard
 import org.pragyan.dalal18.utils.viewLifecycle
+import org.pragyan.dalal18.utils.TinyDB
+import org.pragyan.dalal18.utils.MiscellaneousUtils.buildCounterDrawable
 import java.text.DecimalFormat
 import java.util.*
 import javax.inject.Inject
