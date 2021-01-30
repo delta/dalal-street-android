@@ -135,6 +135,7 @@ class LeaderboardListFragment(private val mode: Int) : Fragment() {
         } else {
             networkDownHandler.onNetworkDownError(resources.getString(R.string.error_check_internet), R.id.leaderboard_dest)
         }
+        (parentFragment as LeaderboardFragment).stopRefresh(mode)
         loadingDialog.dismiss()
     }
 
@@ -174,7 +175,19 @@ class LeaderboardListFragment(private val mode: Int) : Fragment() {
         } else {
             networkDownHandler.onNetworkDownError(resources.getString(R.string.error_check_internet), R.id.leaderboard_dest)
         }
+        (parentFragment as LeaderboardFragment).stopRefresh(mode)
         loadingDialog.dismiss()
+    }
+
+    fun refresh() {
+        when (mode) {
+            OVERALL_MODE -> {
+                getOverallLeaderboardAsynchronously()
+            }
+            DAILY_MODE -> {
+                getDailyLeaderBoardAsynchronously()
+            }
+        }
     }
 
     override fun onPause() {
