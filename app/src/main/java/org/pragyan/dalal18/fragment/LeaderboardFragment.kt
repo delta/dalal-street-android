@@ -1,15 +1,11 @@
 package org.pragyan.dalal18.fragment
 
 import android.content.Context
-import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log.d
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
-import android.widget.Spinner
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -31,7 +27,6 @@ import org.pragyan.dalal18.dagger.ContextModule
 import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent
 import org.pragyan.dalal18.data.LeaderBoardDetails
 import org.pragyan.dalal18.databinding.FragmentLeaderboardBinding
-import org.pragyan.dalal18.ui.MainActivity
 import org.pragyan.dalal18.utils.ConnectionUtils
 import org.pragyan.dalal18.utils.Constants
 import org.pragyan.dalal18.utils.MiscellaneousUtils
@@ -40,15 +35,12 @@ import java.util.*
 import javax.inject.Inject
 
 /* Uses GetLeaderBoard() to set leader board table and to set user's current rank */
-class LeaderboardFragment : Fragment() , AdapterView.OnItemSelectedListener {
+class LeaderboardFragment : Fragment() {
 
     private var binding by viewLifecycle<FragmentLeaderboardBinding>()
 
     @Inject
     lateinit var actionServiceBlockingStub: DalalActionServiceGrpc.DalalActionServiceBlockingStub
-
-    @Inject
-    lateinit var preferences: SharedPreferences
 
     private val leaderBoardDetailsList = ArrayList<LeaderBoardDetails>()
 
@@ -80,17 +72,6 @@ class LeaderboardFragment : Fragment() , AdapterView.OnItemSelectedListener {
         super.onViewCreated(view, savedInstanceState)
         (activity as AppCompatActivity).supportActionBar?.title = resources.getString(R.string.leaderboard)
 
-        val spinner: Spinner = view.findViewById(R.id.leaderboard_spinner)
-        ArrayAdapter.createFromResource(
-                activity as MainActivity,
-                R.array.leaderboard_array,
-                android.R.layout.simple_spinner_item
-        ).also { adapter ->
-            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-            spinner.adapter = adapter
-        }
-
-
         val dialogView = LayoutInflater.from(context).inflate(R.layout.progress_dialog, null)
         (dialogView.findViewById<View>(R.id.progressDialog_textView) as TextView).setText(R.string.loading_leaderboard)
         loadingDialog = AlertDialog.Builder(context!!)
@@ -98,14 +79,17 @@ class LeaderboardFragment : Fragment() , AdapterView.OnItemSelectedListener {
                 .setCancelable(false)
                 .create()
 
-//        getRankListAsynchronously()
-//        leaderBoardRecyclerAdapter = LeaderboardRecyclerAdapter(context, leaderBoardDetailsList)
-//
-//        with(binding.leaderboardRecyclerView) {
-//            layoutManager = LinearLayoutManager(context)
-//            setHasFixedSize(false)
-//            adapter = leaderBoardRecyclerAdapter
-//        }
+        initRecyclerView()
+    }
+
+    private fun initRecyclerView() {
+        leaderBoardRecyclerAdapter = LeaderboardRecyclerAdapter(context, leaderBoardDetailsList)
+
+        with(binding.leaderboardRecyclerView) {
+            layoutManager = LinearLayoutManager(context)
+            setHasFixedSize(false)
+            adapter = leaderBoardRecyclerAdapter
+        }
     }
 
     private fun getRankListAsynchronously() = lifecycleScope.launch {
@@ -166,7 +150,7 @@ class LeaderboardFragment : Fragment() , AdapterView.OnItemSelectedListener {
                     if (rankListResponse.statusCode == GetDailyLeaderboardResponse.StatusCode.OK) {
                         binding.apply {
                             personalRankTextView.text = rankListResponse.myRank.toString()
-                            personalWealthTextView.text = totalWorthTextView.text.toString()
+                            personalWealthTextView.text = rankListResponse.myTotalWorth.toString()
                             personalNameTextView.text = MiscellaneousUtils.username
                             for (currentRow in rankListResponse.rankListList)
                                 leaderBoardDetailsList.add(LeaderBoardDetails(currentRow.rank, currentRow.userName, currentRow.stockWorth, currentRow.totalWorth, currentRow.isBlocked))
@@ -194,32 +178,5 @@ class LeaderboardFragment : Fragment() , AdapterView.OnItemSelectedListener {
 
     companion object {
         private const val LEADER_BOARD_SIZE = 100
-    }
-
-    override fun onNothingSelected(p0: AdapterView<*>?) {
-        TODO("Not yet implemented")
-    }
-
-    override fun onItemSelected(p0:     AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
-        if (p2 == 1){
-            getDailyLeaderBoardRankListAsynchronously()
-            leaderBoardRecyclerAdapter = LeaderboardRecyclerAdapter(context, leaderBoardDetailsList)
-
-            with(binding.leaderboardRecyclerView) {
-                layoutManager = LinearLayoutManager(context)
-                setHasFixedSize(false)
-                adapter = leaderBoardRecyclerAdapter
-            }
-        }
-        else{
-            getRankListAsynchronously()
-            leaderBoardRecyclerAdapter = LeaderboardRecyclerAdapter(context, leaderBoardDetailsList)
-
-            with(binding.leaderboardRecyclerView) {
-                layoutManager = LinearLayoutManager(context)
-                setHasFixedSize(false)
-                adapter = leaderBoardRecyclerAdapter
-            }
-        }
     }
 }
