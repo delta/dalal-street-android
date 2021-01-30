@@ -486,10 +486,4 @@
         <item>30 mins</item>
         <item>60 mins</item>
     </string-array>
-    
-    <string-array name="leaderboard_array">
-        <item>LeaderBoard</item>
-        <item>DailyLeaderBoard</item>
-    </string-array>
-
 </resources>

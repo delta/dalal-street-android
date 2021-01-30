@@ -1,14 +1,12 @@
-package org.pragyan.dalal18.fragment
+package org.pragyan.dalal18.fragment.leaderboard
 
 import android.content.Context
 import android.os.Bundle
-import android.util.Log.d
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -26,7 +24,7 @@ import org.pragyan.dalal18.adapter.LeaderboardRecyclerAdapter
 import org.pragyan.dalal18.dagger.ContextModule
 import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent
 import org.pragyan.dalal18.data.LeaderBoardDetails
-import org.pragyan.dalal18.databinding.FragmentLeaderboardBinding
+import org.pragyan.dalal18.databinding.FragmentLeaderboardListBinding
 import org.pragyan.dalal18.utils.ConnectionUtils
 import org.pragyan.dalal18.utils.Constants
 import org.pragyan.dalal18.utils.MiscellaneousUtils
@@ -34,21 +32,21 @@ import org.pragyan.dalal18.utils.viewLifecycle
 import java.util.*
 import javax.inject.Inject
 
-/* Uses GetLeaderBoard() to set leader board table and to set user's current rank */
-class LeaderboardFragment : Fragment() {
+class LeaderboardListFragment(private val mode: Int) : Fragment() {
 
-    private var binding by viewLifecycle<FragmentLeaderboardBinding>()
+    private var binding by viewLifecycle<FragmentLeaderboardListBinding>()
 
     @Inject
     lateinit var actionServiceBlockingStub: DalalActionServiceGrpc.DalalActionServiceBlockingStub
 
-    private val leaderBoardDetailsList = ArrayList<LeaderBoardDetails>()
-
     lateinit var networkDownHandler: ConnectionUtils.OnNetworkDownHandler
 
     private lateinit var loadingDialog: AlertDialog
-    private lateinit var totalWorthTextView: TextView
+
     private lateinit var leaderBoardRecyclerAdapter: LeaderboardRecyclerAdapter
+    private val leaderBoardDetailsList = ArrayList<LeaderBoardDetails>()
+
+    private lateinit var totalWorthTextView: TextView
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -59,18 +57,18 @@ class LeaderboardFragment : Fragment() {
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        binding = FragmentLeaderboardBinding.inflate(inflater, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
+                              savedInstanceState: Bundle?): View {
+        binding = FragmentLeaderboardListBinding.inflate(inflater, container, false)
 
         totalWorthTextView = container!!.rootView.findViewById(R.id.totalWorthTextView)
-
         DaggerDalalStreetApplicationComponent.builder().contextModule(ContextModule(context!!)).build().inject(this)
+
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        (activity as AppCompatActivity).supportActionBar?.title = resources.getString(R.string.leaderboard)
 
         val dialogView = LayoutInflater.from(context).inflate(R.layout.progress_dialog, null)
         (dialogView.findViewById<View>(R.id.progressDialog_textView) as TextView).setText(R.string.loading_leaderboard)
@@ -80,6 +78,15 @@ class LeaderboardFragment : Fragment() {
                 .create()
 
         initRecyclerView()
+
+        when (mode) {
+            OVERALL_MODE -> {
+                getOverallLeaderboardAsynchronously()
+            }
+            DAILY_MODE -> {
+                getDailyLeaderBoardAsynchronously()
+            }
+        }
     }
 
     private fun initRecyclerView() {
@@ -92,7 +99,7 @@ class LeaderboardFragment : Fragment() {
         }
     }
 
-    private fun getRankListAsynchronously() = lifecycleScope.launch {
+    private fun getOverallLeaderboardAsynchronously() = lifecycleScope.launch {
         leaderBoardDetailsList.clear()
         loadingDialog.show()
         binding.leaderboardRecyclerView.visibility = View.GONE
@@ -107,7 +114,6 @@ class LeaderboardFragment : Fragment() {
                 }
 
                 for (rankListResponse in rankListResponses) {
-                    d("SPD", rankListResponse.statusCode.toString())
                     if (rankListResponse.statusCode == GetLeaderboardResponse.StatusCode.OK) {
                         binding.apply {
                             personalRankTextView.text = rankListResponse.myRank.toString()
@@ -132,7 +138,7 @@ class LeaderboardFragment : Fragment() {
         loadingDialog.dismiss()
     }
 
-    private fun getDailyLeaderBoardRankListAsynchronously() = lifecycleScope.launch {
+    private fun getDailyLeaderBoardAsynchronously() = lifecycleScope.launch {
         leaderBoardDetailsList.clear()
         loadingDialog.show()
         binding.leaderboardRecyclerView.visibility = View.GONE
@@ -177,6 +183,9 @@ class LeaderboardFragment : Fragment() {
     }
 
     companion object {
+        const val OVERALL_MODE = -1
+        const val DAILY_MODE = 1
+
         private const val LEADER_BOARD_SIZE = 100
     }
 }
