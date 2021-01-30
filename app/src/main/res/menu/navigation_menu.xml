@@ -57,6 +57,11 @@
             android:title="@string/leaderboard" />
 
         <item
+            android:id="@+id/dailyChallenge_dest"
+            android:icon="@drawable/daily_challenge_icon"
+            android:title="@string/daily_challenge"/>
+
+        <item
             android:id="@+id/open_orders_dest"
             android:icon="@drawable/orders_icon"
             android:title="@string/my_orders" />
