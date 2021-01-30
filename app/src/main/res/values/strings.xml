@@ -40,6 +40,7 @@
     <string name="mortgage">Mortgage</string>
     <string name="my_orders">Open Orders</string>
     <string name="transactions">Transactions</string>
+    <string name="refer_and_earn">Refer and Earn</string>
     <string name="leaderboard">Leaderboard</string>
     <string name="stock_worth">Stock Worth</string>
     <string name="total_worth">Total Worth</string>
@@ -406,6 +407,7 @@
     <string name="notifications">Notifications</string>
     <string name="not_registered_click_here_to_register">Not registered? Click here to register</string>
     <string name="registering">Registering…</string>
+    <string name="get_referral_code">getting referral code ...</string>
     <string name="retrieval_rate_per_stock">Retrieval Rate/Stock</string>
     <string name="mortgage_uppercase">MORTGAGE</string>
     <string name="retrieve_uppercase">RETRIEVE</string>
@@ -476,6 +478,7 @@
     <string name="cash">Cash</string>
     <string name="reserved_cash">Reserved Cash</string>
     <string name="trade_price">Trade Price</string>
+    <string name="referral_code">Have a referral Code? Enter it here.</string>
     <string-array name="intervalType">
         <item>1 min</item>
         <item>5 mins</item>
@@ -483,10 +486,10 @@
         <item>30 mins</item>
         <item>60 mins</item>
     </string-array>
+    
     <string-array name="leaderboard_array">
         <item>LeaderBoard</item>
         <item>DailyLeaderBoard</item>
     </string-array>
-
 
 </resources>
