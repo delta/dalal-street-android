@@ -9,7 +9,6 @@ import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -96,7 +95,6 @@ class HomeFragment : Fragment(), NewsRecyclerAdapter.NewsItemClickListener, Swip
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         binding.breakingNewsTextView.isSelected = true
-        (activity as AppCompatActivity).supportActionBar?.title = resources.getString(R.string.dalal)
         linearLayoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
 
         companyTickerRecyclerAdapter = CompanyTickerRecyclerAdapter(context, null, this)

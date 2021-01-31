@@ -49,14 +49,13 @@ class CompanyFragment : Fragment(), CompanyRecyclerAdapter.OnCompanyClickListene
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = FragmentCompaniesBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        (activity as AppCompatActivity).supportActionBar?.title = resources.getString(R.string.companies)
 
         adapter = CompanyRecyclerAdapter(context, null, this)
 

@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import org.pragyan.dalal18.R
@@ -17,15 +16,13 @@ class MainMortgageFragment : Fragment() {
 
     private var binding by viewLifecycle<FragmentMainMortgageBinding>()
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = FragmentMainMortgageBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        (activity as AppCompatActivity).supportActionBar?.title = resources.getString(R.string.mortgage_stocks)
-
         binding.apply {
             mortgageViewPager.adapter = MortgagePagerAdapter(childFragmentManager)
             mainMortgageTabLayout.setupWithViewPager(mortgageViewPager)

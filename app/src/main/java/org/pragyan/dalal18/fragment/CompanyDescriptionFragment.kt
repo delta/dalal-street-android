@@ -17,7 +17,7 @@ class CompanyDescriptionFragment : Fragment() {
 
     private lateinit var model: DalalViewModel
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = FragmentCompanyDescriptionBinding.inflate(inflater, container, false)
         return binding.root
     }
