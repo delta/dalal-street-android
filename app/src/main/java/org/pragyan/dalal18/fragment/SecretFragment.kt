@@ -53,6 +53,7 @@ class SecretFragment : Fragment() {
         binding.apply {
             openMarketButton.setOnClickListener { openMarket() }
             closeMarketButton.setOnClickListener { closeMarket() }
+            updateEndOfDayValuesButton.setOnClickListener { updateEndOfDayValues() }
             sendNotificationButton.setOnClickListener { sendNotification() }
             setBankruptButton.setOnClickListener { setCompanyBankrupt(bankruptSwitch.isChecked) }
             setDividendButton.setOnClickListener { setCompanyDividends(dividendSwitch.isChecked) }
@@ -80,6 +81,17 @@ class SecretFragment : Fragment() {
         withContext(Dispatchers.IO) {
             if (ConnectionUtils.getConnectionInfo(context!!) && ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
                 val response = actionServiceBlockingStub.closeMarket(CloseMarket.CloseMarketRequest.newBuilder().setUpdatePrevDayClose(true).build())
+                message = response.statusMessage
+            }
+        }
+        context?.toast(message)
+    }
+
+    private fun updateEndOfDayValues() = lifecycleScope.launch {
+        view?.hideKeyboard()
+        withContext(Dispatchers.IO) {
+            if (ConnectionUtils.getConnectionInfo(context!!) && ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
+                val response = actionServiceBlockingStub.updateEndOfDayValues(UpdateEndOfDayValues.UpdateEndOfDayValuesRequest.getDefaultInstance())
                 message = response.statusMessage
             }
         }
@@ -202,6 +214,7 @@ class SecretFragment : Fragment() {
 /**
  * Open Market
  * Close Market
+ * Update EndOfDayValues
  *
  * AddStocksToExchange
  * AddMarketEvent
