@@ -6,6 +6,7 @@ import org.pragyan.dalal18.fragment.HomeFragment;
 import org.pragyan.dalal18.fragment.LeaderboardFragment;
 import org.pragyan.dalal18.fragment.ReferAndEarnFragment;
 import org.pragyan.dalal18.fragment.SecretFragment;
+import org.pragyan.dalal18.fragment.SingleDayChallengeFragment;
 import org.pragyan.dalal18.fragment.smsVerification.AddPhoneFragment;
 import org.pragyan.dalal18.fragment.smsVerification.OTPVerificationFragment;
 import org.pragyan.dalal18.fragment.mortgage.MortgageFragment;
@@ -60,6 +61,7 @@ public interface DalalStreetApplicationComponent {
     void inject(SecretFragment secretFragment);
     void inject(ReferAndEarnFragment referAndEarnFragment);
     void inject(DailyChallengesFragment dailyChallengesFragment);
+    void inject(SingleDayChallengeFragment singleDayChallengeFragment);
 
     void inject(NotificationService notificationService);
     void inject(VerifyPhoneActivity verifyPhoneActivity);
