@@ -115,7 +115,6 @@ class OrdersFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, OrderIt
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        (activity as AppCompatActivity).supportActionBar?.title = resources.getString(R.string.orders_frag_label)
         ordersRecyclerAdapter = OrdersRecyclerAdapter(context, null)
         binding.apply {
             ordersRecyclerSwipeRefreshLayout.setOnRefreshListener(this@OrdersFragment)

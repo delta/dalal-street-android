@@ -56,7 +56,6 @@ class CompanyFragment : Fragment(), CompanyRecyclerAdapter.OnCompanyClickListene
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        (activity as AppCompatActivity).supportActionBar?.title = resources.getString(R.string.companies)
 
         adapter = CompanyRecyclerAdapter(context, null, this)
 

@@ -4,7 +4,6 @@ import android.app.AlertDialog
 import android.content.*
 import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -60,11 +59,9 @@ class ReferAndEarnFragment : Fragment() {
         binding.referralCodeButton.setOnClickListener { copyReferralCodeToClipboard(binding.userReferralCodeEditText.hint.toString()) }
 
         getUserReferralCode()
-
     }
 
     private fun copyReferralCodeToClipboard(code: String) {
-
         if (code.isEmpty()) {
             Toast.makeText(context!!, "referesh your code", Toast.LENGTH_LONG).show()
             return
@@ -74,11 +71,10 @@ class ReferAndEarnFragment : Fragment() {
         val clip = ClipData.newPlainText("Copied referral code", code) as ClipData
         clipboardManager.setPrimaryClip(clip)
 
-        Toast.makeText(context!!, "referral code copied to clipboard", Toast.LENGTH_LONG).show()
+        Toast.makeText(context!!, "Referral code copied to clipboard", Toast.LENGTH_LONG).show()
     }
 
-    fun getUserReferralCode() = lifecycleScope.launch {
-
+    private fun getUserReferralCode() = lifecycleScope.launch {
         if (withContext(Dispatchers.IO) { ConnectionUtils.getConnectionInfo(context!!) }) {
             val email = preferences.getString(Constants.EMAIL_KEY, "").toString()
 
@@ -87,12 +83,9 @@ class ReferAndEarnFragment : Fragment() {
                 getUerReferralCodeAsynchrounously(email)
             }
         }
-
-
     }
 
-    fun getUerReferralCodeAsynchrounously(userEmail: String) = lifecycleScope.launch {
-
+    private fun getUerReferralCodeAsynchrounously(userEmail: String) = lifecycleScope.launch {
         val referralCodeRequest = GetReferralCodeRequest.newBuilder()
                 .setEmail(userEmail)
                 .build()
@@ -115,7 +108,6 @@ class ReferAndEarnFragment : Fragment() {
         } else {
             referralCodeDialog?.dismiss()
             showSnackBar("Server Unreachable", userEmail)
-
         }
     }
 

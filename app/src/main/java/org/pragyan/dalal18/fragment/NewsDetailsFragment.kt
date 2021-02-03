@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.fragment.app.Fragment
 import androidx.transition.TransitionInflater
@@ -30,7 +29,6 @@ class NewsDetailsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        (activity as AppCompatActivity).supportActionBar?.title = resources.getString(R.string.news_details)
 
         binding.apply {
             newsDetailsHead.text = arguments?.getString(Constants.NEWS_HEAD_KEY)
@@ -43,7 +41,6 @@ class NewsDetailsFragment : Fragment() {
             ViewCompat.setTransitionName(newsDetailsCreatedAt, arguments?.getString(Constants.CREATED_AT_TRANSITION_KEY))
         }
 
-        activity?.title = getString(R.string.news_details)
         loadingDialog.dismiss()
     }
 
