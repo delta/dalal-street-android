@@ -1,12 +1,14 @@
 package org.pragyan.dalal18.dagger;
 
 import org.pragyan.dalal18.fragment.CompanyFragment;
+import org.pragyan.dalal18.fragment.DailyChallengesFragment;
 import org.pragyan.dalal18.fragment.HomeFragment;
 import org.pragyan.dalal18.fragment.NewsFragment;
 import org.pragyan.dalal18.fragment.OrdersFragment;
 import org.pragyan.dalal18.fragment.PortfolioFragment;
 import org.pragyan.dalal18.fragment.ReferAndEarnFragment;
 import org.pragyan.dalal18.fragment.SecretFragment;
+import org.pragyan.dalal18.fragment.SingleDayChallengeFragment;
 import org.pragyan.dalal18.fragment.StockExchangeFragment;
 import org.pragyan.dalal18.fragment.TradeFragment;
 import org.pragyan.dalal18.fragment.TransactionsFragment;
@@ -58,6 +60,8 @@ public interface DalalStreetApplicationComponent {
     void inject(AddPhoneFragment addPhoneFragment);
     void inject(SecretFragment secretFragment);
     void inject(ReferAndEarnFragment referAndEarnFragment);
+    void inject(DailyChallengesFragment dailyChallengesFragment);
+    void inject(SingleDayChallengeFragment singleDayChallengeFragment);
 
     void inject(NotificationService notificationService);
     void inject(VerifyPhoneActivity verifyPhoneActivity);
