@@ -80,7 +80,7 @@ class TradeFragment : Fragment() {
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = FragmentTradeBinding.inflate(inflater, container, false)
 
         // company model which has the company name data, and is commonly used for trade fragment and market depth fragment.

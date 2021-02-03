@@ -40,7 +40,7 @@ class ReferAndEarnFragment : Fragment() {
 
     private var referralCodeDialog: AlertDialog? = null
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = FragmentReferAndEarnBinding.inflate(inflater, container, false)
 
         DaggerDalalStreetApplicationComponent.builder().contextModule(ContextModule(context!!)).build().inject(this)

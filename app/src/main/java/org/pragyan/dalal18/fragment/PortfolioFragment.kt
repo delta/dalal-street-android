@@ -61,7 +61,7 @@ class PortfolioFragment : Fragment() {
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = FragmentPortfolioBinding.inflate(inflater, container, false)
 
         model = activity?.run { ViewModelProvider(this).get(DalalViewModel::class.java) }

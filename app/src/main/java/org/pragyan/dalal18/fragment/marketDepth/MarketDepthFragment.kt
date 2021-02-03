@@ -14,7 +14,7 @@ class MarketDepthFragment : Fragment() {
 
     private var binding by viewLifecycle<FragmentMarketDepthBinding>()
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = FragmentMarketDepthBinding.inflate(inflater, container, false)
 
         binding.apply {

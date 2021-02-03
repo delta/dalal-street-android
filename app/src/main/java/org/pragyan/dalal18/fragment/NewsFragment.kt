@@ -113,7 +113,7 @@ class NewsFragment : Fragment(), NewsRecyclerAdapter.NewsItemClickListener, Swip
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = FragmentNewsBinding.inflate(inflater, container, false)
 
         DaggerDalalStreetApplicationComponent.builder().contextModule(ContextModule(context!!)).build().inject(this)

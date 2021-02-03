@@ -16,7 +16,7 @@ class HelpMainFragment : Fragment() {
 
     private var binding by viewLifecycle<FragmentMainHelpBinding>()
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = FragmentMainHelpBinding.inflate(inflater, container, false)
         return binding.root
     }

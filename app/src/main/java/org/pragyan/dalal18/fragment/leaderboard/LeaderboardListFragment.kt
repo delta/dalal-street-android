@@ -58,7 +58,7 @@ class LeaderboardListFragment(private val mode: Int) : Fragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View {
+                              savedInstanceState: Bundle?): View? {
         binding = FragmentLeaderboardListBinding.inflate(inflater, container, false)
 
         totalWorthTextView = container!!.rootView.findViewById(R.id.totalWorthTextView)

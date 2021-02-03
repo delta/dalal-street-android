@@ -16,7 +16,7 @@ class MainMortgageFragment : Fragment() {
 
     private var binding by viewLifecycle<FragmentMainMortgageBinding>()
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = FragmentMainMortgageBinding.inflate(inflater, container, false)
         return binding.root
     }
