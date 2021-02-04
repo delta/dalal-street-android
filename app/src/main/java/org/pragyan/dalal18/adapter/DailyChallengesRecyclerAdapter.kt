@@ -12,7 +12,7 @@ import org.pragyan.dalal18.databinding.ChallengeListItemBinding
 
 class DailyChallengesRecyclerAdapter(
         private val dailyChallenges: MutableList<DailyChallengeOuterClass.DailyChallenge>,
-        private val userStates: MutableList<Pair<Boolean,Boolean>>,
+        private val userStates: MutableList<UserStateOuterClass.UserState>,
         private val checkUserStateListener: CheckUserStateListener
 ) : RecyclerView.Adapter<DailyChallengesRecyclerAdapter.DailyChallengeViewHolder>() {
     inner class DailyChallengeViewHolder(val binding: ChallengeListItemBinding): RecyclerView.ViewHolder(binding.root)
@@ -41,15 +41,18 @@ class DailyChallengesRecyclerAdapter(
             holder.binding.hintImage.visibility=View.GONE
             holder.binding.claimRewardButton.visibility=View.GONE
         }else{
-            if(userStates[position].first && userStates[position].second){
+            if(userStates[position].isCompleted && userStates[position].isRewardClamied){
                 holder.binding.hintProgressBar.visibility = View.GONE
                 holder.binding.hintImage.visibility=View.VISIBLE
                 holder.binding.hintImage.setImageResource(R.drawable.blue_thumb)
                 holder.binding.claimRewardButton.visibility=View.GONE
-            }else if(userStates[position].first && !userStates[position].second){
+            }else if(userStates[position].isCompleted && !userStates[position].isRewardClamied){
                 holder.binding.hintProgressBar.visibility = View.GONE
                 holder.binding.hintImage.visibility=View.GONE
                 holder.binding.claimRewardButton.visibility=View.VISIBLE
+                holder.binding.claimRewardButton.setOnClickListener {
+                    checkUserStateListener.claimReward(userStates[position].id)
+                }
             }else{
                 holder.binding.hintProgressBar.visibility = View.GONE
                 holder.binding.hintImage.visibility=View.VISIBLE
@@ -61,7 +64,7 @@ class DailyChallengesRecyclerAdapter(
 
     }
     interface CheckUserStateListener{
-       // fun checkChallengeState(challengeId:Int)
+        fun claimReward(Id:Int)
         fun getCompanyNameFromStockId(stockId:Int) : String
         fun isDailyChallengeOpen():Boolean
     }

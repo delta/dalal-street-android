@@ -35,8 +35,6 @@ class DailyChallengesFragment : Fragment() {
     lateinit var actionServiceBlockingStub: DalalActionServiceGrpc.DalalActionServiceBlockingStub
 
 
-    private var isDailyChallengeOpen = false
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         binding = FragmentDailyChallengesBinding.inflate(inflater,container,false)
@@ -46,10 +44,10 @@ class DailyChallengesFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        getMarketDay()
+        getMarketDayAsynchronously()
     }
 
-    private fun setUpViewPager(marketDay: Int) {
+    private fun setUpViewPager(marketDay: Int,isDailyChallengeOpen:Boolean) {
         binding.dailyChallengeViewPager.apply {
             adapter = DailyChallengePagerAdapter(
                     childFragmentManager,
@@ -77,7 +75,7 @@ class DailyChallengesFragment : Fragment() {
 
     }
 
-    private fun getMarketDay() = lifecycleScope.launch{
+    private fun getMarketDayAsynchronously() = lifecycleScope.launch{
         if (withContext(Dispatchers.IO) { ConnectionUtils.getConnectionInfo(context!!) }){
             val dailyChallengeConfigRequest = GetDailyChallengeConfig.GetDailyChallengeConfigRequest.newBuilder()
                     .build()
@@ -85,9 +83,9 @@ class DailyChallengesFragment : Fragment() {
                 val dailyChallengeConfigResponse = withContext(Dispatchers.IO){actionServiceBlockingStub.getDailyChallengeConfig(dailyChallengeConfigRequest)}
                 if(dailyChallengeConfigResponse.statusCode==GetDailyChallengeConfig.GetDailyChallengeConfigResponse.StatusCode.OK){
                     val marketDay = dailyChallengeConfigResponse.marketDay
-                    isDailyChallengeOpen = dailyChallengeConfigResponse.isDailyChallengOpen
+                    val isDailyChallengeOpen = dailyChallengeConfigResponse.isDailyChallengOpen
                     Toast.makeText(requireContext(),"market ${marketDay} isDailyCHallengeOpen ${isDailyChallengeOpen}",Toast.LENGTH_SHORT).show()
-                    setUpViewPager(marketDay)
+                    setUpViewPager(marketDay,isDailyChallengeOpen)
                 }
             } else {
                 showSnackBar("Server Unreachable")
@@ -98,7 +96,7 @@ class DailyChallengesFragment : Fragment() {
 
     private fun showSnackBar(message: String) {
         val snackBar = Snackbar.make(activity!!.findViewById(android.R.id.content), message, Snackbar.LENGTH_INDEFINITE)
-                .setAction("RETRY") { getMarketDay() }
+                .setAction("RETRY") { getMarketDayAsynchronously() }
 
         snackBar.setActionTextColor(ContextCompat.getColor(context!!, R.color.neon_green))
         snackBar.view.setBackgroundColor(Color.parseColor("#20202C"))

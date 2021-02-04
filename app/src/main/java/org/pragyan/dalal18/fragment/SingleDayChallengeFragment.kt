@@ -14,12 +14,12 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import dalalstreet.api.DalalActionServiceGrpc
 import dalalstreet.api.actions.GetDailyChallenges
+import dalalstreet.api.actions.GetMyReward
 import dalalstreet.api.actions.GetMyUserState
 import dalalstreet.api.models.DailyChallengeOuterClass
 import dalalstreet.api.models.UserStateOuterClass
-import kotlinx.coroutines.Deferred
+import kotlinx.android.synthetic.main.fragment_leaderboard.*
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.pragyan.dalal18.R
@@ -38,7 +38,8 @@ class SingleDayChallengeFragment(private val day:Int,private val currMarketDay: 
 
     private var binding by viewLifecycle<FragmentSingleDayChallengeBinding>()
     private lateinit var dailyChallengesRecyclerAdapter: DailyChallengesRecyclerAdapter
-    private  val challengesState = mutableListOf<Pair<Boolean,Boolean>>()
+    private  val challengesState = mutableListOf<UserStateOuterClass.UserState>()
+
     @Inject
     lateinit var actionServiceBlockingStub: DalalActionServiceGrpc.DalalActionServiceBlockingStub
 
@@ -60,9 +61,12 @@ class SingleDayChallengeFragment(private val day:Int,private val currMarketDay: 
 
     }
 
-    private fun initRecyclerView(dailyChallengesList: MutableList<DailyChallengeOuterClass.DailyChallenge>,userStates: MutableList<Pair<Boolean,Boolean>>) {
+    private fun initRecyclerView(dailyChallengesList: MutableList<DailyChallengeOuterClass.DailyChallenge>, userStates: MutableList<UserStateOuterClass.UserState>) {
         dailyChallengesRecyclerAdapter = DailyChallengesRecyclerAdapter(dailyChallengesList,userStates,
                 object : DailyChallengesRecyclerAdapter.CheckUserStateListener{
+                    override fun claimReward(Id:Int) {
+                        claimRewardAsynchronously(Id)
+                    }
 
 
                     override fun getCompanyNameFromStockId(stockId: Int): String {
@@ -78,9 +82,29 @@ class SingleDayChallengeFragment(private val day:Int,private val currMarketDay: 
         binding.dailyChallengeRecyclerView.adapter = dailyChallengesRecyclerAdapter
     }
 
+    private fun claimRewardAsynchronously(id: Int) = lifecycleScope.launch{
+        if (withContext(Dispatchers.IO) { ConnectionUtils.getConnectionInfo(context!!) }){
+            val claimRewardRequest = GetMyReward.GetMyRewardRequest.newBuilder()
+                    .setUserStateId(id)
+                    .build()
+            if (withContext(Dispatchers.IO) { ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT) }) {
+                val claimRewardResponse = withContext(Dispatchers.IO) { actionServiceBlockingStub.getMyReward(claimRewardRequest) }
 
 
+                if (claimRewardResponse.statusCode == GetMyReward.GetMyRewardResponse.StatusCode.OK) {
+                    val reward = claimRewardResponse.reward
+                     Toast.makeText(context!!,"Congratulations!! You have been rewarded with ${reward} ", Toast.LENGTH_SHORT).show()
 
+                } else {
+                    Toast.makeText(context!!, claimRewardResponse.statusMessage.toString(), Toast.LENGTH_LONG).show()
+                }
+
+            } else {
+                showSnackBar("Server Unreachable", day)
+
+            }
+        }
+    }
 
 
     private fun getDailyChallenge(day: Int) = lifecycleScope.launch{
@@ -111,32 +135,36 @@ class SingleDayChallengeFragment(private val day:Int,private val currMarketDay: 
     }
 
     private fun getChallengeUserStatesAsynchronously(dailyChallenges: MutableList<DailyChallengeOuterClass.DailyChallenge>) = lifecycleScope.launch{
+        challengesState.clear()
         val size = dailyChallenges.size
-        for(i in 0..size-1) {
+
             if (withContext(Dispatchers.IO) { ConnectionUtils.getConnectionInfo(context!!) }) {
-                val myUserStateRequest = GetMyUserState.GetMyUserStateRequest.newBuilder()
-                        .setMarketDay(day)
-                        .setChallengeId(dailyChallenges[i].challengeId)
-                        .build()
+
                 if (withContext(Dispatchers.IO) { ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT) }) {
-                    val userStateResponse = withContext(Dispatchers.IO) { actionServiceBlockingStub.getMyUserState(myUserStateRequest) }
+                    for (i in 0..size - 1) {
+                        val myUserStateRequest = GetMyUserState.GetMyUserStateRequest.newBuilder()
+                                .setMarketDay(day)
+                                .setChallengeId(dailyChallenges[i].challengeId)
+                                .build()
+                        val userStateResponse = withContext(Dispatchers.IO) { actionServiceBlockingStub.getMyUserState(myUserStateRequest) }
 
 
-                    if (userStateResponse.statusCode == GetMyUserState.GetMyUserStateResponse.StatusCode.OK) {
-                        val myUserState = userStateResponse.userState
-                        challengesState.add(Pair(myUserState.isCompleted,myUserState.isRewardClamied))
+                        if (userStateResponse.statusCode == GetMyUserState.GetMyUserStateResponse.StatusCode.OK) {
+                            val myUserState = userStateResponse.userState
+                            challengesState.add(myUserState)
 
 
-                    } else {
-                        Toast.makeText(context!!, userStateResponse.statusMessage.toString(), Toast.LENGTH_LONG).show()
+                        } else {
+                            Toast.makeText(context!!, userStateResponse.statusMessage.toString(), Toast.LENGTH_LONG).show()
+                        }
+
                     }
-
-                } else {
+                }else {
                     showSnackBar("Server Unreachable", day)
 
                 }
             }
-        }
+
         initRecyclerView(dailyChallenges,challengesState)
     }
     private fun showSnackBar(message: String, marketDay: Int) {
