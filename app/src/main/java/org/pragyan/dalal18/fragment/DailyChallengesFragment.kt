@@ -34,7 +34,7 @@ class DailyChallengesFragment : Fragment() {
     @Inject
     lateinit var actionServiceBlockingStub: DalalActionServiceGrpc.DalalActionServiceBlockingStub
 
-    private var marketDay:Int = 0
+
     private var isDailyChallengeOpen = false
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -53,9 +53,11 @@ class DailyChallengesFragment : Fragment() {
         binding.dailyChallengeViewPager.apply {
             adapter = DailyChallengePagerAdapter(
                     childFragmentManager,
-                    FragmentStatePagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT
+                    FragmentStatePagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT,
+                    marketDay,
+                    isDailyChallengeOpen
             )
-            //setCurrentItem(marketDay-1)
+            setCurrentItem(marketDay-1)
         }
         binding.daysTabLayout.setupWithViewPager(binding.dailyChallengeViewPager)
         val tabStrip = binding.daysTabLayout.getChildAt(0) as LinearLayout
@@ -72,6 +74,7 @@ class DailyChallengesFragment : Fragment() {
             if (i != 7)
                 tabStrip.getChildAt(i).isClickable = false
         }
+
     }
 
     private fun getMarketDay() = lifecycleScope.launch{
@@ -81,7 +84,7 @@ class DailyChallengesFragment : Fragment() {
             if (withContext(Dispatchers.IO) { ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT) }) {
                 val dailyChallengeConfigResponse = withContext(Dispatchers.IO){actionServiceBlockingStub.getDailyChallengeConfig(dailyChallengeConfigRequest)}
                 if(dailyChallengeConfigResponse.statusCode==GetDailyChallengeConfig.GetDailyChallengeConfigResponse.StatusCode.OK){
-                    marketDay = dailyChallengeConfigResponse.marketDay
+                    val marketDay = dailyChallengeConfigResponse.marketDay
                     isDailyChallengeOpen = dailyChallengeConfigResponse.isDailyChallengOpen
                     Toast.makeText(requireContext(),"market ${marketDay} isDailyCHallengeOpen ${isDailyChallengeOpen}",Toast.LENGTH_SHORT).show()
                     setUpViewPager(marketDay)

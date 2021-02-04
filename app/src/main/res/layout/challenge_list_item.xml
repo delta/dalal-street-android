@@ -29,10 +29,10 @@
                 android:id="@+id/challenge_text"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="20dp"
+                android:layout_marginStart="10dp"
                 android:text="@string/daily_challenge"
                 android:textColor="@color/neutral_font_color"
-                android:textSize="22sp"
+                android:textSize="20sp"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="@+id/challenge_item_container"
                 app:layout_constraintEnd_toEndOf="@id/guideline"
@@ -52,7 +52,6 @@
                 android:id="@+id/challenge_status_container"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:layout_weight="1"
                 android:layout_margin="4dp"
                 app:layout_constraintBottom_toBottomOf="@id/challenge_item_container"
                 app:layout_constraintEnd_toEndOf="@id/challenge_item_container"
@@ -71,9 +70,13 @@
 
                 <ImageView
                     android:id="@+id/hint_image"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:padding="8dp" />
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.5"
+                    app:layout_constraintStart_toStartOf="@id/challenge_status_container"
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <Button
                     android:id="@+id/claim_reward_button"
@@ -85,12 +88,12 @@
                     android:elevation="4dp"
                     android:gravity="center_horizontal"
                     android:minWidth="60dp"
-                    android:visibility="visible"
                     android:text="@string/claim_reward"
                     android:textAlignment="center"
                     android:textColor="@color/neon_yellow"
-                    android:textSize="20sp"
-                    app:layout_constraintBottom_toBottomOf="@+id/hint_image"
+                    android:textSize="16sp"
+                    android:visibility="visible"
+                    app:layout_constraintBottom_toBottomOf="@+id/challenge_status_container"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.5"
                     app:layout_constraintStart_toStartOf="@id/challenge_status_container"
