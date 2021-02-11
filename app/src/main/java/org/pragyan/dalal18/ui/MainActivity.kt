@@ -33,6 +33,7 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
+import com.google.android.play.core.review.ReviewManagerFactory
 import dalalstreet.api.DalalActionServiceGrpc
 import dalalstreet.api.DalalStreamServiceGrpc
 import dalalstreet.api.actions.GetMortgageDetailsRequest
@@ -200,6 +201,8 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
         this.startService(Intent(this.baseContext, PushNotificationService::class.java))
 
         binding.marketCloseIndicatorTextView.isSelected = true
+
+        // requestInAppReviewFromUser()
     }
 
     // Adding and setting up Navigation drawer
@@ -713,6 +716,42 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
             mChannel.lightColor = Color.RED
             nm.createNotificationChannel(mChannel)
         }
+    }
+
+    /**
+     * Currently in testing phase, needs more extensive testing.
+     *
+     * This function is calling the inbuilt Google's API for review.
+     *
+     * Need not to call this function many times, API has a limit,
+     * on excess use of this function, API will not let the app to take
+     * the review from the user.
+     *
+     * Call this whenever needed.
+     *
+     * Need to think if we really need to call this in co-routine,
+     * as API is calling some part asynchronously itself.
+     */
+    private fun requestInAppReviewFromUser() {
+        val reviewManager = ReviewManagerFactory.create(this@MainActivity)
+
+        val request = reviewManager.requestReviewFlow()
+        request.addOnCompleteListener { request ->
+            if (request.isSuccessful) {
+                // We got the ReviewInfo object
+                val reviewInfo = request.result
+                Log.d("USER REVIEW", reviewInfo.toString())
+
+                val reviewFlow = reviewManager.launchReviewFlow(this@MainActivity, reviewInfo)
+                reviewFlow.addOnCompleteListener { _ ->
+                    Log.d("REVIEW FLOW COMPLETED", "DONE YEAH !")
+                }
+            } else {
+                //Toast.makeText(this@MainActivity, request.exception.toString(), Toast.LENGTH_LONG).show()
+                Log.d("ERROR:", request.exception.toString())
+            }
+        }
+
     }
 
     companion object {
