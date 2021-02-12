@@ -1,11 +1,14 @@
 package org.pragyan.dalal18.fragment
 
+import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
@@ -18,7 +21,6 @@ import dalalstreet.api.actions.GetMyReward
 import dalalstreet.api.actions.GetMyUserState
 import dalalstreet.api.models.DailyChallengeOuterClass
 import dalalstreet.api.models.UserStateOuterClass
-import kotlinx.android.synthetic.main.fragment_leaderboard.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -45,6 +47,17 @@ class SingleDayChallengeFragment(private val day:Int,private val currMarketDay: 
 
     private lateinit var model: DalalViewModel
 
+    lateinit var networkDownHandler: ConnectionUtils.OnNetworkDownHandler
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        try {
+            networkDownHandler = context as ConnectionUtils.OnNetworkDownHandler
+        } catch (classCastException: ClassCastException) {
+            throw ClassCastException("$context must implement network down handler.")
+        }
+    }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         binding = FragmentSingleDayChallengeBinding.inflate(inflater,container,false)
@@ -64,8 +77,8 @@ class SingleDayChallengeFragment(private val day:Int,private val currMarketDay: 
     private fun initRecyclerView(dailyChallengesList: MutableList<DailyChallengeOuterClass.DailyChallenge>, userStates: MutableList<UserStateOuterClass.UserState>) {
         dailyChallengesRecyclerAdapter = DailyChallengesRecyclerAdapter(dailyChallengesList,userStates,
                 object : DailyChallengesRecyclerAdapter.CheckUserStateListener{
-                    override fun claimReward(Id:Int) {
-                        claimRewardAsynchronously(Id)
+                    override fun claimReward(Id: Int, button: Button, progressImage: ImageView) {
+                        claimRewardAsynchronously(Id,button,progressImage)
                     }
 
 
@@ -77,12 +90,28 @@ class SingleDayChallengeFragment(private val day:Int,private val currMarketDay: 
                         return (isDailyChallengeOpen && (day==currMarketDay))
                     }
 
+                    override fun getCashWorth() : Long{
+                        return model.getCashWorth()
+                    }
+
+                    override fun getStockWorth() :Long {
+                        return model.getStockWorth()
+                    }
+
+                    override fun getNetWorth() :Long {
+                        return model.getNetWorth()
+                    }
+
+                    override fun getCurrentStocks(stockId: Int): Long {
+                        return model.getQuantityOwnedFromStockId(stockId)
+                    }
+
                 })
         binding.dailyChallengeRecyclerView.layoutManager = LinearLayoutManager(requireContext())
         binding.dailyChallengeRecyclerView.adapter = dailyChallengesRecyclerAdapter
     }
 
-    private fun claimRewardAsynchronously(id: Int) = lifecycleScope.launch{
+    private fun claimRewardAsynchronously(id: Int, button: Button, progressImage: ImageView) = lifecycleScope.launch{
         if (withContext(Dispatchers.IO) { ConnectionUtils.getConnectionInfo(context!!) }){
             val claimRewardRequest = GetMyReward.GetMyRewardRequest.newBuilder()
                     .setUserStateId(id)
@@ -94,6 +123,10 @@ class SingleDayChallengeFragment(private val day:Int,private val currMarketDay: 
                 if (claimRewardResponse.statusCode == GetMyReward.GetMyRewardResponse.StatusCode.OK) {
                     val reward = claimRewardResponse.reward
                      Toast.makeText(context!!,"Congratulations!! You have been rewarded with ${reward} ", Toast.LENGTH_SHORT).show()
+                    button.visibility=View.INVISIBLE
+                    progressImage.setImageResource(R.drawable.blue_thumb)
+                    progressImage.visibility = View.VISIBLE
+
 
                 } else {
                     Toast.makeText(context!!, claimRewardResponse.statusMessage.toString(), Toast.LENGTH_LONG).show()
@@ -103,6 +136,8 @@ class SingleDayChallengeFragment(private val day:Int,private val currMarketDay: 
                 showSnackBar("Server Unreachable", day)
 
             }
+        }else{
+            networkDownHandler.onNetworkDownError(resources.getString(R.string.error_check_internet), R.id.dailyChallenge_dest)
         }
     }
 
@@ -131,6 +166,8 @@ class SingleDayChallengeFragment(private val day:Int,private val currMarketDay: 
                 showSnackBar("Server Unreachable", day)
 
             }
+        }else{
+            networkDownHandler.onNetworkDownError(resources.getString(R.string.error_check_internet), R.id.dailyChallenge_dest)
         }
     }
 
@@ -158,13 +195,16 @@ class SingleDayChallengeFragment(private val day:Int,private val currMarketDay: 
                         }
 
                     }
+                    initRecyclerView(dailyChallenges,challengesState)
                 }else {
                     showSnackBar("Server Unreachable", day)
 
                 }
+            }else{
+                networkDownHandler.onNetworkDownError(resources.getString(R.string.error_check_internet), R.id.dailyChallenge_dest)
             }
 
-        initRecyclerView(dailyChallenges,challengesState)
+
     }
     private fun showSnackBar(message: String, marketDay: Int) {
         val snackBar = Snackbar.make(activity!!.findViewById(android.R.id.content), message, Snackbar.LENGTH_INDEFINITE)

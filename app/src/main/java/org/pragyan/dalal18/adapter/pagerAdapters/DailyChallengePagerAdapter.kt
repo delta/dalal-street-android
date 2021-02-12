@@ -20,4 +20,5 @@ class DailyChallengePagerAdapter(fm: FragmentManager, behavior: Int,private val 
 
 
 
+
 }

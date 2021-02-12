@@ -501,7 +501,7 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
             netStockWorth += quantity * model.getPriceFromStockId(stockId)
         }
         stockWorth = netStockWorth
-
+        model.updateStockWorth(stockWorth)
         changeTextViewValue(binding.stockWorthTextView, binding.stockIndicatorImageView, netStockWorth)
 
         // We need to add reserved stocks worth to calculate total worth
@@ -510,6 +510,8 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
         }
         // Backend has it the way TotalWorth = CashWorth + OwnedStockWorth + ReservedStockWorth
         totalWorth = netStockWorth + cashWorth + model.reservedCash
+        model.updateNetWorth(totalWorth)
+        model.updateCashWorth(cashWorth)
 
         changeTextViewValue(binding.totalWorthTextView, binding.totalIndicatorImageView, totalWorth)
     }
@@ -519,9 +521,11 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
 
         // Initial old value is 0; Zero is placeholder
         cashWorth = intent.getLongExtra(CASH_WORTH_KEY, -1)
+        model.updateCashWorth(cashWorth)
         animateWorthChange(0, cashWorth, binding.cashWorthTextView, binding.cashIndicatorImageView)
 
         totalWorth = intent.getLongExtra(TOTAL_WORTH_KEY, -1)
+        model.updateNetWorth(totalWorth)
 
         // Updates stockWorthTextView and totalWorthTextView
         updateStockWorthViaStreamUpdates()

@@ -1,5 +1,6 @@
 package org.pragyan.dalal18.fragment
 
+import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -34,17 +35,34 @@ class DailyChallengesFragment : Fragment() {
     @Inject
     lateinit var actionServiceBlockingStub: DalalActionServiceGrpc.DalalActionServiceBlockingStub
 
+    lateinit var networkDownHandler: ConnectionUtils.OnNetworkDownHandler
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        try {
+            networkDownHandler = context as ConnectionUtils.OnNetworkDownHandler
+        } catch (classCastException: ClassCastException) {
+            throw ClassCastException("$context must implement network down handler.")
+        }
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         binding = FragmentDailyChallengesBinding.inflate(inflater,container,false)
         DaggerDalalStreetApplicationComponent.builder().contextModule(ContextModule(context!!)).build().inject(this)
+
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         getMarketDayAsynchronously()
+        binding.refreshLayout.setProgressBackgroundColorSchemeColor(resources.getColor(R.color.colorPrimary))
+        binding.refreshLayout.setColorSchemeColors(resources.getColor(R.color.colorAccent))
+        binding.refreshLayout.setOnRefreshListener {
+            getMarketDayAsynchronously()
+
+        }
     }
 
     private fun setUpViewPager(marketDay: Int,isDailyChallengeOpen:Boolean,days:Int) {
@@ -73,6 +91,7 @@ class DailyChallengesFragment : Fragment() {
             if (i != days)
                 tabStrip.getChildAt(i).isClickable = false
         }
+        binding.refreshLayout.isRefreshing=false
 
     }
 
@@ -86,13 +105,17 @@ class DailyChallengesFragment : Fragment() {
                     val marketDay = dailyChallengeConfigResponse.marketDay
                     val isDailyChallengeOpen = dailyChallengeConfigResponse.isDailyChallengOpen
                     val days = dailyChallengeConfigResponse.totalMarketDays
-                    Toast.makeText(requireContext(),"market ${marketDay} isDailyCHallengeOpen ${isDailyChallengeOpen} days ${days}",Toast.LENGTH_SHORT).show()
+                    //Toast.makeText(requireContext(),"market ${marketDay} isDailyCHallengeOpen ${isDailyChallengeOpen} days ${days}",Toast.LENGTH_SHORT).show()
                     setUpViewPager(marketDay,isDailyChallengeOpen,days)
+                }else{
+                    showSnackBar("Server Internal Error")
                 }
             } else {
                 showSnackBar("Server Unreachable")
 
             }
+        }else {
+            networkDownHandler.onNetworkDownError(resources.getString(R.string.error_check_internet), R.id.dailyChallenge_dest)
         }
     }
 
