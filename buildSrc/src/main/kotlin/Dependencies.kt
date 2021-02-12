@@ -38,7 +38,7 @@ object Versions {
     const val FirebaseCrashanalyticsGradle = "2.4.1"
     const val Crashlytics = "17.3.0"
     const val GmsServiceAuth = "17.0.0"
-    const val PlayCore = "1.8.0"
+    const val PlayCore = "1.9.0"
     const val PlayCoreKtx = "1.8.1"
 
     // gRPC dependencies version

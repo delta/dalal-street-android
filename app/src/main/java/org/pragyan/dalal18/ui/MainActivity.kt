@@ -89,6 +89,8 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
     @Inject
     lateinit var preferences: SharedPreferences
 
+    private lateinit var inAppUpdate: InAppUpdate
+
     lateinit var model: DalalViewModel
 
     private val subscriptionIds = ArrayList<SubscriptionId>()
@@ -144,6 +146,9 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
+
+        Log.d("INIT APPUPDATE", "APP UPDATE START")
+        inAppUpdate = InAppUpdate(this@MainActivity)
 
         model = ViewModelProvider(this).get(DalalViewModel::class.java)
 
@@ -203,6 +208,11 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
         binding.marketCloseIndicatorTextView.isSelected = true
 
         // requestInAppReviewFromUser()
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        inAppUpdate.onActivityResult(requestCode,resultCode, data)
     }
 
     // Adding and setting up Navigation drawer
@@ -613,6 +623,8 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
     public override fun onResume() {
         super.onResume()
 
+        inAppUpdate.onResume()
+
         subscribeToStreamsAsynchronously()
 
         val intentFilter = IntentFilter(REFRESH_ALL_WORTH_ACTION)
@@ -622,6 +634,11 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
         LocalBroadcastManager.getInstance(this).registerReceiver(worthNotificationGameStateReceiver, IntentFilter(intentFilter))
 
         connectivityManager.registerNetworkCallback(networkRequest, networkCallback)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        inAppUpdate.onDestroy()
     }
 
     public override fun onPause() {
