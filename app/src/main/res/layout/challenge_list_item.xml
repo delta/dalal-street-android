@@ -9,7 +9,7 @@
         android:id="@+id/dc_card_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="8dp"
+        android:padding="8dp"
         app:cardBackgroundColor="@color/dark_blue_background"
         app:cardCornerRadius="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -22,21 +22,44 @@
             android:id="@+id/challenge_item_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="10dp">
+            android:padding="8dp">
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/reward_text"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:text="1000"
+                android:textColor="@color/neon_green"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@+id/challenge_item_container"
+                app:layout_constraintEnd_toEndOf="@id/guideline2"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/challenge_item_container" />
+
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guideline2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.25" />
 
 
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/challenge_text"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
+                android:layout_marginStart="2dp"
                 android:text="@string/daily_challenge"
                 android:textColor="@color/neutral_font_color"
-                android:textSize="20sp"
+                android:textSize="16sp"
                 android:textStyle="bold"
+                android:gravity="center_horizontal"
                 app:layout_constraintBottom_toBottomOf="@+id/challenge_item_container"
                 app:layout_constraintEnd_toEndOf="@id/guideline"
-                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintStart_toStartOf="@id/guideline2"
                 app:layout_constraintTop_toTopOf="@+id/challenge_item_container" />
 
 
@@ -46,7 +69,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                app:layout_constraintGuide_percent="0.7" />
+                app:layout_constraintGuide_percent="0.75" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/challenge_status_container"
@@ -58,10 +81,14 @@
                 app:layout_constraintStart_toEndOf="@id/guideline"
                 app:layout_constraintTop_toTopOf="@id/challenge_item_container">
 
-                <ProgressBar
-                    android:id="@+id/hint_progress_bar"
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/progress_text_View"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:text="0/100"
+                    android:textSize="16sp"
+                    android:gravity="center_horizontal"
+                    android:textColor="@color/neutral_font_color"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.5"
@@ -69,9 +96,10 @@
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <ImageView
-                    android:id="@+id/hint_image"
+                    android:id="@+id/progress_image"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:foregroundGravity="center"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.5"
@@ -87,11 +115,11 @@
                     android:background="@drawable/black_white_rounded_button"
                     android:elevation="4dp"
                     android:gravity="center_horizontal"
-                    android:minWidth="60dp"
+                    android:minWidth="50dp"
                     android:text="@string/claim_reward"
                     android:textAlignment="center"
                     android:textColor="@color/neon_yellow"
-                    android:textSize="16sp"
+                    android:textSize="14sp"
                     android:visibility="visible"
                     app:layout_constraintBottom_toBottomOf="@+id/challenge_status_container"
                     app:layout_constraintEnd_toEndOf="parent"

@@ -143,7 +143,6 @@ class SingleDayChallengeFragment(private val day:Int,private val currMarketDay: 
                 if (withContext(Dispatchers.IO) { ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT) }) {
                     for (i in 0..size - 1) {
                         val myUserStateRequest = GetMyUserState.GetMyUserStateRequest.newBuilder()
-                                .setMarketDay(day)
                                 .setChallengeId(dailyChallenges[i].challengeId)
                                 .build()
                         val userStateResponse = withContext(Dispatchers.IO) { actionServiceBlockingStub.getMyUserState(myUserStateRequest) }

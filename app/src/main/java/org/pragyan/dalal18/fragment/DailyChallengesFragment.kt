@@ -47,13 +47,14 @@ class DailyChallengesFragment : Fragment() {
         getMarketDayAsynchronously()
     }
 
-    private fun setUpViewPager(marketDay: Int,isDailyChallengeOpen:Boolean) {
+    private fun setUpViewPager(marketDay: Int,isDailyChallengeOpen:Boolean,days:Int) {
         binding.dailyChallengeViewPager.apply {
             adapter = DailyChallengePagerAdapter(
                     childFragmentManager,
                     FragmentStatePagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT,
                     marketDay,
-                    isDailyChallengeOpen
+                    isDailyChallengeOpen,
+                    days
             )
             setCurrentItem(marketDay-1)
         }
@@ -66,10 +67,10 @@ class DailyChallengesFragment : Fragment() {
         }else {
             binding.dailyChallengeViewPager.visibility = View.VISIBLE
         }
-        for (i in (count)..7) {
+        for (i in (count)..days) {
             val newTab = binding.daysTabLayout.getTabAt(i)
             newTab?.text = "Day ${i + 1} \uD83D\uDD12"
-            if (i != 7)
+            if (i != days)
                 tabStrip.getChildAt(i).isClickable = false
         }
 
@@ -84,8 +85,9 @@ class DailyChallengesFragment : Fragment() {
                 if(dailyChallengeConfigResponse.statusCode==GetDailyChallengeConfig.GetDailyChallengeConfigResponse.StatusCode.OK){
                     val marketDay = dailyChallengeConfigResponse.marketDay
                     val isDailyChallengeOpen = dailyChallengeConfigResponse.isDailyChallengOpen
-                    Toast.makeText(requireContext(),"market ${marketDay} isDailyCHallengeOpen ${isDailyChallengeOpen}",Toast.LENGTH_SHORT).show()
-                    setUpViewPager(marketDay,isDailyChallengeOpen)
+                    val days = dailyChallengeConfigResponse.totalMarketDays
+                    Toast.makeText(requireContext(),"market ${marketDay} isDailyCHallengeOpen ${isDailyChallengeOpen} days ${days}",Toast.LENGTH_SHORT).show()
+                    setUpViewPager(marketDay,isDailyChallengeOpen,days)
                 }
             } else {
                 showSnackBar("Server Unreachable")

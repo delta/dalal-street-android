@@ -29,6 +29,9 @@ class DailyChallengesRecyclerAdapter(
         val challengeId = dailyChallenges[position].challengeId
         val challengeType = dailyChallenges[position].challengeType
         val value = dailyChallenges[position].value
+        val rewardAmount = dailyChallenges[position].reward
+        val initialValue = userStates[position].initialValue
+        val finalValue = userStates[position].finalValue
         if(challengeType.equals("Cash")||challengeType.equals("NetWorth")||challengeType.equals("StockWorth"))
             holder.binding.challengeText.text = "Increase your ${challengeType} to ${value}"
         else{
@@ -36,27 +39,29 @@ class DailyChallengesRecyclerAdapter(
             val companyName = checkUserStateListener.getCompanyNameFromStockId(stockId)
             holder.binding.challengeText.text = "Increase the number of stocks of ${companyName} to ${value}"
         }
+        holder.binding.rewardText.text = "\uD83D\uDCB5 $rewardAmount"
         if(checkUserStateListener.isDailyChallengeOpen()){
-            holder.binding.hintProgressBar.visibility = View.VISIBLE
-            holder.binding.hintImage.visibility=View.GONE
+            holder.binding.progressTextView.visibility = View.VISIBLE
+            holder.binding.progressTextView.text = "0/${value}"
+            holder.binding.progressImage.visibility=View.GONE
             holder.binding.claimRewardButton.visibility=View.GONE
         }else{
             if(userStates[position].isCompleted && userStates[position].isRewardClamied){
-                holder.binding.hintProgressBar.visibility = View.GONE
-                holder.binding.hintImage.visibility=View.VISIBLE
-                holder.binding.hintImage.setImageResource(R.drawable.blue_thumb)
+                holder.binding.progressTextView.visibility = View.GONE
+                holder.binding.progressImage.visibility=View.VISIBLE
+                holder.binding.progressImage.setImageResource(R.drawable.blue_thumb)
                 holder.binding.claimRewardButton.visibility=View.GONE
             }else if(userStates[position].isCompleted && !userStates[position].isRewardClamied){
-                holder.binding.hintProgressBar.visibility = View.GONE
-                holder.binding.hintImage.visibility=View.GONE
+                holder.binding.progressTextView.visibility = View.GONE
+                holder.binding.progressImage.visibility=View.GONE
                 holder.binding.claimRewardButton.visibility=View.VISIBLE
                 holder.binding.claimRewardButton.setOnClickListener {
                     checkUserStateListener.claimReward(userStates[position].id)
                 }
             }else{
-                holder.binding.hintProgressBar.visibility = View.GONE
-                holder.binding.hintImage.visibility=View.VISIBLE
-                holder.binding.hintImage.setImageResource(R.drawable.clear_icon)
+                holder.binding.progressTextView.visibility = View.GONE
+                holder.binding.progressImage.visibility=View.VISIBLE
+                holder.binding.progressImage.setImageResource(R.drawable.clear_icon)
                 holder.binding.claimRewardButton.visibility=View.GONE
             }
 

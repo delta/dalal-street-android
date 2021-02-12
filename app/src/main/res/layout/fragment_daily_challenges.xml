@@ -41,6 +41,7 @@
         app:layout_constraintTop_toBottomOf="@+id/daily_challenge_text"
         android:background="#20202C"
         app:tabGravity="fill"
+        app:tabMode="scrollable"
         app:tabSelectedTextColor="@color/neon_blue"
         app:tabTextAppearance="@style/TabHeadingStyle"
         app:tabTextColor="@color/neutral_font_color" />
