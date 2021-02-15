@@ -52,15 +52,15 @@ class DailyChallengesRecyclerAdapter(
             var progress:Long=0
             when(challengeType){
                 "Cash"->{
-                    currentCash = checkUserStateListener.getCashWorth()
+                    val currentCash = checkUserStateListener.getCashWorth()
                     progress = currentCash - initialValue
                 }
                 "NetWorth"->{
-                    netWorth = checkUserStateListener.getNetWorth()
+                    val netWorth = checkUserStateListener.getNetWorth()
                      progress = netWorth - initialValue
                 }
                 "StockWorth"->{
-                    stockWorth = checkUserStateListener.getStockWorth()
+                    val stockWorth = checkUserStateListener.getStockWorth()
                     progress = stockWorth - initialValue
                 }
                 else->{
@@ -117,10 +117,10 @@ class DailyChallengesRecyclerAdapter(
         fun getCurrentStocks(stockId: Int):Long
     }
 
-    companion object{
-        private var currentCash = 0L
-        private var netWorth = 0L
-        private var stockWorth = 0L
-    }
+   // companion object{
+    //    private var currentCash = 0L
+    //    private var netWorth = 0L
+    //    private var stockWorth = 0L
+  //  }
 
 }
