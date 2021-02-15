@@ -1,7 +1,6 @@
 package org.pragyan.dalal18.adapter
 
 import android.graphics.Color
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -28,8 +27,8 @@ class DailyChallengesRecyclerAdapter(
     override fun getItemCount(): Int = dailyChallenges.size
 
     override fun onBindViewHolder(holder: DailyChallengeViewHolder, position: Int) {
-//
-        Log.i("daily",dailyChallenges[position].toString())
+
+
         val challengeId = dailyChallenges[position].challengeId
         val challengeType = dailyChallenges[position].challengeType
         val value = dailyChallenges[position].value
@@ -53,16 +52,15 @@ class DailyChallengesRecyclerAdapter(
             var progress:Long=0
             when(challengeType){
                 "Cash"->{
-                    val currentCash = checkUserStateListener.getCashWorth()
+                    currentCash = checkUserStateListener.getCashWorth()
                     progress = currentCash - initialValue
-
                 }
                 "NetWorth"->{
-                    val netWorth = checkUserStateListener.getNetWorth()
+                    netWorth = checkUserStateListener.getNetWorth()
                      progress = netWorth - initialValue
                 }
                 "StockWorth"->{
-                    val stockWorth = checkUserStateListener.getStockWorth()
+                    stockWorth = checkUserStateListener.getStockWorth()
                     progress = stockWorth - initialValue
                 }
                 else->{
@@ -84,7 +82,7 @@ class DailyChallengesRecyclerAdapter(
                     holder.binding.progressImage.visibility = View.VISIBLE
                     holder.binding.progressImage.setImageResource(R.drawable.blue_thumb)
                     holder.binding.claimRewardButton.visibility = View.GONE
-                } else if (userStates[position].isCompleted && !userStates[position].isRewardClamied) {
+                } else if (userStates[position].isCompleted) {
                     holder.binding.progressTextView.visibility = View.GONE
                     holder.binding.progressImage.visibility = View.GONE
                     holder.binding.claimRewardButton.visibility = View.VISIBLE
@@ -117,6 +115,12 @@ class DailyChallengesRecyclerAdapter(
         fun getStockWorth():Long
         fun getNetWorth():Long
         fun getCurrentStocks(stockId: Int):Long
+    }
+
+    companion object{
+        private var currentCash = 0L
+        private var netWorth = 0L
+        private var stockWorth = 0L
     }
 
 }

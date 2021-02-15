@@ -61,7 +61,6 @@ class DailyChallengesFragment : Fragment() {
         binding.refreshLayout.setColorSchemeColors(resources.getColor(R.color.colorAccent))
         binding.refreshLayout.setOnRefreshListener {
             getMarketDayAsynchronously()
-
         }
     }
 
@@ -105,7 +104,6 @@ class DailyChallengesFragment : Fragment() {
                     val marketDay = dailyChallengeConfigResponse.marketDay
                     val isDailyChallengeOpen = dailyChallengeConfigResponse.isDailyChallengOpen
                     val days = dailyChallengeConfigResponse.totalMarketDays
-                    //Toast.makeText(requireContext(),"market ${marketDay} isDailyCHallengeOpen ${isDailyChallengeOpen} days ${days}",Toast.LENGTH_SHORT).show()
                     setUpViewPager(marketDay,isDailyChallengeOpen,days)
                 }else{
                     showSnackBar("Server Internal Error")
@@ -127,6 +125,4 @@ class DailyChallengesFragment : Fragment() {
         snackBar.view.setBackgroundColor(Color.parseColor("#20202C"))
         snackBar.show()
     }
-
-
 }

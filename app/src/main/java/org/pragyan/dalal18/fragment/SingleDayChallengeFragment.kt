@@ -152,11 +152,9 @@ class SingleDayChallengeFragment(private val day:Int,private val currMarketDay: 
 
 
                 if (dailyChallengesResponse.statusCode == GetDailyChallenges.GetDailyChallengesResponse.StatusCode.OK) {
-                   // Toast.makeText(context!!,dailyChallengesResponse.dailyChallengesList.toString(), Toast.LENGTH_SHORT).show()
-                           //   Log.i("daily",dailyChallengesResponse.dailyChallengesList[day].toString())
+
                     val dailyChallenges = dailyChallengesResponse.dailyChallengesList
                     getChallengeUserStatesAsynchronously(dailyChallenges)
-
 
                 } else {
                     Toast.makeText(context!!, dailyChallengesResponse.statusMessage.toString(), Toast.LENGTH_LONG).show()
@@ -198,12 +196,10 @@ class SingleDayChallengeFragment(private val day:Int,private val currMarketDay: 
                     initRecyclerView(dailyChallenges,challengesState)
                 }else {
                     showSnackBar("Server Unreachable", day)
-
                 }
             }else{
                 networkDownHandler.onNetworkDownError(resources.getString(R.string.error_check_internet), R.id.dailyChallenge_dest)
             }
-
 
     }
     private fun showSnackBar(message: String, marketDay: Int) {
@@ -214,6 +210,4 @@ class SingleDayChallengeFragment(private val day:Int,private val currMarketDay: 
         snackBar.view.setBackgroundColor(Color.parseColor("#20202C"))
         snackBar.show()
     }
-
-
 }
