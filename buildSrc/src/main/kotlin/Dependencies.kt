@@ -57,6 +57,7 @@ object Versions {
     const val Junit = "4.12"
     const val JunitExt = "1.1.2"
     const val EspressoCore = "3.3.0"
+
 }
 
 object BuildPlugins {

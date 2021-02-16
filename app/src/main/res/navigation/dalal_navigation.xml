@@ -132,4 +132,10 @@
         android:label="@string/refer_and_earn"
         tools:layout="@layout/fragment_refer_and_earn" />
 
+    <fragment
+        android:id="@+id/dailyChallenge_dest"
+        android:name="org.pragyan.dalal18.fragment.DailyChallengesFragment"
+        android:label="@string/daily_challenge"
+        tools:layout="@layout/fragment_daily_challenges" />
+
 </navigation>
