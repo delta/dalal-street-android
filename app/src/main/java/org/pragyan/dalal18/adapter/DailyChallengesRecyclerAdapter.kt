@@ -35,7 +35,7 @@ class DailyChallengesRecyclerAdapter(
         val rewardAmount = dailyChallenges[position].reward
 
 
-        if(challengeType.equals("Cash")||challengeType.equals("NetWorth")||challengeType.equals("StockWorth"))
+        if(challengeType.equals(CASH)||challengeType.equals(NETWORTH)||challengeType.equals(STOCKWORTH))
             holder.binding.challengeText.text = "Increase your ${challengeType} by ${value}"
         else{
             val stockId = dailyChallenges[position].stockId
@@ -51,15 +51,15 @@ class DailyChallengesRecyclerAdapter(
             holder.binding.claimRewardButton.visibility=View.GONE
             var progress:Long=0
             when(challengeType){
-                "Cash"->{
+                CASH->{
                     val currentCash = checkUserStateListener.getCashWorth()
                     progress = currentCash - initialValue
                 }
-                "NetWorth"->{
+                NETWORTH->{
                     val netWorth = checkUserStateListener.getNetWorth()
                      progress = netWorth - initialValue
                 }
-                "StockWorth"->{
+                STOCKWORTH->{
                     val stockWorth = checkUserStateListener.getStockWorth()
                     progress = stockWorth - initialValue
                 }
@@ -117,10 +117,10 @@ class DailyChallengesRecyclerAdapter(
         fun getCurrentStocks(stockId: Int):Long
     }
 
-   // companion object{
-    //    private var currentCash = 0L
-    //    private var netWorth = 0L
-    //    private var stockWorth = 0L
-  //  }
+    companion object{
+        private var CASH = "Cash"
+        private var NETWORTH = "NetWorth"
+        private var STOCKWORTH = "StockWorth"
+    }
 
 }
