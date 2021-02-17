@@ -1,0 +1,306 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/black_background">
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/black_background"
+        android:paddingStart="8dp"
+        android:paddingTop="96dp"
+        android:paddingEnd="8dp"
+        android:paddingBottom="16dp">
+
+
+            <TextView
+            android:id="@+id/stockIdEditText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/neutral_font_color"
+            android:text="Open Close Market"
+            android:textColor="@color/neutral_font_color"
+            android:textColorHint="@color/neutral_font_color"
+            app:layout_constraintBottom_toBottomOf="@+id/closeMarketButton"
+            app:layout_constraintEnd_toStartOf="@+id/openMarketButton"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+            <Button
+                android:id="@+id/openMarketButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:background="@drawable/black_white_rounded_button"
+                android:padding="4dp"
+                android:text="Open Market"
+                android:textColor="@color/neon_green"
+                app:layout_constraintBottom_toTopOf="@id/closeMarketButton"
+                app:layout_constraintStart_toEndOf="@id/stockIdEditText"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <Button
+                android:id="@+id/closeMarketButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="20dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/black_white_rounded_button"
+                android:padding="4dp"
+                android:text="Close Market"
+                android:textColor="@color/neon_yellow"
+                app:layout_constraintEnd_toEndOf="@id/openMarketButton"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="@id/openMarketButton"
+                app:layout_constraintTop_toBottomOf="@id/openMarketButton" />
+
+
+            <View
+                android:id="@+id/view3"
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:layout_margin="5dp"
+                android:background="@color/black"
+                app:layout_constraintTop_toBottomOf="@+id/closeMarketButton"
+                tools:layout_editor_absoluteX="8dp" />
+
+            <TextView
+                android:id="@+id/stockIdEditText2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/neutral_font_color"
+                android:inputType="number"
+                android:text="Daily LeaderBoard"
+                android:textColor="@color/neutral_font_color"
+                android:textColorHint="@color/neutral_font_color"
+                app:layout_constraintBottom_toBottomOf="@+id/updateEndOFDayValue"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/updateEndOFDayValue" />
+
+            <Button
+                android:id="@+id/updateEndOFDayValue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/black_white_rounded_button"
+                android:padding="10dp"
+                android:text="Update EndOfDayValues"
+                android:textAllCaps="false"
+                android:textColor="@color/neon_blue"
+                app:layout_constraintEnd_toEndOf="@+id/closeMarketButton"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="@+id/closeMarketButton"
+                app:layout_constraintTop_toBottomOf="@+id/closeMarketButton" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:background="@color/black"
+                android:layout_margin="5dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/updateEndOFDayValue" />
+
+            <TextView
+                android:id="@+id/stockIdEditText3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/neutral_font_color"
+                android:hint="Add DailyChallenge"
+                android:inputType="number"
+                android:textColor="@color/neutral_font_color"
+                android:textColorHint="@color/neutral_font_color"
+                app:layout_constraintBottom_toBottomOf="@+id/enterValueEdittext"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/enterMarketDayEditText" />
+
+        <EditText
+            android:id="@+id/enterMarketDayEditText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:backgroundTint="@color/neutral_font_color"
+            android:hint="Enter Market Day"
+            android:inputType="text"
+            android:textColor="@color/neutral_font_color"
+            android:textColorHint="@color/neutral_font_color"
+            app:layout_constraintBottom_toTopOf="@id/typeOfChallengeEditText"
+            app:layout_constraintEnd_toEndOf="@+id/updateEndOFDayValue"
+            app:layout_constraintStart_toStartOf="@+id/updateEndOFDayValue"
+            app:layout_constraintTop_toBottomOf="@id/updateEndOFDayValue" />
+
+        <Spinner
+            android:id="@+id/typeOfChallengeEditText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:backgroundTint="@color/neutral_font_color"
+            android:hint="Type of Challenge"
+            android:entries="@array/dailyChallengesTypes"
+            app:layout_constraintBottom_toTopOf="@id/StockIDEditText"
+            app:layout_constraintEnd_toEndOf="@+id/enterMarketDayEditText"
+            app:layout_constraintStart_toStartOf="@id/enterMarketDayEditText"
+            app:layout_constraintTop_toBottomOf="@id/enterMarketDayEditText" />
+
+        <EditText
+            android:id="@+id/StockIDEditText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:backgroundTint="@color/neutral_font_color"
+            android:hint="Stock ID"
+            android:inputType="textUri"
+            android:textColor="@color/neutral_font_color"
+            android:textColorHint="@color/neutral_font_color"
+            app:layout_constraintBottom_toTopOf="@id/enterValueEdittext"
+            app:layout_constraintEnd_toEndOf="@+id/enterMarketDayEditText"
+            app:layout_constraintStart_toStartOf="@id/enterMarketDayEditText"
+            app:layout_constraintTop_toBottomOf="@id/typeOfChallengeEditText" />
+
+        <EditText
+            android:id="@+id/enterValueEdittext"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:backgroundTint="@color/neutral_font_color"
+            android:hint="Enter Value"
+            android:inputType="text"
+            android:textColor="@color/neutral_font_color"
+            android:textColorHint="@color/neutral_font_color"
+            app:layout_constraintEnd_toEndOf="@+id/enterMarketDayEditText"
+            app:layout_constraintStart_toStartOf="@id/enterMarketDayEditText"
+            app:layout_constraintTop_toBottomOf="@id/StockIDEditText" />
+
+            <EditText
+                android:id="@+id/rewardEditText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/neutral_font_color"
+                android:hint="Enter Reward"
+                android:inputType="text"
+                android:textColor="@color/neutral_font_color"
+                android:textColorHint="@color/neutral_font_color"
+                app:layout_constraintEnd_toEndOf="@+id/enterValueEdittext"
+                app:layout_constraintStart_toStartOf="@+id/enterValueEdittext"
+                app:layout_constraintTop_toBottomOf="@+id/enterValueEdittext" />
+
+            <Button
+                android:id="@+id/addDailyChallengeButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/black_white_rounded_button"
+                android:text="Add Daily Challenge"
+                android:padding="10dp"
+                android:layout_margin="5dp"
+                android:textColor="@color/neon_blue"
+                app:layout_constraintEnd_toEndOf="@+id/rewardEditText"
+                app:layout_constraintStart_toStartOf="@+id/rewardEditText"
+                app:layout_constraintTop_toBottomOf="@+id/rewardEditText" />
+
+            <View
+                android:id="@+id/view2"
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:layout_margin="5dp"
+                android:background="@color/black"
+                app:layout_constraintTop_toBottomOf="@+id/addDailyChallengeButton"
+                tools:layout_editor_absoluteX="8dp" />
+
+
+            <TextView
+                android:id="@+id/updatedailyChallengeTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/neutral_font_color"
+                android:hint="Update DailyChallenge"
+                android:inputType="number"
+                android:textColor="@color/neutral_font_color"
+                android:textColorHint="@color/neutral_font_color"
+                app:layout_constraintBottom_toBottomOf="@+id/closeDailyChallengeButton"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/openDailyChallengeButton" />
+
+            <Button
+                android:id="@+id/openDailyChallengeButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/black_white_rounded_button"
+                android:padding="10dp"
+                android:text="Open DailyChallenge"
+                android:textColor="@color/neon_green"
+                app:layout_constraintEnd_toEndOf="@+id/addDailyChallengeButton"
+                app:layout_constraintHorizontal_bias="0.4"
+                app:layout_constraintStart_toStartOf="@+id/addDailyChallengeButton"
+                app:layout_constraintTop_toBottomOf="@+id/view2" />
+
+            <Button
+                android:id="@+id/closeDailyChallengeButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:layout_marginTop="4dp"
+                android:background="@drawable/black_white_rounded_button"
+                android:padding="10dp"
+                android:text="Close DailyChallenge"
+                android:textColor="@color/neon_yellow"
+                app:layout_constraintEnd_toEndOf="@+id/openDailyChallengeButton"
+                app:layout_constraintHorizontal_bias="0.166"
+                app:layout_constraintStart_toStartOf="@+id/openDailyChallengeButton"
+                app:layout_constraintTop_toBottomOf="@+id/openDailyChallengeButton" />
+            <View
+                android:id="@+id/view4"
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:layout_margin="6dp"
+                android:background="@color/black"
+                app:layout_constraintTop_toBottomOf="@+id/closeDailyChallengeButton"
+                tools:layout_editor_absoluteX="8dp" />
+
+
+            <EditText
+                android:id="@+id/setMarketdayEditText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/neutral_font_color"
+                android:hint="Enter Matket Day"
+                android:inputType="textUri"
+                android:textColor="@color/neutral_font_color"
+                android:textColorHint="@color/neutral_font_color"
+                app:layout_constraintEnd_toEndOf="@+id/closeDailyChallengeButton"
+                app:layout_constraintStart_toStartOf="@+id/closeDailyChallengeButton"
+                app:layout_constraintTop_toBottomOf="@+id/view4" />
+
+            <Button
+                android:id="@+id/setMarketDayButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:background="@drawable/black_white_rounded_button"
+                android:padding="10dp"
+                android:text="Set Market Day"
+                android:layout_marginTop="5dp"
+                android:textColor="@color/neon_yellow"
+                app:layout_constraintEnd_toEndOf="@+id/setMarketdayEditText"
+                app:layout_constraintStart_toStartOf="@+id/setMarketdayEditText"
+                app:layout_constraintTop_toBottomOf="@+id/setMarketdayEditText" />
+
+            <TextView
+                android:id="@+id/setMarketDayTExtView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/neutral_font_color"
+                android:hint="Set Market Day here"
+                android:inputType="number"
+                android:textColor="@color/neutral_font_color"
+                android:textColorHint="@color/neutral_font_color"
+                app:layout_constraintBottom_toBottomOf="@+id/setMarketDayButton"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/setMarketdayEditText" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.core.widget.NestedScrollView>

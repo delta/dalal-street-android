@@ -1,0 +1,320 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/black_background">
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/black_background"
+        android:paddingStart="8dp"
+        android:paddingTop="96dp"
+        android:paddingEnd="8dp"
+        android:paddingBottom="16dp">
+
+
+
+<!--        <Button-->
+<!--            android:id="@+id/updateEndOfDayValuesButton"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:background="@drawable/black_white_rounded_button"-->
+<!--            android:padding="10dp"-->
+<!--            android:text="Update EndOfDayValues"-->
+<!--            android:textAllCaps="false"-->
+<!--            android:textColor="@color/neon_blue"-->
+<!--            app:layout_constraintBottom_toTopOf="@+id/closeMarketButton"-->
+<!--            app:layout_constraintEnd_toEndOf="parent"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            app:layout_constraintTop_toBottomOf="@+id/view2" />-->
+
+<!--        <Button-->
+<!--            android:id="@+id/openMarketButton"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginStart="20dp"-->
+<!--            android:background="@drawable/black_white_rounded_button"-->
+<!--            android:padding="4dp"-->
+<!--            android:text="Open Market"-->
+<!--            android:textColor="@color/neon_green"-->
+<!--            app:layout_constraintBottom_toBottomOf="parent"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            app:layout_constraintTop_toBottomOf="@id/newsDescriptionEditText"-->
+<!--            app:layout_constraintVertical_bias="1" />-->
+
+<!--        <Button-->
+<!--            android:id="@+id/closeMarketButton"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginEnd="20dp"-->
+<!--            android:background="@drawable/black_white_rounded_button"-->
+<!--            android:padding="4dp"-->
+<!--            android:text="Close Market"-->
+<!--            android:textColor="@color/neon_yellow"-->
+<!--            app:layout_constraintBottom_toBottomOf="parent"-->
+<!--            app:layout_constraintEnd_toEndOf="parent"-->
+<!--            app:layout_constraintTop_toBottomOf="@id/newsDescriptionEditText"-->
+<!--            app:layout_constraintVertical_bias="0.985" />-->
+
+        <EditText
+            android:id="@+id/stockIdEditText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/neutral_font_color"
+            android:hint="Stock ID"
+            android:inputType="number"
+            android:textColor="@color/neutral_font_color"
+            android:textColorHint="@color/neutral_font_color"
+            app:layout_constraintBottom_toBottomOf="@+id/newStockPriceEditText"
+            app:layout_constraintEnd_toStartOf="@+id/stocksToExchangeEditText"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <EditText
+            android:id="@+id/stocksToExchangeEditText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/neutral_font_color"
+            android:hint="Stocks to Exchange"
+            android:inputType="number"
+            android:textColor="@color/neutral_font_color"
+            android:textColorHint="@color/neutral_font_color"
+            app:layout_constraintBottom_toTopOf="@id/newStockPriceEditText"
+            app:layout_constraintEnd_toStartOf="@+id/stocksToExchangeButton"
+            app:layout_constraintStart_toEndOf="@id/stockIdEditText"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <Button
+            android:id="@+id/stocksToExchangeButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/black_white_rounded_button"
+            android:text="Add"
+            android:textColor="@color/neon_blue"
+            app:layout_constraintBottom_toTopOf="@id/updateStockPriceButton"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/stocksToExchangeEditText"
+            app:layout_constraintTop_toTopOf="parent" />
+
+            <EditText
+                android:id="@+id/newStockPriceEditText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:backgroundTint="@color/neutral_font_color"
+                android:hint="New Stock Price"
+                android:inputType="number"
+                android:textColor="@color/neutral_font_color"
+                android:textColorHint="@color/neutral_font_color"
+                app:layout_constraintEnd_toEndOf="@id/stocksToExchangeEditText"
+                app:layout_constraintStart_toStartOf="@id/stocksToExchangeEditText"
+                app:layout_constraintTop_toBottomOf="@id/stocksToExchangeEditText" />
+
+        <Button
+            android:id="@+id/updateStockPriceButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/black_white_rounded_button"
+            android:text="Update"
+            android:textColor="@color/neon_orange"
+            app:layout_constraintBottom_toBottomOf="@+id/newStockPriceEditText"
+            app:layout_constraintEnd_toEndOf="@id/stocksToExchangeButton"
+            app:layout_constraintStart_toStartOf="@id/stocksToExchangeButton"
+            app:layout_constraintTop_toBottomOf="@id/stocksToExchangeButton" />
+
+            <!--        <Button-->
+<!--            android:id="@+id/sendNotificationButton"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginTop="8dp"-->
+<!--            android:background="@drawable/black_white_rounded_button"-->
+<!--            android:text="Send"-->
+<!--            android:textColor="@color/neon_yellow"-->
+<!--            app:layout_constraintBottom_toBottomOf="@+id/notificationEditText"-->
+<!--            app:layout_constraintEnd_toEndOf="parent"-->
+<!--            app:layout_constraintStart_toEndOf="@+id/isGlobalSwitch"-->
+<!--            app:layout_constraintTop_toTopOf="@id/isGlobalSwitch" />-->
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/black"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toStartOf="parent"
+                tools:layout_editor_absoluteY="108dp" />
+
+            <EditText
+            android:id="@+id/stockIdEditText2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/neutral_font_color"
+            android:hint="Stock ID"
+            android:inputType="number"
+            android:textColor="@color/neutral_font_color"
+            android:textColorHint="@color/neutral_font_color"
+            app:layout_constraintBottom_toBottomOf="@+id/dividendSwitch"
+            app:layout_constraintEnd_toStartOf="@+id/bankruptSwitch"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/bankruptSwitch" />
+
+            <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/bankruptSwitch"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="Bankrupt?"
+                android:textColor="@color/neutral_font_color"
+                app:layout_constraintBottom_toTopOf="@id/dividendSwitch"
+                app:layout_constraintEnd_toEndOf="@+id/stocksToExchangeEditText"
+                app:layout_constraintStart_toStartOf="@+id/stocksToExchangeEditText"
+                app:layout_constraintTop_toTopOf="@+id/setBankruptButton" />
+
+            <Button
+                android:id="@+id/setBankruptButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/black_white_rounded_button"
+                android:text="Bankrupt"
+                android:textColor="@color/neon_green"
+                app:layout_constraintBottom_toTopOf="@id/setDividendButton"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.39"
+                app:layout_constraintStart_toEndOf="@id/bankruptSwitch"
+                app:layout_constraintTop_toBottomOf="@+id/newStockPriceEditText" />
+
+            <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/dividendSwitch"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Dividend?"
+            android:textColor="@color/neutral_font_color"
+            app:layout_constraintBottom_toBottomOf="@id/setDividendButton"
+            app:layout_constraintEnd_toEndOf="@+id/bankruptSwitch"
+            app:layout_constraintStart_toStartOf="@id/bankruptSwitch"
+            app:layout_constraintTop_toBottomOf="@id/bankruptSwitch" />
+
+        <Button
+            android:id="@+id/setDividendButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/black_white_rounded_button"
+            android:text="Dividend"
+            android:textColor="@color/neon_purple"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/bankruptSwitch"
+            app:layout_constraintTop_toBottomOf="@id/setBankruptButton" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:layout_marginTop="8dp"
+            android:background="@color/black"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/setDividendButton" />
+
+        <EditText
+            android:id="@+id/stockIdEditText3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/neutral_font_color"
+            android:hint="Stock ID"
+            android:inputType="number"
+            android:textColor="@color/neutral_font_color"
+            android:textColorHint="@color/neutral_font_color"
+            app:layout_constraintBottom_toBottomOf="@+id/newsDescriptionEditText"
+            app:layout_constraintEnd_toStartOf="@+id/bankruptSwitch"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/isGlobalNewsSwitch" />
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/isGlobalNewsSwitch"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:backgroundTint="@color/neutral_font_color"
+            android:hint="Global?"
+            android:inputType="number"
+            android:textColor="@color/neutral_font_color"
+            android:textColorHint="@color/neutral_font_color"
+            app:layout_constraintBottom_toTopOf="@id/headlinesEditText"
+            app:layout_constraintEnd_toEndOf="@+id/dividendSwitch"
+            app:layout_constraintStart_toStartOf="@+id/dividendSwitch"
+            app:layout_constraintTop_toBottomOf="@id/dividendSwitch" />
+
+        <EditText
+            android:id="@+id/headlinesEditText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:backgroundTint="@color/neutral_font_color"
+            android:hint="News Headline"
+            android:inputType="text"
+            android:textColor="@color/neutral_font_color"
+            android:textColorHint="@color/neutral_font_color"
+            app:layout_constraintBottom_toTopOf="@id/newsImageUrlEditText"
+            app:layout_constraintEnd_toEndOf="@+id/isGlobalNewsSwitch"
+            app:layout_constraintStart_toStartOf="@id/isGlobalNewsSwitch"
+            app:layout_constraintTop_toBottomOf="@id/isGlobalNewsSwitch" />
+
+        <EditText
+            android:id="@+id/newsImageUrlEditText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:backgroundTint="@color/neutral_font_color"
+            android:hint="Image URL"
+            android:inputType="textUri"
+            android:textColor="@color/neutral_font_color"
+            android:textColorHint="@color/neutral_font_color"
+            app:layout_constraintBottom_toTopOf="@id/newsDescriptionEditText"
+            app:layout_constraintEnd_toEndOf="@+id/isGlobalNewsSwitch"
+            app:layout_constraintStart_toStartOf="@id/isGlobalNewsSwitch"
+            app:layout_constraintTop_toBottomOf="@id/headlinesEditText" />
+
+        <EditText
+            android:id="@+id/newsDescriptionEditText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:backgroundTint="@color/neutral_font_color"
+            android:hint="News Text"
+            android:inputType="text"
+            android:textColor="@color/neutral_font_color"
+            android:textColorHint="@color/neutral_font_color"
+            app:layout_constraintEnd_toEndOf="@+id/isGlobalNewsSwitch"
+            app:layout_constraintStart_toStartOf="@id/isGlobalNewsSwitch"
+            app:layout_constraintTop_toBottomOf="@id/newsImageUrlEditText" />
+
+        <Button
+            android:id="@+id/sendNewsButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/black_white_rounded_button"
+            android:text="Send News"
+            android:textColor="@color/neon_blue"
+            app:layout_constraintBottom_toBottomOf="@id/newsDescriptionEditText"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/headlinesEditText"
+            app:layout_constraintTop_toTopOf="@+id/isGlobalNewsSwitch" />
+
+        <View
+            android:id="@+id/view2"
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:layout_marginTop="8dp"
+            android:background="@color/black"
+            app:layout_constraintBottom_toTopOf="@id/stocksToExchangeEditText"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/newsDescriptionEditText"
+            app:layout_constraintVertical_bias="0" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.core.widget.NestedScrollView>

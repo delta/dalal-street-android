@@ -76,6 +76,7 @@ class CompanyFragment : Fragment(), CompanyRecyclerAdapter.OnCompanyClickListene
         }
 
         setupAdminPanelLink(LASAGNE.toInt().toString())
+        findNavController().navigate(R.id.action_company_to_secret)
     }
 
     fun updateValues() {

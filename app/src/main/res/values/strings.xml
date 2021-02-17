@@ -487,4 +487,11 @@
     <string name="progress">Progress</string>
     <string name="reward">Rewards</string>
     <string name="challenge">Challenges</string>
+    <string-array name="dailyChallengesTypes">
+        <item>CASH</item>
+        <item>NetWorth</item>
+        <item>SpecificStock</item>
+        <item>StockWorth</item>
+        <item>UNRECOGNIZED</item>
+    </string-array>
 </resources>
