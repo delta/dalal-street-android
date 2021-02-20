@@ -274,21 +274,22 @@
                 app:layout_constraintStart_toStartOf="@+id/closeDailyChallengeButton"
                 app:layout_constraintTop_toBottomOf="@+id/view4" />
 
-            <Button
-                android:id="@+id/setMarketDayButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                android:background="@drawable/black_white_rounded_button"
-                android:padding="10dp"
-                android:text="Set Market Day"
-                android:layout_marginTop="5dp"
-                android:textColor="@color/neon_yellow"
-                app:layout_constraintEnd_toEndOf="@+id/setMarketdayEditText"
-                app:layout_constraintStart_toStartOf="@+id/setMarketdayEditText"
-                app:layout_constraintTop_toBottomOf="@+id/setMarketdayEditText" />
+        <Button
+            android:id="@+id/setMarketDayButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:layout_marginTop="4dp"
+            android:background="@drawable/black_white_rounded_button"
+            android:padding="10dp"
+            android:text="Set Market Day"
+            android:textColor="@color/neon_yellow"
+            app:layout_constraintEnd_toEndOf="@+id/setMarketdayEditText"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/setMarketdayEditText"
+            app:layout_constraintTop_toBottomOf="@+id/setMarketdayEditText" />
 
-            <TextView
+        <TextView
                 android:id="@+id/setMarketDayTExtView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
