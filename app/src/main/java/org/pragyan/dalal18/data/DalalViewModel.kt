@@ -12,6 +12,9 @@ class DalalViewModel : ViewModel() {
     var favoriteCompanyStockId: Int? = null
 
     var reservedCash = 0L
+    private var cashWorth =0L
+    private var stockWorth = 0L
+    private var netWorth = 0L
 
     fun updateGlobalStock(stockId: Int, price: Long, quantityInMarket: Long, quantityInExchange: Long) {
         globalStockDetails[stockId]?.price = price
@@ -66,6 +69,30 @@ class DalalViewModel : ViewModel() {
         }
 
         return reservedStocksValue
+    }
+
+    fun updateCashWorth(cash:Long){
+        cashWorth = cash
+    }
+
+    fun updateStockWorth(stockW:Long){
+        stockWorth = stockW
+    }
+
+    fun updateNetWorth(netW:Long){
+        netWorth = netW
+    }
+
+    fun getCashWorth():Long{
+        return cashWorth
+    }
+
+    fun getStockWorth():Long{
+        return stockWorth
+    }
+
+    fun getNetWorth():Long{
+        return netWorth
     }
 
     /* ============================= Stock Utils ============================= */

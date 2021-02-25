@@ -482,4 +482,9 @@
         <item>30 mins</item>
         <item>60 mins</item>
     </string-array>
+    <string name="daily_challenge">Daily Challenges</string>
+    <string name="claim_reward">Claim Reward</string>
+    <string name="progress">Progress</string>
+    <string name="reward">Rewards</string>
+    <string name="challenge">Challenges</string>
 </resources>

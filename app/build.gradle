@@ -109,6 +109,7 @@ dependencies {
 
     //Dagger
     implementation (Libs.dagger)
+    implementation (Libs.kotlinStd)
     kapt (Libs.daggerCompiler)
 
     // Gson
