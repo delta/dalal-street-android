@@ -58,7 +58,7 @@
 
 
             <View
-                android:id="@+id/view3"
+                android:id="@+id/viewForDivingSections3"
                 android:layout_width="match_parent"
                 android:layout_height="2dp"
                 android:layout_margin="5dp"
@@ -200,7 +200,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/rewardEditText" />
 
             <View
-                android:id="@+id/view2"
+                android:id="@+id/viewForDivingSections2"
                 android:layout_width="match_parent"
                 android:layout_height="2dp"
                 android:layout_margin="5dp"
@@ -235,7 +235,7 @@
                 app:layout_constraintEnd_toEndOf="@+id/addDailyChallengeButton"
                 app:layout_constraintHorizontal_bias="0.4"
                 app:layout_constraintStart_toStartOf="@+id/addDailyChallengeButton"
-                app:layout_constraintTop_toBottomOf="@+id/view2" />
+                app:layout_constraintTop_toBottomOf="@+id/viewForDivingSections2" />
 
             <Button
                 android:id="@+id/closeDailyChallengeButton"
@@ -252,7 +252,7 @@
                 app:layout_constraintStart_toStartOf="@+id/openDailyChallengeButton"
                 app:layout_constraintTop_toBottomOf="@+id/openDailyChallengeButton" />
             <View
-                android:id="@+id/view4"
+                android:id="@+id/viewForDivingSections"
                 android:layout_width="match_parent"
                 android:layout_height="2dp"
                 android:layout_margin="6dp"
@@ -272,7 +272,7 @@
                 android:textColorHint="@color/neutral_font_color"
                 app:layout_constraintEnd_toEndOf="@+id/closeDailyChallengeButton"
                 app:layout_constraintStart_toStartOf="@+id/closeDailyChallengeButton"
-                app:layout_constraintTop_toBottomOf="@+id/view4" />
+                app:layout_constraintTop_toBottomOf="@+id/viewForDivingSections" />
 
         <Button
             android:id="@+id/setMarketDayButton"

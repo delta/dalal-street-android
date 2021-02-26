@@ -51,7 +51,11 @@ class AdminPanelUserSpecificFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.apply {
-
+            blockUserButton.setOnClickListener { blockUser() }
+            unblockUserButton.setOnClickListener { unblockUser() }
+            unblockAllUserButton.setOnClickListener { unblockAllUser() }
+            sendNotificationButton.setOnClickListener { sendNotification() }
+            inspectUserButton.setOnClickListener { inspectUser() }
         }
 
     }
@@ -110,6 +114,27 @@ class AdminPanelUserSpecificFragment : Fragment() {
                                 .setText(notificationEditText.text.toString())
                                 .setUserId(userIdforNotification.text.toString().toInt())
                                 .setIsGlobal(isGlobalSwitch.isChecked)
+                                .build())
+
+                        message = response.statusMessage
+                    }
+                }
+            }
+        }
+        context?.toast(message)
+    }
+
+    private fun inspectUser() = lifecycleScope.launch {
+        view?.hideKeyboard()
+
+        withContext(Dispatchers.IO) {
+            if (ConnectionUtils.getConnectionInfo(context!!) && ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
+                binding.apply {
+                    if (userIdforInspectUser.text.toString().isNotBlank() && noOfDaysForInspectUser.text.toString().isNotBlank()) {
+                        val response = actionServiceBlockingStub.inspectUser(InspectUserRequest.newBuilder()
+                                .setDay(noOfDaysForInspectUser.text.toString().toInt())
+                                .setUserId(userIdforInspectUser.text.toString().toInt())
+                                .setTransactionType(askUserSwitch.isChecked)
                                 .build())
 
                         message = response.statusMessage

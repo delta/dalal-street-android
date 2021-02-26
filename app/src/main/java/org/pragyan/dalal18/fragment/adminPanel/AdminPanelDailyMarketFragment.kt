@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import dalalstreet.api.DalalActionServiceGrpc
 import dalalstreet.api.actions.*
+import kotlinx.android.synthetic.main.fragment_adminpanel_dailymarket.*
 import kotlinx.android.synthetic.main.fragment_getting_started.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -27,7 +28,6 @@ import org.pragyan.dalal18.utils.hideKeyboard
 import org.pragyan.dalal18.utils.viewLifecycle
 import javax.inject.Inject
 
-@Suppress("PLUGIN_WARNING")
 class AdminPanelDailyMarketFragment : Fragment() {
     private var binding by viewLifecycle<FragmentAdminpanelDailymarketBinding>()
 
@@ -57,8 +57,7 @@ class AdminPanelDailyMarketFragment : Fragment() {
             addDailyChallengeButton.setOnClickListener { addDailyChallenge() }
             openDailyChallengeButton.setOnClickListener { openDailyChallenge() }
             closeDailyChallengeButton.setOnClickListener { closeDailyChallenge() }
-
-
+            setMarketDayButton.setOnClickListener { setMarketDay() }
         }
 
     }
@@ -119,6 +118,21 @@ class AdminPanelDailyMarketFragment : Fragment() {
         }
         context?.toast(message)
     }
+    private fun setMarketDay() = lifecycleScope.launch {
+        view?.hideKeyboard()
+        withContext(Dispatchers.IO) {
+            if (ConnectionUtils.getConnectionInfo(context!!) && ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
+                if(setMarketdayEditText.text.toString().isNotBlank()){
+                    val response = actionServiceBlockingStub.setMarketDay(SetMarketDay.SetMarketDayRequest.newBuilder()
+                            .setMarketDay(setMarketdayEditText.text.toString().toInt())
+                            .build())
+                    message = response.statusMessage
+                }
+
+            }
+        }
+        context?.toast(message)
+    }
 
     private fun addDailyChallenge() = lifecycleScope.launch {
         view?.hideKeyboard()
@@ -134,7 +148,7 @@ class AdminPanelDailyMarketFragment : Fragment() {
 
                         val response = actionServiceBlockingStub.addDailyChallenge(AddDailyChallenge.AddDailyChallengeRequest.newBuilder()
                                 .setMarketDay(enterMarketDayEditText.text.toString().toInt())
-                                .setChallengeType(typeOfChallengeEditText.selectedItem.toString() as AddDailyChallenge.ChallengeType)
+                                .setChallengeType(AddDailyChallenge.ChallengeType.valueOf(typeOfChallengeEditText.selectedItem.toString()) )
                                 .setStockId(StockIDEditText.text.toString().toInt())
                                 .setValue(enterValueEdittext.text.toString().toLong())
                                 .setReward(rewardEditText.text.toString().toInt())

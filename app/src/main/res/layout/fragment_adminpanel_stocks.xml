@@ -304,7 +304,7 @@
             app:layout_constraintTop_toTopOf="@+id/isGlobalNewsSwitch" />
 
         <View
-            android:id="@+id/view2"
+            android:id="@+id/viewForDivingSections2"
             android:layout_width="match_parent"
             android:layout_height="2dp"
             android:layout_marginTop="8dp"

@@ -134,12 +134,10 @@ class AdminPanelStocksFragment : Fragment() {
                 binding.apply {
                     if (headlinesEditText.text.toString().isNotBlank() && newsDescriptionEditText.text.toString().isNotBlank() &&
                             newsImageUrlEditText.text.toString().isNotBlank()) {
-                        val response = actionServiceBlockingStub.addMarketEvent(AddMarketEvent.AddMarketEventRequest.newBuilder()
-                                .setHeadline(headlinesEditText.text.toString())
-                                .setText(newsDescriptionEditText.text.toString())
-                                .setStockId(stockIdEditText3.text.toString().toInt())
-                                .setImageUrl(newsImageUrlEditText.text.toString())
+                        val response = actionServiceBlockingStub.sendNotifications(SendNotifications.SendNotificationsRequest.newBuilder()
                                 .setIsGlobal(isGlobalNewsSwitch.isChecked)
+                                .setText(newsDescriptionEditText.text.toString())
+                                .setUserId(stockIdEditText3.text.toString().toInt())
                                 .build())
                         message = response.statusMessage
                     }

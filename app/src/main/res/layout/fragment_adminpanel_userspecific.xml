@@ -59,7 +59,7 @@
             app:layout_constraintTop_toBottomOf="@+id/blockuserEditText" />
 
         <View
-            android:id="@+id/view3"
+            android:id="@+id/viewForDivingSections3"
             android:layout_width="match_parent"
             android:layout_height="2dp"
             android:background="@color/black"
@@ -94,7 +94,7 @@
             android:textColor="@color/neutral_font_color"
             android:textColorHint="@color/neutral_font_color"
             app:layout_constraintStart_toEndOf="@+id/unblockUserTextview"
-            app:layout_constraintTop_toBottomOf="@+id/view3" />
+            app:layout_constraintTop_toBottomOf="@+id/viewForDivingSections3" />
 
         <Button
             android:id="@+id/unblockUserButton"
@@ -147,7 +147,7 @@
             app:layout_constraintTop_toBottomOf="@+id/view5" />
 
         <View
-            android:id="@+id/view4"
+            android:id="@+id/viewForDivingSections"
             android:layout_width="match_parent"
             android:layout_height="2dp"
             android:layout_marginTop="20dp"
@@ -184,7 +184,7 @@
             app:layout_constraintEnd_toEndOf="@+id/unblockAllUserButton"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="@+id/unblockAllUserButton"
-            app:layout_constraintTop_toBottomOf="@+id/view4" />
+            app:layout_constraintTop_toBottomOf="@+id/viewForDivingSections" />
 
         <EditText
             android:id="@+id/notificationEditText"
@@ -227,6 +227,102 @@
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="@+id/userIdforNotification"
             app:layout_constraintTop_toBottomOf="@+id/userIdforNotification" />
+
+        <View
+            android:id="@+id/viewBelowSendNotiButton"
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="@color/black"
+            android:layout_marginTop="10dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/sendNotificationButton" />
+        <TextView
+            android:id="@+id/inspectUserTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:backgroundTint="@color/neutral_font_color"
+            android:text="Inspect User"
+            android:textColor="@color/neutral_font_color"
+            android:textColorHint="@color/neutral_font_color"
+            app:layout_constraintBottom_toBottomOf="@+id/userIdforInspectUser"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/sendNotificationButton"
+            app:layout_constraintVertical_bias="0.526" />
+
+        <EditText
+            android:id="@+id/userIdforInspectUser"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:backgroundTint="@color/neutral_font_color"
+            android:hint="User Id"
+            android:inputType="text"
+            android:textColor="@color/neutral_font_color"
+            android:textColorHint="@color/neutral_font_color"
+            app:layout_constraintEnd_toEndOf="@+id/askUserSwitch"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/askUserSwitch"
+            app:layout_constraintTop_toBottomOf="@+id/bidUserSwitch" />
+
+        <EditText
+            android:id="@+id/noOfDaysForInspectUser"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:backgroundTint="@color/neutral_font_color"
+            android:hint="Days"
+            android:inputType="text"
+            android:textColor="@color/neutral_font_color"
+            android:textColorHint="@color/neutral_font_color"
+            app:layout_constraintEnd_toEndOf="@+id/userIdforInspectUser"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/userIdforInspectUser"
+            app:layout_constraintTop_toBottomOf="@+id/userIdforInspectUser" />
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/askUserSwitch"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:backgroundTint="@color/neutral_font_color"
+            android:hint="Ask User"
+            android:inputType="number"
+            android:textColor="@color/neutral_font_color"
+            android:textColorHint="@color/neutral_font_color"
+            app:layout_constraintEnd_toEndOf="@+id/userIdforNotification"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/userIdforNotification"
+            app:layout_constraintTop_toBottomOf="@+id/viewBelowSendNotiButton" />
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/bidUserSwitch"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:backgroundTint="@color/neutral_font_color"
+            android:hint="Bid User"
+            android:inputType="number"
+            android:textColor="@color/neutral_font_color"
+            android:textColorHint="@color/neutral_font_color"
+            app:layout_constraintEnd_toEndOf="@+id/askUserSwitch"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/askUserSwitch"
+            app:layout_constraintTop_toBottomOf="@+id/askUserSwitch" />
+
+        <Button
+            android:id="@+id/inspectUserButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:layout_marginEnd="24dp"
+            android:padding="5dp"
+            android:background="@drawable/black_white_rounded_button"
+            android:text="Inspect User"
+            android:textColor="@color/neon_yellow"
+            app:layout_constraintEnd_toEndOf="@+id/noOfDaysForInspectUser"
+            app:layout_constraintTop_toBottomOf="@+id/noOfDaysForInspectUser" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
