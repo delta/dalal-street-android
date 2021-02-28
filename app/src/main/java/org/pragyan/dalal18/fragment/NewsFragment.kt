@@ -123,6 +123,13 @@ class NewsFragment : Fragment(), NewsRecyclerAdapter.NewsItemClickListener, Swip
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        
+        postponeEnterTransition()
+        binding.newsRecyclerView.viewTreeObserver
+                .addOnPreDrawListener {
+                    startPostponedEnterTransition()
+                    true
+                } 
         newsRecyclerAdapter = NewsRecyclerAdapter(context, null, this)
 
         binding.apply {
