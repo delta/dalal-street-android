@@ -492,6 +492,5 @@
         <item>NetWorth</item>
         <item>SpecificStock</item>
         <item>StockWorth</item>
-        <item>UNRECOGNIZED</item>
     </string-array>
 </resources>

@@ -1,6 +1,7 @@
 package org.pragyan.dalal18.fragment.adminPanel
 
 import android.os.Bundle
+import android.util.Log.d
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,20 +9,20 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import dalalstreet.api.DalalActionServiceGrpc
-import dalalstreet.api.actions.*
+import dalalstreet.api.actions.BlockUser
+import dalalstreet.api.actions.SendNotifications
+import dalalstreet.api.actions.UnblockAllUsers
+import dalalstreet.api.actions.UnblockUser
 import kotlinx.android.synthetic.main.fragment_adminpanel_userspecific.*
-import kotlinx.android.synthetic.main.fragment_getting_started.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.jetbrains.anko.longToast
 import org.jetbrains.anko.toast
-import org.pragyan.dalal18.R
 import org.pragyan.dalal18.dagger.ContextModule
 import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent
 import org.pragyan.dalal18.data.DalalViewModel
-import org.pragyan.dalal18.databinding.FragmentAdminpanelStocksBinding
 import org.pragyan.dalal18.databinding.FragmentAdminpanelUserspecificBinding
-import org.pragyan.dalal18.databinding.FragmentSecretBinding
 import org.pragyan.dalal18.utils.ConnectionUtils
 import org.pragyan.dalal18.utils.Constants
 import org.pragyan.dalal18.utils.hideKeyboard
@@ -126,23 +127,31 @@ class AdminPanelUserSpecificFragment : Fragment() {
 
     private fun inspectUser() = lifecycleScope.launch {
         view?.hideKeyboard()
-
         withContext(Dispatchers.IO) {
             if (ConnectionUtils.getConnectionInfo(context!!) && ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
                 binding.apply {
                     if (userIdforInspectUser.text.toString().isNotBlank() && noOfDaysForInspectUser.text.toString().isNotBlank()) {
-                        val response = actionServiceBlockingStub.inspectUser(InspectUserRequest.newBuilder()
+                        val response = actionServiceBlockingStub.inspectUser(dalalstreet.api.actions.InspectUserRequest.newBuilder()
                                 .setDay(noOfDaysForInspectUser.text.toString().toInt())
                                 .setUserId(userIdforInspectUser.text.toString().toInt())
                                 .setTransactionType(askUserSwitch.isChecked)
                                 .build())
+                        val rep = response.listList
+                       rep.forEach{
+                            d("SPD","in response")
+                            context?.longToast("User Email : ${it.email} \n User Id : ${it.id} \n Position : ${it.position} \n StockSum : ${it.stockSum} \n TransactionCount : ${it.transactionCount}")
+//                            inspectUser.email = it.email
+//                            inspectUser.id = it.id
+//                            inspectUser.position = it.position
+//                            inspectUser.stockSum = it.stockSum
+//                            inspectUser.transactionCount = it.transactionCount
 
-                        message = response.statusMessage
+                      }
                     }
                 }
             }
         }
-        context?.toast(message)
+       // context?.longToast("User Email : ${inspectUser.email} \n User Id : ${inspectUser.id} \n Position : ${inspectUser.position} \n StockSum : ${inspectUser.stockSum} \n TransactionCount : ${inspectUser.transactionCount}")
     }
 
 

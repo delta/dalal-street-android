@@ -1,6 +1,7 @@
 package org.pragyan.dalal18.fragment.adminPanel
 
 import android.os.Bundle
+import android.util.Log.d
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -145,10 +146,9 @@ class AdminPanelDailyMarketFragment : Fragment() {
                             enterValueEdittext.text.toString().isNotBlank()  &&
                             rewardEditText.text.toString().isNotBlank()
                     ) {
-
                         val response = actionServiceBlockingStub.addDailyChallenge(AddDailyChallenge.AddDailyChallengeRequest.newBuilder()
                                 .setMarketDay(enterMarketDayEditText.text.toString().toInt())
-                                .setChallengeType(AddDailyChallenge.ChallengeType.valueOf(typeOfChallengeEditText.selectedItem.toString()) )
+                                .setChallengeType(getChallengeTypeEnum(typeOfChallengeEditText.selectedItem.toString()))
                                 .setStockId(StockIDEditText.text.toString().toInt())
                                 .setValue(enterValueEdittext.text.toString().toLong())
                                 .setReward(rewardEditText.text.toString().toInt())
@@ -159,6 +159,23 @@ class AdminPanelDailyMarketFragment : Fragment() {
             }
         }
         context?.toast(message)
+    }
+
+    private fun getChallengeTypeEnum(type :String): AddDailyChallenge.ChallengeType {
+        return when(type){
+            "Cash" -> {
+                AddDailyChallenge.ChallengeType.Cash;
+            }
+            "NetWorth" ->{
+                AddDailyChallenge.ChallengeType.NetWorth
+            }
+            "StockWorth" -> {
+                AddDailyChallenge.ChallengeType.StockWorth
+            }
+            else -> {
+                AddDailyChallenge.ChallengeType.SpecificStock
+            }
+        }
     }
 
 }

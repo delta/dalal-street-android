@@ -48,4 +48,3 @@ data class GameStateDetails(val gameStateUpdateType: GameStateUpdateType, val is
 @Parcelize
 data class CustomOrderUpdate(val orderId: Int, val isClosed: Boolean, val isAsk: Boolean, val orderPrice: Long, val companyName: String,
                              val stockId: Int, val stockQuantity: Long, val isNewOrder: Boolean, val orderType: OrderType) : Parcelable
-
