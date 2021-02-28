@@ -13,6 +13,7 @@ import dalalstreet.api.actions.BlockUser
 import dalalstreet.api.actions.SendNotifications
 import dalalstreet.api.actions.UnblockAllUsers
 import dalalstreet.api.actions.UnblockUser
+import dalalstreet.api.models.InspectDetailsOuterClass
 import kotlinx.android.synthetic.main.fragment_adminpanel_userspecific.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -32,11 +33,13 @@ import javax.inject.Inject
 @Suppress("PLUGIN_WARNING")
 class AdminPanelUserSpecificFragment : Fragment() {
     private var binding by viewLifecycle<FragmentAdminpanelUserspecificBinding>()
+
     @Inject
     lateinit var actionServiceBlockingStub: DalalActionServiceGrpc.DalalActionServiceBlockingStub
 
     private lateinit var model: DalalViewModel
     private var message = ""
+    private lateinit var resp: MutableList<InspectDetailsOuterClass.InspectDetails>
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -77,6 +80,7 @@ class AdminPanelUserSpecificFragment : Fragment() {
         }
         context?.toast(message)
     }
+
     private fun unblockUser() = lifecycleScope.launch {
         view?.hideKeyboard()
         withContext(Dispatchers.IO) {
@@ -93,17 +97,19 @@ class AdminPanelUserSpecificFragment : Fragment() {
         }
         context?.toast(message)
     }
+
     private fun unblockAllUser() = lifecycleScope.launch {
         view?.hideKeyboard()
         withContext(Dispatchers.IO) {
             if (ConnectionUtils.getConnectionInfo(context!!) && ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
-                    val response = actionServiceBlockingStub.unBlockAllUsers(UnblockAllUsers.UnblockAllUsersRequest.getDefaultInstance())
-                    message = response.statusMessage
+                val response = actionServiceBlockingStub.unBlockAllUsers(UnblockAllUsers.UnblockAllUsersRequest.getDefaultInstance())
+                message = response.statusMessage
 
             }
         }
         context?.toast(message)
     }
+
     private fun sendNotification() = lifecycleScope.launch {
         view?.hideKeyboard()
 
@@ -136,22 +142,24 @@ class AdminPanelUserSpecificFragment : Fragment() {
                                 .setUserId(userIdforInspectUser.text.toString().toInt())
                                 .setTransactionType(askUserSwitch.isChecked)
                                 .build())
-                        val rep = response.listList
-                       rep.forEach{
-                            d("SPD","in response")
-                            context?.longToast("User Email : ${it.email} \n User Id : ${it.id} \n Position : ${it.position} \n StockSum : ${it.stockSum} \n TransactionCount : ${it.transactionCount}")
-//                            inspectUser.email = it.email
-//                            inspectUser.id = it.id
-//                            inspectUser.position = it.position
-//                            inspectUser.stockSum = it.stockSum
-//                            inspectUser.transactionCount = it.transactionCount
-
-                      }
+                        resp = response.listList
+//                        resp.forEach{
+//                            context?.longToast("User Email : ${it.email} \n" +
+//                                    "User Id : ${it.id} \n " +
+//                                    "Position : ${it.position} \n" +
+//                                    "StockSum : ${it.stockSum} \n " +
+//                                    "TransactionCount : ${it.transactionCount}")
+//                        }
+                        message = response.statusMessage
                     }
                 }
             }
         }
-       // context?.longToast("User Email : ${inspectUser.email} \n User Id : ${inspectUser.id} \n Position : ${inspectUser.position} \n StockSum : ${inspectUser.stockSum} \n TransactionCount : ${inspectUser.transactionCount}")
+        d("SPD", resp.toString())
+
+
+        context?.longToast(message)
+
     }
 
 
