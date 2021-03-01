@@ -138,8 +138,10 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
                         GameStateUpdateType.UserReferredCreditUpdate -> {
                             toast("Reward claimed!")
                             val gameState = intent.getParcelableExtra<GameStateDetails>(GAME_STATE_KEY)
+                            totalWorth += gameState.referredCashWorth - cashWorth
                             cashWorth = gameState.referredCashWorth
                             changeTextViewValue(binding.cashWorthTextView, binding.cashIndicatorImageView, cashWorth)
+                            changeTextViewValue(binding.totalWorthTextView, binding.totalIndicatorImageView, totalWorth)
                         }
                         else ->
                             Log.v(MainActivity::class.java.simpleName, "Game state update unused: $gameStateDetails")
