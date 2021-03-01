@@ -43,7 +43,7 @@ data class StockHistory(var stockDate: Date?, var stockHigh: Long, var stockLow:
 
 @Parcelize
 data class GameStateDetails(val gameStateUpdateType: GameStateUpdateType, val isMarketOpen: Boolean?, val isOtpVerified: Boolean?, val dividendStockId: Int?, val givesDividend: Boolean?,
-                            val bankruptStockId: Int?, val isBankrupt: Boolean?) : Parcelable
+                            val bankruptStockId: Int?, val isBankrupt: Boolean?, val referredCashWorth: Long) : Parcelable
 
 @Parcelize
 data class CustomOrderUpdate(val orderId: Int, val isClosed: Boolean, val isAsk: Boolean, val orderPrice: Long, val companyName: String,

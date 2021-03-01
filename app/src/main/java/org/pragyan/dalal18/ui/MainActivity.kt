@@ -100,13 +100,15 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
     private var totalWorth: Long = 0
     private var unreadNotificationsCount = 0
 
+    val TAG = "MainActivity"
+
     private lateinit var networkCallback: ConnectivityManager.NetworkCallback
 
     private val worthNotificationGameStateReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
+            Log.i(TAG, "onReceived() called " + intent.action)
             when (intent.action) {
                 REFRESH_ALL_WORTH_ACTION -> {
-
                     cashWorth += intent.getLongExtra(TRANSACTION_TOTAL_KEY, 0)
                     updateStockWorthViaStreamUpdates()
                     changeTextViewValue(binding.cashWorthTextView, binding.cashIndicatorImageView, cashWorth)
@@ -120,7 +122,8 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
 
                 GAME_STATE_UPDATE_ACTION -> {
                     val gameStateDetails = intent.getParcelableExtra<GameStateDetails>(GAME_STATE_KEY)
-
+                    if(gameStateDetails != null)
+                        Log.i(TAG, "onReceived() called gameStateType " + gameStateDetails.gameStateUpdateType)
                     if (gameStateDetails != null) when (gameStateDetails.gameStateUpdateType) {
                         GameStateUpdateType.MarketStateUpdate ->
                             displayMarketStatusAlert(gameStateDetails.isMarketOpen ?: true)
@@ -131,6 +134,14 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
                         GameStateUpdateType.UserBlockStateUpdate -> {
                             toast("Your account has been terminated")
                             logout()
+                        }
+                        GameStateUpdateType.UserReferredCreditUpdate -> {
+                            toast("Reward claimed!")
+                            val gameState = intent.getParcelableExtra<GameStateDetails>(GAME_STATE_KEY)
+                            totalWorth += gameState.referredCashWorth - cashWorth
+                            cashWorth = gameState.referredCashWorth
+                            changeTextViewValue(binding.cashWorthTextView, binding.cashIndicatorImageView, cashWorth)
+                            changeTextViewValue(binding.totalWorthTextView, binding.totalIndicatorImageView, totalWorth)
                         }
                         else ->
                             Log.v(MainActivity::class.java.simpleName, "Game state update unused: $gameStateDetails")
@@ -462,7 +473,8 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
                                     stockDividendState?.stockId,
                                     stockDividendState?.givesDividend,
                                     stockBankruptState?.stockId,
-                                    stockBankruptState?.isBankrupt)
+                                    stockBankruptState?.isBankrupt,
+                                    userReferredCredit.cash)
 
                             intent.putExtra(GAME_STATE_KEY, gameStateDetails)
                             LocalBroadcastManager.getInstance(this@MainActivity).sendBroadcast(intent)
