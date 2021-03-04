@@ -3,7 +3,11 @@ package org.pragyan.dalal18.ui
 import android.animation.ValueAnimator
 import android.app.NotificationChannel
 import android.app.NotificationManager
-import android.content.*
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
+import android.content.SharedPreferences
 import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.net.ConnectivityManager
@@ -14,15 +18,19 @@ import android.os.Bundle
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.util.Log
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.LinearLayout.*
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
+import androidx.core.view.MenuItemCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -38,7 +46,17 @@ import dalalstreet.api.DalalStreamServiceGrpc
 import dalalstreet.api.actions.GetMortgageDetailsRequest
 import dalalstreet.api.actions.LogoutRequest
 import dalalstreet.api.actions.LogoutResponse
-import dalalstreet.api.datastreams.*
+import dalalstreet.api.datastreams.DataStreamType
+import dalalstreet.api.datastreams.GameStateUpdate
+import dalalstreet.api.datastreams.MarketEventUpdate
+import dalalstreet.api.datastreams.NotificationUpdate
+import dalalstreet.api.datastreams.StockExchangeUpdate
+import dalalstreet.api.datastreams.StockPricesUpdate
+import dalalstreet.api.datastreams.SubscribeRequest
+import dalalstreet.api.datastreams.SubscribeResponse
+import dalalstreet.api.datastreams.SubscriptionId
+import dalalstreet.api.datastreams.TransactionUpdate
+import dalalstreet.api.datastreams.UnsubscribeRequest
 import dalalstreet.api.models.GameStateUpdateType
 import dalalstreet.api.models.TransactionType
 import io.grpc.stub.StreamObserver
@@ -48,6 +66,7 @@ import kotlinx.coroutines.withContext
 import org.jetbrains.anko.contentView
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.find
+import org.jetbrains.anko.padding
 import org.jetbrains.anko.toast
 import org.pragyan.dalal18.R
 import org.pragyan.dalal18.dagger.ContextModule
@@ -58,9 +77,33 @@ import org.pragyan.dalal18.data.GlobalStockDetails
 import org.pragyan.dalal18.databinding.ActivityMainBinding
 import org.pragyan.dalal18.notifications.NotificationFragment
 import org.pragyan.dalal18.notifications.PushNotificationService
-import org.pragyan.dalal18.utils.*
-import org.pragyan.dalal18.utils.Constants.*
+import org.pragyan.dalal18.utils.ConnectionUtils
+import org.pragyan.dalal18.utils.Constants.EMAIL_KEY
+import org.pragyan.dalal18.utils.Constants.HOST
+import org.pragyan.dalal18.utils.Constants.MARKET_OPEN_KEY
+import org.pragyan.dalal18.utils.Constants.NOTIFICATION_NEWS_SHARED_PREF
+import org.pragyan.dalal18.utils.Constants.NOTIFICATION_SHARED_PREF
+import org.pragyan.dalal18.utils.Constants.PASSWORD_KEY
+import org.pragyan.dalal18.utils.Constants.PORT
+import org.pragyan.dalal18.utils.Constants.PREF_COMP
+import org.pragyan.dalal18.utils.Constants.PREF_MAIN
+import org.pragyan.dalal18.utils.Constants.PRICE_FORMAT
+import org.pragyan.dalal18.utils.Constants.REFRESH_MARKET_EVENTS_FOR_HOME_AND_NEWS
+import org.pragyan.dalal18.utils.Constants.REFRESH_OWNED_STOCKS_FOR_ALL
+import org.pragyan.dalal18.utils.Constants.REFRESH_PRICE_TICKER_FOR_HOME
+import org.pragyan.dalal18.utils.Constants.REFRESH_STOCKS_EXCHANGE_FOR_COMPANY
+import org.pragyan.dalal18.utils.Constants.REFRESH_STOCKS_FOR_MORTGAGE
+import org.pragyan.dalal18.utils.Constants.REFRESH_STOCK_PRICES_FOR_ALL
+import org.pragyan.dalal18.utils.Constants.SESSION_KEY
+import org.pragyan.dalal18.utils.Constants.STOP_NOTIFICATION_ACTION
+import org.pragyan.dalal18.utils.Constants.USERNAME_KEY
+import org.pragyan.dalal18.utils.DalalTourUtils
+import org.pragyan.dalal18.utils.LongEvaluator
+import org.pragyan.dalal18.utils.MiscellaneousUtils
 import org.pragyan.dalal18.utils.MiscellaneousUtils.buildCounterDrawable
+import org.pragyan.dalal18.utils.TinyDB
+import org.pragyan.dalal18.utils.hideKeyboard
+import org.pragyan.dalal18.utils.viewLifecycle
 import java.text.DecimalFormat
 import java.util.*
 import javax.inject.Inject
@@ -142,6 +185,34 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
                             cashWorth = gameState.referredCashWorth
                             changeTextViewValue(binding.cashWorthTextView, binding.cashIndicatorImageView, cashWorth)
                             changeTextViewValue(binding.totalWorthTextView, binding.totalIndicatorImageView, totalWorth)
+                        }
+                        GameStateUpdateType.UserRewardCreditUpdate->{
+
+                            val gameState = intent.getParcelableExtra<GameStateDetails>(GAME_STATE_KEY)
+                            totalWorth += gameState.userRewardCash - cashWorth
+                            cashWorth = gameState.userRewardCash
+                            val reward = gameState.userRewardCash - cashWorth
+                            toast("Congratulations!! You have been rewarded with ${reward} ")
+                            changeTextViewValue(binding.cashWorthTextView, binding.cashIndicatorImageView, cashWorth)
+                            changeTextViewValue(binding.totalWorthTextView, binding.totalIndicatorImageView, totalWorth)
+                        }
+                        GameStateUpdateType.DailyChallengeStatusUpdate->{
+                            val gameState = intent.getParcelableExtra<GameStateDetails>(GAME_STATE_KEY)
+                            val dailychallengeStatus: ImageView = MenuItemCompat.getActionView(binding.navigationViewLeft.menu.findItem(R.id.dailyChallenge_dest)) as ImageView
+                            if(gameState.isDailyChallengeOpen) {
+                                toast("Daily challenge is open")
+
+
+                                dailychallengeStatus.background = getDrawable(R.drawable.orange_status_circle)
+                                dailychallengeStatus.layoutParams.height = 75
+                                dailychallengeStatus.layoutParams.width =75
+
+
+                            }
+                            else {
+                                toast("Daily challenge is closed")
+                                dailychallengeStatus.background = null
+                            }
                         }
                         else ->
                             Log.v(MainActivity::class.java.simpleName, "Game state update unused: $gameStateDetails")
@@ -245,6 +316,7 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
                 contentView?.hideKeyboard()
             }
         })
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -474,7 +546,9 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
                                     stockDividendState?.givesDividend,
                                     stockBankruptState?.stockId,
                                     stockBankruptState?.isBankrupt,
-                                    userReferredCredit.cash)
+                                    userReferredCredit.cash,
+                                    userRewardCredit.cash,
+                                    dailyChallengeState.isDailyChallengeOpen)
 
                             intent.putExtra(GAME_STATE_KEY, gameStateDetails)
                             LocalBroadcastManager.getInstance(this@MainActivity).sendBroadcast(intent)

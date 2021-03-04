@@ -121,8 +121,7 @@ class SingleDayChallengeFragment(private val day:Int,private val currMarketDay: 
 
 
                 if (claimRewardResponse.statusCode == GetMyReward.GetMyRewardResponse.StatusCode.OK) {
-                    val reward = claimRewardResponse.reward
-                     Toast.makeText(context!!,"Congratulations!! You have been rewarded with ${reward} ", Toast.LENGTH_SHORT).show()
+
                     button.visibility=View.INVISIBLE
                     progressImage.setImageResource(R.drawable.blue_thumb)
                     progressImage.visibility = View.VISIBLE

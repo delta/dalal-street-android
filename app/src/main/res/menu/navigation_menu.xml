@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <group android:id="@+id/information_category">
 
@@ -58,6 +59,7 @@
 
         <item
             android:id="@+id/dailyChallenge_dest"
+            app:actionViewClass="android.widget.ImageView"
             android:icon="@drawable/daily_challenge_icon"
             android:title="@string/daily_challenge"/>
 
