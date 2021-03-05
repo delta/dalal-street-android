@@ -59,7 +59,6 @@
 
         <item
             android:id="@+id/dailyChallenge_dest"
-            app:actionViewClass="android.widget.ImageView"
             android:icon="@drawable/daily_challenge_icon"
             android:title="@string/daily_challenge"/>
 

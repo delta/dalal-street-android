@@ -18,14 +18,11 @@ import android.os.Bundle
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.util.Log
-import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.LinearLayout.*
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -66,7 +63,6 @@ import kotlinx.coroutines.withContext
 import org.jetbrains.anko.contentView
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.find
-import org.jetbrains.anko.padding
 import org.jetbrains.anko.toast
 import org.pragyan.dalal18.R
 import org.pragyan.dalal18.dagger.ContextModule
@@ -188,31 +184,12 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
                         }
                         GameStateUpdateType.UserRewardCreditUpdate->{
 
+                            toast("Reward claimed!")
                             val gameState = intent.getParcelableExtra<GameStateDetails>(GAME_STATE_KEY)
                             totalWorth += gameState.userRewardCash - cashWorth
                             cashWorth = gameState.userRewardCash
-                            val reward = gameState.userRewardCash - cashWorth
-                            toast("Congratulations!! You have been rewarded with ${reward} ")
                             changeTextViewValue(binding.cashWorthTextView, binding.cashIndicatorImageView, cashWorth)
                             changeTextViewValue(binding.totalWorthTextView, binding.totalIndicatorImageView, totalWorth)
-                        }
-                        GameStateUpdateType.DailyChallengeStatusUpdate->{
-                            val gameState = intent.getParcelableExtra<GameStateDetails>(GAME_STATE_KEY)
-                            val dailychallengeStatus: ImageView = MenuItemCompat.getActionView(binding.navigationViewLeft.menu.findItem(R.id.dailyChallenge_dest)) as ImageView
-                            if(gameState.isDailyChallengeOpen) {
-                                toast("Daily challenge is open")
-
-
-                                dailychallengeStatus.background = getDrawable(R.drawable.orange_status_circle)
-                                dailychallengeStatus.layoutParams.height = 75
-                                dailychallengeStatus.layoutParams.width =75
-
-
-                            }
-                            else {
-                                toast("Daily challenge is closed")
-                                dailychallengeStatus.background = null
-                            }
                         }
                         else ->
                             Log.v(MainActivity::class.java.simpleName, "Game state update unused: $gameStateDetails")
