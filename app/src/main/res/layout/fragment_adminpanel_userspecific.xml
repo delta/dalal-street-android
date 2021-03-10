@@ -59,7 +59,6 @@
             app:layout_constraintTop_toBottomOf="@+id/blockUserEditText" />
 
         <View
-            android:id="@+id/viewForDivingSections3"
             android:layout_width="match_parent"
             android:layout_height="2dp"
             android:background="@color/black"
@@ -86,15 +85,15 @@
             android:id="@+id/unblockUserEditText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="40dp"
-            android:layout_marginTop="5dp"
+            android:layout_marginStart="36dp"
+            android:layout_marginTop="32dp"
             android:backgroundTint="@color/neutral_font_color"
             android:hint="Enter User ID"
             android:inputType="text"
             android:textColor="@color/neutral_font_color"
             android:textColorHint="@color/neutral_font_color"
             app:layout_constraintStart_toEndOf="@+id/unblockUserTextvView"
-            app:layout_constraintTop_toBottomOf="@+id/viewForDivingSections3" />
+            app:layout_constraintTop_toBottomOf="@+id/blockUserButton" />
 
         <Button
             android:id="@+id/unblockUserButton"
@@ -110,7 +109,7 @@
             app:layout_constraintTop_toBottomOf="@+id/unblockUserEditText" />
 
         <View
-            android:id="@+id/view5"
+            android:id="@+id/view2"
             android:layout_width="match_parent"
             android:layout_height="2dp"
             android:layout_marginTop="10dp"
@@ -129,14 +128,14 @@
             android:textColorHint="@color/neutral_font_color"
             app:layout_constraintBottom_toBottomOf="@+id/unblockAllUserButton"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/view5"
+            app:layout_constraintTop_toTopOf="@+id/unblockAllUserButton"
             app:layout_constraintVertical_bias="0.588" />
 
         <Button
             android:id="@+id/unblockAllUserButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="28dp"
             android:background="@drawable/black_white_rounded_button"
             android:padding="4dp"
             android:text="Unblock All User"
@@ -144,10 +143,9 @@
             app:layout_constraintEnd_toEndOf="@+id/unblockUserButton"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="@+id/unblockUserButton"
-            app:layout_constraintTop_toBottomOf="@+id/view5" />
+            app:layout_constraintTop_toBottomOf="@+id/unblockUserButton" />
 
         <View
-            android:id="@+id/viewForDivingSections"
             android:layout_width="match_parent"
             android:layout_height="2dp"
             android:layout_marginTop="20dp"
@@ -175,7 +173,7 @@
             android:id="@+id/isGlobalSwitch"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="40dp"
             android:backgroundTint="@color/neutral_font_color"
             android:hint="Global?"
             android:inputType="number"
@@ -184,7 +182,7 @@
             app:layout_constraintEnd_toEndOf="@+id/unblockAllUserButton"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="@+id/unblockAllUserButton"
-            app:layout_constraintTop_toBottomOf="@+id/viewForDivingSections" />
+            app:layout_constraintTop_toBottomOf="@+id/unblockAllUserButton" />
 
         <EditText
             android:id="@+id/notificationEditText"
@@ -229,7 +227,7 @@
             app:layout_constraintTop_toBottomOf="@+id/userIdForNotification" />
 
         <View
-            android:id="@+id/viewBelowSendNotiButton"
+            android:id="@+id/viewBelowSendNotificationButton"
             android:layout_width="match_parent"
             android:layout_height="2dp"
             android:background="@color/black"
@@ -294,7 +292,7 @@
             app:layout_constraintEnd_toEndOf="@+id/userIdForNotification"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="@+id/userIdForNotification"
-            app:layout_constraintTop_toBottomOf="@+id/viewBelowSendNotiButton" />
+            app:layout_constraintTop_toBottomOf="@+id/viewBelowSendNotificationButton" />
 
 
         <Button
