@@ -65,9 +65,9 @@ class CompanyFragment : Fragment(), CompanyRecyclerAdapter.OnCompanyClickListene
         DaggerDalalStreetApplicationComponent.builder().contextModule(ContextModule(context!!)).build().inject(this)
         updateValues()
         binding.apply {
-//            portfolioRecyclerView.setHasFixedSize(false)
-//            portfolioRecyclerView.adapter = adapter
-//            portfolioRecyclerView.layoutManager = LinearLayoutManager(context)
+            portfolioRecyclerView.setHasFixedSize(false)
+            portfolioRecyclerView.adapter = adapter
+            portfolioRecyclerView.layoutManager = LinearLayoutManager(context)
         }
 
         if (preferences.getBoolean(PREF_COMP, true)) {
@@ -75,8 +75,7 @@ class CompanyFragment : Fragment(), CompanyRecyclerAdapter.OnCompanyClickListene
             DalalTourUtils.genericViewTour(activity as AppCompatActivity, binding.percentageChangeTextView, 100, getString(R.string.percentchange_tour))
         }
 
-       // setupAdminPanelLink(LASAGNE.toInt().toString())
-        findNavController().navigate(R.id.action_company_to_secret)
+        setupAdminPanelLink(LASAGNE.toInt().toString())
     }
 
     fun updateValues() {

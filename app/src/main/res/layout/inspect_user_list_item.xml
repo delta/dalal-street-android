@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="4dp"
+    app:cardCornerRadius="8dp"
+    app:cardElevation="4dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/inspectUserViewForeground"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/dark_blue_background"
+        android:padding="8dp">
+
+        <TextView
+            android:id="@+id/userIdTextview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/kreon_light"
+            android:text="UserId : 01"
+            android:textColor="@color/neutral_font_color"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@id/email_textView"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/email_textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:fontFamily="@font/kreon_light"
+            android:text="Email : spd.doddini@gmail.com"
+            android:textColor="@color/neutral_font_color"
+            android:textSize="20sp"
+            app:layout_constraintBottom_toTopOf="@id/transactionCount_textView"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/userIdTextview" />
+
+        <TextView
+            android:id="@+id/transactionCount_textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:fontFamily="@font/kreon_light"
+            android:text="Transaction Count : 27"
+            android:textColor="@color/neutral_font_color"
+            android:textSize="18sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/email_textView" />
+
+        <TextView
+            android:id="@+id/position_textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Position : 1"
+            android:textColor="@color/neutral_font_color"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="@+id/transactionCount_textView"
+            app:layout_constraintTop_toBottomOf="@+id/transactionCount_textView" />
+
+        <TextView
+            android:id="@+id/stocksum_textview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Stock Sum : 1"
+            android:textColor="@color/neutral_font_color"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="@+id/transactionCount_textView"
+            app:layout_constraintTop_toBottomOf="@+id/position_textView" />
+
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.cardview.widget.CardView>

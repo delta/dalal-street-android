@@ -142,18 +142,34 @@ class AdminPanelDailyMarketFragment : Fragment() {
             if (ConnectionUtils.getConnectionInfo(context!!) && ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
                 binding.apply {
                     if (enterMarketDayEditText.text.toString().isNotBlank()  &&
-                            StockIDEditText.text.toString().isNotBlank() &&
                             enterValueEdittext.text.toString().isNotBlank()  &&
                             rewardEditText.text.toString().isNotBlank()
                     ) {
-                        val response = actionServiceBlockingStub.addDailyChallenge(AddDailyChallenge.AddDailyChallengeRequest.newBuilder()
-                                .setMarketDay(enterMarketDayEditText.text.toString().toInt())
-                                .setChallengeType(getChallengeTypeEnum(typeOfChallengeEditText.selectedItem.toString()))
-                                .setStockId(StockIDEditText.text.toString().toInt())
-                                .setValue(enterValueEdittext.text.toString().toLong())
-                                .setReward(rewardEditText.text.toString().toInt())
-                                .build())
-                        message = response.statusMessage
+                        val challengetype = getChallengeTypeEnum(typeOfChallengeEditText.selectedItem.toString())
+                        if(challengetype == AddDailyChallenge.ChallengeType.SpecificStock){
+                            if(StockIDEditText.text.toString().isNotBlank()){
+                                val response = actionServiceBlockingStub.addDailyChallenge(AddDailyChallenge.AddDailyChallengeRequest.newBuilder()
+                                        .setMarketDay(enterMarketDayEditText.text.toString().toInt())
+                                        .setChallengeType(challengetype)
+                                        .setStockId(StockIDEditText.text.toString().toInt())
+                                        .setValue(enterValueEdittext.text.toString().toLong())
+                                        .setReward(rewardEditText.text.toString().toInt())
+                                        .build())
+                                message = response.statusMessage
+                            }
+
+                        }
+                        else{
+                            val response = actionServiceBlockingStub.addDailyChallenge(AddDailyChallenge.AddDailyChallengeRequest.newBuilder()
+                                    .setMarketDay(enterMarketDayEditText.text.toString().toInt())
+                                    .setChallengeType(challengetype)
+                                    .setValue(enterValueEdittext.text.toString().toLong())
+                                    .setReward(rewardEditText.text.toString().toInt())
+                                    .build())
+                            message = response.statusMessage
+                        }
+
+
                     }
                 }
             }
@@ -163,8 +179,8 @@ class AdminPanelDailyMarketFragment : Fragment() {
 
     private fun getChallengeTypeEnum(type :String): AddDailyChallenge.ChallengeType {
         return when(type){
-            "Cash" -> {
-                AddDailyChallenge.ChallengeType.Cash;
+            "CASH" -> {
+                AddDailyChallenge.ChallengeType.Cash
             }
             "NetWorth" ->{
                 AddDailyChallenge.ChallengeType.NetWorth

@@ -8,6 +8,8 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.Navigation.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
 import dalalstreet.api.DalalActionServiceGrpc
 import dalalstreet.api.actions.BlockUser
 import dalalstreet.api.actions.SendNotifications
@@ -20,6 +22,8 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.jetbrains.anko.longToast
 import org.jetbrains.anko.toast
+import org.pragyan.dalal18.R
+import org.pragyan.dalal18.adapter.InspectUserAdapter
 import org.pragyan.dalal18.dagger.ContextModule
 import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent
 import org.pragyan.dalal18.data.DalalViewModel
@@ -140,24 +144,18 @@ class AdminPanelUserSpecificFragment : Fragment() {
                         val response = actionServiceBlockingStub.inspectUser(dalalstreet.api.actions.InspectUserRequest.newBuilder()
                                 .setDay(noOfDaysForInspectUser.text.toString().toInt())
                                 .setUserId(userIdforInspectUser.text.toString().toInt())
-                                .setTransactionType(askUserSwitch.isChecked)
+                                .setTransactionType(bidUserSwitch.isChecked)
                                 .build())
                         resp = response.listList
-//                        resp.forEach{
-//                            context?.longToast("User Email : ${it.email} \n" +
-//                                    "User Id : ${it.id} \n " +
-//                                    "Position : ${it.position} \n" +
-//                                    "StockSum : ${it.stockSum} \n " +
-//                                    "TransactionCount : ${it.transactionCount}")
-//                        }
+
                         message = response.statusMessage
                     }
                 }
             }
         }
-        d("SPD", resp.toString())
 
-
+        rv_inspectUSer.layoutManager = LinearLayoutManager(context)
+        rv_inspectUSer.adapter = InspectUserAdapter(resp,context!!)
         context?.longToast(message)
 
     }

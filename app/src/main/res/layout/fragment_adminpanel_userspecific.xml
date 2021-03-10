@@ -261,9 +261,9 @@
             android:inputType="text"
             android:textColor="@color/neutral_font_color"
             android:textColorHint="@color/neutral_font_color"
-            app:layout_constraintEnd_toEndOf="@+id/askUserSwitch"
+            app:layout_constraintEnd_toEndOf="@+id/bidUserSwitch"
             app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="@+id/askUserSwitch"
+            app:layout_constraintStart_toStartOf="@+id/bidUserSwitch"
             app:layout_constraintTop_toBottomOf="@+id/bidUserSwitch" />
 
         <EditText
@@ -282,21 +282,6 @@
             app:layout_constraintTop_toBottomOf="@+id/userIdforInspectUser" />
 
         <androidx.appcompat.widget.SwitchCompat
-            android:id="@+id/askUserSwitch"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:backgroundTint="@color/neutral_font_color"
-            android:hint="Ask User"
-            android:inputType="number"
-            android:textColor="@color/neutral_font_color"
-            android:textColorHint="@color/neutral_font_color"
-            app:layout_constraintEnd_toEndOf="@+id/userIdforNotification"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="@+id/userIdforNotification"
-            app:layout_constraintTop_toBottomOf="@+id/viewBelowSendNotiButton" />
-
-        <androidx.appcompat.widget.SwitchCompat
             android:id="@+id/bidUserSwitch"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -306,10 +291,11 @@
             android:inputType="number"
             android:textColor="@color/neutral_font_color"
             android:textColorHint="@color/neutral_font_color"
-            app:layout_constraintEnd_toEndOf="@+id/askUserSwitch"
+            app:layout_constraintEnd_toEndOf="@+id/userIdforNotification"
             app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="@+id/askUserSwitch"
-            app:layout_constraintTop_toBottomOf="@+id/askUserSwitch" />
+            app:layout_constraintStart_toStartOf="@+id/userIdforNotification"
+            app:layout_constraintTop_toBottomOf="@+id/viewBelowSendNotiButton" />
+
 
         <Button
             android:id="@+id/inspectUserButton"
@@ -323,6 +309,15 @@
             android:textColor="@color/neon_yellow"
             app:layout_constraintEnd_toEndOf="@+id/noOfDaysForInspectUser"
             app:layout_constraintTop_toBottomOf="@+id/noOfDaysForInspectUser" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_inspectUSer"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="20dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/inspectUserButton" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
