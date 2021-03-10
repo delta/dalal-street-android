@@ -36,10 +36,8 @@ import kotlinx.android.synthetic.main.order_list_item.view.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.jetbrains.anko.doAsync
-import org.jetbrains.anko.longToast
-import org.jetbrains.anko.toast
-import org.jetbrains.anko.uiThread
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
 import org.pragyan.dalal18.R
 import org.pragyan.dalal18.adapter.OrdersRecyclerAdapter
 import org.pragyan.dalal18.dagger.ContextModule
@@ -50,9 +48,11 @@ import org.pragyan.dalal18.data.Order
 import org.pragyan.dalal18.databinding.FragmentMyOrdersBinding
 import org.pragyan.dalal18.utils.ConnectionUtils
 import org.pragyan.dalal18.utils.Constants
-import org.pragyan.dalal18.utils.Constants.CANCEL_ORDER_TOUR_KEY
-import org.pragyan.dalal18.utils.OrderItemTouchHelper
 import org.pragyan.dalal18.utils.viewLifecycle
+import org.pragyan.dalal18.utils.longToast
+import org.pragyan.dalal18.utils.toast
+import org.pragyan.dalal18.utils.OrderItemTouchHelper
+import org.pragyan.dalal18.utils.Constants.CANCEL_ORDER_TOUR_KEY
 import javax.inject.Inject
 
 class OrdersFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, OrderItemTouchHelper.BusItemTouchHelperListener {
@@ -184,12 +184,12 @@ class OrdersFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, OrderIt
 
     private fun getOpenOrdersAsynchronously() {
         loadingOrdersDialog.show()
-        doAsync {
+        GlobalScope.async (Dispatchers.Default){
             if (ConnectionUtils.getConnectionInfo(context)) {
                 if (ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
                     val openOrdersResponse = actionServiceBlockingStub.getMyOpenOrders(GetMyOpenOrdersRequest.newBuilder().build())
 
-                    uiThread {
+                    withContext(Dispatchers.Main) {
 
                         if (openOrdersResponse?.statusCode == GetMyOpenOrdersResponse.StatusCode.OK) {
                             binding.ordersRecyclerSwipeRefreshLayout.isRefreshing = false
@@ -243,12 +243,12 @@ class OrdersFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, OrderIt
                         }
                     }
                 } else {
-                    uiThread { networkDownHandler?.onNetworkDownError(resources.getString(R.string.error_server_down), R.id.open_orders_dest) }
+                    withContext(Dispatchers.Main) { networkDownHandler?.onNetworkDownError(resources.getString(R.string.error_server_down), R.id.open_orders_dest) }
                 }
             } else {
-                uiThread { networkDownHandler?.onNetworkDownError(resources.getString(R.string.error_check_internet), R.id.open_orders_dest) }
+                withContext(Dispatchers.Main) { networkDownHandler?.onNetworkDownError(resources.getString(R.string.error_check_internet), R.id.open_orders_dest) }
             }
-            uiThread { loadingOrdersDialog.dismiss() }
+            withContext(Dispatchers.Main) { loadingOrdersDialog.dismiss() }
         }
     }
 
@@ -352,7 +352,7 @@ class OrdersFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, OrderIt
 
         LocalBroadcastManager.getInstance(context!!).unregisterReceiver(ordersReceiver)
 
-        doAsync {
+        GlobalScope.async (Dispatchers.Default){
             if (orderSubscriptionId != null) {
                 streamServiceBlockingStub.unsubscribe(UnsubscribeRequest.newBuilder().setSubscriptionId(orderSubscriptionId).build())
             }

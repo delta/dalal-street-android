@@ -19,16 +19,24 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.navigation.fragment.findNavController
 import dalalstreet.api.DalalActionServiceGrpc
 import dalalstreet.api.actions.PlaceOrderRequest
-import org.jetbrains.anko.doAsync
-import org.jetbrains.anko.toast
-import org.jetbrains.anko.uiThread
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
 import org.pragyan.dalal18.R
 import org.pragyan.dalal18.dagger.ContextModule
 import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent
 import org.pragyan.dalal18.data.DalalViewModel
 import org.pragyan.dalal18.databinding.FragmentTradeBinding
 import org.pragyan.dalal18.ui.MainActivity.Companion.GAME_STATE_UPDATE_ACTION
-import org.pragyan.dalal18.utils.*
+import org.pragyan.dalal18.utils.ConnectionUtils
+import org.pragyan.dalal18.utils.Constants
+import org.pragyan.dalal18.utils.DalalTourUtils
+import org.pragyan.dalal18.utils.setStatusIndicator
+import org.pragyan.dalal18.utils.OrderTypeUtils
+import org.pragyan.dalal18.utils.hideKeyboard
+import org.pragyan.dalal18.utils.toast
+import org.pragyan.dalal18.utils.viewLifecycle
 import org.pragyan.dalal18.utils.Constants.ORDER_FEE_RATE
 import org.pragyan.dalal18.utils.Constants.PREF_TRADE
 import java.text.DecimalFormat
@@ -286,12 +294,12 @@ class TradeFragment : Fragment() {
                     .setStockQuantity((noOfStocksEditText.text.toString()).toLong())
                     .build()
 
-            doAsync {
+            GlobalScope.async (Dispatchers.Default) {
                 if (ConnectionUtils.getConnectionInfo(context)) {
                     if (ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
                         val orderResponse = actionServiceBlockingStub.placeOrder(orderRequest)
 
-                        uiThread {
+                        withContext(Dispatchers.Main) {
                             if (orderResponse.statusCodeValue == 0) {
                                 context?.toast("Order Placed")
                                 noOfStocksEditText.setText("")
@@ -302,12 +310,12 @@ class TradeFragment : Fragment() {
                             }
                         }
                     } else {
-                        uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_server_down), R.id.trade_dest) }
+                        withContext(Dispatchers.Main) { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_server_down), R.id.trade_dest) }
                     }
                 } else {
-                    uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_check_internet), R.id.trade_dest) }
+                    withContext(Dispatchers.Main) { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_check_internet), R.id.trade_dest) }
                 }
-                uiThread { loadingDialog?.dismiss() }
+                withContext(Dispatchers.Main) { loadingDialog?.dismiss() }
             }
         }
     }

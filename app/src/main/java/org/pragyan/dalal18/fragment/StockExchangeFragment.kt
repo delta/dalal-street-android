@@ -24,16 +24,20 @@ import dalalstreet.api.models.Stock
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.jetbrains.anko.doAsync
-import org.jetbrains.anko.toast
-import org.jetbrains.anko.uiThread
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
 import org.pragyan.dalal18.R
 import org.pragyan.dalal18.dagger.ContextModule
 import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent
 import org.pragyan.dalal18.data.DalalViewModel
 import org.pragyan.dalal18.databinding.FragmentStockExchangeBinding
 import org.pragyan.dalal18.ui.MainActivity.Companion.GAME_STATE_UPDATE_ACTION
-import org.pragyan.dalal18.utils.*
+import org.pragyan.dalal18.utils.ConnectionUtils
+import org.pragyan.dalal18.utils.Constants
+import org.pragyan.dalal18.utils.hideKeyboard
+import org.pragyan.dalal18.utils.toast
+import org.pragyan.dalal18.utils.viewLifecycle
+import org.pragyan.dalal18.utils.setStatusIndicator
 import java.text.DecimalFormat
 import javax.inject.Inject
 
@@ -177,13 +181,13 @@ class StockExchangeFragment : Fragment() {
             stocksInExchangeTextView.text = ""
         }
 
-        doAsync {
+        GlobalScope.async (Dispatchers.Default){
             if (ConnectionUtils.getConnectionInfo(context)) {
                 if (ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
                     val companyProfileResponse = actionServiceBlockingStub.getCompanyProfile(
                             GetCompanyProfileRequest.newBuilder().setStockId(stockId).build())
 
-                    uiThread {
+                    withContext(Dispatchers.Main) {
 
                         currentStock = companyProfileResponse.stockDetails
 
@@ -214,12 +218,12 @@ class StockExchangeFragment : Fragment() {
                         }
                     }
                 } else {
-                    uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_server_down), R.id.exchange_dest) }
+                    withContext(Dispatchers.Main) { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_server_down), R.id.exchange_dest) }
                 }
             } else {
-                uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_check_internet), R.id.exchange_dest) }
+                withContext(Dispatchers.Main) { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_check_internet), R.id.exchange_dest) }
             }
-            uiThread { loadingDialog?.dismiss() }
+            withContext(Dispatchers.Main) { loadingDialog?.dismiss() }
         }
     }
 

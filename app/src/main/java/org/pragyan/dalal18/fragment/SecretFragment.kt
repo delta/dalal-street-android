@@ -12,7 +12,11 @@ import dalalstreet.api.actions.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+<<<<<<< HEAD
 import org.jetbrains.anko.toast
+=======
+import org.pragyan.dalal18.R
+>>>>>>> remove: anko
 import org.pragyan.dalal18.dagger.ContextModule
 import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent
 import org.pragyan.dalal18.data.DalalViewModel
@@ -20,6 +24,7 @@ import org.pragyan.dalal18.databinding.FragmentSecretBinding
 import org.pragyan.dalal18.utils.ConnectionUtils
 import org.pragyan.dalal18.utils.Constants
 import org.pragyan.dalal18.utils.hideKeyboard
+import org.pragyan.dalal18.utils.toast
 import org.pragyan.dalal18.utils.viewLifecycle
 import javax.inject.Inject
 

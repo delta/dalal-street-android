@@ -15,8 +15,10 @@ import androidx.recyclerview.widget.RecyclerView
 import dalalstreet.api.DalalActionServiceGrpc
 import dalalstreet.api.actions.GetTransactionsRequest
 import dalalstreet.api.models.Transaction
-import org.jetbrains.anko.doAsync
-import org.jetbrains.anko.uiThread
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.withContext
 import org.pragyan.dalal18.R
 import org.pragyan.dalal18.adapter.TransactionRecyclerAdapter
 import org.pragyan.dalal18.dagger.ContextModule
@@ -94,7 +96,7 @@ class TransactionsFragment : Fragment() {
 
         loadingDialog?.show()
 
-        doAsync {
+        GlobalScope.async (Dispatchers.Default){
 
             lastId = preferences.getInt(Constants.LAST_TRANSACTION_ID, 0)
 
@@ -107,7 +109,7 @@ class TransactionsFragment : Fragment() {
                             .setLastTransactionId(lastId)
                             .build())
 
-                    uiThread {
+                    withContext(Dispatchers.Main) {
 
                         paginate = transactionsResponse.transactionsCount == 10
 
@@ -129,12 +131,12 @@ class TransactionsFragment : Fragment() {
                         }
                     }
                 } else {
-                    uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_server_down), R.id.transactions_dest) }
+                    withContext(Dispatchers.Main) { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_server_down), R.id.transactions_dest) }
                 }
             } else {
-                uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_check_internet), R.id.transactions_dest) }
+                withContext(Dispatchers.Main) { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_check_internet), R.id.transactions_dest) }
             }
-            uiThread { loadingDialog?.dismiss() }
+            withContext(Dispatchers.Main) { loadingDialog?.dismiss() }
         }
     }
 

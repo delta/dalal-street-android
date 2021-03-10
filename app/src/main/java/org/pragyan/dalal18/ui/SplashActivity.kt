@@ -8,6 +8,7 @@ import android.view.View
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.material.snackbar.Snackbar
@@ -17,9 +18,10 @@ import dalalstreet.api.actions.LoginResponse
 import io.grpc.ManagedChannel
 import io.grpc.Metadata
 import io.grpc.stub.MetadataUtils
-import org.jetbrains.anko.doAsync
-import org.jetbrains.anko.toast
-import org.jetbrains.anko.uiThread
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.withContext
 import org.pragyan.dalal18.R
 import org.pragyan.dalal18.dagger.ContextModule
 import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent
@@ -29,6 +31,7 @@ import org.pragyan.dalal18.utils.ConnectionUtils
 import org.pragyan.dalal18.utils.Constants
 import org.pragyan.dalal18.utils.Constants.MARKET_OPEN_KEY
 import org.pragyan.dalal18.utils.MiscellaneousUtils
+import org.pragyan.dalal18.utils.toast
 import org.pragyan.dalal18.utils.viewLifecycle
 import java.util.*
 import javax.inject.Inject
@@ -89,7 +92,7 @@ class SplashActivity : AppCompatActivity() {
     }
 
     private fun loginAsynchronously(email: String, password: String) {
-        doAsync {
+        GlobalScope.async (Dispatchers.Default){
             if (ConnectionUtils.getConnectionInfo(this@SplashActivity)) {
                 if (ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
                     val sessionId = preferences.getString(Constants.SESSION_KEY, null)
@@ -99,7 +102,7 @@ class SplashActivity : AppCompatActivity() {
                         val customStub = MetadataUtils.attachHeaders(DalalActionServiceGrpc.newBlockingStub(channel), getStubMetadata(sessionId))
                         val loginResponse = customStub.login(LoginRequest.newBuilder().setEmail(email).setPassword(password).build())
 
-                        uiThread {
+                        withContext(Dispatchers.Main) {
 
                             if (loginResponse.statusCode == LoginResponse.StatusCode.OK && !loginResponse.user.isBlocked) {
 
@@ -180,7 +183,7 @@ class SplashActivity : AppCompatActivity() {
 
                         }
                     } else {
-                        uiThread { startLoginActivity() }
+                        withContext(Dispatchers.Main) { startLoginActivity() }
                     }
                 } else {
                     val snackBar = Snackbar.make(findViewById<View>(android.R.id.content), resources.getString(R.string.error_server_down), Snackbar.LENGTH_INDEFINITE)
@@ -195,7 +198,7 @@ class SplashActivity : AppCompatActivity() {
                 }
 
             } else /* No internet available */ {
-                uiThread {
+                withContext(Dispatchers.Main) {
 
                     val snackBar = Snackbar.make(findViewById<View>(android.R.id.content), "Please check internet connection", Snackbar.LENGTH_INDEFINITE)
                             .setAction("RETRY") {

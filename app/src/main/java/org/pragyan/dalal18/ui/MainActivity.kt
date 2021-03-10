@@ -1,5 +1,6 @@
 package org.pragyan.dalal18.ui
 
+import org.pragyan.dalal18.utils.toast
 import android.animation.ValueAnimator
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -60,10 +61,8 @@ import io.grpc.stub.StreamObserver
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.jetbrains.anko.contentView
-import org.jetbrains.anko.doAsync
-import org.jetbrains.anko.find
-import org.jetbrains.anko.toast
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
 import org.pragyan.dalal18.R
 import org.pragyan.dalal18.dagger.ContextModule
 import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent
@@ -96,10 +95,10 @@ import org.pragyan.dalal18.utils.Constants.USERNAME_KEY
 import org.pragyan.dalal18.utils.DalalTourUtils
 import org.pragyan.dalal18.utils.LongEvaluator
 import org.pragyan.dalal18.utils.MiscellaneousUtils
-import org.pragyan.dalal18.utils.MiscellaneousUtils.buildCounterDrawable
-import org.pragyan.dalal18.utils.TinyDB
 import org.pragyan.dalal18.utils.hideKeyboard
 import org.pragyan.dalal18.utils.viewLifecycle
+import org.pragyan.dalal18.utils.TinyDB
+import org.pragyan.dalal18.utils.MiscellaneousUtils.buildCounterDrawable
 import java.text.DecimalFormat
 import java.util.*
 import javax.inject.Inject
@@ -241,7 +240,7 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
         }
 
         val worthViewClickListener = View.OnClickListener {
-            contentView?.hideKeyboard()
+            binding.root.hideKeyboard()
             findNavController(R.id.main_host_fragment).navigate(R.id.portfolio_dest, null, NavOptions.Builder().setPopUpTo(R.id.home_dest, false).build())
         }
 
@@ -277,7 +276,7 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
 
         MiscellaneousUtils.username = intent.getStringExtra(USERNAME_KEY)
         val header = binding.navigationViewLeft.getHeaderView(0)
-        header.find<TextView>(R.id.usernameTextView).text = MiscellaneousUtils.username
+        header.findViewById<TextView>(R.id.usernameTextView).text = MiscellaneousUtils.username
 
         binding.mainDrawerLayout.addDrawerListener(object : DrawerLayout.DrawerListener {
             override fun onDrawerStateChanged(newState: Int) {
@@ -290,7 +289,7 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
             }
 
             override fun onDrawerOpened(drawerView: View) {
-                contentView?.hideKeyboard()
+                binding.root.hideKeyboard()
             }
         })
 
@@ -311,7 +310,7 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
         val navController = findNavController(R.id.main_host_fragment)
 
         val id = item.itemId
-        contentView?.hideKeyboard()
+        binding.root.hideKeyboard()
 
         when (id) {
             R.id.action_notifications -> {
@@ -545,7 +544,7 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
 
     // Unsubscribes from all streams
     private fun unsubscribeFromAllStreams() {
-        doAsync {
+        GlobalScope.async (Dispatchers.Default){
             if (ConnectionUtils.getConnectionInfo(this@MainActivity) && ConnectionUtils.isReachableByTcp(HOST, PORT)) {
                 for (subscriptionId in subscriptionIds) {
                     val unsubscribeResponse =
@@ -756,7 +755,7 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
     override fun onNetworkDownError(message: String, fragment: Int) {
         startActivity(Intent(this@MainActivity, SplashActivity::class.java))
         finish()
-        contentView?.hideKeyboard()
+        binding.root.hideKeyboard()
     }
 
     // Creates a new networkCallback object

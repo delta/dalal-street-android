@@ -20,9 +20,10 @@ import dalalstreet.api.DalalStreamServiceGrpc
 import dalalstreet.api.actions.GetCompanyProfileRequest
 import dalalstreet.api.datastreams.*
 import io.grpc.stub.StreamObserver
-import org.jetbrains.anko.doAsync
-import org.jetbrains.anko.toast
-import org.jetbrains.anko.uiThread
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.withContext
 import org.pragyan.dalal18.R
 import org.pragyan.dalal18.adapter.MarketDepthRecyclerAdapter
 import org.pragyan.dalal18.dagger.ContextModule
@@ -33,6 +34,7 @@ import org.pragyan.dalal18.databinding.FragmentDepthTableBinding
 import org.pragyan.dalal18.utils.ConnectionUtils
 import org.pragyan.dalal18.utils.Constants
 import org.pragyan.dalal18.utils.Constants.REFRESH_MARKET_DEPTH_FOR_TABLE
+import org.pragyan.dalal18.utils.toast
 import org.pragyan.dalal18.utils.viewLifecycle
 import java.text.DecimalFormat
 import java.util.*
@@ -162,7 +164,7 @@ class DepthTableFragment : Fragment() {
     private fun getMarketDepthSubscriptionId(stockId: Int) {
 
         prevSubscriptionId = subscriptionId
-        doAsync {
+        GlobalScope.async (Dispatchers.Default){
             streamServiceStub.subscribe(
                     SubscribeRequest
                             .newBuilder()
@@ -175,7 +177,7 @@ class DepthTableFragment : Fragment() {
                                 subscriptionId = value.subscriptionId
                                 getMarketDepth(value.subscriptionId)
                             } else {
-                                uiThread { context?.toast("Server internal error") }
+                                 context?.toast("Server internal error")
                             }
                             onCompleted()
                         }
@@ -249,7 +251,7 @@ class DepthTableFragment : Fragment() {
 
     private fun unsubscribe(prevSubscriptionId: SubscriptionId?) {
 
-        doAsync {
+        GlobalScope.async (Dispatchers.Default){
             if (prevSubscriptionId != null) {
                 streamServiceStub.unsubscribe(
                         UnsubscribeRequest.newBuilder()
@@ -281,12 +283,12 @@ class DepthTableFragment : Fragment() {
 
     private fun getCompanyProfileAsynchronously(stockId: Int) {
 
-        doAsync {
+        GlobalScope.async (Dispatchers.Default){
             if (ConnectionUtils.getConnectionInfo(context)) {
                 if (ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
                     val companyProfileResponse = actionServiceBlockingStub.getCompanyProfile(
                             GetCompanyProfileRequest.newBuilder().setStockId(stockId).build())
-                    uiThread {
+                    withContext(Dispatchers.Main) {
                         if (activity != null && isAdded) {
                             val currentStock = companyProfileResponse.stockDetails
 
@@ -305,12 +307,12 @@ class DepthTableFragment : Fragment() {
                         }
                     }
                 } else {
-                    uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_server_down), R.id.market_depth_dest) }
+                    withContext(Dispatchers.Main) { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_server_down), R.id.market_depth_dest) }
                 }
             } else {
-                uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_check_internet), R.id.market_depth_dest) }
+                withContext(Dispatchers.Main) { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_check_internet), R.id.market_depth_dest) }
             }
-            uiThread {
+            withContext(Dispatchers.Main) {
                 binding.companySpinner.clearFocus()
                 loadingDialog?.dismiss()
             }

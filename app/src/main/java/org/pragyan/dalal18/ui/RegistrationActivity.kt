@@ -9,7 +9,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -19,15 +18,16 @@ import dalalstreet.api.actions.RegisterRequest
 import dalalstreet.api.actions.RegisterResponse
 import io.grpc.ManagedChannel
 import kotlinx.coroutines.Dispatchers
-import org.jetbrains.anko.doAsync
-import org.jetbrains.anko.toast
-import org.jetbrains.anko.uiThread
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.withContext
 import org.pragyan.dalal18.R
 import org.pragyan.dalal18.dagger.ContextModule
 import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent
 import org.pragyan.dalal18.databinding.ActivityRegistrationBinding
 import org.pragyan.dalal18.utils.ConnectionUtils
 import org.pragyan.dalal18.utils.Constants
+import org.pragyan.dalal18.utils.toast
 import org.pragyan.dalal18.utils.viewLifecycle
 import javax.inject.Inject
 
@@ -96,7 +96,7 @@ class RegistrationActivity : AppCompatActivity() {
 
         registrationAlertDialog?.show()
 
-        doAsync {
+        GlobalScope.async (Dispatchers.Default){
             if (ConnectionUtils.getConnectionInfo(this@RegistrationActivity)) {
                 if (ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
                     val stub = DalalActionServiceGrpc.newBlockingStub(channel)
@@ -120,7 +120,7 @@ class RegistrationActivity : AppCompatActivity() {
                         else -> response.statusMessage
                     }
 
-                    uiThread {
+                    withContext(Dispatchers.Main) {
                         if(message == invalidReferralCodeMessage) {
                             invalidReferralAlertDialog?.show()
                         } else {
@@ -132,12 +132,12 @@ class RegistrationActivity : AppCompatActivity() {
                         }
                     }
                 } else {
-                    uiThread { showErrorSnackBar(resources.getString(R.string.error_server_down)) }
+                    withContext(Dispatchers.Main) { showErrorSnackBar(resources.getString(R.string.error_server_down)) }
                 }
             } else {
-                uiThread { showErrorSnackBar(resources.getString(R.string.error_check_internet)) }
+                withContext(Dispatchers.Main) { showErrorSnackBar(resources.getString(R.string.error_check_internet)) }
             }
-            uiThread { registrationAlertDialog?.dismiss() }
+            withContext(Dispatchers.Main) { registrationAlertDialog?.dismiss() }
         }
     }
 

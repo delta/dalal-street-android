@@ -5,7 +5,6 @@ import android.content.Context
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.ImageView
-import org.jetbrains.anko.toast
 import java.lang.StringBuilder
 import java.util.*
 

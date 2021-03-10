@@ -19,9 +19,10 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import dalalstreet.api.DalalActionServiceGrpc
 import dalalstreet.api.actions.MortgageStocksRequest
 import dalalstreet.api.actions.MortgageStocksResponse
-import org.jetbrains.anko.doAsync
-import org.jetbrains.anko.toast
-import org.jetbrains.anko.uiThread
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.withContext
 import org.pragyan.dalal18.R
 import org.pragyan.dalal18.dagger.ContextModule
 import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent
@@ -181,7 +182,7 @@ class MortgageFragment : Fragment() {
         (dialogView.findViewById<View>(R.id.progressDialog_textView) as TextView).text = tempString
         loadingDialog = AlertDialog.Builder(context!!).setView(dialogView).setCancelable(false).create()
         loadingDialog?.show()
-        doAsync {
+        GlobalScope.async (Dispatchers.Default){
 
             if (ConnectionUtils.getConnectionInfo(context)) {
                 if (ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
@@ -189,7 +190,7 @@ class MortgageFragment : Fragment() {
                             MortgageStocksRequest.newBuilder().setStockId(lastStockId)
                                     .setStockQuantity(stocksTransaction).build())
 
-                    uiThread {
+                    withContext(Dispatchers.Main) {
                         if (mortgageStocksResponse.statusCode == MortgageStocksResponse.StatusCode.OK) {
                             context?.toast("Transaction successful")
                             binding.mortgageStocksEditText.setText("0")
@@ -199,12 +200,12 @@ class MortgageFragment : Fragment() {
                         }
                     }
                 } else {
-                    uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_server_down), R.id.main_mortgage_dest) }
+                    withContext(Dispatchers.Main) { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_server_down), R.id.main_mortgage_dest) }
                 }
             } else {
-                uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_check_internet), R.id.main_mortgage_dest) }
+                withContext(Dispatchers.Main) { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_check_internet), R.id.main_mortgage_dest) }
             }
-            uiThread { loadingDialog?.dismiss() }
+            withContext(Dispatchers.Main) { loadingDialog?.dismiss() }
         }
     }
 

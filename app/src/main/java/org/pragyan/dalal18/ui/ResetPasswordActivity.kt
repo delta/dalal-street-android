@@ -13,16 +13,15 @@ import io.grpc.ManagedChannel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.jetbrains.anko.contentView
-import org.jetbrains.anko.longToast
-import org.jetbrains.anko.toast
 import org.pragyan.dalal18.R
 import org.pragyan.dalal18.dagger.ContextModule
 import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent
 import org.pragyan.dalal18.databinding.ActivityResetPasswordBinding
 import org.pragyan.dalal18.utils.ConnectionUtils
-import org.pragyan.dalal18.utils.Constants
+import org.pragyan.dalal18.utils.Constants.*
 import org.pragyan.dalal18.utils.hideKeyboard
+import org.pragyan.dalal18.utils.longToast
+import org.pragyan.dalal18.utils.toast
 import org.pragyan.dalal18.utils.viewLifecycle
 import javax.inject.Inject
 
@@ -48,7 +47,7 @@ class ResetPasswordActivity : AppCompatActivity() {
 
         binding.resetPasswordButton.setOnClickListener { onResetPasswordButtonClick() }
 
-        if (preferences.getString(Constants.EMAIL_KEY, null) != null) {
+        if (preferences.getString(EMAIL_KEY, null) != null) {
             longToast("User already logged in")
             finish()
         }
@@ -83,7 +82,7 @@ class ResetPasswordActivity : AppCompatActivity() {
             }
 
         } else {
-            contentView?.hideKeyboard()
+            binding.root.hideKeyboard()
             toast("Server Unreachable")
         }
     }

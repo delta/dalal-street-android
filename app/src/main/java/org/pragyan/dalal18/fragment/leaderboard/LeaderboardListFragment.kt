@@ -18,18 +18,34 @@ import dalalstreet.api.actions.GetLeaderboardResponse
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+<<<<<<< HEAD:app/src/main/java/org/pragyan/dalal18/fragment/leaderboard/LeaderboardListFragment.kt
 import org.jetbrains.anko.longToast
 import org.jetbrains.anko.toast
+=======
+>>>>>>> remove: anko:app/src/main/java/org/pragyan/dalal18/fragment/LeaderboardFragment.kt
 import org.pragyan.dalal18.R
 import org.pragyan.dalal18.adapter.LeaderboardRecyclerAdapter
 import org.pragyan.dalal18.dagger.ContextModule
 import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent
 import org.pragyan.dalal18.data.LeaderBoardDetails
+<<<<<<< HEAD:app/src/main/java/org/pragyan/dalal18/fragment/leaderboard/LeaderboardListFragment.kt
 import org.pragyan.dalal18.databinding.FragmentLeaderboardListBinding
 import org.pragyan.dalal18.utils.ConnectionUtils
 import org.pragyan.dalal18.utils.Constants
 import org.pragyan.dalal18.utils.MiscellaneousUtils
 import org.pragyan.dalal18.utils.viewLifecycle
+=======
+import org.pragyan.dalal18.databinding.FragmentLeaderboardBinding
+<<<<<<< HEAD:app/src/main/java/org/pragyan/dalal18/fragment/leaderboard/LeaderboardListFragment.kt
+import org.pragyan.dalal18.utils.*
+>>>>>>> remove: anko:app/src/main/java/org/pragyan/dalal18/fragment/LeaderboardFragment.kt
+=======
+import org.pragyan.dalal18.utils.ConnectionUtils
+import org.pragyan.dalal18.utils.Constants
+import org.pragyan.dalal18.utils.MiscellaneousUtils
+import org.pragyan.dalal18.utils.viewLifecycle
+import org.pragyan.dalal18.utils.longToast
+>>>>>>> refactor:remove wildcard imports:app/src/main/java/org/pragyan/dalal18/fragment/LeaderboardFragment.kt
 import java.util.*
 import javax.inject.Inject
 
