@@ -4,7 +4,7 @@ public class Constants {
 
     // TODO (Release): Change server IP and Port
 
-    public static final String HOST = "venmei.com";
+    public static final String HOST = "venmei.comz";
     public static final int PORT = 8000;
 
     // TODO (Release): Change company image base URL and how is built

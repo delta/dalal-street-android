@@ -1,14 +1,12 @@
 package org.pragyan.dalal18.fragment.adminPanel
 
 import android.os.Bundle
-import android.util.Log.d
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.Navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import dalalstreet.api.DalalActionServiceGrpc
 import dalalstreet.api.actions.BlockUser
@@ -22,7 +20,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.jetbrains.anko.longToast
 import org.jetbrains.anko.toast
-import org.pragyan.dalal18.R
 import org.pragyan.dalal18.adapter.InspectUserAdapter
 import org.pragyan.dalal18.dagger.ContextModule
 import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent
@@ -73,10 +70,10 @@ class AdminPanelUserSpecificFragment : Fragment() {
         withContext(Dispatchers.IO) {
             if (ConnectionUtils.getConnectionInfo(context!!) && ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
 
-                if (blockuserEditText.text.toString().isNotBlank()
+                if (blockUserEditText.text.toString().isNotBlank()
                 ) {
                     val response = actionServiceBlockingStub.blockUser(BlockUser.BlockUserRequest.newBuilder()
-                            .setUserId(blockuserEditText.text.toString().toInt())
+                            .setUserId(blockUserEditText.text.toString().toInt())
                             .build())
                     message = response.statusMessage
                 }
@@ -90,10 +87,10 @@ class AdminPanelUserSpecificFragment : Fragment() {
         withContext(Dispatchers.IO) {
             if (ConnectionUtils.getConnectionInfo(context!!) && ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
 
-                if (unblockuserEditText.text.toString().isNotBlank()
+                if (unblockUserEditText.text.toString().isNotBlank()
                 ) {
                     val response = actionServiceBlockingStub.unBlockUser(UnblockUser.UnblockUserRequest.newBuilder()
-                            .setUserId(unblockuserEditText.text.toString().toInt())
+                            .setUserId(unblockUserEditText.text.toString().toInt())
                             .build())
                     message = response.statusMessage
                 }
@@ -120,10 +117,10 @@ class AdminPanelUserSpecificFragment : Fragment() {
         withContext(Dispatchers.IO) {
             if (ConnectionUtils.getConnectionInfo(context!!) && ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
                 binding.apply {
-                    if (userIdforNotification.text.toString().isNotBlank() && notificationEditText.text.toString().isNotBlank()) {
+                    if (userIdForNotification.text.toString().isNotBlank() && notificationEditText.text.toString().isNotBlank()) {
                         val response = actionServiceBlockingStub.sendNotifications(SendNotifications.SendNotificationsRequest.newBuilder()
                                 .setText(notificationEditText.text.toString())
-                                .setUserId(userIdforNotification.text.toString().toInt())
+                                .setUserId(userIdForNotification.text.toString().toInt())
                                 .setIsGlobal(isGlobalSwitch.isChecked)
                                 .build())
 
@@ -140,10 +137,10 @@ class AdminPanelUserSpecificFragment : Fragment() {
         withContext(Dispatchers.IO) {
             if (ConnectionUtils.getConnectionInfo(context!!) && ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
                 binding.apply {
-                    if (userIdforInspectUser.text.toString().isNotBlank() && noOfDaysForInspectUser.text.toString().isNotBlank()) {
+                    if (userIdForInspectUser.text.toString().isNotBlank() && noOfDaysForInspectUser.text.toString().isNotBlank()) {
                         val response = actionServiceBlockingStub.inspectUser(dalalstreet.api.actions.InspectUserRequest.newBuilder()
                                 .setDay(noOfDaysForInspectUser.text.toString().toInt())
-                                .setUserId(userIdforInspectUser.text.toString().toInt())
+                                .setUserId(userIdForInspectUser.text.toString().toInt())
                                 .setTransactionType(bidUserSwitch.isChecked)
                                 .build())
                         resp = response.listList

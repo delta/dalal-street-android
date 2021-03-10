@@ -16,7 +16,7 @@
         android:padding="8dp">
 
         <TextView
-            android:id="@+id/userIdTextview"
+            android:id="@+id/userIdTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/kreon_light"
@@ -24,12 +24,12 @@
             android:textColor="@color/neutral_font_color"
             android:textSize="22sp"
             android:textStyle="bold"
-            app:layout_constraintBottom_toTopOf="@id/email_textView"
+            app:layout_constraintBottom_toTopOf="@id/emailTextViewForInspectUser"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/email_textView"
+            android:id="@+id/emailTextViewForInspectUser"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
@@ -37,12 +37,12 @@
             android:text="Email : spd.doddini@gmail.com"
             android:textColor="@color/neutral_font_color"
             android:textSize="20sp"
-            app:layout_constraintBottom_toTopOf="@id/transactionCount_textView"
+            app:layout_constraintBottom_toTopOf="@id/transactionCountTextView"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/userIdTextview" />
+            app:layout_constraintTop_toBottomOf="@id/userIdTextView" />
 
         <TextView
-            android:id="@+id/transactionCount_textView"
+            android:id="@+id/transactionCountTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
@@ -51,29 +51,29 @@
             android:textColor="@color/neutral_font_color"
             android:textSize="18sp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/email_textView" />
+            app:layout_constraintTop_toBottomOf="@id/emailTextViewForInspectUser" />
 
         <TextView
-            android:id="@+id/position_textView"
+            android:id="@+id/positionTextViewForInspectUser"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Position : 1"
             android:textColor="@color/neutral_font_color"
             android:textSize="20sp"
             android:textStyle="bold"
-            app:layout_constraintStart_toStartOf="@+id/transactionCount_textView"
-            app:layout_constraintTop_toBottomOf="@+id/transactionCount_textView" />
+            app:layout_constraintStart_toStartOf="@+id/transactionCountTextView"
+            app:layout_constraintTop_toBottomOf="@+id/transactionCountTextView" />
 
         <TextView
-            android:id="@+id/stocksum_textview"
+            android:id="@+id/stockSumTextViewForInspectUser"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Stock Sum : 1"
             android:textColor="@color/neutral_font_color"
             android:textSize="20sp"
             android:textStyle="bold"
-            app:layout_constraintStart_toStartOf="@+id/transactionCount_textView"
-            app:layout_constraintTop_toBottomOf="@+id/position_textView" />
+            app:layout_constraintStart_toStartOf="@+id/transactionCountTextView"
+            app:layout_constraintTop_toBottomOf="@+id/positionTextViewForInspectUser" />
 
 
 

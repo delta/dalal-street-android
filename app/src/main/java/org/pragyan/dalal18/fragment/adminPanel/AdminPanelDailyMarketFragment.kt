@@ -1,7 +1,6 @@
 package org.pragyan.dalal18.fragment.adminPanel
 
 import android.os.Bundle
-import android.util.Log.d
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,18 +10,14 @@ import androidx.lifecycle.lifecycleScope
 import dalalstreet.api.DalalActionServiceGrpc
 import dalalstreet.api.actions.*
 import kotlinx.android.synthetic.main.fragment_adminpanel_dailymarket.*
-import kotlinx.android.synthetic.main.fragment_getting_started.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.jetbrains.anko.toast
-import org.pragyan.dalal18.R
 import org.pragyan.dalal18.dagger.ContextModule
 import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent
 import org.pragyan.dalal18.data.DalalViewModel
 import org.pragyan.dalal18.databinding.FragmentAdminpanelDailymarketBinding
-import org.pragyan.dalal18.databinding.FragmentAdminpanelStocksBinding
-import org.pragyan.dalal18.databinding.FragmentSecretBinding
 import org.pragyan.dalal18.utils.ConnectionUtils
 import org.pragyan.dalal18.utils.Constants
 import org.pragyan.dalal18.utils.hideKeyboard
@@ -54,7 +49,7 @@ class AdminPanelDailyMarketFragment : Fragment() {
         binding.apply {
             openMarketButton.setOnClickListener { openMarket() }
             closeMarketButton.setOnClickListener { closeMarket() }
-            updateEndOFDayValue.setOnClickListener { updateEndOfDayValues() }
+            updateEndOfDayValue.setOnClickListener { updateEndOfDayValues() }
             addDailyChallengeButton.setOnClickListener { addDailyChallenge() }
             openDailyChallengeButton.setOnClickListener { openDailyChallenge() }
             closeDailyChallengeButton.setOnClickListener { closeDailyChallenge() }
@@ -123,9 +118,9 @@ class AdminPanelDailyMarketFragment : Fragment() {
         view?.hideKeyboard()
         withContext(Dispatchers.IO) {
             if (ConnectionUtils.getConnectionInfo(context!!) && ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
-                if(setMarketdayEditText.text.toString().isNotBlank()){
+                if(setMarketDayEditText.text.toString().isNotBlank()){
                     val response = actionServiceBlockingStub.setMarketDay(SetMarketDay.SetMarketDayRequest.newBuilder()
-                            .setMarketDay(setMarketdayEditText.text.toString().toInt())
+                            .setMarketDay(setMarketDayEditText.text.toString().toInt())
                             .build())
                     message = response.statusMessage
                 }
@@ -142,17 +137,17 @@ class AdminPanelDailyMarketFragment : Fragment() {
             if (ConnectionUtils.getConnectionInfo(context!!) && ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
                 binding.apply {
                     if (enterMarketDayEditText.text.toString().isNotBlank()  &&
-                            enterValueEdittext.text.toString().isNotBlank()  &&
+                            enterValueEditextForDailyChallenge.text.toString().isNotBlank()  &&
                             rewardEditText.text.toString().isNotBlank()
                     ) {
                         val challengetype = getChallengeTypeEnum(typeOfChallengeEditText.selectedItem.toString())
                         if(challengetype == AddDailyChallenge.ChallengeType.SpecificStock){
-                            if(StockIDEditText.text.toString().isNotBlank()){
+                            if(stockIdEditTextForDailyChallenge.text.toString().isNotBlank()){
                                 val response = actionServiceBlockingStub.addDailyChallenge(AddDailyChallenge.AddDailyChallengeRequest.newBuilder()
                                         .setMarketDay(enterMarketDayEditText.text.toString().toInt())
                                         .setChallengeType(challengetype)
-                                        .setStockId(StockIDEditText.text.toString().toInt())
-                                        .setValue(enterValueEdittext.text.toString().toLong())
+                                        .setStockId(stockIdEditTextForDailyChallenge.text.toString().toInt())
+                                        .setValue(enterValueEditextForDailyChallenge.text.toString().toLong())
                                         .setReward(rewardEditText.text.toString().toInt())
                                         .build())
                                 message = response.statusMessage
@@ -163,7 +158,7 @@ class AdminPanelDailyMarketFragment : Fragment() {
                             val response = actionServiceBlockingStub.addDailyChallenge(AddDailyChallenge.AddDailyChallengeRequest.newBuilder()
                                     .setMarketDay(enterMarketDayEditText.text.toString().toInt())
                                     .setChallengeType(challengetype)
-                                    .setValue(enterValueEdittext.text.toString().toLong())
+                                    .setValue(enterValueEditextForDailyChallenge.text.toString().toLong())
                                     .setReward(rewardEditText.text.toString().toInt())
                                     .build())
                             message = response.statusMessage

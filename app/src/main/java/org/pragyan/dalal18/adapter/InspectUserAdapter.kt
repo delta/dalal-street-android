@@ -30,9 +30,9 @@ import org.pragyan.dalal18.R
 }
 
 class ViewHolder (view: View) : RecyclerView.ViewHolder(view) {
-    val inspectUserUserId = view.userIdTextview
-    val inspectUserEmail = view.email_textView
-    val TransactionCount = view.transactionCount_textView
-    val inspectUserPosition = view.position_textView
-    val StockSum = view.stocksum_textview
+    val inspectUserUserId = view.userIdTextView
+    val inspectUserEmail = view.emailTextViewForInspectUser
+    val TransactionCount = view.transactionCountTextView
+    val inspectUserPosition = view.positionTextViewForInspectUser
+    val StockSum = view.stockSumTextViewForInspectUser
 }

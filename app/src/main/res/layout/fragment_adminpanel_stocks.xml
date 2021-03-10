@@ -16,47 +16,6 @@
 
 
 
-<!--        <Button-->
-<!--            android:id="@+id/updateEndOfDayValuesButton"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:background="@drawable/black_white_rounded_button"-->
-<!--            android:padding="10dp"-->
-<!--            android:text="Update EndOfDayValues"-->
-<!--            android:textAllCaps="false"-->
-<!--            android:textColor="@color/neon_blue"-->
-<!--            app:layout_constraintBottom_toTopOf="@+id/closeMarketButton"-->
-<!--            app:layout_constraintEnd_toEndOf="parent"-->
-<!--            app:layout_constraintStart_toStartOf="parent"-->
-<!--            app:layout_constraintTop_toBottomOf="@+id/view2" />-->
-
-<!--        <Button-->
-<!--            android:id="@+id/openMarketButton"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_marginStart="20dp"-->
-<!--            android:background="@drawable/black_white_rounded_button"-->
-<!--            android:padding="4dp"-->
-<!--            android:text="Open Market"-->
-<!--            android:textColor="@color/neon_green"-->
-<!--            app:layout_constraintBottom_toBottomOf="parent"-->
-<!--            app:layout_constraintStart_toStartOf="parent"-->
-<!--            app:layout_constraintTop_toBottomOf="@id/newsDescriptionEditText"-->
-<!--            app:layout_constraintVertical_bias="1" />-->
-
-<!--        <Button-->
-<!--            android:id="@+id/closeMarketButton"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_marginEnd="20dp"-->
-<!--            android:background="@drawable/black_white_rounded_button"-->
-<!--            android:padding="4dp"-->
-<!--            android:text="Close Market"-->
-<!--            android:textColor="@color/neon_yellow"-->
-<!--            app:layout_constraintBottom_toBottomOf="parent"-->
-<!--            app:layout_constraintEnd_toEndOf="parent"-->
-<!--            app:layout_constraintTop_toBottomOf="@id/newsDescriptionEditText"-->
-<!--            app:layout_constraintVertical_bias="0.985" />-->
 
         <EditText
             android:id="@+id/stockIdEditText"
@@ -125,29 +84,17 @@
             app:layout_constraintStart_toStartOf="@id/stocksToExchangeButton"
             app:layout_constraintTop_toBottomOf="@id/stocksToExchangeButton" />
 
-            <!--        <Button-->
-<!--            android:id="@+id/sendNotificationButton"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_marginTop="8dp"-->
-<!--            android:background="@drawable/black_white_rounded_button"-->
-<!--            android:text="Send"-->
-<!--            android:textColor="@color/neon_yellow"-->
-<!--            app:layout_constraintBottom_toBottomOf="@+id/notificationEditText"-->
-<!--            app:layout_constraintEnd_toEndOf="parent"-->
-<!--            app:layout_constraintStart_toEndOf="@+id/isGlobalSwitch"-->
-<!--            app:layout_constraintTop_toTopOf="@id/isGlobalSwitch" />-->
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@color/black"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="1.0"
-                app:layout_constraintStart_toStartOf="parent"
-                tools:layout_editor_absoluteY="108dp" />
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="8dp"
+            android:background="@color/black"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/newStockPriceEditText" />
 
-            <EditText
+        <EditText
             android:id="@+id/stockIdEditText2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -172,20 +119,20 @@
                 app:layout_constraintStart_toStartOf="@+id/stocksToExchangeEditText"
                 app:layout_constraintTop_toTopOf="@+id/setBankruptButton" />
 
-            <Button
-                android:id="@+id/setBankruptButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/black_white_rounded_button"
-                android:text="Bankrupt"
-                android:textColor="@color/neon_green"
-                app:layout_constraintBottom_toTopOf="@id/setDividendButton"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.39"
-                app:layout_constraintStart_toEndOf="@id/bankruptSwitch"
-                app:layout_constraintTop_toBottomOf="@+id/newStockPriceEditText" />
+        <Button
+            android:id="@+id/setBankruptButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/black_white_rounded_button"
+            android:text="Bankrupt"
+            android:textColor="@color/neon_green"
+            app:layout_constraintBottom_toTopOf="@id/setDividendButton"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.39"
+            app:layout_constraintStart_toEndOf="@id/bankruptSwitch"
+            app:layout_constraintTop_toBottomOf="@+id/newStockPriceEditText" />
 
-            <androidx.appcompat.widget.SwitchCompat
+        <androidx.appcompat.widget.SwitchCompat
             android:id="@+id/dividendSwitch"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -219,7 +166,7 @@
             app:layout_constraintTop_toBottomOf="@id/setDividendButton" />
 
         <EditText
-            android:id="@+id/stockIdEditText3"
+            android:id="@+id/stockIdEditTextForNews"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:backgroundTint="@color/neutral_font_color"

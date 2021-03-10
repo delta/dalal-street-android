@@ -38,7 +38,6 @@ class AdminPanelStocksFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         binding = FragmentAdminpanelStocksBinding.inflate(inflater, container, false)
-
         model = activity?.run { ViewModelProvider(this).get(DalalViewModel::class.java) }
                 ?: throw Exception("Invalid activity")
         DaggerDalalStreetApplicationComponent.builder().contextModule(ContextModule(context!!)).build().inject(this)
@@ -134,10 +133,12 @@ class AdminPanelStocksFragment : Fragment() {
                 binding.apply {
                     if (headlinesEditText.text.toString().isNotBlank() && newsDescriptionEditText.text.toString().isNotBlank() &&
                             newsImageUrlEditText.text.toString().isNotBlank()) {
-                        val response = actionServiceBlockingStub.sendNotifications(SendNotifications.SendNotificationsRequest.newBuilder()
-                                .setIsGlobal(isGlobalNewsSwitch.isChecked)
+                        val response = actionServiceBlockingStub.addMarketEvent(AddMarketEvent.AddMarketEventRequest.newBuilder()
+                                .setStockId(stockIdEditTextForNews.text.toString().toInt())
+                                .setHeadline(headlinesEditText.text.toString())
                                 .setText(newsDescriptionEditText.text.toString())
-                                .setUserId(stockIdEditText3.text.toString().toInt())
+                                .setImageUrl(newsImageUrlEditText.text.toString())
+                                .setIsGlobal(isGlobalNewsSwitch.isChecked)
                                 .build())
                         message = response.statusMessage
                     }

@@ -75,12 +75,12 @@
                 android:text="Daily LeaderBoard"
                 android:textColor="@color/neutral_font_color"
                 android:textColorHint="@color/neutral_font_color"
-                app:layout_constraintBottom_toBottomOf="@+id/updateEndOFDayValue"
+                app:layout_constraintBottom_toBottomOf="@+id/updateEndOfDayValue"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/updateEndOFDayValue" />
+                app:layout_constraintTop_toTopOf="@+id/updateEndOfDayValue" />
 
             <Button
-                android:id="@+id/updateEndOFDayValue"
+                android:id="@+id/updateEndOfDayValue"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
@@ -101,7 +101,7 @@
                 android:layout_margin="5dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/updateEndOFDayValue" />
+                app:layout_constraintTop_toBottomOf="@+id/updateEndOfDayValue" />
 
             <TextView
                 android:id="@+id/stockIdEditText3"
@@ -112,7 +112,7 @@
                 android:inputType="number"
                 android:textColor="@color/neutral_font_color"
                 android:textColorHint="@color/neutral_font_color"
-                app:layout_constraintBottom_toBottomOf="@+id/enterValueEdittext"
+                app:layout_constraintBottom_toBottomOf="@+id/enterValueEditextForDailyChallenge"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@id/enterMarketDayEditText" />
 
@@ -127,9 +127,9 @@
             android:textColor="@color/neutral_font_color"
             android:textColorHint="@color/neutral_font_color"
             app:layout_constraintBottom_toTopOf="@id/typeOfChallengeEditText"
-            app:layout_constraintEnd_toEndOf="@+id/updateEndOFDayValue"
-            app:layout_constraintStart_toStartOf="@+id/updateEndOFDayValue"
-            app:layout_constraintTop_toBottomOf="@id/updateEndOFDayValue" />
+            app:layout_constraintEnd_toEndOf="@+id/updateEndOfDayValue"
+            app:layout_constraintStart_toStartOf="@+id/updateEndOfDayValue"
+            app:layout_constraintTop_toBottomOf="@id/updateEndOfDayValue" />
 
         <Spinner
             android:id="@+id/typeOfChallengeEditText"
@@ -139,13 +139,13 @@
             android:backgroundTint="@color/neutral_font_color"
             android:hint="Type of Challenge"
             android:entries="@array/dailyChallengesTypes"
-            app:layout_constraintBottom_toTopOf="@id/StockIDEditText"
+            app:layout_constraintBottom_toTopOf="@id/stockIdEditTextForDailyChallenge"
             app:layout_constraintEnd_toEndOf="@+id/enterMarketDayEditText"
             app:layout_constraintStart_toStartOf="@id/enterMarketDayEditText"
             app:layout_constraintTop_toBottomOf="@id/enterMarketDayEditText" />
 
         <EditText
-            android:id="@+id/StockIDEditText"
+            android:id="@+id/stockIdEditTextForDailyChallenge"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
@@ -154,13 +154,13 @@
             android:inputType="textUri"
             android:textColor="@color/neutral_font_color"
             android:textColorHint="@color/neutral_font_color"
-            app:layout_constraintBottom_toTopOf="@id/enterValueEdittext"
+            app:layout_constraintBottom_toTopOf="@id/enterValueEditextForDailyChallenge"
             app:layout_constraintEnd_toEndOf="@+id/enterMarketDayEditText"
             app:layout_constraintStart_toStartOf="@id/enterMarketDayEditText"
             app:layout_constraintTop_toBottomOf="@id/typeOfChallengeEditText" />
 
         <EditText
-            android:id="@+id/enterValueEdittext"
+            android:id="@+id/enterValueEditextForDailyChallenge"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
@@ -171,7 +171,7 @@
             android:textColorHint="@color/neutral_font_color"
             app:layout_constraintEnd_toEndOf="@+id/enterMarketDayEditText"
             app:layout_constraintStart_toStartOf="@id/enterMarketDayEditText"
-            app:layout_constraintTop_toBottomOf="@id/StockIDEditText" />
+            app:layout_constraintTop_toBottomOf="@id/stockIdEditTextForDailyChallenge" />
 
             <EditText
                 android:id="@+id/rewardEditText"
@@ -182,9 +182,9 @@
                 android:inputType="text"
                 android:textColor="@color/neutral_font_color"
                 android:textColorHint="@color/neutral_font_color"
-                app:layout_constraintEnd_toEndOf="@+id/enterValueEdittext"
-                app:layout_constraintStart_toStartOf="@+id/enterValueEdittext"
-                app:layout_constraintTop_toBottomOf="@+id/enterValueEdittext" />
+                app:layout_constraintEnd_toEndOf="@+id/enterValueEditextForDailyChallenge"
+                app:layout_constraintStart_toStartOf="@+id/enterValueEditextForDailyChallenge"
+                app:layout_constraintTop_toBottomOf="@+id/enterValueEditextForDailyChallenge" />
 
             <Button
                 android:id="@+id/addDailyChallengeButton"
@@ -210,7 +210,7 @@
 
 
             <TextView
-                android:id="@+id/updatedailyChallengeTextView"
+                android:id="@+id/updateDailyChallengeTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:backgroundTint="@color/neutral_font_color"
@@ -262,7 +262,7 @@
 
 
             <EditText
-                android:id="@+id/setMarketdayEditText"
+                android:id="@+id/setMarketDayEditText"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:backgroundTint="@color/neutral_font_color"
@@ -284,13 +284,13 @@
             android:padding="10dp"
             android:text="Set Market Day"
             android:textColor="@color/neon_yellow"
-            app:layout_constraintEnd_toEndOf="@+id/setMarketdayEditText"
+            app:layout_constraintEnd_toEndOf="@+id/setMarketDayEditText"
             app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="@+id/setMarketdayEditText"
-            app:layout_constraintTop_toBottomOf="@+id/setMarketdayEditText" />
+            app:layout_constraintStart_toStartOf="@+id/setMarketDayEditText"
+            app:layout_constraintTop_toBottomOf="@+id/setMarketDayEditText" />
 
         <TextView
-                android:id="@+id/setMarketDayTExtView"
+                android:id="@+id/setMarketDayTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:backgroundTint="@color/neutral_font_color"
@@ -300,7 +300,7 @@
                 android:textColorHint="@color/neutral_font_color"
                 app:layout_constraintBottom_toBottomOf="@+id/setMarketDayButton"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/setMarketdayEditText" />
+                app:layout_constraintTop_toTopOf="@+id/setMarketDayEditText" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
