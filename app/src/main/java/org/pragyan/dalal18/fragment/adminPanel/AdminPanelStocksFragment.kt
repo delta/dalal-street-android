@@ -62,9 +62,9 @@ class AdminPanelStocksFragment : Fragment() {
 
         withContext(Dispatchers.IO) {
             if (ConnectionUtils.getConnectionInfo(context!!) && ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
-                if (binding.stockIdEditText2.text.toString().isNotBlank()) {
+                if (binding.stockIdEditTextForBankrupt.text.toString().isNotBlank()) {
                     val response = actionServiceBlockingStub.setBankruptcy(SetBankruptcyRequest.newBuilder()
-                            .setStockId(binding.stockIdEditText2.text.toString().toInt())
+                            .setStockId(binding.stockIdEditTextForBankrupt.text.toString().toInt())
                             .setIsBankrupt(isBankrupt)
                             .build())
                     message = response.statusMessage
@@ -79,9 +79,9 @@ class AdminPanelStocksFragment : Fragment() {
 
         withContext(Dispatchers.IO) {
             if (ConnectionUtils.getConnectionInfo(context!!) && ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
-                if (binding.stockIdEditText2.text.toString().isNotBlank()) {
+                if (binding.stockIdEditTextForBankrupt.text.toString().isNotBlank()) {
                     val response = actionServiceBlockingStub.setGivesDividends(SetGivesDividendsRequest.newBuilder()
-                            .setStockId(binding.stockIdEditText2.text.toString().toInt())
+                            .setStockId(binding.stockIdEditTextForBankrupt.text.toString().toInt())
                             .setGivesDividends(givesDividends)
                             .build())
                     message = response.statusMessage
