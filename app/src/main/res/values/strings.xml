@@ -487,4 +487,12 @@
     <string name="progress">Progress</string>
     <string name="reward">Rewards</string>
     <string name="challenge">Challenges</string>
+    <string-array name="dailyChallengesTypes">
+        <item>CASH</item>
+        <item>NetWorth</item>
+        <item>SpecificStock</item>
+        <item>StockWorth</item>
+    </string-array>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

@@ -2,7 +2,6 @@
 buildscript {
 
 
-
     repositories {
         google()
         jcenter()
@@ -13,7 +12,6 @@ buildscript {
         classpath (BuildPlugins.kotlinGradlePlugin)
         classpath (BuildPlugins.googleServicesGradlePlugin)
         classpath (BuildPlugins.firebaseCrashlyticsGradle)
-
 
 
         // NOTE: Do not place your application dependencies here; they belong
