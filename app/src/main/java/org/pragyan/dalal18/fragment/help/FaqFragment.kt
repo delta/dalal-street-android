@@ -27,19 +27,19 @@ class FaqFragment : Fragment() {
 
         expand_text_view_faq1.text = resources.getText(R.string.faq_1a)
         expand_text_view_faq2.text = resources.getText(R.string.faq_2a)
-        expand_text_view_faq3.text = resources.getText(R.string.faq_8a)
+        expand_text_view_faq3.text = resources.getText(R.string.faq_3a)
         expand_text_view_faq4.text = resources.getText(R.string.faq_4a)
         expand_text_view_faq5.text = resources.getText(R.string.faq_5a)
         expand_text_view_faq6.text = resources.getText(R.string.faq_6a)
-        expand_text_view_faq8.text = resources.getText(R.string.faq_7a)
+        expand_text_view_faq7.text = resources.getText(R.string.faq_7a)
+        expand_text_view_faq8.text = resources.getText(R.string.faq_8a)
         expand_text_view_faq9.text = resources.getText(R.string.faq_9a)
-        expand_text_view_faq11.text = resources.getText(R.string.faq_10a)
-        expand_text_view_faq7.text = resources.getText(R.string.faq_11a)
+        expand_text_view_faq11.text = resources.getText(R.string.faq_11a)
 
 
         val rewardClaimedSpan =  ImageSpan(context!!, R.drawable.blue_thumb)
         val challengeLostSpan = ImageSpan(context!!,R.drawable.clear_icon)
-        val spannableText=  SpannableString(resources.getString(R.string.faq_12a));
+        val spannableText=  SpannableString(resources.getString(R.string.faq_10a));
 
         spannableText.setSpan(rewardClaimedSpan, spannableText.indexOf("symbols")+9,spannableText.indexOf("symbols")+11 , 0)
         spannableText.setSpan(challengeLostSpan, spannableText.indexOf("claimed.")+10,spannableText.indexOf("claimed.")+12 , 0)

@@ -374,7 +374,7 @@
     you can use Stoploss Sell Orders to lock in a profit/limit your losses.</string>
     <string name="faq_2a"><b>What exactly is this trade price and how is it determined?</b>\n\nThe trade price is the price at which a transaction is executed. Our algorithm uses a best match approach to match Buy Orders to Sell orders as well as to determine the price at which the trade is executed.
         \n\nYou can view the trade price of all of your executed transactions on the Transactions Page.</string>
-    <string name="faq_3a"><b>What is Total Worth and how is it calculated?</b>\n\n
+    <string name="faq_12a"><b>What is Total Worth and how is it calculated?</b>\n\n
         The player with the highest Total Worth at the end of <b>7 days </b>is the winner. Your Net Worth is split into two parts - Cash In  Hand and Stock Worth. You can view these values on the Portfolio page.</string>
     <string name="faq_4a"><b>What is this short selling you speak of?</b>\n\nWhile you will buy a company’s stock if you expect its price to go up,  you can short sell a company’s stock if you expect its price to go down. \n\nIn a nutshell, short selling
         means to sell stocks that you don’t own so that you can buy them back at a lower price.For example, short selling 5 shares of a company XYZ is mathematically equivalent to buying -5 shares of XYZ. When you short sell,
@@ -391,17 +391,17 @@
         :-\n\n<b>Mortgage</b> - In this step, you will be  selling your stocks to the exchange at the Deposit Rate (80% of the Current Stock Price).
     \n\n<b>Retrieval</b> - Here, you will be retrieving the stocks you initially mortgaged by paying the exchange at the Retrieval Rate (90% of the Current Stock Price).
     Note : After you mortgage a stock, it is no longer a part of your portfolio and hence, will not contribute to your stock worth (until you retrieve it).</string>
-    <string name="faq_7a"><b>Can I expect any new companies to pop up over the course of the game?</b>\n\nWhile we don’t expect any more companies to  go public over the course of this game,  existing companies may release more shares in the middle.
+    <string name="faq_8a"><b>Can I expect any new companies to pop up over the course of the game?</b>\n\nWhile we don’t expect any more companies to  go public over the course of this game,  existing companies may release more shares in the middle.
         \n\nIf this happens, then the number of Stocks in Exchange will increase, and you can buy these stocks from the Exchange Page. Stay tuned to the News
         Page and look out for notifications.\n\n If you still have any queries, please feel free to ask it on our Official Forum
         and we\'ll try to get back to you as soon as possible.\n\n Happy Trading!</string>
-    <string name="faq_8a"><b>How is the winner determined?</b>\n\nThe player with the highest Total Net Worth at the end of <b>7 days </b>is declared as the winner. Your Total  Net Worth is calculated by adding - <b> Cash In Hand, Stock Worths, Reserved Cash and Reserved Stock Worth </b>. You can view these values on the Portfolio page.</string>
+    <string name="faq_3a"><b>How is the winner determined?</b>\n\nThe player with the highest Total Net Worth at the end of <b>7 days </b>is declared as the winner. Your Total  Net Worth is calculated by adding - <b> Cash In Hand, Stock Worths, Reserved Cash and Reserved Stock Worth </b>. You can view these values on the Portfolio page.</string>
     <string name="faq_9a"><b>Can a company to go bankrupt?</b>\n\nYes. A company might go bankrupt depending on their current financial situation. Stay tuned to the news page for the latest updates about companies. When a company goes bankrupt, you can no longer exchange stocks their stocks and all stocks you own of that company become worthless.
 </string>
-    <string name="faq_10a"><b>Help my account got blocked!</b>\n\nWhenever we observe a user breaking our rules of conduct, we block the user from playing. Check out our malpractice section in Getting Started for more details. Reach out to us on our forum for any clarification.</string>
-    <string name="faq_11a"><b>Can I expect a company to give dividends?</b>\n\nDuring the course of the game, some companies might offer dividends to you. Dividends are a fixed amount per stocks that you own of their company. You\'ll be notified when a company is giving dividends, till then stay tuned to the news for latest updates of a company.
+    <string name="faq_11a"><b>Help my account got blocked!</b>\n\nWhenever we observe a user breaking our rules of conduct, we block the user from playing. Check out our malpractice section in Getting Started for more details. Reach out to us on our forum for any clarification.</string>
+    <string name="faq_7a"><b>Can I expect a company to give dividends?</b>\n\nDuring the course of the game, some companies might offer dividends to you. Dividends are a fixed amount per stocks that you own of their company. You\'ll be notified when a company is giving dividends, till then stay tuned to the news for latest updates of a company.
 </string>
-    <string name="faq_12a"><b>What are daily challenges?</b>\n\nA set of daily challenges will be given for every market day along with an associated reward based on the difficulty of the challenge.
+    <string name="faq_10a"><b>What are daily challenges?</b>\n\nA set of daily challenges will be given for every market day along with an associated reward based on the difficulty of the challenge.
                                     \n\nEach challenge constitutes increasing any one of the four following parameters to the specified value, namely, <b>Cash worth, Stock Worth, Net worth, Number of a specific Stock.</b>
                                     \n\nThe challenge for a specific market day is <b>valid only between the opening and closing of the Daily challenge </b>and user should complete it within that period in order to be able to claim the reward.
                                     \n\nThe status and progress of a particular challenge is shown adjacent to that particular challenge by the following symbols
