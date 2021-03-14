@@ -401,6 +401,16 @@
     <string name="faq_10a"><b>Help my account got blocked!</b>\n\nWhenever we observe a user breaking our rules of conduct, we block the user from playing. Check out our malpractice section in Getting Started for more details. Reach out to us on our forum for any clarification.</string>
     <string name="faq_11a"><b>Can I expect a company to give dividends?</b>\n\nDuring the course of the game, some companies might offer dividends to you. Dividends are a fixed amount per stocks that you own of their company. You\'ll be notified when a company is giving dividends, till then stay tuned to the news for latest updates of a company.
 </string>
+    <string name="faq_12a"><b>What are daily challenges?</b>\n\nA set of daily challenges will be given for every market day along with an associated reward based on the difficulty of the challenge.
+                                    \n\nEach challenge constitutes increasing any one of the four following parameters to the specified value, namely, <b>Cash worth, Stock Worth, Net worth, Number of a specific Stock.</b>
+                                    \n\nThe challenge for a specific market day is <b>valid only between the opening and closing of the Daily challenge </b>and user should complete it within that period in order to be able to claim the reward.
+                                    \n\nThe status and progress of a particular challenge is shown adjacent to that particular challenge by the following symbols
+    \n\n : The Challenge has been completed and the reward has been claimed.
+    \n\n : The Challenge has not been completed and the daily challenges has been closed.\n\n When the Challenge has been completed and reward is ready to be claimed users should click on the button to claim the reward.
+    \n\n<span>While challenge is open, the current value and the value needed to achieve the challenge will be displayed for users to check their progress. It will either be in green or red showing if the user has reached or has not reached the value.</span>
+    \n\nDaily Challenges are closed at the end of the day.
+
+</string>
     <string name="notifications">Notifications</string>
     <string name="not_registered_click_here_to_register">Not registered? Click here to register</string>
     <string name="registering">Registering…</string>

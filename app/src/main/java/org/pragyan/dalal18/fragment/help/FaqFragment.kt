@@ -1,14 +1,19 @@
 package org.pragyan.dalal18.fragment.help
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.text.SpannableString
+import android.text.SpannableStringBuilder
+import android.text.Spanned
+import android.text.style.ImageSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import kotlinx.android.synthetic.main.fragment_faq.*
 import org.pragyan.dalal18.R
-import android.content.Intent
-import android.net.Uri
+
 
 @Suppress("PLUGIN_WARNING")
 class FaqFragment : Fragment() {
@@ -28,9 +33,17 @@ class FaqFragment : Fragment() {
         expand_text_view_faq6.text = resources.getText(R.string.faq_6a)
         expand_text_view_faq8.text = resources.getText(R.string.faq_7a)
         expand_text_view_faq9.text = resources.getText(R.string.faq_9a)
-        expand_text_view_faq10.text = resources.getText(R.string.faq_10a)
+        expand_text_view_faq11.text = resources.getText(R.string.faq_10a)
         expand_text_view_faq7.text = resources.getText(R.string.faq_11a)
 
+
+        val rewardClaimedSpan =  ImageSpan(context!!, R.drawable.blue_thumb)
+        val challengeLostSpan = ImageSpan(context!!,R.drawable.clear_icon)
+        val spannableText=  SpannableString(resources.getString(R.string.faq_12a));
+
+        spannableText.setSpan(rewardClaimedSpan, spannableText.indexOf("symbols")+9,spannableText.indexOf("symbols")+11 , 0)
+        spannableText.setSpan(challengeLostSpan, spannableText.indexOf("claimed.")+10,spannableText.indexOf("claimed.")+12 , 0)
+        expand_text_view_faq10.text = spannableText
         forumTextView.setOnClickListener { openForumWebPage() }
     }
 
