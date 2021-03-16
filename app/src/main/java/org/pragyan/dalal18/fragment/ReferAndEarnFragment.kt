@@ -80,12 +80,12 @@ class ReferAndEarnFragment : Fragment() {
 
             if (email.isNotEmpty() && email.isNotBlank()) {
                 referralCodeDialog?.show()
-                getUerReferralCodeAsynchrounously(email)
+                getUserReferralCodeAsynchronously(email)
             }
         }
     }
 
-    private fun getUerReferralCodeAsynchrounously(userEmail: String) = lifecycleScope.launch {
+    private fun getUserReferralCodeAsynchronously(userEmail: String) = lifecycleScope.launch {
         val referralCodeRequest = GetReferralCodeRequest.newBuilder()
                 .setEmail(userEmail)
                 .build()
@@ -121,13 +121,13 @@ class ReferAndEarnFragment : Fragment() {
     }
 
     private fun shareReferralCode() {
-        val shareIntent = Intent()
+        val shareIntent = Intent(Intent.ACTION_SEND)
         shareIntent.type = "text/plain"
 
         val referralCode = preferences.getString(Constants.USER_REFERRAL_CODE, "")
-        val shareMessage = Constants.DALAL_SHARE_MESSAGE + referralCode + ", and get instinct cash reward !"
+        val shareMessage = "${Constants.DALAL_SHARE_MESSAGE}$referralCode and get instant cash reward!"
 
         shareIntent.putExtra(Intent.EXTRA_TEXT, shareMessage)
-        startActivity(shareIntent)
+        startActivity(Intent.createChooser(shareIntent, "Share referral code via..."))
     }
 }
