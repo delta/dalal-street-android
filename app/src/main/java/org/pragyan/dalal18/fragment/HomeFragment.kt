@@ -258,6 +258,11 @@ class HomeFragment : Fragment(), NewsRecyclerAdapter.NewsItemClickListener, Swip
         handler.removeCallbacks(tickerRunnable)
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        LocalBroadcastManager.getInstance(context!!).unregisterReceiver(refreshNewsListReceiver)
+    }
+
     companion object {
         private const val COMPANY_TICKER_DURATION = 2500
     }
