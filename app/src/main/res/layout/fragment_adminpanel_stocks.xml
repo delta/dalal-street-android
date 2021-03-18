@@ -83,6 +83,7 @@
 
 
         <View
+            android:id="@+id/view5"
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_marginTop="8dp"
@@ -120,14 +121,14 @@
             android:id="@+id/setBankruptButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
             android:background="@drawable/black_white_rounded_button"
             android:text="Bankrupt"
             android:textColor="@color/neon_green"
-            app:layout_constraintBottom_toTopOf="@id/setDividendButton"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.39"
             app:layout_constraintStart_toEndOf="@id/bankruptSwitch"
-            app:layout_constraintTop_toBottomOf="@+id/newStockPriceEditText" />
+            app:layout_constraintTop_toBottomOf="@+id/view5" />
 
         <androidx.appcompat.widget.SwitchCompat
             android:id="@+id/dividendSwitch"
@@ -145,11 +146,12 @@
             android:id="@+id/setDividendButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="16dp"
             android:background="@drawable/black_white_rounded_button"
             android:text="Dividend"
             android:textColor="@color/neon_purple"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.39"
             app:layout_constraintStart_toEndOf="@+id/bankruptSwitch"
             app:layout_constraintTop_toBottomOf="@id/setBankruptButton" />
 
