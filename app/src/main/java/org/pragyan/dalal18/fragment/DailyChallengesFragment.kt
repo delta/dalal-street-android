@@ -80,7 +80,7 @@ class DailyChallengesFragment : Fragment() {
         val count = marketDay
         if(count==0){
             binding.dailyChallengeViewPager.visibility = View.GONE
-            Toast.makeText(context,"Market is closed",Toast.LENGTH_SHORT).show()
+            binding.comingsoonTextView.visibility = View.VISIBLE
         }else {
             binding.dailyChallengeViewPager.visibility = View.VISIBLE
         }

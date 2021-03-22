@@ -106,6 +106,18 @@ class SingleDayChallengeFragment(private val day:Int,private val currMarketDay: 
                         return model.getQuantityOwnedFromStockId(stockId)
                     }
 
+                    override fun getReservedCash(): Long {
+                        return model.reservedCash
+                    }
+
+                    override fun getReservedStockWorth(): Long {
+                        return model.getReservedStocksValue()
+                    }
+
+                    override fun getReservedStock(stockId: Int): Long {
+                        return model.getReservedStocksFromStockId(stockId)
+                    }
+
                 })
         binding.dailyChallengeRecyclerView.layoutManager = LinearLayoutManager(requireContext())
         binding.dailyChallengeRecyclerView.adapter = dailyChallengesRecyclerAdapter
