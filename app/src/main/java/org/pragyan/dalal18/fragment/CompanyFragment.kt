@@ -56,7 +56,7 @@ class CompanyFragment : Fragment(), CompanyRecyclerAdapter.OnCompanyClickListene
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        findNavController().navigate(R.id.action_company_to_secret)
+
         adapter = CompanyRecyclerAdapter(context, null, this)
 
         model = activity?.run { ViewModelProvider(this).get(DalalViewModel::class.java) }

@@ -104,7 +104,7 @@ class DailyChallengesFragment : Fragment() {
                     val marketDay = dailyChallengeConfigResponse.marketDay
                     val isDailyChallengeOpen = dailyChallengeConfigResponse.isDailyChallengOpen
                     val days = dailyChallengeConfigResponse.totalMarketDays
-                    setUpViewPager(marketDay,isDailyChallengeOpen,days)
+                    setUpViewPager(0,isDailyChallengeOpen,days)
                 }else{
                     showSnackBar("Server Internal Error")
                 }
