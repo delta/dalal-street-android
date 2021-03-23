@@ -3,12 +3,12 @@ package org.pragyan.dalal18.fragment
 import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
-import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.lifecycle.lifecycleScope
@@ -104,7 +104,7 @@ class DailyChallengesFragment : Fragment() {
                     val marketDay = dailyChallengeConfigResponse.marketDay
                     val isDailyChallengeOpen = dailyChallengeConfigResponse.isDailyChallengOpen
                     val days = dailyChallengeConfigResponse.totalMarketDays
-                    setUpViewPager(0,isDailyChallengeOpen,days)
+                    setUpViewPager(marketDay,isDailyChallengeOpen,days)
                 }else{
                     showSnackBar("Server Internal Error")
                 }
