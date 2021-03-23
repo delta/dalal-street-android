@@ -118,9 +118,9 @@ class AdminPanelDailyMarketFragment : Fragment() {
         view?.hideKeyboard()
         withContext(Dispatchers.IO) {
             if (ConnectionUtils.getConnectionInfo(context!!) && ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
-                if(setMarketDayEditText.text.toString().isNotBlank()){
+                if(enterMarketDayEditText.text.toString().isNotBlank()){
                     val response = actionServiceBlockingStub.setMarketDay(SetMarketDay.SetMarketDayRequest.newBuilder()
-                            .setMarketDay(setMarketDayEditText.text.toString().toInt())
+                            .setMarketDay(enterMarketDayEditText.text.toString().toInt())
                             .build())
                     message = response.statusMessage
                 }
