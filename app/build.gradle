@@ -148,4 +148,8 @@ dependencies {
 
     //security
     implementation(Libs.security)
+
+    // play core sdk
+    implementation (Libs.playCore)
+    implementation (Libs.playCoreKtx)
 }
