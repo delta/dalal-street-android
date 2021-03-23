@@ -142,9 +142,9 @@ class AdminPanelDailyMarketFragment : Fragment() {
                     ) {
                         val challengetype = getChallengeTypeEnum(typeOfChallengeEditText.selectedItem.toString())
                         if(challengetype == AddDailyChallenge.ChallengeType.SpecificStock){
-                            if(stockIdEditTextForDailyChallenge.text.toString().isNotBlank()){
+                            if(stockIdEditTextForDailyChallenge.text.toString().isNotBlank() && enterMarketDayEditTextForAddDailyChallenge.text.toString().isNotBlank()){
                                 val response = actionServiceBlockingStub.addDailyChallenge(AddDailyChallenge.AddDailyChallengeRequest.newBuilder()
-                                        .setMarketDay(enterMarketDayEditText.text.toString().toInt())
+                                        .setMarketDay(enterMarketDayEditTextForAddDailyChallenge.text.toString().toInt())
                                         .setChallengeType(challengetype)
                                         .setStockId(stockIdEditTextForDailyChallenge.text.toString().toInt())
                                         .setValue(enterValueEditextForDailyChallenge.text.toString().toLong())
