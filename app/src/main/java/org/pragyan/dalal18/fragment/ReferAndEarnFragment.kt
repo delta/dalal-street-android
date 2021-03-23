@@ -99,7 +99,7 @@ class ReferAndEarnFragment : Fragment() {
 
                 preferences.edit().putString(Constants.USER_REFERRAL_CODE, referralCodeResponse.referralCode.toString()).apply()
 
-                copyReferralCodeToClipboard(referralCodeResponse.referralCode.toString())
+                // copyReferralCodeToClipboard(referralCodeResponse.referralCode.toString())
 
             } else {
                 Toast.makeText(context!!, referralCodeResponse.statusMessage.toString(), Toast.LENGTH_LONG).show()
