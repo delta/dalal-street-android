@@ -35,6 +35,7 @@ class FaqFragment : Fragment() {
         expand_text_view_faq8.text = resources.getText(R.string.faq_8a)
         expand_text_view_faq9.text = resources.getText(R.string.faq_9a)
         expand_text_view_faq11.text = resources.getText(R.string.faq_11a)
+        expand_text_view_faq12.text = resources.getText(R.string.faq_12a)
 
 
         val rewardClaimedSpan =  ImageSpan(context!!, R.drawable.blue_thumb)

@@ -1,6 +1,7 @@
 package org.pragyan.dalal18.adapter
 
 import android.graphics.Color
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -52,7 +53,7 @@ class DailyChallengesRecyclerAdapter(
             var progress:Long=0
             when(challengeType){
                 CASH->{
-                    val currentCash = checkUserStateListener.getCashWorth()
+                    val currentCash = checkUserStateListener.getCashWorth() + checkUserStateListener.getReservedCash()
                     progress = currentCash - initialValue
                 }
                 NETWORTH->{
@@ -60,12 +61,12 @@ class DailyChallengesRecyclerAdapter(
                      progress = netWorth - initialValue
                 }
                 STOCKWORTH->{
-                    val stockWorth = checkUserStateListener.getStockWorth()
+                    val stockWorth = checkUserStateListener.getStockWorth() + checkUserStateListener.getReservedStockWorth()
                     progress = stockWorth - initialValue
                 }
                 else->{
                     val stockId = dailyChallenges[position].stockId
-                    val stocksOwned = checkUserStateListener.getCurrentStocks(stockId)
+                    val stocksOwned = checkUserStateListener.getCurrentStocks(stockId) + checkUserStateListener.getReservedStock(stockId)
                     progress = stocksOwned-initialValue
                 }
             }
@@ -115,6 +116,9 @@ class DailyChallengesRecyclerAdapter(
         fun getStockWorth():Long
         fun getNetWorth():Long
         fun getCurrentStocks(stockId: Int):Long
+        fun getReservedCash():Long
+        fun getReservedStockWorth():Long
+        fun getReservedStock(stockId:Int): Long
     }
 
     companion object{

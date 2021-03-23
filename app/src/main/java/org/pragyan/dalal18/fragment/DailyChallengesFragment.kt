@@ -3,12 +3,12 @@ package org.pragyan.dalal18.fragment
 import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
-import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.lifecycle.lifecycleScope
@@ -80,7 +80,7 @@ class DailyChallengesFragment : Fragment() {
         val count = marketDay
         if(count==0){
             binding.dailyChallengeViewPager.visibility = View.GONE
-            Toast.makeText(context,"Market is closed",Toast.LENGTH_SHORT).show()
+            binding.comingsoonTextView.visibility = View.VISIBLE
         }else {
             binding.dailyChallengeViewPager.visibility = View.VISIBLE
         }
