@@ -191,11 +191,6 @@ class LeaderboardListFragment(private val mode: Int) : Fragment() {
         }
     }
 
-    override fun onPause() {
-        super.onPause()
-        leaderBoardDetailsList.clear()
-    }
-
     companion object {
         const val OVERALL_MODE = -1
         const val DAILY_MODE = 1
