@@ -188,6 +188,8 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
                             val gameState = intent.getParcelableExtra<GameStateDetails>(GAME_STATE_KEY)
                             totalWorth += gameState.userRewardCash - cashWorth
                             cashWorth = gameState.userRewardCash
+                            model.updateCashWorth(cashWorth)
+                            model.updateNetWorth(totalWorth)
                             changeTextViewValue(binding.cashWorthTextView, binding.cashIndicatorImageView, cashWorth)
                             changeTextViewValue(binding.totalWorthTextView, binding.totalIndicatorImageView, totalWorth)
                         }
