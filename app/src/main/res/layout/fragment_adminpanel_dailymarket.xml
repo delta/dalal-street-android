@@ -107,7 +107,6 @@
             app:layout_constraintTop_toBottomOf="@+id/updateEndOfDayValue" />
 
         <TextView
-                android:id="@+id/stockIdEditText3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:backgroundTint="@color/neutral_font_color"
@@ -202,7 +201,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/rewardEditText" />
 
         <View
-            android:id="@+id/view4"
+            android:id="@+id/viewBelowAddDailyChallenge"
             android:layout_width="match_parent"
             android:layout_height="2dp"
             android:layout_margin="5dp"
@@ -238,7 +237,7 @@
             app:layout_constraintEnd_toEndOf="@+id/addDailyChallengeButton"
             app:layout_constraintHorizontal_bias="0.4"
             app:layout_constraintStart_toStartOf="@+id/addDailyChallengeButton"
-            app:layout_constraintTop_toBottomOf="@+id/view4" />
+            app:layout_constraintTop_toBottomOf="@+id/viewBelowAddDailyChallenge" />
 
         <Button
             android:id="@+id/closeDailyChallengeButton"
