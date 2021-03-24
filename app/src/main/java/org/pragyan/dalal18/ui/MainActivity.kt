@@ -73,7 +73,7 @@ import org.pragyan.dalal18.data.GlobalStockDetails
 import org.pragyan.dalal18.databinding.ActivityMainBinding
 import org.pragyan.dalal18.notifications.NotificationFragment
 import org.pragyan.dalal18.notifications.PushNotificationService
-import org.pragyan.dalal18.utils.ConnectionUtils
+import org.pragyan.dalal18.utils.*
 import org.pragyan.dalal18.utils.Constants.EMAIL_KEY
 import org.pragyan.dalal18.utils.Constants.HOST
 import org.pragyan.dalal18.utils.Constants.MARKET_OPEN_KEY
@@ -93,13 +93,7 @@ import org.pragyan.dalal18.utils.Constants.REFRESH_STOCK_PRICES_FOR_ALL
 import org.pragyan.dalal18.utils.Constants.SESSION_KEY
 import org.pragyan.dalal18.utils.Constants.STOP_NOTIFICATION_ACTION
 import org.pragyan.dalal18.utils.Constants.USERNAME_KEY
-import org.pragyan.dalal18.utils.DalalTourUtils
-import org.pragyan.dalal18.utils.LongEvaluator
-import org.pragyan.dalal18.utils.MiscellaneousUtils
 import org.pragyan.dalal18.utils.MiscellaneousUtils.buildCounterDrawable
-import org.pragyan.dalal18.utils.TinyDB
-import org.pragyan.dalal18.utils.hideKeyboard
-import org.pragyan.dalal18.utils.viewLifecycle
 import java.text.DecimalFormat
 import java.util.*
 import javax.inject.Inject
@@ -126,6 +120,8 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
 
     @Inject
     lateinit var preferences: SharedPreferences
+
+    private lateinit var inAppUpdate: InAppUpdate
 
     lateinit var model: DalalViewModel
 
@@ -205,6 +201,9 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
+        Log.d("INIT APPUPDATE", "APP UPDATE START")
+        inAppUpdate = InAppUpdate(this@MainActivity)
+
         model = ViewModelProvider(this).get(DalalViewModel::class.java)
 
         val tinyDB = TinyDB(this)
@@ -261,6 +260,11 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
         this.startService(Intent(this.baseContext, PushNotificationService::class.java))
 
         binding.marketCloseIndicatorTextView.isSelected = true
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        inAppUpdate.onActivityResult(requestCode,resultCode, data)
     }
 
     // Adding and setting up Navigation drawer
@@ -693,6 +697,8 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
     public override fun onPause() {
         super.onPause()
 
+        inAppUpdate.onResume()
+
         unsubscribeFromAllStreams()
 
         preferences.edit().remove(LAST_TRANSACTION_ID).apply()
@@ -704,6 +710,11 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
         LocalBroadcastManager.getInstance(this).unregisterReceiver(worthNotificationGameStateReceiver)
 
         preferences.edit().remove(LAST_TRANSACTION_ID).apply()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        inAppUpdate.onDestroy()
     }
 
     private fun subscribeToStreamsAsynchronously() = lifecycleScope.launch {
