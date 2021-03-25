@@ -106,9 +106,9 @@ class TransactionsFragment : Fragment() {
     private fun getTransactionsAsynchronously() {
         if (firstFetch)
             loadingDialog.show()
-        doAsync {
-            lastId = preferences.getInt(Constants.LAST_TRANSACTION_ID, 0)
+        lastId = preferences.getInt(Constants.LAST_TRANSACTION_ID, 0)
 
+        doAsync {
             if (ConnectionUtils.getConnectionInfo(context)) {
                 if (ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
                     val transactionsResponse = actionServiceBlockingStub.getTransactions(GetTransactionsRequest
@@ -133,20 +133,19 @@ class TransactionsFragment : Fragment() {
                             if (firstFetch) {
                                 if (transactionList.isEmpty()) {
                                     // No Transactions on the First Fetch itself
-                                    mainContent.visibility = View.GONE
                                     noTransactionsTextView.visibility = View.VISIBLE
                                 } else
                                     mainContent.visibility = View.VISIBLE
 
                                 firstFetch = false
                             }
-                            transactionsAdapter.setList(transactionList)
-                            transactionsAdapter.notifyItemRangeInserted(positionStart, newItemsCount)
-
-                            preferences.edit()
-                                    .putInt(Constants.LAST_TRANSACTION_ID, transactionsResponse.transactionsList.last().id)
-                                    .apply()
                         }
+                        transactionsAdapter.setList(transactionList)
+                        transactionsAdapter.notifyItemRangeInserted(positionStart, newItemsCount)
+
+                        preferences.edit()
+                                .putInt(Constants.LAST_TRANSACTION_ID, transactionsResponse.transactionsList.last().id)
+                                .apply()
                     }
                 } else {
                     uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_server_down), R.id.transactions_dest) }
