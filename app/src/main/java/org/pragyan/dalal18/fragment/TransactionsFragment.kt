@@ -3,15 +3,16 @@ package org.pragyan.dalal18.fragment
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewTreeObserver.OnScrollChangedListener
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import dalalstreet.api.DalalActionServiceGrpc
 import dalalstreet.api.actions.GetTransactionsRequest
 import dalalstreet.api.models.Transaction
@@ -31,7 +32,9 @@ import javax.inject.Inject
 
 class TransactionsFragment : Fragment() {
 
-    private var binding by viewLifecycle<FragmentTransactionsBinding>()
+    private var binding: FragmentTransactionsBinding by viewLifecycle(
+            performBeforeDestroying = { binding.mainContent.viewTreeObserver.removeOnScrollChangedListener(scrollListener) }
+    )
 
     @Inject
     lateinit var actionServiceBlockingStub: DalalActionServiceGrpc.DalalActionServiceBlockingStub
@@ -43,9 +46,22 @@ class TransactionsFragment : Fragment() {
 
     private val transactionList = ArrayList<Transaction>()
     private var transactionsAdapter: TransactionRecyclerAdapter? = null
-    private var loadingDialog: AlertDialog? = null
+//    private var loadingDialog: AlertDialog? = null
 
     lateinit var networkDownHandler: ConnectionUtils.OnNetworkDownHandler
+
+    // Pagination Logic
+    private val scrollListener = OnScrollChangedListener {
+        val view: View = binding.mainContent.getChildAt(binding.mainContent.childCount - 1)
+        val diff: Int = view.bottom - (binding.mainContent.height + binding.mainContent.scrollY)
+        if (diff == 0 && paginate) {
+            if (activity != null) {
+                Log.i("TAG", "onScrolled: LastItem")
+                getTransactionsAsynchronously()
+                paginate = false
+            }
+        }
+    }
 
     internal var paginate = true
     private var lastId = 0
@@ -71,28 +87,31 @@ class TransactionsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        transactionsAdapter = TransactionRecyclerAdapter(context, null, model.globalStockDetails)
+        buildRecyclerView()
 
-        with(binding.transactionsRecyclerView) {
-            adapter = transactionsAdapter
-            setHasFixedSize(false)
-            layoutManager = LinearLayoutManager(context)
-//            addOnScrollListener(CustomScrollListener())
-        }
-
-        val dialogView = LayoutInflater.from(context).inflate(R.layout.progress_dialog, null)
-        (dialogView.findViewById<View>(R.id.progressDialog_textView) as TextView).setText(R.string.loading_transaction)
-        loadingDialog = AlertDialog.Builder(context!!)
-                .setView(dialogView)
-                .setCancelable(false)
-                .create()
+//        val dialogView = LayoutInflater.from(context).inflate(R.layout.progress_dialog, null)
+//        (dialogView.findViewById<View>(R.id.progressDialog_textView) as TextView).setText(R.string.loading_transaction)
+//        loadingDialog = AlertDialog.Builder(context!!)
+//                .setView(dialogView)
+//                .setCancelable(false)
+//                .create()
         preferences.edit().remove(Constants.LAST_TRANSACTION_ID).apply()
         getTransactionsAsynchronously()
     }
 
-    private fun getTransactionsAsynchronously() {
-        loadingDialog?.show()
+    private fun buildRecyclerView() {
+        transactionsAdapter = TransactionRecyclerAdapter(context, null, model.globalStockDetails)
+        with(binding.transactionsRecyclerView) {
+            adapter = transactionsAdapter
+            setHasFixedSize(false)
+            layoutManager = LinearLayoutManager(context)
+        }
 
+        binding.mainContent.viewTreeObserver.addOnScrollChangedListener(scrollListener)
+    }
+
+    private fun getTransactionsAsynchronously() {
+//        loadingDialog?.show()
         doAsync {
             lastId = preferences.getInt(Constants.LAST_TRANSACTION_ID, 0)
 
@@ -106,6 +125,10 @@ class TransactionsFragment : Fragment() {
 
                     uiThread {
                         paginate = transactionsResponse.transactionsCount == 10
+                        if (!paginate) {
+                            // No more Transactions left to show for the user
+                            binding.progressBar.visibility = View.GONE
+                        }
 
                         transactionList.addAll(transactionsResponse.transactionsList)
 
@@ -130,23 +153,7 @@ class TransactionsFragment : Fragment() {
             } else {
                 uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_check_internet), R.id.transactions_dest) }
             }
-            uiThread { loadingDialog?.dismiss() }
-        }
-    }
-
-    inner class CustomScrollListener internal constructor() : RecyclerView.OnScrollListener() {
-        override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-            val visibleItemCount = recyclerView.layoutManager!!.childCount
-            val totalItemCount = recyclerView.layoutManager!!.itemCount
-            val pastVisibleItems = (recyclerView.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
-            if (pastVisibleItems + visibleItemCount >= totalItemCount) {
-                if (paginate) {
-                    if (activity != null) {
-                        getTransactionsAsynchronously()
-                        paginate = false
-                    }
-                }
-            }
+//            uiThread { loadingDialog?.dismiss() }
         }
     }
 
