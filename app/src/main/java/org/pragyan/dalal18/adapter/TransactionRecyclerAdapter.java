@@ -90,9 +90,8 @@ public class TransactionRecyclerAdapter extends RecyclerView.Adapter<Transaction
         return transactionList.size();
     }
 
-    public void swapData(List<Transaction> newList) {
+    public void setList(List<Transaction> newList) {
         transactionList = newList;
-        notifyDataSetChanged();
     }
 
     static class MyViewHolder extends RecyclerView.ViewHolder {

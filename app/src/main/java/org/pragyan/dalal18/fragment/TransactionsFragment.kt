@@ -131,6 +131,9 @@ class TransactionsFragment : Fragment() {
                             binding.progressBar.visibility = View.GONE
                         }
 
+                        val positionStart = transactionList.size
+                        val newItemsCount = transactionsResponse.transactionsList.size
+
                         transactionList.addAll(transactionsResponse.transactionsList)
 
                         binding.apply {
@@ -144,7 +147,8 @@ class TransactionsFragment : Fragment() {
 
                                 firstFetch = false
                             }
-                            transactionsAdapter.swapData(transactionList)
+                            transactionsAdapter.setList(transactionList)
+                            transactionsAdapter.notifyItemRangeInserted(positionStart, newItemsCount)
 
                             preferences.edit()
                                     .putInt(Constants.LAST_TRANSACTION_ID, transactionsResponse.transactionsList.last().id)
