@@ -210,12 +210,17 @@ class VerifyPhoneActivity : AppCompatActivity(), ConnectionUtils.SmsVerification
 
     override fun phoneVerificationSuccessful() {
 
-        startLoginProcess(preferences.getString(SplashActivity.EMAIL_KEY, null), preferences.getString(SplashActivity.PASSWORD_KEY, null))
-        //startActivity(intent)
-        //finish()
+        val email = preferences.getString(SplashActivity.EMAIL_KEY, null)
+        val password = preferences.getString(SplashActivity.PASSWORD_KEY, null)
+        if (email != null && password != null && email != "") {
+            loginAsynchronously(email, password)
+        } else {
+            startLoginActivity()
+        }
+
     }
 
-    private fun loginAsynchronously(email: String, password: String) {
+    private fun loginAsynchronously(email: String?, password: String?) {
         doAsync {
             if (ConnectionUtils.getConnectionInfo(this@VerifyPhoneActivity)) {
                 if (ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
@@ -243,48 +248,39 @@ class VerifyPhoneActivity : AppCompatActivity(), ConnectionUtils.SmsVerification
                                 finish()
                             }
                         }
-                    }
-                         else {
-                            uiThread { startLoginActivity() }
-                        }
                     } else {
-                        val snackBar = Snackbar.make(findViewById<View>(android.R.id.content), resources.getString(R.string.error_server_down), Snackbar.LENGTH_INDEFINITE)
-                                .setAction("RETRY") {
-                                    startLoginProcess(email, password)
-                                }
-
-                        snackBar.setActionTextColor(ContextCompat.getColor(this@VerifyPhoneActivity, R.color.neon_green))
-                        snackBar.view.setBackgroundColor(Color.parseColor("#20202C"))
-                        snackBar.show()
-
+                        uiThread { startLoginActivity() }
                     }
+                } else {
+                    val snackBar = Snackbar.make(findViewById<View>(android.R.id.content), resources.getString(R.string.error_server_down), Snackbar.LENGTH_INDEFINITE)
+                            .setAction("RETRY") {
+                                phoneVerificationSuccessful()
+                            }
 
-                } else /* No internet available */ {
-                    uiThread {
+                    snackBar.setActionTextColor(ContextCompat.getColor(this@VerifyPhoneActivity, R.color.neon_green))
+                    snackBar.view.setBackgroundColor(Color.parseColor("#20202C"))
+                    snackBar.show()
 
-                        val snackBar = Snackbar.make(findViewById<View>(android.R.id.content), "Please check internet connection", Snackbar.LENGTH_INDEFINITE)
-                                .setAction("RETRY") {
-                                    startLoginProcess(email, password)
+                }
 
-                                }
+            } else /* No internet available */ {
+                uiThread {
 
-                        snackBar.setActionTextColor(ContextCompat.getColor(this@VerifyPhoneActivity, R.color.neon_green))
-                        snackBar.view.setBackgroundColor(Color.parseColor("#20202C"))
-                        snackBar.show()
+                    val snackBar = Snackbar.make(findViewById<View>(android.R.id.content), "Please check internet connection", Snackbar.LENGTH_INDEFINITE)
+                            .setAction("RETRY") {
+                                phoneVerificationSuccessful()
 
-                    }
+                            }
+
+                    snackBar.setActionTextColor(ContextCompat.getColor(this@VerifyPhoneActivity, R.color.neon_green))
+                    snackBar.view.setBackgroundColor(Color.parseColor("#20202C"))
+                    snackBar.show()
+
                 }
             }
         }
-
-    private fun startLoginProcess(email: String?, password: String?) {
-
-        if (email != null && password != null && email != "") {
-            loginAsynchronously(email, password)
-        } else {
-            startLoginActivity()
-        }
     }
+
 
     private fun startLoginActivity() {
         preferences.edit().putString(SplashActivity.EMAIL_KEY, null).putString(SplashActivity.PASSWORD_KEY, null).apply()
