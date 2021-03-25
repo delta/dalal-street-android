@@ -62,7 +62,9 @@ public class Constants {
     public static final String PREF_TRADE = "TRADE_TOUR";
     public static final String CANCEL_ORDER_TOUR_KEY = "cancel-order-tour-key";
     public static final String USER_REFERRAL_CODE = "";
-
+    public static String USER_FCM_TOKEN = "";
+    public static final String DALAL_COMMON_FCM_REGISTRATION_KEY = "dalal-21-for-all";
+    public static String USER_SPECIFIC_FCM_REGISTRATION_KEY = "";
     public static final String ENCRYPTED_SHARED_PREF_NAME = "encrypted_shared_pref";
 }
 

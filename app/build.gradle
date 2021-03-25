@@ -146,6 +146,9 @@ dependencies {
     // firebase crashanalytics
     implementation (Libs.crashAnalytics)
 
+    // firebase cloud messaging
+    implementation(Libs.firebasecloudmessaging)
+
     //security
     implementation(Libs.security)
 
