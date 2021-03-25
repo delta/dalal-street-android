@@ -38,6 +38,10 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.messaging.FirebaseMessaging
+import com.google.firebase.messaging.ktx.messaging
 import dalalstreet.api.DalalActionServiceGrpc
 import dalalstreet.api.DalalStreamServiceGrpc
 import dalalstreet.api.actions.GetMortgageDetailsRequest
@@ -93,6 +97,9 @@ import org.pragyan.dalal18.utils.Constants.REFRESH_STOCK_PRICES_FOR_ALL
 import org.pragyan.dalal18.utils.Constants.SESSION_KEY
 import org.pragyan.dalal18.utils.Constants.STOP_NOTIFICATION_ACTION
 import org.pragyan.dalal18.utils.Constants.USERNAME_KEY
+import org.pragyan.dalal18.utils.Constants.USER_SPECIFIC_FCM_REGISTRATION_KEY
+import org.pragyan.dalal18.utils.Constants.USER_FCM_TOKEN
+import org.pragyan.dalal18.utils.Constants.DALAL_COMMON_FCM_REGISTRATION_KEY
 import org.pragyan.dalal18.utils.MiscellaneousUtils.buildCounterDrawable
 import java.text.DecimalFormat
 import java.util.*
@@ -260,6 +267,10 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
         this.startService(Intent(this.baseContext, PushNotificationService::class.java))
 
         binding.marketCloseIndicatorTextView.isSelected = true
+
+        updateFCMToken()
+        subscribeToCommonFCMStream()
+        subscribeToSpecificUserFCMStream()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -793,6 +804,55 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
             mChannel.lightColor = Color.RED
             nm.createNotificationChannel(mChannel)
         }
+    }
+
+    private fun updateFCMToken() {
+        FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
+            if (!task.isSuccessful) {
+                Log.w(TAG, "Fetching FCM registration token failed", task.exception)
+                return@OnCompleteListener
+            }
+
+            // Get new FCM registration token
+            val token = task.result
+
+            // Log and toast
+            USER_FCM_TOKEN = token.toString()
+            Log.d("FCM token - ", USER_FCM_TOKEN)
+            // Toast.makeText(this@MainActivity, "Token updated !", Toast.LENGTH_LONG).show()
+        })
+    }
+
+    private fun subscribeToCommonFCMStream() {
+
+        Firebase.messaging.subscribeToTopic(DALAL_COMMON_FCM_REGISTRATION_KEY)
+                .addOnCompleteListener { task ->
+                    if (!task.isSuccessful) {
+                        Log.d("UNABLE TO REGISTER FROM", "COMMON FCM STREAM")
+                    }
+                    Log.d("SUCCESSFULLY REG TO", "COMMON FCM STREAM")
+                }
+
+    }
+
+    private fun subscribeToSpecificUserFCMStream() {
+
+        // will be changed to user_id
+        USER_SPECIFIC_FCM_REGISTRATION_KEY = this.preferences.getString(EMAIL_KEY, "")
+        val index = USER_SPECIFIC_FCM_REGISTRATION_KEY!!.indexOf("@")
+        USER_SPECIFIC_FCM_REGISTRATION_KEY = USER_SPECIFIC_FCM_REGISTRATION_KEY.substring(0, index)
+
+        Log.d("SUBSTRING", USER_SPECIFIC_FCM_REGISTRATION_KEY.toString())
+
+        if(USER_SPECIFIC_FCM_REGISTRATION_KEY!!.isNotEmpty() and USER_SPECIFIC_FCM_REGISTRATION_KEY!!.isNotBlank())
+            Firebase.messaging.subscribeToTopic(USER_SPECIFIC_FCM_REGISTRATION_KEY.toString())
+                    .addOnCompleteListener { task ->
+                        if (!task.isSuccessful) {
+                            Log.d("UNABLE TO REGISTER TO", "SPECIFIC FCM STREAM")
+                        }
+                        Log.d("SUCCESSFULLY REG TO", "SPECIFIC FCM STREAM")
+                    }
+
     }
 
     companion object {

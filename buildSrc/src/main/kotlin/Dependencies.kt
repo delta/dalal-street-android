@@ -3,8 +3,8 @@ object AndroidSdk {
     const val minSdk = 21
     const val targetSdk = 29
 
-    const val versionCode = 15
-    const val versionName = "6.3"
+    const val versionCode = 16
+    const val versionName = "7.0"
     const val buildToolsVersion = "29.0.3"
     const val DalalAppId = "org.pragyan.dalal18"
 }
@@ -142,6 +142,7 @@ object Libs {
     const val firebaseBom = "com.google.firebase:firebase-bom:${Versions.FirebaseBom}"
     const val firebaseAnalytics = "com.google.firebase:firebase-analytics-ktx"
     const val crashAnalytics = "com.google.firebase:firebase-crashlytics-ktx"
+    const val firebasecloudmessaging = "com.google.firebase:firebase-messaging-ktx"
 
     const val gmsServiceAuth = "com.google.android.gms:play-services-auth:${Versions.GmsServiceAuth}"
 
