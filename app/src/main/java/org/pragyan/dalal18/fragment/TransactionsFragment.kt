@@ -26,13 +26,14 @@ import org.pragyan.dalal18.databinding.FragmentTransactionsBinding
 import org.pragyan.dalal18.utils.ConnectionUtils
 import org.pragyan.dalal18.utils.Constants
 import org.pragyan.dalal18.utils.viewLifecycle
-import java.util.*
 import javax.inject.Inject
 
 class TransactionsFragment : Fragment() {
 
     private var binding: FragmentTransactionsBinding by viewLifecycle(
-            performBeforeDestroying = { binding.mainContent.viewTreeObserver.removeOnScrollChangedListener(scrollListener) }
+            performBeforeDestroying = {
+                binding.mainContent.viewTreeObserver.removeOnScrollChangedListener(scrollListener)
+            }
     )
 
     @Inject
@@ -44,8 +45,8 @@ class TransactionsFragment : Fragment() {
     private lateinit var model: DalalViewModel
 
     private val transactionList = ArrayList<Transaction>()
-    private var transactionsAdapter: TransactionRecyclerAdapter? = null
-    private var loadingDialog: AlertDialog? = null
+    private lateinit var transactionsAdapter: TransactionRecyclerAdapter
+    private lateinit var loadingDialog: AlertDialog
 
     lateinit var networkDownHandler: ConnectionUtils.OnNetworkDownHandler
 
@@ -111,7 +112,7 @@ class TransactionsFragment : Fragment() {
 
     private fun getTransactionsAsynchronously() {
         if (firstFetch)
-            loadingDialog?.show()
+            loadingDialog.show()
         doAsync {
             lastId = preferences.getInt(Constants.LAST_TRANSACTION_ID, 0)
 
@@ -124,8 +125,6 @@ class TransactionsFragment : Fragment() {
                             .build())
 
                     uiThread {
-                        firstFetch = false
-
                         paginate = transactionsResponse.transactionsCount == 10
                         if (!paginate) {
                             // No more Transactions left to show for the user
@@ -135,18 +134,21 @@ class TransactionsFragment : Fragment() {
                         transactionList.addAll(transactionsResponse.transactionsList)
 
                         binding.apply {
-                            if (transactionList.size == 0) {
-                                mainContent.visibility = View.GONE
-                                noTransactionsTextView.visibility = View.VISIBLE
-                            } else {
-                                transactionsAdapter?.swapData(transactionList)
-                                mainContent.visibility = View.VISIBLE
-                                noTransactionsTextView.visibility = View.GONE
+                            if (firstFetch) {
+                                if (transactionList.isEmpty()) {
+                                    // No Transactions on the First Fetch itself
+                                    mainContent.visibility = View.GONE
+                                    noTransactionsTextView.visibility = View.VISIBLE
+                                } else
+                                    mainContent.visibility = View.VISIBLE
 
-                                preferences.edit()
-                                        .putInt(Constants.LAST_TRANSACTION_ID, transactionsResponse.transactionsList.last().id)
-                                        .apply()
+                                firstFetch = false
                             }
+                            transactionsAdapter.swapData(transactionList)
+
+                            preferences.edit()
+                                    .putInt(Constants.LAST_TRANSACTION_ID, transactionsResponse.transactionsList.last().id)
+                                    .apply()
                         }
                     }
                 } else {
@@ -156,7 +158,7 @@ class TransactionsFragment : Fragment() {
                 uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_check_internet), R.id.transactions_dest) }
             }
             if (firstFetch)
-                uiThread { loadingDialog?.dismiss() }
+                uiThread { loadingDialog.dismiss() }
         }
     }
 
