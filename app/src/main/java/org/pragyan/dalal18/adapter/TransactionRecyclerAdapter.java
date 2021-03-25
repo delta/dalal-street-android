@@ -56,9 +56,9 @@ public class TransactionRecyclerAdapter extends RecyclerView.Adapter<Transaction
         holder.timeTextView.setText(parseDate(currentTransaction.getCreatedAt()));
 
         String tempString = COLON_SEPARATOR + currentTransaction.getStockQuantity();
-        if(currentTransaction.getStockQuantity() > 0)
+        if (currentTransaction.getStockQuantity() > 0)
             holder.quantityTextView.setTextColor(Color.GREEN);
-        else if(currentTransaction.getStockQuantity() < 0)
+        else if (currentTransaction.getStockQuantity() < 0)
             holder.quantityTextView.setTextColor(Color.RED);
         holder.quantityTextView.setText(tempString);
 
@@ -66,9 +66,9 @@ public class TransactionRecyclerAdapter extends RecyclerView.Adapter<Transaction
         holder.tradePriceTextView.setText(tempString);
 
         tempString = COLON_SEPARATOR + currentTransaction.getTotal();
-        if(currentTransaction.getTotal() > 0)
+        if (currentTransaction.getTotal() > 0)
             holder.cashTextView.setTextColor(Color.GREEN);
-        else if(currentTransaction.getTotal() < 0)
+        else if (currentTransaction.getTotal() < 0)
             holder.cashTextView.setTextColor(Color.RED);
         holder.cashTextView.setText(tempString);
 

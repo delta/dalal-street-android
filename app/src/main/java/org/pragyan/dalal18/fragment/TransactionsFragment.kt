@@ -77,7 +77,7 @@ class TransactionsFragment : Fragment() {
             adapter = transactionsAdapter
             setHasFixedSize(false)
             layoutManager = LinearLayoutManager(context)
-            addOnScrollListener(CustomScrollListener())
+//            addOnScrollListener(CustomScrollListener())
         }
 
         val dialogView = LayoutInflater.from(context).inflate(R.layout.progress_dialog, null)
@@ -91,16 +91,13 @@ class TransactionsFragment : Fragment() {
     }
 
     private fun getTransactionsAsynchronously() {
-
         loadingDialog?.show()
 
         doAsync {
-
             lastId = preferences.getInt(Constants.LAST_TRANSACTION_ID, 0)
 
             if (ConnectionUtils.getConnectionInfo(context)) {
                 if (ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
-
                     val transactionsResponse = actionServiceBlockingStub.getTransactions(GetTransactionsRequest
                             .newBuilder()
                             .setCount(0)
@@ -108,18 +105,17 @@ class TransactionsFragment : Fragment() {
                             .build())
 
                     uiThread {
-
                         paginate = transactionsResponse.transactionsCount == 10
 
                         transactionList.addAll(transactionsResponse.transactionsList)
 
                         binding.apply {
                             if (transactionList.size == 0) {
-                                transactionsRecyclerView.visibility = View.GONE
+                                mainContent.visibility = View.GONE
                                 noTransactionsTextView.visibility = View.VISIBLE
                             } else {
                                 transactionsAdapter?.swapData(transactionList)
-                                transactionsRecyclerView.visibility = View.VISIBLE
+                                mainContent.visibility = View.VISIBLE
                                 noTransactionsTextView.visibility = View.GONE
 
                                 preferences.edit()
@@ -139,13 +135,11 @@ class TransactionsFragment : Fragment() {
     }
 
     inner class CustomScrollListener internal constructor() : RecyclerView.OnScrollListener() {
-
         override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
             val visibleItemCount = recyclerView.layoutManager!!.childCount
             val totalItemCount = recyclerView.layoutManager!!.itemCount
             val pastVisibleItems = (recyclerView.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
             if (pastVisibleItems + visibleItemCount >= totalItemCount) {
-
                 if (paginate) {
                     if (activity != null) {
                         getTransactionsAsynchronously()
