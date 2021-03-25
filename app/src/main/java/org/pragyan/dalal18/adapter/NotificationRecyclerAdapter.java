@@ -6,13 +6,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+
 import org.pragyan.dalal18.R;
 import org.pragyan.dalal18.data.Notification;
 
 import java.util.List;
-
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
 
 import static org.pragyan.dalal18.utils.MiscellaneousUtils.parseDate;
 
@@ -46,9 +46,8 @@ public class NotificationRecyclerAdapter extends RecyclerView.Adapter<Notificati
         return notificationList.size();
     }
 
-    public void swapData(List<Notification> list) {
+    public void setList(List<Notification> list) {
         notificationList = list;
-        notifyDataSetChanged();
     }
 
     class NotificationViewHolder extends RecyclerView.ViewHolder {

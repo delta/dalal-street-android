@@ -90,6 +90,7 @@ dependencies {
 
     // Support Libraries
     implementation (Libs.appcompat)
+    implementation (Libs.legacySupport)
     implementation (Libs.androidMaterialLibrary)
     implementation (Libs.browser)
     implementation (Libs.preference)

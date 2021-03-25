@@ -15,6 +15,7 @@ object Versions {
     const val CoreKtx = "1.3.1"
     const val Coroutine = "1.3.3"
     const val Appcompat = "1.1.0"
+    const val LegacySupport = "1.0.0"
     const val ConstraintLayout = "2.0.0-beta4"
     const val Lifecycle = "2.2.0"
     const val Navigation = "1.0.0"
@@ -84,7 +85,6 @@ object TestLibs {
     const val junitRunner = "androidx.test.runner.AndroidJUnitRunner"
 }
 
-
 object Libs {
     const val anko = "org.jetbrains.anko:anko:${Versions.Anko}"
 
@@ -92,6 +92,7 @@ object Libs {
     const val kotlinCoroutine = "org.jetbrains.kotlinx:kotlinx-coroutines-android:${Versions.Coroutine}"
     const val coreKtx = "androidx.core:core-ktx:${Versions.CoreKtx}"
     const val appcompat = "androidx.appcompat:appcompat:${Versions.Appcompat}"
+    const val legacySupport = "androidx.legacy:legacy-support-v4:${Versions.LegacySupport}"
     const val constraintLayout = "androidx.constraintlayout:constraintlayout:${Versions.ConstraintLayout}"
     const val androidMaterialLibrary = "com.google.android.material:material:${Versions.Material}"
 
