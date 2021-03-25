@@ -3,7 +3,6 @@ package org.pragyan.dalal18.fragment
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -46,7 +45,7 @@ class TransactionsFragment : Fragment() {
 
     private val transactionList = ArrayList<Transaction>()
     private var transactionsAdapter: TransactionRecyclerAdapter? = null
-//    private var loadingDialog: AlertDialog? = null
+    private var loadingDialog: AlertDialog? = null
 
     lateinit var networkDownHandler: ConnectionUtils.OnNetworkDownHandler
 
@@ -56,14 +55,14 @@ class TransactionsFragment : Fragment() {
         val diff: Int = view.bottom - (binding.mainContent.height + binding.mainContent.scrollY)
         if (diff == 0 && paginate) {
             if (activity != null) {
-                Log.i("TAG", "onScrolled: LastItem")
                 getTransactionsAsynchronously()
                 paginate = false
             }
         }
     }
 
-    internal var paginate = true
+    private var firstFetch = true
+    private var paginate = true
     private var lastId = 0
 
     override fun onAttach(context: Context) {
@@ -89,12 +88,12 @@ class TransactionsFragment : Fragment() {
 
         buildRecyclerView()
 
-//        val dialogView = LayoutInflater.from(context).inflate(R.layout.progress_dialog, null)
-//        (dialogView.findViewById<View>(R.id.progressDialog_textView) as TextView).setText(R.string.loading_transaction)
-//        loadingDialog = AlertDialog.Builder(context!!)
-//                .setView(dialogView)
-//                .setCancelable(false)
-//                .create()
+        val dialogView = LayoutInflater.from(context).inflate(R.layout.progress_dialog, null)
+        (dialogView.findViewById<View>(R.id.progressDialog_textView) as TextView).setText(R.string.loading_transaction)
+        loadingDialog = AlertDialog.Builder(context!!)
+                .setView(dialogView)
+                .setCancelable(false)
+                .create()
         preferences.edit().remove(Constants.LAST_TRANSACTION_ID).apply()
         getTransactionsAsynchronously()
     }
@@ -111,7 +110,8 @@ class TransactionsFragment : Fragment() {
     }
 
     private fun getTransactionsAsynchronously() {
-//        loadingDialog?.show()
+        if (firstFetch)
+            loadingDialog?.show()
         doAsync {
             lastId = preferences.getInt(Constants.LAST_TRANSACTION_ID, 0)
 
@@ -124,6 +124,8 @@ class TransactionsFragment : Fragment() {
                             .build())
 
                     uiThread {
+                        firstFetch = false
+
                         paginate = transactionsResponse.transactionsCount == 10
                         if (!paginate) {
                             // No more Transactions left to show for the user
@@ -153,7 +155,8 @@ class TransactionsFragment : Fragment() {
             } else {
                 uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_check_internet), R.id.transactions_dest) }
             }
-//            uiThread { loadingDialog?.dismiss() }
+            if (firstFetch)
+                uiThread { loadingDialog?.dismiss() }
         }
     }
 
