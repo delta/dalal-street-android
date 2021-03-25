@@ -6,9 +6,9 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.ViewTreeObserver.OnScrollChangedListener
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
+import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -28,13 +28,10 @@ import org.pragyan.dalal18.utils.Constants
 import org.pragyan.dalal18.utils.viewLifecycle
 import javax.inject.Inject
 
+
 class TransactionsFragment : Fragment() {
 
-    private var binding: FragmentTransactionsBinding by viewLifecycle(
-            performBeforeDestroying = {
-                binding.mainContent.viewTreeObserver.removeOnScrollChangedListener(scrollListener)
-            }
-    )
+    private var binding: FragmentTransactionsBinding by viewLifecycle()
 
     @Inject
     lateinit var actionServiceBlockingStub: DalalActionServiceGrpc.DalalActionServiceBlockingStub
@@ -50,18 +47,7 @@ class TransactionsFragment : Fragment() {
 
     lateinit var networkDownHandler: ConnectionUtils.OnNetworkDownHandler
 
-    // Pagination Logic
-    private val scrollListener = OnScrollChangedListener {
-        val view: View = binding.mainContent.getChildAt(binding.mainContent.childCount - 1)
-        val diff: Int = view.bottom - (binding.mainContent.height + binding.mainContent.scrollY)
-        if (diff == 0 && paginate) {
-            if (activity != null) {
-                getTransactionsAsynchronously()
-                paginate = false
-            }
-        }
-    }
-
+    // Pagination
     private var firstFetch = true
     private var paginate = true
     private var lastId = 0
@@ -101,13 +87,21 @@ class TransactionsFragment : Fragment() {
 
     private fun buildRecyclerView() {
         transactionsAdapter = TransactionRecyclerAdapter(context, null, model.globalStockDetails)
-        with(binding.transactionsRecyclerView) {
+        binding.transactionsRecyclerView.apply {
             adapter = transactionsAdapter
             setHasFixedSize(false)
             layoutManager = LinearLayoutManager(context)
         }
 
-        binding.mainContent.viewTreeObserver.addOnScrollChangedListener(scrollListener)
+        binding.mainContent.setOnScrollChangeListener(NestedScrollView.OnScrollChangeListener { v, _, scrollY, _, _ ->
+            if (scrollY == v.getChildAt(0).measuredHeight - v.measuredHeight) {
+                if (paginate && activity != null) {
+                    println("Bottom")
+                    getTransactionsAsynchronously()
+                    paginate = false
+                }
+            }
+        })
     }
 
     private fun getTransactionsAsynchronously() {

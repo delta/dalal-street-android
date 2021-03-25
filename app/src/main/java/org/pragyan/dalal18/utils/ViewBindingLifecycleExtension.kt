@@ -18,7 +18,7 @@ import kotlin.reflect.KProperty
  *                               or after onDestroyView an exception is thrown.
  */
 
-fun <T : ViewBinding> Fragment.viewLifecycle(performBeforeDestroying: () -> Unit = {}): ReadWriteProperty<Fragment, T> =
+fun <T : ViewBinding> Fragment.viewLifecycle(): ReadWriteProperty<Fragment, T> =
         object : ReadWriteProperty<Fragment, T>, DefaultLifecycleObserver {
 
             private var binding: T? = null
@@ -36,7 +36,6 @@ fun <T : ViewBinding> Fragment.viewLifecycle(performBeforeDestroying: () -> Unit
 
             // binding is made null when view is destroyed.
             override fun onDestroy(owner: LifecycleOwner) {
-                performBeforeDestroying()
                 binding = null
             }
 
