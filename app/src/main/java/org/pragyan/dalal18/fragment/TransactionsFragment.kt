@@ -31,7 +31,7 @@ import javax.inject.Inject
 
 class TransactionsFragment : Fragment() {
 
-    private var binding: FragmentTransactionsBinding by viewLifecycle()
+    private var binding by viewLifecycle<FragmentTransactionsBinding>()
 
     @Inject
     lateinit var actionServiceBlockingStub: DalalActionServiceGrpc.DalalActionServiceBlockingStub
@@ -96,7 +96,6 @@ class TransactionsFragment : Fragment() {
         binding.mainContent.setOnScrollChangeListener(NestedScrollView.OnScrollChangeListener { v, _, scrollY, _, _ ->
             if (scrollY == v.getChildAt(0).measuredHeight - v.measuredHeight) {
                 if (paginate && activity != null) {
-                    println("Bottom")
                     getTransactionsAsynchronously()
                     paginate = false
                 }

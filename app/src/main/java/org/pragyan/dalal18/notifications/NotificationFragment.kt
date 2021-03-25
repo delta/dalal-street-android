@@ -25,7 +25,6 @@ import org.pragyan.dalal18.ui.MainActivity
 import org.pragyan.dalal18.utils.ConnectionUtils
 import org.pragyan.dalal18.utils.Constants
 import org.pragyan.dalal18.utils.viewLifecycle
-import java.util.*
 import javax.inject.Inject
 
 class NotificationFragment : Fragment() {
@@ -42,9 +41,11 @@ class NotificationFragment : Fragment() {
     lateinit var preferences: SharedPreferences
 
     lateinit var networkDownHandler: ConnectionUtils.OnNetworkDownHandler
-    private var loadingDialog: AlertDialog? = null
-    private var paginate = true
+//    private lateinit var loadingDialog: AlertDialog
+
     private var customNotificationList = ArrayList<Notification>()
+
+    private var paginate = true
     private var lastId = 0
 
     override fun onAttach(context: Context) {
@@ -65,30 +66,31 @@ class NotificationFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val dialogView = LayoutInflater.from(context).inflate(R.layout.progress_dialog, null)
-        val tempString = "Getting notifications..."
-        (dialogView.findViewById<View>(R.id.progressDialog_textView) as TextView).text = tempString
-        loadingDialog = AlertDialog.Builder(context!!)
-                .setView(dialogView)
-                .setCancelable(false)
-                .create()
+//        val dialogView = LayoutInflater.from(context).inflate(R.layout.progress_dialog, null)
+//        val tempString = "Getting notifications..."
+//        (dialogView.findViewById<View>(R.id.progressDialog_textView) as TextView).text = tempString
+//        loadingDialog = AlertDialog.Builder(context!!)
+//                .setView(dialogView)
+//                .setCancelable(false)
+//                .create()
 
-        notificationRecyclerAdapter = NotificationRecyclerAdapter(context, null)
-        with(binding.notificationsRecyclerView) {
-            adapter = notificationRecyclerAdapter
-            setHasFixedSize(false)
-            addOnScrollListener(CustomScrollListener())
-            layoutManager = LinearLayoutManager(this@NotificationFragment.context)
-        }
-
+        buildRecyclerView()
 
         preferences.edit().remove(Constants.LAST_NOTIFICATION_ID).apply()
         getNotificationsAsynchronously()
     }
 
-    private fun getNotificationsAsynchronously() {
+    private fun buildRecyclerView() {
+        notificationRecyclerAdapter = NotificationRecyclerAdapter(context, null)
+        with(binding.notificationsRecyclerView) {
+            adapter = notificationRecyclerAdapter
+            setHasFixedSize(false)
+            layoutManager = LinearLayoutManager(this@NotificationFragment.context)
+        }
+    }
 
-        loadingDialog?.show()
+    private fun getNotificationsAsynchronously() {
+//        loadingDialog.show()
         lastId = preferences.getInt(Constants.LAST_NOTIFICATION_ID, 0)
 
         doAsync {
@@ -101,7 +103,6 @@ class NotificationFragment : Fragment() {
                         paginate = notificationsResponse.notificationsCount == 10
 
                         if (notificationsResponse.notificationsList.size > 0) {
-
                             for (currentNotification in notificationsResponse.notificationsList) {
                                 customNotificationList.add(Notification(currentNotification.text, currentNotification.createdAt))
                                 preferences.edit()
@@ -124,25 +125,7 @@ class NotificationFragment : Fragment() {
             } else {
                 uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_check_internet), R.id.notifications_dest) }
             }
-            uiThread { loadingDialog?.dismiss() }
-        }
-    }
-
-    inner class CustomScrollListener internal constructor() : RecyclerView.OnScrollListener() {
-
-        override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-            val visibleItemCount = recyclerView.layoutManager!!.childCount
-            val totalItemCount = recyclerView.layoutManager!!.itemCount
-            val pastVisibleItems = (recyclerView.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
-            if (pastVisibleItems + visibleItemCount >= totalItemCount) {
-
-                if (paginate) {
-                    if (activity != null) {
-                        getNotificationsAsynchronously()
-                        paginate = false
-                    }
-                }
-            }
+//            uiThread { loadingDialog.dismiss() }
         }
     }
 
@@ -172,8 +155,7 @@ class NotificationFragment : Fragment() {
     }
 
     companion object {
-
-        public const val TEXT_KEY = "text-key"
-        public const val CREATED_AT_KEY = "createdat-key"
+        const val TEXT_KEY = "text-key"
+        const val CREATED_AT_KEY = "createdat-key"
     }
 }
