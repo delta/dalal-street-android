@@ -143,9 +143,10 @@ class NotificationFragment : Fragment() {
                         notificationRecyclerAdapter.setList(customNotificationList)
                         notificationRecyclerAdapter.notifyItemRangeInserted(positionStart, newItemsCount)
 
-                        preferences.edit()
-                                .putInt(Constants.LAST_NOTIFICATION_ID, notificationsResponse.notificationsList.last().id)
-                                .apply()
+                        if (notificationsResponse.notificationsList.isNotEmpty())
+                            preferences.edit()
+                                    .putInt(Constants.LAST_NOTIFICATION_ID, notificationsResponse.notificationsList.last().id)
+                                    .apply()
                     }
                 } else {
                     uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_server_down), R.id.notifications_dest) }

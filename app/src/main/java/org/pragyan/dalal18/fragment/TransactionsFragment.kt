@@ -143,9 +143,10 @@ class TransactionsFragment : Fragment() {
                         transactionsAdapter.setList(transactionList)
                         transactionsAdapter.notifyItemRangeInserted(positionStart, newItemsCount)
 
-                        preferences.edit()
-                                .putInt(Constants.LAST_TRANSACTION_ID, transactionsResponse.transactionsList.last().id)
-                                .apply()
+                        if (transactionsResponse.transactionsList.isNotEmpty())
+                            preferences.edit()
+                                    .putInt(Constants.LAST_TRANSACTION_ID, transactionsResponse.transactionsList.last().id)
+                                    .apply()
                     }
                 } else {
                     uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_server_down), R.id.transactions_dest) }
