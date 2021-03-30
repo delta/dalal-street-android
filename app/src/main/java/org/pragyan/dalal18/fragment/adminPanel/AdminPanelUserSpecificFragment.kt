@@ -70,9 +70,10 @@ class AdminPanelUserSpecificFragment : Fragment() {
         withContext(Dispatchers.IO) {
             if (ConnectionUtils.getConnectionInfo(context!!) && ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
 
-                if (blockUserEditText.text.toString().isNotBlank()
+                if (blockUserEditText.text.toString().isNotBlank() && addPenaltyEditText.text.toString().isNotBlank()
                 ) {
                     val response = actionServiceBlockingStub.blockUser(BlockUser.BlockUserRequest.newBuilder()
+                            .setPenalty(addPenaltyEditText.text.toString().toLong())
                             .setUserId(blockUserEditText.text.toString().toInt())
                             .build())
                     message = response.statusMessage
