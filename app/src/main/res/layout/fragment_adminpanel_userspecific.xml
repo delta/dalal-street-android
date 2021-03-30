@@ -44,19 +44,34 @@
             app:layout_constraintStart_toEndOf="@+id/blockUserTextview"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <EditText
+            android:id="@+id/addPenaltyEditText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:backgroundTint="@color/neutral_font_color"
+            android:hint="Enter Penalty"
+            android:inputType="text"
+            android:textColor="@color/neutral_font_color"
+            android:textColorHint="@color/neutral_font_color"
+            app:layout_constraintEnd_toEndOf="@+id/blockUserEditText"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/blockUserEditText"
+            app:layout_constraintTop_toBottomOf="@+id/blockUserEditText" />
+
         <Button
             android:id="@+id/blockUserButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="16dp"
             android:background="@drawable/black_white_rounded_button"
             android:padding="4dp"
             android:text="Block User"
             android:textColor="@color/red_piechart"
             app:layout_constraintEnd_toEndOf="@+id/blockUserEditText"
-            app:layout_constraintHorizontal_bias="0.15"
+            app:layout_constraintHorizontal_bias="0.523"
             app:layout_constraintStart_toStartOf="@+id/blockUserEditText"
-            app:layout_constraintTop_toBottomOf="@+id/blockUserEditText" />
+            app:layout_constraintTop_toBottomOf="@+id/addPenaltyEditText" />
 
         <View
             android:layout_width="match_parent"
