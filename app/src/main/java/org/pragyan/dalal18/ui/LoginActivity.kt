@@ -5,7 +5,9 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.graphics.Color
 import android.os.Bundle
+import android.os.CountDownTimer
 import android.view.LayoutInflater
+import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
@@ -18,6 +20,7 @@ import dalalstreet.api.DalalActionServiceGrpc
 import dalalstreet.api.actions.ForgotPasswordRequest
 import dalalstreet.api.actions.LoginRequest
 import dalalstreet.api.actions.LoginResponse
+import dalalstreet.api.actions.ResendVerificationEmailRequest
 import io.grpc.ManagedChannel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -263,6 +266,9 @@ class LoginActivity : AppCompatActivity() {
                         .apply()
                 startActivity(intent)
                 finish()
+            } else if (loginResponse.statusMessage == "User has not verified account") {
+                 toast(loginResponse.statusMessage)
+                 setCountDownText()
             } else {
                 toast(loginResponse.statusMessage)
                 binding.passwordEditText.setText("")
@@ -271,6 +277,48 @@ class LoginActivity : AppCompatActivity() {
             signingInAlertDialog?.dismiss()
             contentView?.hideKeyboard()
             showSnackBar("Server Unreachable")
+        }
+    }
+
+    private fun setCountDownText(){
+        binding.resendEmailTextView.visibility=View.VISIBLE
+        val countDownTimer = object:CountDownTimer(60000,1000){
+            override fun onFinish() {
+                binding.resendEmailTextView.text = "Resend Email? Click here!"
+                binding.resendEmailTextView.setOnClickListener {
+                    resendEmailVerificationAsynchronously(binding.emailEditText.text.toString())
+                    //this.start()
+                }
+            }
+
+            override fun onTick(p0: Long) {
+                binding.resendEmailTextView.text = "Resend Email in ${p0/1000} secs"
+
+            }
+
+        }.start()
+    }
+
+    private fun resendEmailVerificationAsynchronously(email: String) = lifecycleScope.launch {
+        signingInAlertDialog?.show()
+        contentView?.hideKeyboard()
+
+        if (withContext(Dispatchers.IO) { ConnectionUtils.getConnectionInfo(this@LoginActivity) }) {
+            val resendVerificationEmailRequest = ResendVerificationEmailRequest.newBuilder().setEmail(email).build()
+            val resendVerificationEmailResponse = withContext(Dispatchers.IO) { DalalActionServiceGrpc.newBlockingStub(channel).resendVerificationEmail(resendVerificationEmailRequest) }
+
+            signingInAlertDialog?.dismiss()
+            AlertDialog.Builder(this@LoginActivity, R.style.AlertDialogTheme)
+                    .setTitle("Resend Verification Email")
+                    .setMessage(resendVerificationEmailResponse.statusMessage)
+                    .setPositiveButton("OKAY") { dI, _ -> dI.dismiss()
+                    binding.resendEmailTextView.visibility=View.INVISIBLE}
+                    .setCancelable(true)
+                    .show()
+
+        } else {
+            signingInAlertDialog?.dismiss()
+            toast("Server Unreachable")
         }
     }
 
