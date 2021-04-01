@@ -3,8 +3,9 @@ object AndroidSdk {
     const val minSdk = 21
     const val targetSdk = 29
 
-    const val versionCode = 16
-    const val versionName = "7.0"
+    const val versionCode = 17
+    const val versionName = "7.1"
+
     const val buildToolsVersion = "29.0.3"
     const val DalalAppId = "org.pragyan.dalal18"
 }
