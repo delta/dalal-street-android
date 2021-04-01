@@ -114,7 +114,7 @@ class StockExchangeFragment : Fragment() {
             buyExchangeButton.setOnClickListener { buyStocksFromExchange() }
             stockIncrementFiveButton.setOnClickListener { addToStockExchangeInput(5) }
             stockIncrementOneButton.setOnClickListener { addToStockExchangeInput(1) }
-            stockIncrementmMinusOneButton.setOnClickListener { addToStockExchangeInput(-1) }
+            stockDecrementOneButton.setOnClickListener { addToStockExchangeInput(-1) }
         }
     }
 
