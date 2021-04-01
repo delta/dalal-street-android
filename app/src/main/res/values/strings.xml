@@ -99,6 +99,7 @@
     <string name="bidepth_tour">Bid Depth </string>
     <string name="askdepth_tour">Ask Depth</string>
     <string name="incrementFive">+5</string>
+    <string name="decrementOne">-1</string>
     <string name="incrementOne">+1</string>
     <string name="marketClose">Market is Closed \t\t\t Market is Closed \t\t\t Market is Closed</string>
 
