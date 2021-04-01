@@ -1,5 +1,6 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:animateLayoutChanges="true"
@@ -249,12 +250,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.6" />
+        app:layout_constraintGuide_percent="0.53" />
 
     <Button
         android:id="@+id/stockIncrementFiveButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="50dp"
+        android:layout_height="42dp"
+        android:layout_marginStart="6dp"
         android:background="@drawable/black_white_rounded_button"
         android:elevation="4dp"
         android:minWidth="60dp"
@@ -262,14 +264,28 @@
         android:textColor="@color/neon_yellow"
         android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="@+id/stocks_exchange_input"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/stockIncrementOneButton"
+        app:layout_constraintStart_toEndOf="@+id/stockIncrementOneButton"
+        app:layout_constraintTop_toTopOf="@+id/stocks_exchange_input" />
+
+    <Button
+        android:id="@+id/stockDecrementOneButton"
+        android:layout_width="50dp"
+        android:layout_height="42dp"
+        android:layout_marginStart="6dp"
+        android:background="@drawable/black_white_rounded_button"
+        android:elevation="4dp"
+        android:minWidth="60dp"
+        android:text="@string/decrementOne"
+        android:textColor="@color/neon_yellow"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="@+id/stocks_exchange_input"
+        app:layout_constraintStart_toEndOf="@+id/stockIncrementFiveButton"
         app:layout_constraintTop_toTopOf="@+id/stocks_exchange_input" />
 
     <Button
         android:id="@+id/stockIncrementOneButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="50dp"
+        android:layout_height="42dp"
         android:background="@drawable/black_white_rounded_button"
         android:elevation="4dp"
         android:minWidth="60dp"
@@ -277,7 +293,6 @@
         android:textColor="@color/neon_yellow"
         android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="@+id/stocks_exchange_input"
-        app:layout_constraintEnd_toStartOf="@id/stockIncrementFiveButton"
         app:layout_constraintStart_toStartOf="@+id/guideline"
         app:layout_constraintTop_toTopOf="@+id/stocks_exchange_input" />
 

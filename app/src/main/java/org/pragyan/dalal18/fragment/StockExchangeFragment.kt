@@ -114,6 +114,7 @@ class StockExchangeFragment : Fragment() {
             buyExchangeButton.setOnClickListener { buyStocksFromExchange() }
             stockIncrementFiveButton.setOnClickListener { addToStockExchangeInput(5) }
             stockIncrementOneButton.setOnClickListener { addToStockExchangeInput(1) }
+            stockDecrementOneButton.setOnClickListener { addToStockExchangeInput(-1) }
         }
     }
 
@@ -123,7 +124,7 @@ class StockExchangeFragment : Fragment() {
                 noOfStocksEditText.setText("0")
             }
             var noOfStocks = noOfStocksEditText.text.toString().toInt()
-            noOfStocks = (noOfStocks + increment).coerceAtMost(Constants.ASK_LIMIT)
+            noOfStocks = (noOfStocks + increment).coerceAtMost(Constants.ASK_LIMIT).coerceAtLeast(0)
             noOfStocksEditText.setText(noOfStocks.toString())
         }
     }
@@ -134,6 +135,7 @@ class StockExchangeFragment : Fragment() {
 
             when {
                 noOfStocksEditText.text.toString().trim { it <= ' ' }.isEmpty() -> context?.toast("Enter the number of Stocks")
+                noOfStocksEditText.text.toString() == "0" -> context?.toast("Enter valid number of Stocks")
                 currentStock != null -> {
                     loadingDialog?.show()
                     if (withContext(Dispatchers.IO) { ConnectionUtils.getConnectionInfo(context!!) }) {
