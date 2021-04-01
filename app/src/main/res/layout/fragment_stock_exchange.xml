@@ -268,7 +268,7 @@
         app:layout_constraintTop_toTopOf="@+id/stocks_exchange_input" />
 
     <Button
-        android:id="@+id/stockIncrementmMnusOneButton"
+        android:id="@+id/stockIncrementmMinusOneButton"
         android:layout_width="50dp"
         android:layout_height="42dp"
         android:layout_marginStart="6dp"
