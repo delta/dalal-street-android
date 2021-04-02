@@ -8,7 +8,7 @@ public class Constants {
     public static final int PORT = 8000;
 
     // TODO (Release): Change company image base URL and how is built
-    public static final String COMPANY_IMAGES_BASE_URL = "https://dalal.pragyan.org/public/src/images/companies/";
+    public static final String COMPANY_IMAGES_BASE_URL = "https://delta.nitt.edu/~vivekr/dalal/companies/";
 
     public static final String PLAYSTORE_URL = "http://bit.ly/Dalal-Street-app";
     public static final String DALAL_SHARE_MESSAGE = "Install Dalal Street app from playstore - " + PLAYSTORE_URL + "\n\nUse this Referral Code - ";
