@@ -117,7 +117,8 @@ class RegistrationActivity : AppCompatActivity() {
                         RegisterResponse.StatusCode.OK -> "Successfully Registered! Please check your inbox to verify email."
                         RegisterResponse.StatusCode.AlreadyRegisteredError -> "You have already registered."
                         RegisterResponse.StatusCode.InvalidReferralCodeError -> invalidReferralCodeMessage
-                        else -> response.statusMessage
+                        RegisterResponse.StatusCode.InternalServerError -> "Something went wrong"
+                        else -> "Something went wrong, please try again."
                     }
 
                     uiThread {
