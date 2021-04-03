@@ -23,7 +23,7 @@ data class MarketDepth(var price: Long, var volume: Long)
 data class MortgageDetails(var stockId: Int, var shortName: String, var companyName: String, var stockQuantity: Long, var mortgagePrice: Long)
 
 @Parcelize
-data class NewsDetails(var createdAt: String?, var headlines: String?, var content: String?, var imagePath: String?) : Parcelable
+data class NewsDetails(var createdAt: String?, var headlines: String?, var content: String?, var imagePath: String?, var basePath: String?) : Parcelable
 
 data class Notification(val text: String, val createdAt: String)
 
