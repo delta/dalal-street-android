@@ -146,7 +146,7 @@ class HomeFragment : Fragment(), NewsRecyclerAdapter.NewsItemClickListener, Swip
                             newsList.clear()
 
                             for (currentMarketEvent in marketEventsResponse.marketEventsList) {
-                                newsList.add(NewsDetails(currentMarketEvent.createdAt, currentMarketEvent.headline, currentMarketEvent.text, currentMarketEvent.imagePath))
+                                newsList.add(NewsDetails(currentMarketEvent.createdAt, currentMarketEvent.headline, currentMarketEvent.text, currentMarketEvent.imagePath, marketEventsResponse.newsBasePath))
                             }
 
                             if (newsList.isNotEmpty()) {
@@ -221,7 +221,7 @@ class HomeFragment : Fragment(), NewsRecyclerAdapter.NewsItemClickListener, Swip
         bundle.putString(Constants.NEWS_CREATED_AT_KEY, newsList[position].createdAt)
         bundle.putString(Constants.NEWS_CONTENT_KEY, newsList[position].content)
         bundle.putString(Constants.NEWS_HEAD_KEY, newsList[position].headlines)
-        bundle.putString(Constants.NEWS_IMAGE_PATH_KEY, newsList[position].imagePath)
+        bundle.putString(Constants.NEWS_IMAGE_PATH_KEY, newsList[position].basePath+""+newsList[position].imagePath)
         bundle.putString(Constants.HEAD_TRANSITION_KEY, headTransition)
         bundle.putString(Constants.CONTENT_TRANSITION_KEY, contentTransition)
         bundle.putString(Constants.CREATED_AT_TRANSITION_KEY, createdAtTransition)

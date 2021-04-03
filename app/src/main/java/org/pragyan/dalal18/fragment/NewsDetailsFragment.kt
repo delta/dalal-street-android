@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import android.widget.Toast
 import androidx.core.view.ViewCompat
 import androidx.fragment.app.Fragment
 import androidx.transition.TransitionInflater
@@ -34,7 +35,7 @@ class NewsDetailsFragment : Fragment() {
             newsDetailsHead.text = arguments?.getString(Constants.NEWS_HEAD_KEY)
             newsDetailsContent.text = arguments?.getString(Constants.NEWS_CONTENT_KEY)
             newsDetailsCreatedAt.text = parseDate(arguments?.getString(Constants.NEWS_CREATED_AT_KEY))
-            Picasso.get().load("https://delta.nitt.edu/~vivekr/dalal/news/" + arguments?.getString(Constants.NEWS_IMAGE_PATH_KEY)).into(newsDetailsImage)
+            Picasso.get().load(arguments?.getString(Constants.NEWS_IMAGE_PATH_KEY)).into(newsDetailsImage)
             ViewCompat.setTransitionName(newsDetailsHead, arguments?.getString(Constants.HEAD_TRANSITION_KEY))
             ViewCompat.setTransitionName(newsDetailsContent, arguments?.getString(Constants.CONTENT_TRANSITION_KEY))
             ViewCompat.setTransitionName(newsDetailsCreatedAt, arguments?.getString(Constants.CREATED_AT_TRANSITION_KEY))

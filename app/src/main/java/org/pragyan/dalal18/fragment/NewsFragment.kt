@@ -77,7 +77,7 @@ class NewsFragment : Fragment(), NewsRecyclerAdapter.NewsItemClickListener, Swip
                     newsDetailsList.clear()
 
                     for (currentMarketEvent in marketEventsResponse.marketEventsList) {
-                        newsDetailsList.add(NewsDetails(currentMarketEvent.createdAt, currentMarketEvent.headline, currentMarketEvent.text, currentMarketEvent.imagePath))
+                        newsDetailsList.add(NewsDetails(currentMarketEvent.createdAt, currentMarketEvent.headline, currentMarketEvent.text, currentMarketEvent.imagePath, marketEventsResponse.newsBasePath))
                     }
 
                     binding.apply {
@@ -177,7 +177,7 @@ class NewsFragment : Fragment(), NewsRecyclerAdapter.NewsItemClickListener, Swip
         bundle.putString(Constants.NEWS_CREATED_AT_KEY, newsDetailsList[position].createdAt)
         bundle.putString(Constants.NEWS_CONTENT_KEY, newsDetailsList[position].content)
         bundle.putString(Constants.NEWS_HEAD_KEY, newsDetailsList[position].headlines)
-        bundle.putString(Constants.NEWS_IMAGE_PATH_KEY, newsDetailsList[position].imagePath)
+        bundle.putString(Constants.NEWS_IMAGE_PATH_KEY, newsDetailsList[position].basePath+""+newsDetailsList[position].imagePath)
         bundle.putString(Constants.HEAD_TRANSITION_KEY, headTransition)
         bundle.putString(Constants.CONTENT_TRANSITION_KEY, contentTransition)
         bundle.putString(Constants.CREATED_AT_TRANSITION_KEY, createdAtTransition)
