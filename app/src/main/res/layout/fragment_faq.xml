@@ -529,24 +529,14 @@
                 android:background="@color/neon_orange" />
 
             <TextView
+                android:id="@+id/forumTextView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:fontFamily="@font/kreon_light"
                 android:gravity="center"
-                android:text="@string/forum"
+                android:text="@string/reach_out_to_us"
                 android:textColor="@color/neutral_font_color"
-                android:textSize="16sp" />
-
-            <TextView
-                android:id="@+id/forumTextView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:fontFamily="@font/kreon_light"
-                android:gravity="center"
-                android:text="@string/forum_link"
-                android:textColor="@color/colorAccent"
                 android:textSize="16sp" />
 
         </LinearLayout>

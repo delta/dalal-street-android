@@ -4,8 +4,9 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.text.SpannableString
-import android.text.SpannableStringBuilder
 import android.text.Spanned
+import android.text.method.LinkMovementMethod
+import android.text.style.ClickableSpan
 import android.text.style.ImageSpan
 import android.view.LayoutInflater
 import android.view.View
@@ -19,7 +20,7 @@ import org.pragyan.dalal18.R
 class FaqFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_faq,container,false)
+        return inflater.inflate(R.layout.fragment_faq, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -38,18 +39,32 @@ class FaqFragment : Fragment() {
         expand_text_view_faq12.text = resources.getText(R.string.faq_12a)
 
 
-        val rewardClaimedSpan =  ImageSpan(context!!, R.drawable.blue_thumb)
-        val challengeLostSpan = ImageSpan(context!!,R.drawable.clear_icon)
-        val spannableText=  SpannableString(resources.getString(R.string.faq_10a));
+        val rewardClaimedSpan = ImageSpan(context!!, R.drawable.blue_thumb)
+        val challengeLostSpan = ImageSpan(context!!, R.drawable.clear_icon)
+        val spannableText = SpannableString(resources.getString(R.string.faq_10a));
 
-        spannableText.setSpan(rewardClaimedSpan, spannableText.indexOf("symbols")+9,spannableText.indexOf("symbols")+11 , 0)
-        spannableText.setSpan(challengeLostSpan, spannableText.indexOf("claimed.")+10,spannableText.indexOf("claimed.")+12 , 0)
+        spannableText.setSpan(rewardClaimedSpan, spannableText.indexOf("symbols") + 9, spannableText.indexOf("symbols") + 11, 0)
+        spannableText.setSpan(challengeLostSpan, spannableText.indexOf("claimed.") + 10, spannableText.indexOf("claimed.") + 12, 0)
         expand_text_view_faq10.text = spannableText
-        forumTextView.setOnClickListener { openForumWebPage() }
+
+        setClickableSpanForForum()
+    }
+
+    private fun setClickableSpanForForum() {
+        val text = "Reach out to us on Dalal Street Forum"
+        val ss = SpannableString(text)
+        val clickableSpan1: ClickableSpan = object : ClickableSpan() {
+            override fun onClick(widget: View) {
+                openForumWebPage()
+            }
+        }
+        ss.setSpan(clickableSpan1, 19, 37, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+        forumTextView.text = ss
+        forumTextView.movementMethod = LinkMovementMethod.getInstance()
     }
 
     private fun openForumWebPage() {
-        val forumIntent = Intent(Intent.ACTION_VIEW, Uri.parse("https://forum.pragyan.org/"))
+        val forumIntent = Intent(Intent.ACTION_VIEW, Uri.parse("https://discord.gg/jrfEXT5M"))
         startActivity(forumIntent)
     }
 }
