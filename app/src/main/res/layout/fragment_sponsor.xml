@@ -35,12 +35,10 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/media_partner_text">
 
-        <LinearLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/sponsor_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:orientation="vertical"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -56,7 +54,10 @@
                 android:layout_marginBottom="12dp"
                 app:cardCornerRadius="7dp"
                 app:cardElevation="5dp"
-                app:cardUseCompatPadding="true">
+                app:cardUseCompatPadding="true"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/sponsor_layout">
 
                 <ImageView
                     android:id="@+id/partner_1"
@@ -81,6 +82,9 @@
                 android:layout_marginBottom="12dp"
                 app:cardCornerRadius="7dp"
                 app:cardElevation="5dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/cardView"
                 app:cardUseCompatPadding="true">
 
                 <ImageView
@@ -106,6 +110,9 @@
                 android:layout_marginBottom="12dp"
                 app:cardCornerRadius="7dp"
                 app:cardElevation="5dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/cardView2"
                 app:cardUseCompatPadding="true">
 
                 <ImageView
@@ -121,7 +128,7 @@
                     android:scaleType="fitCenter" />
             </androidx.cardview.widget.CardView>
 
-        </LinearLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
 
 
