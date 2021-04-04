@@ -31,6 +31,7 @@ import org.pragyan.dalal18.ui.MainActivity.Companion.GAME_STATE_UPDATE_ACTION
 import org.pragyan.dalal18.utils.*
 import org.pragyan.dalal18.utils.Constants.ORDER_FEE_RATE
 import org.pragyan.dalal18.utils.Constants.PREF_TRADE
+import java.lang.NumberFormatException
 import java.text.DecimalFormat
 import javax.inject.Inject
 
@@ -210,14 +211,23 @@ class TradeFragment : Fragment() {
                 model.getPriceFromStockId(lastStockId)
             } else {
                 if (orderPriceEditText.text.toString().trim { it <= ' ' }.isNotEmpty()) {
-                    (orderPriceEditText.text.toString()).toLong()
+                    try{
+                        (orderPriceEditText.text.toString()).toLong()
+                    } catch (numberFormatException : NumberFormatException) {
+                        throw NumberFormatException("Improper number format found, please try again")
+                    }
                 } else {
                     0
                 }
             }
 
             val noOfStocks = if (noOfStocksEditText.text.toString().trim { it <= ' ' }.isNotEmpty()) {
-                noOfStocksEditText.text.toString().toLong()
+                try{
+                    noOfStocksEditText.text.toString().toLong()
+                } catch (numberFormatException : NumberFormatException) {
+                    throw NumberFormatException("Improper number format found, please try again")
+                }
+
             } else {
                 0
             }
