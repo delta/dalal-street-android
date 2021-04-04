@@ -13,9 +13,10 @@ import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import org.pragyan.dalal18.R
 import org.pragyan.dalal18.ui.SplashActivity
+import org.pragyan.dalal18.utils.MiscellaneousUtils.NotiId
 
 class FCMService: FirebaseMessagingService() {
-    var NotiId = 1;
+
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         super.onMessageReceived(remoteMessage)
         Log.d(TAG, "From: " + remoteMessage!!.from)
