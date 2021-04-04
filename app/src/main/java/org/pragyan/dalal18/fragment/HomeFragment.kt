@@ -6,6 +6,7 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.os.Bundle
 import android.os.Handler
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -129,43 +130,48 @@ class HomeFragment : Fragment(), NewsRecyclerAdapter.NewsItemClickListener, Swip
     }
 
     private fun getLatestNewsAsynchronously() {
-        showNewsAvailable(false)
-        binding.loadingNewsHomeFragmentProgressBar.visibility = View.VISIBLE
-        binding.loadingNewsTextView.text = getString(R.string.getting_latest_news)
+        // Catch the Error until a Proper fix is found
+        try {
+            showNewsAvailable(false)
+            binding.loadingNewsHomeFragmentProgressBar.visibility = View.VISIBLE
+            binding.loadingNewsTextView.text = getString(R.string.getting_latest_news)
 
-        doAsync {
-            if (ConnectionUtils.getConnectionInfo(context)) {
-                if (ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
+            doAsync {
+                if (ConnectionUtils.getConnectionInfo(context)) {
+                    if (ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
 
-                    val marketEventsResponse = actionServiceBlockingStub.getMarketEvents(GetMarketEventsRequest.newBuilder().setCount(0).setLastEventId(0).build())
+                        val marketEventsResponse = actionServiceBlockingStub.getMarketEvents(GetMarketEventsRequest.newBuilder().setCount(0).setLastEventId(0).build())
 
-                    uiThread {
-                        binding.newsSwipeRefreshLayout.isRefreshing = false
-                        if (marketEventsResponse.statusCode == GetMarketEventsResponse.StatusCode.OK) {
+                        uiThread {
+                            binding.newsSwipeRefreshLayout.isRefreshing = false
+                            if (marketEventsResponse.statusCode == GetMarketEventsResponse.StatusCode.OK) {
 
-                            newsList.clear()
+                                newsList.clear()
 
-                            for (currentMarketEvent in marketEventsResponse.marketEventsList) {
-                                newsList.add(NewsDetails(currentMarketEvent.createdAt, currentMarketEvent.headline, currentMarketEvent.text, currentMarketEvent.imagePath, marketEventsResponse.newsBasePath))
-                            }
+                                for (currentMarketEvent in marketEventsResponse.marketEventsList) {
+                                    newsList.add(NewsDetails(currentMarketEvent.createdAt, currentMarketEvent.headline, currentMarketEvent.text, currentMarketEvent.imagePath, marketEventsResponse.newsBasePath))
+                                }
 
-                            if (newsList.isNotEmpty()) {
-                                newsRecyclerAdapter.swapData(newsList)
-                                showNewsAvailable(true)
+                                if (newsList.isNotEmpty()) {
+                                    newsRecyclerAdapter.swapData(newsList)
+                                    showNewsAvailable(true)
+                                } else {
+                                    showNewsAvailable(false)
+                                }
+
                             } else {
-                                showNewsAvailable(false)
+                                context?.toast(marketEventsResponse.statusMessage)
                             }
-
-                        } else {
-                            context?.toast(marketEventsResponse.statusMessage)
                         }
+                    } else {
+                        uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_server_down), R.id.home_dest) }
                     }
                 } else {
-                    uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_server_down), R.id.home_dest) }
+                    uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_check_internet), R.id.home_dest) }
                 }
-            } else {
-                uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_check_internet), R.id.home_dest) }
             }
+        } catch (e: Exception) {
+            Log.e(TAG, "getLatestNewsAsynchronously: ", e)
         }
     }
 
@@ -264,6 +270,8 @@ class HomeFragment : Fragment(), NewsRecyclerAdapter.NewsItemClickListener, Swip
     }
 
     companion object {
+        private const val TAG = "HomeFragment"
+
         private const val COMPANY_TICKER_DURATION = 2500
     }
 }
