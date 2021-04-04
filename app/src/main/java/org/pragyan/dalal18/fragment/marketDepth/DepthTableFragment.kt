@@ -294,6 +294,8 @@ class DepthTableFragment : Fragment() {
                             val prevDayClose = currentStock.previousDayClose
 
                             binding.apply {
+                                bidDepthLayout.visibility=View.VISIBLE
+                                askDepthLayout.visibility = View.VISIBLE
                                 currentStockPriceLayout.visibility = View.VISIBLE
                                 val currentStockPrice = "Current Stock Price : " + Constants.RUPEE_SYMBOL + df.format(currentPrice).toString()
                                 currentStockPriceTextView.text = currentStockPrice
