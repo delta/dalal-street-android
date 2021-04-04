@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".fragment.SponsorFragment">
+
+    <LinearLayout
+        android:id="@+id/sponsor_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/partner_1"
+            android:layout_width="match_parent"
+            android:layout_margin="10dp"
+            android:layout_height="180dp"
+            android:contentDescription="@string/company_image_description"
+            android:scaleType="centerCrop" />
+        <ImageView
+            android:id="@+id/partner_2"
+            android:layout_width="match_parent"
+            android:layout_height="180dp"
+            android:layout_margin="10dp"
+            android:contentDescription="@string/company_image_description"
+            android:scaleType="centerCrop" />
+        <ImageView
+            android:id="@+id/partner_3"
+            android:layout_width="match_parent"
+            android:layout_height="180dp"
+            android:layout_margin="10dp"
+            android:contentDescription="@string/company_image_description"
+            android:scaleType="centerCrop" />
+
+    </LinearLayout>
+
+
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

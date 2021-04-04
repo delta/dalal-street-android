@@ -138,4 +138,10 @@
         android:label="@string/daily_challenge"
         tools:layout="@layout/fragment_daily_challenges" />
 
+    <fragment
+        android:id="@+id/sponsorFrag_dest"
+        android:name="org.pragyan.dalal18.fragment.SponsorFragment"
+        android:label="@string/sponsor"
+        tools:layout="@layout/fragment_sponsor"/>
+
 </navigation>
