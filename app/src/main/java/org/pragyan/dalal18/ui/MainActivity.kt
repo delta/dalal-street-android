@@ -285,7 +285,7 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
 
         val appBarConfig = AppBarConfiguration.Builder(setOf(R.id.home_dest, R.id.companies_dest, R.id.portfolio_dest,
                 R.id.exchange_dest, R.id.market_depth_dest, R.id.trade_dest, R.id.main_mortgage_dest, R.id.news_dest,
-                R.id.leaderboard_dest, R.id.dailyChallenge_dest,R.id.open_orders_dest, R.id.transactions_dest, R.id.notifications_dest, R.id.refer_and_earn_dest, R.id.sponsorFrag_dest))
+                R.id.leaderboard_dest, R.id.dailyChallenge_dest,R.id.open_orders_dest, R.id.transactions_dest, R.id.notifications_dest, R.id.refer_and_earn_dest, R.id.sponsor_dest))
                 .setDrawerLayout(binding.mainDrawerLayout)
                 .build()
 
