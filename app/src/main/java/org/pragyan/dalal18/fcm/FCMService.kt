@@ -30,7 +30,7 @@ class FCMService: FirebaseMessagingService() {
         val pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
                 PendingIntent.FLAG_ONE_SHOT)
         val defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
-        val notificationBuilder = NotificationCompat.Builder(this)
+        val notificationBuilder = NotificationCompat.Builder(this, getString(R.string.notification_channel_id))
                 .setContentText(remoteMessage.notification?.body)
                 .setAutoCancel(true)
                 .setContentTitle(remoteMessage.notification?.title)

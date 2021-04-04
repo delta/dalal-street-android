@@ -838,7 +838,7 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
     private fun subscribeToSpecificUserFCMStream() {
 
         // will be changed to user_id
-        val username = MiscellaneousUtils.username.toString()
+        val username = MiscellaneousUtils.username.toString().replace("\\s".toRegex(), "")
         USER_SPECIFIC_FCM_REGISTRATION_KEY = this.preferences.getString(EMAIL_KEY, "")
         val index = USER_SPECIFIC_FCM_REGISTRATION_KEY!!.indexOf("@")
         USER_SPECIFIC_FCM_REGISTRATION_KEY = USER_SPECIFIC_FCM_REGISTRATION_KEY.substring(0, index).toString() + username.toString()
