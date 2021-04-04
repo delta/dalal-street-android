@@ -8,12 +8,14 @@ import android.content.Intent
 import android.media.RingtoneManager
 import android.util.Log
 import androidx.core.app.NotificationCompat
+import com.google.firebase.messaging.Constants
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import org.pragyan.dalal18.R
 import org.pragyan.dalal18.ui.SplashActivity
 
 class FCMService: FirebaseMessagingService() {
+    var NotiId = 1;
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         super.onMessageReceived(remoteMessage)
         Log.d(TAG, "From: " + remoteMessage!!.from)
@@ -35,7 +37,8 @@ class FCMService: FirebaseMessagingService() {
                 .setSound(defaultSoundUri)
                 .setContentIntent(pendingIntent)
         val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        notificationManager.notify(0 /* ID of notification */, notificationBuilder.build())
+        NotiId += 1;
+        notificationManager.notify(NotiId /* ID of notification */, notificationBuilder.build())
     }
     override fun onNewToken(p0: String) {
         super.onNewToken(p0)
