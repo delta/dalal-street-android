@@ -73,4 +73,5 @@ public class MiscellaneousUtils {
 
     public static String sessionId = "dalalStreetSessionId";
     public static String username = null;
+    public static int NotiId = 1;
 }
