@@ -81,6 +81,11 @@
             android:icon="@drawable/refer_and_earn_icon"
             android:title="@string/refer_and_earn" />
 
+        <item
+            android:id="@+id/sponsor_dest"
+            android:icon="@drawable/ic_baseline_mediation_24"
+            android:title="@string/sponsor" />
+
     </group>
 
 

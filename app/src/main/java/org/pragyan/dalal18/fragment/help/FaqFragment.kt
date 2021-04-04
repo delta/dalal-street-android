@@ -63,7 +63,7 @@ class FaqFragment : Fragment() {
     }
 
     private fun openForumWebPage() {
-        val forumIntent = Intent(Intent.ACTION_VIEW, Uri.parse("https://discord.gg/jrfEXT5M"))
+        val forumIntent = Intent(Intent.ACTION_VIEW, Uri.parse("https://discord.gg/xh9r4G3jcH"))
         startActivity(forumIntent)
     }
 }
