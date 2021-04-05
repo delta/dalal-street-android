@@ -27,7 +27,6 @@ import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
-import androidx.core.view.MenuItemCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -168,7 +167,7 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
                         Log.i(TAG, "onReceived() called gameStateType " + gameStateDetails.gameStateUpdateType)
                     if (gameStateDetails != null) when (gameStateDetails.gameStateUpdateType) {
                         GameStateUpdateType.MarketStateUpdate ->
-                            displayMarketStatusAlert(gameStateDetails.isMarketOpen ?: true)
+                            updateMarketStatus(gameStateDetails.isMarketOpen ?: true)
                         GameStateUpdateType.StockDividendStateUpdate ->
                             model.updateDividendState(gameStateDetails.dividendStockId, gameStateDetails.givesDividend)
                         GameStateUpdateType.StockBankruptStateUpdate ->
@@ -238,7 +237,7 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
         getMortgageDetailsAsynchronously()
 
         if (!intent.getBooleanExtra(MARKET_OPEN_KEY, false))
-            displayMarketStatusAlert(false)
+            updateMarketStatus(false)
 
         if (preferences.getBoolean(PREF_MAIN, true)) {
             preferences.edit()
@@ -264,7 +263,6 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
         }
 
         createChannel()
-        this.startService(Intent(this.baseContext, PushNotificationService::class.java))
 
         binding.marketCloseIndicatorTextView.isSelected = true
 
@@ -372,8 +370,7 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
     }
 
     fun logout() = lifecycleScope.launch {
-        val notificationIntent = Intent(baseContext, PushNotificationService::class.java)
-        this@MainActivity.stopService(notificationIntent)
+        stopService(Intent(baseContext, PushNotificationService::class.java))
         unsubscribeFromAllStreams()
 
         if (withContext(Dispatchers.IO) { ConnectionUtils.getConnectionInfo(this@MainActivity) }) {
@@ -632,7 +629,11 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
         loadingDialog.dismiss()
     }
 
-    private fun displayMarketStatusAlert(isMarketOpen: Boolean) {
+    private fun updateMarketStatus(isMarketOpen: Boolean) {
+        val pushNotificationsIntent = Intent(baseContext, PushNotificationService::class.java)
+        if (isMarketOpen) startService(pushNotificationsIntent)
+        else stopService(pushNotificationsIntent)
+
         AlertDialog.Builder(this, R.style.AlertDialogTheme)
                 .setTitle(if (isMarketOpen) "Market Open" else "Market Closed")
                 .setMessage(getString(if (isMarketOpen) R.string.market_open_text else R.string.market_closed_text))
