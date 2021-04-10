@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -75,7 +74,7 @@
 
     <fragment
         android:id="@+id/leaderboard_dest"
-        android:name="org.pragyan.dalal18.fragment.LeaderboardFragment"
+        android:name="org.pragyan.dalal18.fragment.leaderboard.LeaderboardFragment"
         android:label="@string/leaderboard_frag_label"
         tools:layout="@layout/fragment_leaderboard" />
 
@@ -126,5 +125,23 @@
         android:name="org.pragyan.dalal18.fragment.SecretFragment"
         android:label="@string/admin_panel"
         tools:layout="@layout/fragment_secret" />
+
+    <fragment
+        android:id="@+id/refer_and_earn_dest"
+        android:name="org.pragyan.dalal18.fragment.ReferAndEarnFragment"
+        android:label="@string/refer_and_earn"
+        tools:layout="@layout/fragment_refer_and_earn" />
+
+    <fragment
+        android:id="@+id/dailyChallenge_dest"
+        android:name="org.pragyan.dalal18.fragment.DailyChallengesFragment"
+        android:label="@string/daily_challenge"
+        tools:layout="@layout/fragment_daily_challenges" />
+
+    <fragment
+        android:id="@+id/sponsor_dest"
+        android:name="org.pragyan.dalal18.fragment.SponsorFragment"
+        android:label="@string/sponsor"
+        tools:layout="@layout/fragment_sponsor"/>
 
 </navigation>

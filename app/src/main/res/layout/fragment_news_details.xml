@@ -8,7 +8,7 @@
         android:id="@+id/news_details_image"
         android:layout_width="match_parent"
         android:layout_height="200dp"
-        android:contentDescription="@string/news_details"
+        android:contentDescription="@string/news_details_frag_label"
         android:scaleType="centerCrop" />
 
     <ScrollView

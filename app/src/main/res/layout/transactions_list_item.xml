@@ -6,163 +6,175 @@
     android:background="@color/black_background"
     android:padding="8dp">
 
-    <TextView
-        android:id="@+id/transactionCompanyTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="4dp"
-        android:fontFamily="@font/kreon_light"
-        android:textAllCaps="true"
-        android:textColor="@color/neutral_font_color"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toTopOf="@+id/transactionType_textView"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/transactionType_textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="4dp"
-        android:fontFamily="@font/kreon_light"
-        android:textColor="@color/neutral_font_color"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toTopOf="@+id/quantityText"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/transactionCompanyTextView" />
-
-    <TextView
-        android:id="@+id/quantityText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="4dp"
-        android:fontFamily="@font/kreon_light"
-        android:text="@string/quantity"
-        android:textColor="@color/neutral_font_color"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toTopOf="@+id/tradePriceText"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/transactionType_textView" />
-
-    <TextView
-        android:id="@+id/tradePriceText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="4dp"
-        android:fontFamily="@font/kreon_light"
-        android:text="@string/trade_price"
-        android:textColor="@color/neutral_font_color"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toTopOf="@id/cashText"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/quantityText" />
-
-    <TextView
-        android:id="@+id/cashText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="4dp"
-        android:fontFamily="@font/kreon_light"
-        android:text="@string/cash"
-        android:textColor="@color/neutral_font_color"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toTopOf="@id/reservedAssetsText"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tradePriceText" />
-
-    <TextView
-        android:id="@+id/reservedAssetsText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="4dp"
-        android:fontFamily="@font/kreon_light"
-        android:text="@string/reserved_cash"
-        android:textColor="@color/neutral_font_color"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toTopOf="@id/time_textView"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/cashText" />
-
-    <TextView
-        android:id="@+id/time_textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:fontFamily="@font/kreon_light"
-        android:textColor="@color/neutral_font_color"
-        android:textSize="16sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/reservedAssetsText" />
-
-    <View
+    <androidx.cardview.widget.CardView
+        android:id="@+id/dc_card_view"
         android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_below="@+id/time_textView"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="4dp"
-        android:background="@color/divider_line_gray"
+        android:layout_height="wrap_content"
+        android:padding="12dp"
+        app:cardBackgroundColor="@color/dark_blue_background"
+        app:cardCornerRadius="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintDimensionRatio="2:1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/time_textView" />
+        app:layout_constraintTop_toTopOf="parent">
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.4" />
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="12dp">
 
-    <TextView
-        android:id="@+id/quantityTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="4dp"
-        android:fontFamily="@font/kreon_light"
-        android:textColor="@color/neutral_font_color"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="@+id/quantityText"
-        app:layout_constraintStart_toStartOf="@+id/guideline"
-        app:layout_constraintTop_toTopOf="@+id/quantityText" />
 
-    <TextView
-        android:id="@+id/tradePriceTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="4dp"
-        android:fontFamily="@font/kreon_light"
-        android:textColor="@color/neutral_font_color"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="@+id/tradePriceText"
-        app:layout_constraintStart_toStartOf="@+id/guideline"
-        app:layout_constraintTop_toTopOf="@+id/tradePriceText" />
+            <TextView
+                android:id="@+id/transactionCompanyTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:fontFamily="@font/kreon_light"
+                android:textAllCaps="true"
+                android:textColor="@color/neutral_font_color"
+                android:textSize="20sp"
+                app:layout_constraintBottom_toTopOf="@+id/transactionType_textView"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/cashTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="4dp"
-        android:fontFamily="@font/kreon_light"
-        android:textColor="@color/neutral_font_color"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="@+id/cashText"
-        app:layout_constraintStart_toStartOf="@+id/guideline"
-        app:layout_constraintTop_toTopOf="@+id/cashText" />
+            <TextView
+                android:id="@+id/transactionType_textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:fontFamily="@font/kreon_light"
+                android:textColor="@color/neutral_font_color"
+                android:textSize="20sp"
+                app:layout_constraintBottom_toTopOf="@+id/quantityText"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/transactionCompanyTextView" />
 
-    <TextView
-        android:id="@+id/reservedAssetsTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="4dp"
-        android:fontFamily="@font/kreon_light"
-        android:textColor="@color/neutral_font_color"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="@+id/reservedAssetsText"
-        app:layout_constraintStart_toStartOf="@+id/guideline"
-        app:layout_constraintTop_toTopOf="@+id/reservedAssetsText" />
+            <TextView
+                android:id="@+id/quantityText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:fontFamily="@font/kreon_light"
+                android:text="@string/quantity"
+                android:textColor="@color/neutral_font_color"
+                android:textSize="20sp"
+                app:layout_constraintBottom_toTopOf="@+id/tradePriceText"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/transactionType_textView" />
+
+            <TextView
+                android:id="@+id/tradePriceText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:fontFamily="@font/kreon_light"
+                android:text="@string/trade_price"
+                android:textColor="@color/neutral_font_color"
+                android:textSize="20sp"
+                app:layout_constraintBottom_toTopOf="@id/cashText"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/quantityText" />
+
+            <TextView
+                android:id="@+id/cashText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:fontFamily="@font/kreon_light"
+                android:text="@string/cash"
+                android:textColor="@color/neutral_font_color"
+                android:textSize="20sp"
+                app:layout_constraintBottom_toTopOf="@id/reservedAssetsText"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tradePriceText" />
+
+            <TextView
+                android:id="@+id/reservedAssetsText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:fontFamily="@font/kreon_light"
+                android:text="@string/reserved_cash"
+                android:textColor="@color/neutral_font_color"
+                android:textSize="20sp"
+                app:layout_constraintBottom_toTopOf="@id/time_textView"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/cashText" />
+
+            <TextView
+                android:id="@+id/time_textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:fontFamily="@font/kreon_light"
+                android:textColor="@color/neutral_font_color"
+                android:textSize="16sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/reservedAssetsText" />
+
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guideline"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.4" />
+
+            <TextView
+                android:id="@+id/quantityTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:fontFamily="@font/kreon_light"
+                android:textColor="@color/neutral_font_color"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@+id/quantityText"
+                app:layout_constraintStart_toStartOf="@+id/guideline"
+                app:layout_constraintTop_toTopOf="@+id/quantityText" />
+
+            <TextView
+                android:id="@+id/tradePriceTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:fontFamily="@font/kreon_light"
+                android:textColor="@color/neutral_font_color"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@+id/tradePriceText"
+                app:layout_constraintStart_toStartOf="@+id/guideline"
+                app:layout_constraintTop_toTopOf="@+id/tradePriceText" />
+
+            <TextView
+                android:id="@+id/cashTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:fontFamily="@font/kreon_light"
+                android:textColor="@color/neutral_font_color"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@+id/cashText"
+                app:layout_constraintStart_toStartOf="@+id/guideline"
+                app:layout_constraintTop_toTopOf="@+id/cashText" />
+
+            <TextView
+                android:id="@+id/reservedAssetsTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:fontFamily="@font/kreon_light"
+                android:textColor="@color/neutral_font_color"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@+id/reservedAssetsText"
+                app:layout_constraintStart_toStartOf="@+id/guideline"
+                app:layout_constraintTop_toTopOf="@+id/reservedAssetsText" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.cardview.widget.CardView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

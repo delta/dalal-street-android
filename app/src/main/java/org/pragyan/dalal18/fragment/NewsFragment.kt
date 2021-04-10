@@ -10,7 +10,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -22,7 +21,6 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import dalalstreet.api.DalalActionServiceGrpc
 import dalalstreet.api.actions.GetMarketEventsRequest
 import dalalstreet.api.actions.GetMarketEventsResponse
-import kotlinx.android.synthetic.main.fragment_news.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -32,12 +30,15 @@ import org.pragyan.dalal18.adapter.NewsRecyclerAdapter
 import org.pragyan.dalal18.dagger.ContextModule
 import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent
 import org.pragyan.dalal18.data.NewsDetails
+import org.pragyan.dalal18.databinding.FragmentNewsBinding
 import org.pragyan.dalal18.utils.ConnectionUtils
 import org.pragyan.dalal18.utils.Constants
+import org.pragyan.dalal18.utils.viewLifecycle
 import javax.inject.Inject
 
-
 class NewsFragment : Fragment(), NewsRecyclerAdapter.NewsItemClickListener, SwipeRefreshLayout.OnRefreshListener {
+
+    private var binding by viewLifecycle<FragmentNewsBinding>()
 
     @Inject
     lateinit var actionServiceBlockingStub: DalalActionServiceGrpc.DalalActionServiceBlockingStub
@@ -69,23 +70,25 @@ class NewsFragment : Fragment(), NewsRecyclerAdapter.NewsItemClickListener, Swip
                     actionServiceBlockingStub.getMarketEvents(GetMarketEventsRequest.newBuilder().setCount(0).setLastEventId(0).build())
                 }
 
-                newsSwipeRefreshLayout?.isRefreshing = false
+                binding.newsSwipeRefreshLayout.isRefreshing = false
 
                 if (marketEventsResponse.statusCode == GetMarketEventsResponse.StatusCode.OK) {
 
                     newsDetailsList.clear()
 
                     for (currentMarketEvent in marketEventsResponse.marketEventsList) {
-                        newsDetailsList.add(NewsDetails(currentMarketEvent.createdAt, currentMarketEvent.headline, currentMarketEvent.text, currentMarketEvent.imagePath))
+                        newsDetailsList.add(NewsDetails(currentMarketEvent.createdAt, currentMarketEvent.headline, currentMarketEvent.text, currentMarketEvent.imagePath, marketEventsResponse.newsBasePath))
                     }
 
-                    if (newsDetailsList.size != 0) {
-                        newsRecyclerAdapter?.swapData(newsDetailsList)
-                        noNewsTextView?.visibility = View.GONE
-                        newsRecyclerView?.visibility = View.VISIBLE
-                    } else {
-                        noNewsTextView.visibility = View.VISIBLE
-                        newsRecyclerView.visibility = View.GONE
+                    binding.apply {
+                        if (newsDetailsList.size != 0) {
+                            newsRecyclerAdapter?.swapData(newsDetailsList)
+                            noNewsTextView.visibility = View.GONE
+                            newsRecyclerView.visibility = View.VISIBLE
+                        } else {
+                            noNewsTextView.visibility = View.VISIBLE
+                            newsRecyclerView.visibility = View.GONE
+                        }
                     }
 
                 } else {
@@ -111,24 +114,33 @@ class NewsFragment : Fragment(), NewsRecyclerAdapter.NewsItemClickListener, Swip
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        binding = FragmentNewsBinding.inflate(inflater, container, false)
 
-        val rootView = inflater.inflate(R.layout.fragment_news, container, false)
         DaggerDalalStreetApplicationComponent.builder().contextModule(ContextModule(context!!)).build().inject(this)
-        return rootView
+
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        (activity as AppCompatActivity).supportActionBar?.title = resources.getString(R.string.news)
+
+        postponeEnterTransition()
+        binding.newsRecyclerView.viewTreeObserver
+                .addOnPreDrawListener {
+                    startPostponedEnterTransition()
+                    true
+                }
         newsRecyclerAdapter = NewsRecyclerAdapter(context, null, this)
 
-        with(newsRecyclerView) {
-            layoutManager = LinearLayoutManager(context)
-            setHasFixedSize(false)
-            adapter = newsRecyclerAdapter
-        }
+        binding.apply {
+            with(newsRecyclerView) {
+                layoutManager = LinearLayoutManager(context)
+                setHasFixedSize(false)
+                adapter = newsRecyclerAdapter
+            }
 
-        newsSwipeRefreshLayout.setOnRefreshListener(this)
+            newsSwipeRefreshLayout.setOnRefreshListener(this@NewsFragment)
+        }
 
         val dialogView = LayoutInflater.from(context).inflate(R.layout.progress_dialog, null)
         (dialogView.findViewById<View>(R.id.progressDialog_textView) as TextView).setText(R.string.getting_latest_news)
@@ -147,6 +159,11 @@ class NewsFragment : Fragment(), NewsRecyclerAdapter.NewsItemClickListener, Swip
         LocalBroadcastManager.getInstance(context!!).unregisterReceiver(refreshNewsListListener)
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        LocalBroadcastManager.getInstance(context!!).unregisterReceiver(refreshNewsListListener)
+    }
+
     override fun onRefresh() {
         getNewsAsynchronously()
     }
@@ -160,7 +177,7 @@ class NewsFragment : Fragment(), NewsRecyclerAdapter.NewsItemClickListener, Swip
         bundle.putString(Constants.NEWS_CREATED_AT_KEY, newsDetailsList[position].createdAt)
         bundle.putString(Constants.NEWS_CONTENT_KEY, newsDetailsList[position].content)
         bundle.putString(Constants.NEWS_HEAD_KEY, newsDetailsList[position].headlines)
-        bundle.putString(Constants.NEWS_IMAGE_PATH_KEY, newsDetailsList[position].imagePath)
+        bundle.putString(Constants.NEWS_IMAGE_PATH_KEY, newsDetailsList[position].basePath+""+newsDetailsList[position].imagePath)
         bundle.putString(Constants.HEAD_TRANSITION_KEY, headTransition)
         bundle.putString(Constants.CONTENT_TRANSITION_KEY, contentTransition)
         bundle.putString(Constants.CREATED_AT_TRANSITION_KEY, createdAtTransition)

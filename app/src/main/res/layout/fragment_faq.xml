@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/black_background"
@@ -8,7 +9,8 @@
     android:paddingStart="2dp"
     android:paddingTop="8dp"
     android:paddingEnd="2dp"
-    android:paddingBottom="8dp">
+    android:paddingBottom="8dp"
+    tools:viewBindingIgnore="true">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -426,6 +428,7 @@
                     android:layout_marginTop="-25dp"
                     android:layout_marginRight="10dp"
                     android:fontFamily="@font/kreon_light"
+                    android:textStyle="bold"
                     android:lineSpacingExtra="2dp"
                     android:paddingStart="0dp"
                     android:paddingEnd="40dp"
@@ -433,6 +436,91 @@
                     android:textSize="16sp" />
 
             </com.ms.square.android.expandabletextview.ExpandableTextView>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginStart="4dp"
+                android:layout_marginEnd="4dp"
+                android:background="@color/neon_orange" />
+
+            <com.ms.square.android.expandabletextview.ExpandableTextView
+                android:id="@+id/expand_text_view_faq11"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="16dp"
+                app:collapseDrawable="@drawable/arrow_drop_up"
+                app:expandDrawable="@drawable/arrow_drop_down"
+                app:maxCollapsedLines="1">
+
+                <ImageButton
+                    android:id="@id/expand_collapse"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="top|end"
+                    android:background="@android:color/transparent"
+                    android:paddingStart="20dp"
+                    android:paddingEnd="16dp" />
+
+                <TextView
+                    android:id="@id/expandable_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="-25dp"
+                    android:layout_marginRight="10dp"
+                    android:fontFamily="@font/kreon_light"
+                    android:lineSpacingExtra="2dp"
+                    android:paddingStart="0dp"
+                    android:paddingEnd="40dp"
+                    android:textColor="#FFFFFF"
+                    android:textSize="16sp" />
+
+            </com.ms.square.android.expandabletextview.ExpandableTextView>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginStart="4dp"
+                android:layout_marginEnd="4dp"
+                android:background="@color/neon_orange" />
+
+            <com.ms.square.android.expandabletextview.ExpandableTextView
+                android:id="@+id/expand_text_view_faq12"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="16dp"
+                app:collapseDrawable="@drawable/arrow_drop_up"
+                app:expandDrawable="@drawable/arrow_drop_down"
+                app:maxCollapsedLines="1">
+
+                <ImageButton
+                    android:id="@id/expand_collapse"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="top|end"
+                    android:background="@android:color/transparent"
+                    android:paddingStart="20dp"
+                    android:paddingEnd="16dp" />
+
+                <TextView
+                    android:id="@id/expandable_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="-25dp"
+                    android:layout_marginRight="10dp"
+                    android:fontFamily="@font/kreon_light"
+                    android:lineSpacingExtra="2dp"
+                    android:paddingStart="0dp"
+                    android:paddingEnd="40dp"
+                    android:textColor="#FFFFFF"
+                    android:textSize="16sp" />
+
+            </com.ms.square.android.expandabletextview.ExpandableTextView>
+
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
@@ -441,24 +529,14 @@
                 android:background="@color/neon_orange" />
 
             <TextView
+                android:id="@+id/forumTextView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:fontFamily="@font/kreon_light"
                 android:gravity="center"
-                android:text="@string/forum"
+                android:text="@string/reach_out_to_us"
                 android:textColor="@color/neutral_font_color"
-                android:textSize="16sp" />
-
-            <TextView
-                android:id="@+id/forumTextView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:fontFamily="@font/kreon_light"
-                android:gravity="center"
-                android:text="@string/forum_link"
-                android:textColor="@color/colorAccent"
                 android:textSize="16sp" />
 
         </LinearLayout>

@@ -1,21 +1,27 @@
 package org.pragyan.dalal18.dagger;
 
 import org.pragyan.dalal18.fragment.CompanyFragment;
+import org.pragyan.dalal18.fragment.DailyChallengesFragment;
 import org.pragyan.dalal18.fragment.HomeFragment;
-import org.pragyan.dalal18.fragment.LeaderboardFragment;
-import org.pragyan.dalal18.fragment.SecretFragment;
-import org.pragyan.dalal18.fragment.smsVerification.AddPhoneFragment;
-import org.pragyan.dalal18.fragment.smsVerification.OTPVerificationFragment;
-import org.pragyan.dalal18.fragment.mortgage.MortgageFragment;
 import org.pragyan.dalal18.fragment.NewsFragment;
 import org.pragyan.dalal18.fragment.OrdersFragment;
 import org.pragyan.dalal18.fragment.PortfolioFragment;
+import org.pragyan.dalal18.fragment.ReferAndEarnFragment;
+import org.pragyan.dalal18.fragment.SecretFragment;
+import org.pragyan.dalal18.fragment.SingleDayChallengeFragment;
 import org.pragyan.dalal18.fragment.StockExchangeFragment;
 import org.pragyan.dalal18.fragment.TradeFragment;
 import org.pragyan.dalal18.fragment.TransactionsFragment;
+import org.pragyan.dalal18.fragment.adminPanel.AdminPanelDailyMarketFragment;
+import org.pragyan.dalal18.fragment.adminPanel.AdminPanelStocksFragment;
+import org.pragyan.dalal18.fragment.adminPanel.AdminPanelUserSpecificFragment;
+import org.pragyan.dalal18.fragment.leaderboard.LeaderboardListFragment;
 import org.pragyan.dalal18.fragment.marketDepth.DepthGraphFragment;
 import org.pragyan.dalal18.fragment.marketDepth.DepthTableFragment;
+import org.pragyan.dalal18.fragment.mortgage.MortgageFragment;
 import org.pragyan.dalal18.fragment.mortgage.RetrieveFragment;
+import org.pragyan.dalal18.fragment.smsVerification.AddPhoneFragment;
+import org.pragyan.dalal18.fragment.smsVerification.OTPVerificationFragment;
 import org.pragyan.dalal18.notifications.NotificationFragment;
 import org.pragyan.dalal18.notifications.NotificationService;
 import org.pragyan.dalal18.notifications.PushNotificationService;
@@ -46,7 +52,7 @@ public interface DalalStreetApplicationComponent {
     void inject(NewsFragment newsFragment);
     void inject(MortgageFragment mortgageFragment);
     void inject(RetrieveFragment retrieveFragment);
-    void inject(LeaderboardFragment leaderboardFragment);
+    void inject(LeaderboardListFragment leaderboardListFragment);
     void inject(StockExchangeFragment stockExchangeFragment);
     void inject(TransactionsFragment transactionsFragment);
     void inject(OrdersFragment ordersFragment);
@@ -56,6 +62,12 @@ public interface DalalStreetApplicationComponent {
     void inject(OTPVerificationFragment otpVerificationFragment);
     void inject(AddPhoneFragment addPhoneFragment);
     void inject(SecretFragment secretFragment);
+    void inject(AdminPanelStocksFragment adminPanelStocksFragment);
+    void inject(AdminPanelDailyMarketFragment adminPanelDailyMarketFragment);
+    void inject(AdminPanelUserSpecificFragment adminPanelUserSpecificFragment);
+    void inject(ReferAndEarnFragment referAndEarnFragment);
+    void inject(DailyChallengesFragment dailyChallengesFragment);
+    void inject(SingleDayChallengeFragment singleDayChallengeFragment);
 
     void inject(NotificationService notificationService);
     void inject(VerifyPhoneActivity verifyPhoneActivity);

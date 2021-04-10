@@ -1,0 +1,338 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/black_background">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/black_background"
+        android:paddingStart="8dp"
+        android:paddingTop="16dp"
+        android:paddingEnd="8dp"
+        android:paddingBottom="16dp">
+
+        <TextView
+            android:id="@+id/blockUserTextview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:backgroundTint="@color/neutral_font_color"
+            android:text="Block User"
+            android:textColor="@color/neutral_font_color"
+            android:textColorHint="@color/neutral_font_color"
+            app:layout_constraintBottom_toBottomOf="@+id/blockUserButton"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/blockUserEditText"
+            app:layout_constraintVertical_bias="0.538" />
+
+        <EditText
+            android:id="@+id/blockUserEditText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="52dp"
+            android:layout_marginTop="88dp"
+            android:backgroundTint="@color/neutral_font_color"
+            android:hint="Enter User ID"
+            android:inputType="text"
+            android:textColor="@color/neutral_font_color"
+            android:textColorHint="@color/neutral_font_color"
+            app:layout_constraintStart_toEndOf="@+id/blockUserTextview"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <EditText
+            android:id="@+id/addPenaltyEditText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:backgroundTint="@color/neutral_font_color"
+            android:hint="Enter Penalty"
+            android:inputType="text"
+            android:textColor="@color/neutral_font_color"
+            android:textColorHint="@color/neutral_font_color"
+            app:layout_constraintEnd_toEndOf="@+id/blockUserEditText"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/blockUserEditText"
+            app:layout_constraintTop_toBottomOf="@+id/blockUserEditText" />
+
+        <Button
+            android:id="@+id/blockUserButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/black_white_rounded_button"
+            android:padding="4dp"
+            android:text="Block User"
+            android:textColor="@color/red_piechart"
+            app:layout_constraintEnd_toEndOf="@+id/blockUserEditText"
+            app:layout_constraintHorizontal_bias="0.523"
+            app:layout_constraintStart_toStartOf="@+id/blockUserEditText"
+            app:layout_constraintTop_toBottomOf="@+id/addPenaltyEditText" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="@color/black"
+            android:layout_marginTop="10dp"
+            app:layout_constraintTop_toBottomOf="@+id/blockUserButton"
+            tools:layout_editor_absoluteX="13dp" />
+
+
+        <TextView
+            android:id="@+id/unblockUserTextvView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:backgroundTint="@color/neutral_font_color"
+            android:text="Unblock User"
+            android:textColor="@color/neutral_font_color"
+            android:textColorHint="@color/neutral_font_color"
+            app:layout_constraintBottom_toBottomOf="@+id/unblockUserButton"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/unblockUserEditText"
+            app:layout_constraintVertical_bias="0.461" />
+
+        <EditText
+            android:id="@+id/unblockUserEditText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="36dp"
+            android:layout_marginTop="32dp"
+            android:backgroundTint="@color/neutral_font_color"
+            android:hint="Enter User ID"
+            android:inputType="text"
+            android:textColor="@color/neutral_font_color"
+            android:textColorHint="@color/neutral_font_color"
+            app:layout_constraintStart_toEndOf="@+id/unblockUserTextvView"
+            app:layout_constraintTop_toBottomOf="@+id/blockUserButton" />
+
+        <Button
+            android:id="@+id/unblockUserButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:background="@drawable/black_white_rounded_button"
+            android:padding="4dp"
+            android:text="Unblock User"
+            android:textColor="@color/neon_green"
+            app:layout_constraintEnd_toEndOf="@+id/unblockUserEditText"
+            app:layout_constraintStart_toStartOf="@+id/unblockUserEditText"
+            app:layout_constraintTop_toBottomOf="@+id/unblockUserEditText" />
+
+        <View
+            android:id="@+id/view2"
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:layout_marginTop="10dp"
+            android:background="@color/black"
+            app:layout_constraintTop_toBottomOf="@+id/unblockUserButton"
+            tools:layout_editor_absoluteX="8dp" />
+
+        <TextView
+            android:id="@+id/unblockAllUser"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:backgroundTint="@color/neutral_font_color"
+            android:text="Unbock All User"
+            android:textColor="@color/neutral_font_color"
+            android:textColorHint="@color/neutral_font_color"
+            app:layout_constraintBottom_toBottomOf="@+id/unblockAllUserButton"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/unblockAllUserButton"
+            app:layout_constraintVertical_bias="0.588" />
+
+        <Button
+            android:id="@+id/unblockAllUserButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="28dp"
+            android:background="@drawable/black_white_rounded_button"
+            android:padding="4dp"
+            android:text="Unblock All User"
+            android:textColor="@color/neon_green"
+            app:layout_constraintEnd_toEndOf="@+id/unblockUserButton"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/unblockUserButton"
+            app:layout_constraintTop_toBottomOf="@+id/unblockUserButton" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:layout_marginTop="20dp"
+            android:background="@color/black"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.48"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/unblockAllUserButton" />
+
+        <TextView
+            android:id="@+id/sendNotificationTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:backgroundTint="@color/neutral_font_color"
+            android:text="Send Notification"
+            android:textColor="@color/neutral_font_color"
+            android:textColorHint="@color/neutral_font_color"
+            app:layout_constraintBottom_toBottomOf="@+id/userIdForNotification"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/isGlobalSwitch" />
+
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/isGlobalSwitch"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="40dp"
+            android:backgroundTint="@color/neutral_font_color"
+            android:hint="Global?"
+            android:inputType="number"
+            android:textColor="@color/neutral_font_color"
+            android:textColorHint="@color/neutral_font_color"
+            app:layout_constraintEnd_toEndOf="@+id/unblockAllUserButton"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/unblockAllUserButton"
+            app:layout_constraintTop_toBottomOf="@+id/unblockAllUserButton" />
+
+        <EditText
+            android:id="@+id/notificationEditText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:backgroundTint="@color/neutral_font_color"
+            android:hint="NotificationText"
+            android:inputType="text"
+            android:textColor="@color/neutral_font_color"
+            android:textColorHint="@color/neutral_font_color"
+            app:layout_constraintEnd_toEndOf="@+id/isGlobalSwitch"
+            app:layout_constraintStart_toStartOf="@id/isGlobalSwitch"
+            app:layout_constraintTop_toBottomOf="@id/isGlobalSwitch" />
+
+        <EditText
+            android:id="@+id/userIdForNotification"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:backgroundTint="@color/neutral_font_color"
+            android:hint="User Id"
+            android:inputType="text"
+            android:textColor="@color/neutral_font_color"
+            android:textColorHint="@color/neutral_font_color"
+            app:layout_constraintEnd_toEndOf="@+id/notificationEditText"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/notificationEditText"
+            app:layout_constraintTop_toBottomOf="@+id/notificationEditText" />
+
+        <Button
+            android:id="@+id/sendNotificationButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="28dp"
+            android:background="@drawable/black_white_rounded_button"
+            android:text="Send"
+            android:textColor="@color/neon_yellow"
+            app:layout_constraintEnd_toEndOf="@+id/userIdForNotification"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/userIdForNotification"
+            app:layout_constraintTop_toBottomOf="@+id/userIdForNotification" />
+
+        <View
+            android:id="@+id/viewBelowSendNotificationButton"
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="@color/black"
+            android:layout_marginTop="10dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/sendNotificationButton" />
+        <TextView
+            android:id="@+id/inspectUserTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:backgroundTint="@color/neutral_font_color"
+            android:text="Inspect User"
+            android:textColor="@color/neutral_font_color"
+            android:textColorHint="@color/neutral_font_color"
+            app:layout_constraintBottom_toBottomOf="@+id/userIdForInspectUser"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/sendNotificationButton"
+            app:layout_constraintVertical_bias="0.526" />
+
+        <EditText
+            android:id="@+id/userIdForInspectUser"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:backgroundTint="@color/neutral_font_color"
+            android:hint="User Id"
+            android:inputType="text"
+            android:textColor="@color/neutral_font_color"
+            android:textColorHint="@color/neutral_font_color"
+            app:layout_constraintEnd_toEndOf="@+id/bidUserSwitch"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/bidUserSwitch"
+            app:layout_constraintTop_toBottomOf="@+id/bidUserSwitch" />
+
+        <EditText
+            android:id="@+id/noOfDaysForInspectUser"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:backgroundTint="@color/neutral_font_color"
+            android:hint="Days"
+            android:inputType="text"
+            android:textColor="@color/neutral_font_color"
+            android:textColorHint="@color/neutral_font_color"
+            app:layout_constraintEnd_toEndOf="@+id/userIdForInspectUser"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/userIdForInspectUser"
+            app:layout_constraintTop_toBottomOf="@+id/userIdForInspectUser" />
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/bidUserSwitch"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:backgroundTint="@color/neutral_font_color"
+            android:hint="Bid User"
+            android:inputType="number"
+            android:textColor="@color/neutral_font_color"
+            android:textColorHint="@color/neutral_font_color"
+            app:layout_constraintEnd_toEndOf="@+id/userIdForNotification"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/userIdForNotification"
+            app:layout_constraintTop_toBottomOf="@+id/viewBelowSendNotificationButton" />
+
+
+        <Button
+            android:id="@+id/inspectUserButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:layout_marginEnd="24dp"
+            android:padding="5dp"
+            android:background="@drawable/black_white_rounded_button"
+            android:text="Inspect User"
+            android:textColor="@color/neon_yellow"
+            app:layout_constraintEnd_toEndOf="@+id/noOfDaysForInspectUser"
+            app:layout_constraintTop_toBottomOf="@+id/noOfDaysForInspectUser" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_inspectUSer"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="20dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/inspectUserButton" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.core.widget.NestedScrollView>

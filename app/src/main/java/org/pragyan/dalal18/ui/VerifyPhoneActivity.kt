@@ -12,6 +12,7 @@ import android.view.ViewGroup
 import android.view.ViewGroup.MarginLayoutParams
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.google.android.gms.auth.api.Auth
@@ -20,29 +21,45 @@ import com.google.android.gms.auth.api.credentials.HintRequest
 import com.google.android.gms.auth.api.phone.SmsRetriever
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.api.GoogleApiClient
+import com.google.android.material.snackbar.Snackbar
 import dalalstreet.api.DalalActionServiceGrpc
+import dalalstreet.api.actions.LoginRequest
+import dalalstreet.api.actions.LoginResponse
 import dalalstreet.api.actions.LogoutRequest
 import dalalstreet.api.actions.LogoutResponse
-import kotlinx.android.synthetic.main.activity_verify_phone.*
+import io.grpc.ManagedChannel
+import io.grpc.Metadata
+import io.grpc.stub.MetadataUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.toast
+import org.jetbrains.anko.uiThread
 import org.pragyan.dalal18.R
 import org.pragyan.dalal18.adapter.pagerAdapters.SmsVerificationPagerAdapter
 import org.pragyan.dalal18.adapter.pagerAdapters.SmsVerificationPagerAdapter.Companion.ADD_PHONE
 import org.pragyan.dalal18.adapter.pagerAdapters.SmsVerificationPagerAdapter.Companion.OTP_VERIFICATION
 import org.pragyan.dalal18.dagger.ContextModule
 import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent
+import org.pragyan.dalal18.databinding.ActivityVerifyPhoneBinding
 import org.pragyan.dalal18.fragment.smsVerification.AddPhoneFragment
 import org.pragyan.dalal18.fragment.smsVerification.OTPVerificationFragment
 import org.pragyan.dalal18.utils.ConnectionUtils
 import org.pragyan.dalal18.utils.Constants
 import org.pragyan.dalal18.utils.Constants.SMS_KEY
+import org.pragyan.dalal18.utils.MiscellaneousUtils
 import org.pragyan.dalal18.utils.MiscellaneousUtils.convertDpToPixel
+import org.pragyan.dalal18.utils.viewLifecycle
 import javax.inject.Inject
 
 class VerifyPhoneActivity : AppCompatActivity(), ConnectionUtils.SmsVerificationHandler, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+
+    private val binding by viewLifecycle(ActivityVerifyPhoneBinding::inflate)
+
+    /* Not injecting stub directly into this context to prevent empty/null metadata attached to stub since user has not logged in. */
+    @Inject
+    lateinit var channel: ManagedChannel
 
     @Inject
     lateinit var actionServiceBlockingStub: DalalActionServiceGrpc.DalalActionServiceBlockingStub
@@ -62,7 +79,7 @@ class VerifyPhoneActivity : AppCompatActivity(), ConnectionUtils.SmsVerification
 
                 val otp = extractOtpFromMessage(message)
                 val page = supportFragmentManager.findFragmentByTag(
-                        "android:switcher:" + R.id.smsViewPager + ":" + smsViewPager.currentItem) as OTPVerificationFragment
+                        "android:switcher:" + R.id.smsViewPager + ":" + binding.smsViewPager.currentItem) as OTPVerificationFragment
 
                 Log.v(LOG_TAG, "Extracted OTP: $otp")
                 page.checkIfOtpIsCorrect(otp, phoneNumber)
@@ -72,7 +89,7 @@ class VerifyPhoneActivity : AppCompatActivity(), ConnectionUtils.SmsVerification
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_verify_phone)
+        setContentView(binding.root)
 
         DaggerDalalStreetApplicationComponent.builder().contextModule(ContextModule(this)).build().inject(this)
 
@@ -80,13 +97,15 @@ class VerifyPhoneActivity : AppCompatActivity(), ConnectionUtils.SmsVerification
         setSupportActionBar(toolbar)
         title = getString(R.string.otp_verification)
 
-        smsViewPager.adapter = SmsVerificationPagerAdapter(supportFragmentManager)
-        smsTabLayout.setupWithViewPager(smsViewPager)
+        binding.apply {
+            smsViewPager.adapter = SmsVerificationPagerAdapter(supportFragmentManager)
+            smsTabLayout.setupWithViewPager(smsViewPager)
 
-        smsTabLayout.setBackgroundColor(Color.parseColor("#20202C"))
+            smsTabLayout.setBackgroundColor(Color.parseColor("#20202C"))
+        }
 
-        for (i in 0 until smsTabLayout.tabCount) {
-            val tab: View = (smsTabLayout.getChildAt(0) as ViewGroup).getChildAt(i)
+        for (i in 0 until binding.smsTabLayout.tabCount) {
+            val tab: View = (binding.smsTabLayout.getChildAt(0) as ViewGroup).getChildAt(i)
             val marginLayoutParams = tab.layoutParams as MarginLayoutParams
 
             val pixels = convertDpToPixel(8.0f, this)
@@ -132,7 +151,7 @@ class VerifyPhoneActivity : AppCompatActivity(), ConnectionUtils.SmsVerification
                     startListeningToSMS()
 
                     val page = supportFragmentManager.findFragmentByTag(
-                            "android:switcher:" + R.id.smsViewPager + ":" + smsViewPager.currentItem) as AddPhoneFragment
+                            "android:switcher:" + R.id.smsViewPager + ":" + binding.smsViewPager.currentItem) as AddPhoneFragment
 
                     phoneNumber = phoneNumberWithExtension.id
                     page.sendAddPhoneNumberAsynchronously(phoneNumberWithExtension.id)
@@ -177,12 +196,12 @@ class VerifyPhoneActivity : AppCompatActivity(), ConnectionUtils.SmsVerification
 
     override fun navigateToOtpVerification(phoneNumber: String) {
         this.phoneNumber = phoneNumber
-        smsViewPager.currentItem = OTP_VERIFICATION
+        binding.smsViewPager.currentItem = OTP_VERIFICATION
     }
 
     override fun navigateToAddPhone() {
         this.phoneNumber = ""
-        smsViewPager.currentItem = ADD_PHONE
+        binding.smsViewPager.currentItem = ADD_PHONE
     }
 
     override fun getPhoneNumber(): String {
@@ -190,11 +209,92 @@ class VerifyPhoneActivity : AppCompatActivity(), ConnectionUtils.SmsVerification
     }
 
     override fun phoneVerificationSuccessful() {
-        val intent = Intent(this, MainActivity::class.java)
-        intent.putExtras(this.intent)
-        startActivity(intent)
+
+        val email = preferences.getString(SplashActivity.EMAIL_KEY, null)
+        val password = preferences.getString(SplashActivity.PASSWORD_KEY, null)
+        if (email != null && password != null && email != "") {
+            loginAsynchronously(email, password)
+        } else {
+            startLoginActivity()
+        }
+
+    }
+
+    private fun loginAsynchronously(email: String?, password: String?) {
+        doAsync {
+            if (ConnectionUtils.getConnectionInfo(this@VerifyPhoneActivity)) {
+                if (ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
+                    val sessionId = preferences.getString(Constants.SESSION_KEY, null)
+
+                    if (sessionId != null) {
+
+                        val customStub = MetadataUtils.attachHeaders(DalalActionServiceGrpc.newBlockingStub(channel), getStubMetadata(sessionId))
+                        val loginResponse = customStub.login(LoginRequest.newBuilder().setEmail(email).setPassword(password).build())
+
+                        uiThread {
+
+                            if (loginResponse.statusCode == LoginResponse.StatusCode.OK && !loginResponse.user.isBlocked) {
+
+                                MiscellaneousUtils.sessionId = loginResponse.sessionId
+
+                                val intent = Intent(this@VerifyPhoneActivity, MainActivity::class.java)
+                                intent.putExtras(getIntent())
+                                with(intent) {
+                                    putExtra(MainActivity.CASH_WORTH_KEY, loginResponse.user.cash)
+                                    putExtra(MainActivity.TOTAL_WORTH_KEY, loginResponse.user.total)
+                                    putExtra(MainActivity.RESERVED_CASH_KEY, loginResponse.user.reservedCash)
+                                }
+                                startActivity(intent)
+                                finish()
+                            }
+                        }
+                    } else {
+                        uiThread { startLoginActivity() }
+                    }
+                } else {
+                    val snackBar = Snackbar.make(findViewById<View>(android.R.id.content), resources.getString(R.string.error_server_down), Snackbar.LENGTH_INDEFINITE)
+                            .setAction("RETRY") {
+                                phoneVerificationSuccessful()
+                            }
+
+                    snackBar.setActionTextColor(ContextCompat.getColor(this@VerifyPhoneActivity, R.color.neon_green))
+                    snackBar.view.setBackgroundColor(Color.parseColor("#20202C"))
+                    snackBar.show()
+
+                }
+
+            } else /* No internet available */ {
+                uiThread {
+
+                    val snackBar = Snackbar.make(findViewById<View>(android.R.id.content), "Please check internet connection", Snackbar.LENGTH_INDEFINITE)
+                            .setAction("RETRY") {
+                                phoneVerificationSuccessful()
+
+                            }
+
+                    snackBar.setActionTextColor(ContextCompat.getColor(this@VerifyPhoneActivity, R.color.neon_green))
+                    snackBar.view.setBackgroundColor(Color.parseColor("#20202C"))
+                    snackBar.show()
+
+                }
+            }
+        }
+    }
+
+
+    private fun startLoginActivity() {
+        preferences.edit().putString(SplashActivity.EMAIL_KEY, null).putString(SplashActivity.PASSWORD_KEY, null).apply()
+        startActivity(Intent(this, LoginActivity::class.java))
         finish()
     }
+
+    private fun getStubMetadata(sessionId: String): Metadata {
+        val metadata = Metadata()
+        val metadataKey = Metadata.Key.of("sessionid", Metadata.ASCII_STRING_MARSHALLER)
+        metadata.put(metadataKey, sessionId)
+        return metadata
+    }
+
 
     override fun onNetworkDownError(message: String) {
         toast(message)

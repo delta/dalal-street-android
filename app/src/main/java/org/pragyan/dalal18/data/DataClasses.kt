@@ -23,7 +23,7 @@ data class MarketDepth(var price: Long, var volume: Long)
 data class MortgageDetails(var stockId: Int, var shortName: String, var companyName: String, var stockQuantity: Long, var mortgagePrice: Long)
 
 @Parcelize
-data class NewsDetails(var createdAt: String?, var headlines: String?, var content: String?, var imagePath: String?) : Parcelable
+data class NewsDetails(var createdAt: String?, var headlines: String?, var content: String?, var imagePath: String?, var basePath: String?) : Parcelable
 
 data class Notification(val text: String, val createdAt: String)
 
@@ -43,9 +43,8 @@ data class StockHistory(var stockDate: Date?, var stockHigh: Long, var stockLow:
 
 @Parcelize
 data class GameStateDetails(val gameStateUpdateType: GameStateUpdateType, val isMarketOpen: Boolean?, val isOtpVerified: Boolean?, val dividendStockId: Int?, val givesDividend: Boolean?,
-                            val bankruptStockId: Int?, val isBankrupt: Boolean?) : Parcelable
+                            val bankruptStockId: Int?, val isBankrupt: Boolean?, val referredCashWorth: Long, val userRewardCash: Long, val isDailyChallengeOpen: Boolean) : Parcelable
 
 @Parcelize
 data class CustomOrderUpdate(val orderId: Int, val isClosed: Boolean, val isAsk: Boolean, val orderPrice: Long, val companyName: String,
                              val stockId: Int, val stockQuantity: Long, val isNewOrder: Boolean, val orderType: OrderType) : Parcelable
-

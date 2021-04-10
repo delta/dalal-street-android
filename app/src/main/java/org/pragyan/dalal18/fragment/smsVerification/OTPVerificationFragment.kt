@@ -13,7 +13,6 @@ import androidx.lifecycle.lifecycleScope
 import dalalstreet.api.DalalActionServiceGrpc
 import dalalstreet.api.actions.VerifyOTPRequest
 import dalalstreet.api.actions.VerifyOTPResponse
-import kotlinx.android.synthetic.main.fragment_otp_verification.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -21,11 +20,15 @@ import org.jetbrains.anko.toast
 import org.pragyan.dalal18.R
 import org.pragyan.dalal18.dagger.ContextModule
 import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent
+import org.pragyan.dalal18.databinding.FragmentOtpVerificationBinding
 import org.pragyan.dalal18.utils.ConnectionUtils
 import org.pragyan.dalal18.utils.hideKeyboard
+import org.pragyan.dalal18.utils.viewLifecycle
 import javax.inject.Inject
 
 class OTPVerificationFragment : Fragment() {
+
+    private var binding by viewLifecycle<FragmentOtpVerificationBinding>()
 
     @Inject
     lateinit var actionServiceBlockingStub: DalalActionServiceGrpc.DalalActionServiceBlockingStub
@@ -45,13 +48,16 @@ class OTPVerificationFragment : Fragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_otp_verification, container, false)
+        binding = FragmentOtpVerificationBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        verifyOtpButton.setOnClickListener { onVerifyButtonClick() }
+        binding.apply {
+            verifyOtpButton.setOnClickListener { onVerifyButtonClick() }
+        }
 
         setupResendTimer()
     }
@@ -66,36 +72,39 @@ class OTPVerificationFragment : Fragment() {
     }
 
     private fun setupResendTimer() {
-        resendTimer = object : CountDownTimer(60000, 1000) {
-            override fun onFinish() {
-                resendOtpButton.text = this@OTPVerificationFragment.getString(R.string.resend_otp)
-                resendOtpButton.isEnabled = true
+        binding.apply {
+            resendTimer = object : CountDownTimer(60000, 1000) {
+                override fun onFinish() {
+                    resendOtpButton.text = this@OTPVerificationFragment.getString(R.string.resend_otp)
+                    resendOtpButton.isEnabled = true
+                }
+
+                override fun onTick(left: Long) {
+                    val resendButtonText = getString(R.string.resend_in_00) + adjustUnits(left / 1000)
+                    resendOtpButton.text = resendButtonText
+                }
             }
 
-            override fun onTick(left: Long) {
-                val resendButtonText = getString(R.string.resend_in_00) + adjustUnits(left / 1000)
-                resendOtpButton.text = resendButtonText
+            resendOtpButton.setOnClickListener {
+                smsVerificationHandler.navigateToAddPhone()
             }
-
-        }
-
-        resendOtpButton.setOnClickListener {
-            smsVerificationHandler.navigateToAddPhone()
         }
     }
 
     private fun onVerifyButtonClick() {
-        if (otpSpecialEditText.text.toString().length != 4)
-            context?.toast("Enter valid OTP")
-        else
-            checkIfOtpIsCorrect(otpSpecialEditText.text.toString(), smsVerificationHandler.phoneNumber)
+        binding.apply {
+            if (otpSpecialEditText.text.toString().length != 4)
+                context?.toast("Enter valid OTP")
+            else
+                checkIfOtpIsCorrect(otpSpecialEditText.text.toString(), smsVerificationHandler.phoneNumber)
+        }
     }
 
     fun checkIfOtpIsCorrect(otp: String, phoneNumber: String) = lifecycleScope.launch {
 
         loadingDialog.show()
         view?.hideKeyboard()
-        otpSpecialEditText.setText(otp)
+        binding.otpSpecialEditText.setText(otp)
 
         if (withContext(Dispatchers.IO) { ConnectionUtils.getConnectionInfo(context) }) {
 
@@ -125,7 +134,7 @@ class OTPVerificationFragment : Fragment() {
     override fun onResume() {
         super.onResume()
 
-        phoneNumberTextView.text = smsVerificationHandler.phoneNumber
+        binding.phoneNumberTextView.text = smsVerificationHandler.phoneNumber
 
         if (smsVerificationHandler.phoneNumber.isBlank() || smsVerificationHandler.phoneNumber.isEmpty())
             smsVerificationHandler.navigateToAddPhone()

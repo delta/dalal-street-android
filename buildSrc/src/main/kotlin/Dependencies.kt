@@ -3,18 +3,20 @@ object AndroidSdk {
     const val minSdk = 21
     const val targetSdk = 29
 
-    const val versionCode = 15
-    const val versionName = "6.3"
+    const val versionCode = 26
+    const val versionName = "7.7"
+
     const val buildToolsVersion = "29.0.3"
     const val DalalAppId = "org.pragyan.dalal18"
 }
 
 object Versions {
-    const val Gradle = "3.6.0"
+    const val Gradle = "4.0.1"
     const val Kotlin = "1.3.61"
     const val CoreKtx = "1.3.1"
     const val Coroutine = "1.3.3"
     const val Appcompat = "1.1.0"
+    const val LegacySupport = "1.0.0"
     const val ConstraintLayout = "2.0.0-beta4"
     const val Lifecycle = "2.2.0"
     const val Navigation = "1.0.0"
@@ -38,7 +40,7 @@ object Versions {
     const val FirebaseCrashanalyticsGradle = "2.4.1"
     const val Crashlytics = "17.3.0"
     const val GmsServiceAuth = "17.0.0"
-    const val PlayCore = "1.8.0"
+    const val PlayCore = "1.9.0"
     const val PlayCoreKtx = "1.8.1"
 
     // gRPC dependencies version
@@ -57,6 +59,7 @@ object Versions {
     const val Junit = "4.12"
     const val JunitExt = "1.1.2"
     const val EspressoCore = "3.3.0"
+
 }
 
 object BuildPlugins {
@@ -83,7 +86,6 @@ object TestLibs {
     const val junitRunner = "androidx.test.runner.AndroidJUnitRunner"
 }
 
-
 object Libs {
     const val anko = "org.jetbrains.anko:anko:${Versions.Anko}"
 
@@ -91,6 +93,7 @@ object Libs {
     const val kotlinCoroutine = "org.jetbrains.kotlinx:kotlinx-coroutines-android:${Versions.Coroutine}"
     const val coreKtx = "androidx.core:core-ktx:${Versions.CoreKtx}"
     const val appcompat = "androidx.appcompat:appcompat:${Versions.Appcompat}"
+    const val legacySupport = "androidx.legacy:legacy-support-v4:${Versions.LegacySupport}"
     const val constraintLayout = "androidx.constraintlayout:constraintlayout:${Versions.ConstraintLayout}"
     const val androidMaterialLibrary = "com.google.android.material:material:${Versions.Material}"
 
@@ -141,6 +144,7 @@ object Libs {
     const val firebaseBom = "com.google.firebase:firebase-bom:${Versions.FirebaseBom}"
     const val firebaseAnalytics = "com.google.firebase:firebase-analytics-ktx"
     const val crashAnalytics = "com.google.firebase:firebase-crashlytics-ktx"
+    const val firebasecloudmessaging = "com.google.firebase:firebase-messaging-ktx"
 
     const val gmsServiceAuth = "com.google.android.gms:play-services-auth:${Versions.GmsServiceAuth}"
 

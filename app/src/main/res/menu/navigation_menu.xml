@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <group android:id="@+id/information_category">
 
@@ -16,7 +17,7 @@
         <item
             android:id="@+id/portfolio_dest"
             android:icon="@drawable/portfolio_icon"
-            android:title="@string/portfolio"/>
+            android:title="@string/portfolio" />
 
     </group>
 
@@ -50,11 +51,16 @@
             android:id="@+id/news_dest"
             android:icon="@drawable/news_icon"
             android:title="@string/news" />
-        
+
         <item
             android:id="@+id/leaderboard_dest"
             android:icon="@drawable/trophy_icon"
-            android:title="@string/leaderboard" />
+            android:title="@string/leaderboard_frag_label" />
+
+        <item
+            android:id="@+id/dailyChallenge_dest"
+            android:icon="@drawable/daily_challenge_icon"
+            android:title="@string/daily_challenge"/>
 
         <item
             android:id="@+id/open_orders_dest"
@@ -67,5 +73,20 @@
             android:title="@string/transactions" />
 
     </group>
+
+    <group android:id="@+id/referral_code">
+
+        <item
+            android:id="@+id/refer_and_earn_dest"
+            android:icon="@drawable/refer_and_earn_icon"
+            android:title="@string/refer_and_earn" />
+
+        <item
+            android:id="@+id/sponsor_dest"
+            android:icon="@drawable/ic_baseline_mediation_24"
+            android:title="@string/sponsor" />
+
+    </group>
+
 
 </menu>

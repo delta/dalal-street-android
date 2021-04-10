@@ -6,10 +6,10 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.os.Bundle
 import android.os.Handler
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -24,7 +24,6 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import dalalstreet.api.DalalActionServiceGrpc
 import dalalstreet.api.actions.GetMarketEventsRequest
 import dalalstreet.api.actions.GetMarketEventsResponse
-import kotlinx.android.synthetic.main.fragment_home.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.toast
 import org.jetbrains.anko.uiThread
@@ -36,13 +35,17 @@ import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent
 import org.pragyan.dalal18.data.CompanyTickerDetails
 import org.pragyan.dalal18.data.DalalViewModel
 import org.pragyan.dalal18.data.NewsDetails
+import org.pragyan.dalal18.databinding.FragmentHomeBinding
 import org.pragyan.dalal18.utils.ConnectionUtils
 import org.pragyan.dalal18.utils.Constants
+import org.pragyan.dalal18.utils.viewLifecycle
 import java.text.DecimalFormat
 import javax.inject.Inject
 
 class HomeFragment : Fragment(), NewsRecyclerAdapter.NewsItemClickListener, SwipeRefreshLayout.OnRefreshListener,
         CompanyTickerRecyclerAdapter.OnCompanyTickerClickListener {
+
+    private var binding by viewLifecycle<FragmentHomeBinding>()
 
     @Inject
     lateinit var actionServiceBlockingStub: DalalActionServiceGrpc.DalalActionServiceBlockingStub
@@ -76,48 +79,50 @@ class HomeFragment : Fragment(), NewsRecyclerAdapter.NewsItemClickListener, Swip
                         builder.append(if (currentStock.up == 1) "\u2191" else "\u2193").append("     ")
                     }
                 }
-                breakingNewsTextView.text = builder.toString()
+                binding.breakingNewsTextView.text = builder.toString()
             }
         }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-
-        val rootView = inflater.inflate(R.layout.fragment_home, container, false)
+        binding = FragmentHomeBinding.inflate(inflater, container, false)
 
         model = activity?.run { ViewModelProvider(this).get(DalalViewModel::class.java) }
                 ?: throw Exception("Invalid activity")
         DaggerDalalStreetApplicationComponent.builder().contextModule(ContextModule(context!!)).build().inject(this)
 
-        return rootView
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        breakingNewsTextView.isSelected = true
-        (activity as AppCompatActivity).supportActionBar?.title = resources.getString(R.string.dalal)
+        binding.breakingNewsTextView.isSelected = true
         linearLayoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
 
         companyTickerRecyclerAdapter = CompanyTickerRecyclerAdapter(context, null, this)
-        companiesRecyclerView.layoutManager = linearLayoutManager
-        companiesRecyclerView.itemAnimator = DefaultItemAnimator()
-        companiesRecyclerView.adapter = companyTickerRecyclerAdapter
+        binding.apply {
+            companiesRecyclerView.layoutManager = linearLayoutManager
+            companiesRecyclerView.itemAnimator = DefaultItemAnimator()
+            companiesRecyclerView.adapter = companyTickerRecyclerAdapter
+        }
 
         val companiesSnapHelper = PagerSnapHelper()
-        companiesSnapHelper.attachToRecyclerView(companiesRecyclerView)
+        companiesSnapHelper.attachToRecyclerView(binding.companiesRecyclerView)
 
         newsRecyclerAdapter = NewsRecyclerAdapter(context, null, this)
 
-        newsRecyclerView.layoutManager = LinearLayoutManager(context)
-        newsRecyclerView.setHasFixedSize(true)
-        newsRecyclerView.adapter = newsRecyclerAdapter
+        binding.apply {
+            newsRecyclerView.layoutManager = LinearLayoutManager(context)
+            newsRecyclerView.setHasFixedSize(true)
+            newsRecyclerView.adapter = newsRecyclerAdapter
 
-        setTickerAndNewsValues()
-        newsSwipeRefreshLayout.setOnRefreshListener(this)
+            setTickerAndNewsValues()
+            newsSwipeRefreshLayout.setOnRefreshListener(this@HomeFragment)
+        }
 
         tickerRunnable = object : Runnable {
             override fun run() {
                 val position = linearLayoutManager?.findFirstVisibleItemPosition() ?: 0
-                companiesRecyclerView.smoothScrollToPosition(position + 1)
+                binding.companiesRecyclerView.smoothScrollToPosition(position + 1)
                 handler.postDelayed(this, COMPANY_TICKER_DURATION.toLong())
             }
         }
@@ -125,51 +130,58 @@ class HomeFragment : Fragment(), NewsRecyclerAdapter.NewsItemClickListener, Swip
     }
 
     private fun getLatestNewsAsynchronously() {
-        showNewsAvailable(false)
-        loadingNewsHomeFragmentProgressBar.visibility = View.VISIBLE
-        loadingNews_textView.text = getString(R.string.getting_latest_news)
+        // Catch the Error until a Proper fix is found
+        try {
+            showNewsAvailable(false)
+            binding.loadingNewsHomeFragmentProgressBar.visibility = View.VISIBLE
+            binding.loadingNewsTextView.text = getString(R.string.getting_latest_news)
 
-        doAsync {
-            if (ConnectionUtils.getConnectionInfo(context)) {
-                if (ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
+            doAsync {
+                if (ConnectionUtils.getConnectionInfo(context)) {
+                    if (ConnectionUtils.isReachableByTcp(Constants.HOST, Constants.PORT)) {
 
-                    val marketEventsResponse = actionServiceBlockingStub.getMarketEvents(GetMarketEventsRequest.newBuilder().setCount(0).setLastEventId(0).build())
+                        val marketEventsResponse = actionServiceBlockingStub.getMarketEvents(GetMarketEventsRequest.newBuilder().setCount(0).setLastEventId(0).build())
 
-                    uiThread {
-                        newsSwipeRefreshLayout?.isRefreshing = false
-                        if (marketEventsResponse.statusCode == GetMarketEventsResponse.StatusCode.OK) {
+                        uiThread {
+                            binding.newsSwipeRefreshLayout.isRefreshing = false
+                            if (marketEventsResponse.statusCode == GetMarketEventsResponse.StatusCode.OK) {
 
-                            newsList.clear()
+                                newsList.clear()
 
-                            for (currentMarketEvent in marketEventsResponse.marketEventsList) {
-                                newsList.add(NewsDetails(currentMarketEvent.createdAt, currentMarketEvent.headline, currentMarketEvent.text, currentMarketEvent.imagePath))
-                            }
+                                for (currentMarketEvent in marketEventsResponse.marketEventsList) {
+                                    newsList.add(NewsDetails(currentMarketEvent.createdAt, currentMarketEvent.headline, currentMarketEvent.text, currentMarketEvent.imagePath, marketEventsResponse.newsBasePath))
+                                }
 
-                            if (newsList.isNotEmpty()) {
-                                newsRecyclerAdapter.swapData(newsList)
-                                showNewsAvailable(true)
+                                if (newsList.isNotEmpty()) {
+                                    newsRecyclerAdapter.swapData(newsList)
+                                    showNewsAvailable(true)
+                                } else {
+                                    showNewsAvailable(false)
+                                }
+
                             } else {
-                                showNewsAvailable(false)
+                                context?.toast(marketEventsResponse.statusMessage)
                             }
-
-                        } else {
-                            context?.toast(marketEventsResponse.statusMessage)
                         }
+                    } else {
+                        uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_server_down), R.id.home_dest) }
                     }
                 } else {
-                    uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_server_down), R.id.home_dest) }
+                    uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_check_internet), R.id.home_dest) }
                 }
-            } else {
-                uiThread { networkDownHandler.onNetworkDownError(resources.getString(R.string.error_check_internet), R.id.home_dest) }
             }
+        } catch (e: Exception) {
+            Log.e(TAG, "getLatestNewsAsynchronously: ", e)
         }
     }
 
     private fun showNewsAvailable(show: Boolean) {
-        loadingNews_textView?.text = if (show) getString(R.string.getting_latest_news) else getString(R.string.news_not_available)
-        loadingNewsHomeFragmentProgressBar?.visibility = if (show) View.VISIBLE else View.GONE
-        loadingNewsRelativeLayout?.visibility = if (show) View.GONE else View.VISIBLE
-        newsRecyclerView?.visibility = if (show) View.VISIBLE else View.GONE
+        binding.apply {
+            loadingNewsTextView.text = if (show) getString(R.string.getting_latest_news) else getString(R.string.news_not_available)
+            loadingNewsHomeFragmentProgressBar.visibility = if (show) View.VISIBLE else View.GONE
+            loadingNewsRelativeLayout.visibility = if (show) View.GONE else View.VISIBLE
+            newsRecyclerView.visibility = if (show) View.VISIBLE else View.GONE
+        }
     }
 
     override fun onAttach(context: Context) {
@@ -177,7 +189,7 @@ class HomeFragment : Fragment(), NewsRecyclerAdapter.NewsItemClickListener, Swip
         try {
             networkDownHandler = context as ConnectionUtils.OnNetworkDownHandler
         } catch (classCastException: ClassCastException) {
-            throw ClassCastException(context.toString() + " must implement network down handler.")
+            throw ClassCastException("$context must implement network down handler.")
         }
 
     }
@@ -203,7 +215,7 @@ class HomeFragment : Fragment(), NewsRecyclerAdapter.NewsItemClickListener, Swip
             }
             builder.append("     ")
         }
-        breakingNewsTextView.text = builder.toString()
+        binding.breakingNewsTextView.text = builder.toString()
     }
 
     override fun onNewsClicked(layout: View, position: Int, headlinesTextView: View, contentTextView: View, createdAtTextView: View) {
@@ -215,7 +227,7 @@ class HomeFragment : Fragment(), NewsRecyclerAdapter.NewsItemClickListener, Swip
         bundle.putString(Constants.NEWS_CREATED_AT_KEY, newsList[position].createdAt)
         bundle.putString(Constants.NEWS_CONTENT_KEY, newsList[position].content)
         bundle.putString(Constants.NEWS_HEAD_KEY, newsList[position].headlines)
-        bundle.putString(Constants.NEWS_IMAGE_PATH_KEY, newsList[position].imagePath)
+        bundle.putString(Constants.NEWS_IMAGE_PATH_KEY, newsList[position].basePath+""+newsList[position].imagePath)
         bundle.putString(Constants.HEAD_TRANSITION_KEY, headTransition)
         bundle.putString(Constants.CONTENT_TRANSITION_KEY, contentTransition)
         bundle.putString(Constants.CREATED_AT_TRANSITION_KEY, createdAtTransition)
@@ -252,7 +264,14 @@ class HomeFragment : Fragment(), NewsRecyclerAdapter.NewsItemClickListener, Swip
         handler.removeCallbacks(tickerRunnable)
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        LocalBroadcastManager.getInstance(context!!).unregisterReceiver(refreshNewsListReceiver)
+    }
+
     companion object {
+        private const val TAG = "HomeFragment"
+
         private const val COMPANY_TICKER_DURATION = 2500
     }
 }

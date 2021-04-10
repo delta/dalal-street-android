@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
     android:background="@color/black_background">
 
     <androidx.appcompat.widget.Toolbar
@@ -146,6 +147,22 @@
     </androidx.cardview.widget.CardView>
 
     <TextView
+        android:id="@+id/resendEmailTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:fontFamily="@font/kreon_light"
+        android:padding="10dp"
+        android:textColor="@color/neon_orange"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/login_cardView"
+        tools:text="Resend email in -- seconds" />
+
+    <TextView
         android:id="@+id/clickRegisterTextView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -158,6 +175,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/login_cardView" />
+        app:layout_constraintTop_toBottomOf="@+id/resendEmailTextView" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

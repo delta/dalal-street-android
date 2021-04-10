@@ -5,10 +5,13 @@ public class Constants {
     // TODO (Release): Change server IP and Port
 
     public static final String HOST = "dalal.pragyan.org";
-    public static final int PORT = 8080;
+    public static final int PORT = 8000;
 
     // TODO (Release): Change company image base URL and how is built
-    public static final String COMPANY_IMAGES_BASE_URL = "https://dalal.pragyan.org/public/src/images/companies/";
+    public static final String COMPANY_IMAGES_BASE_URL = "https://avikumar15.github.io/companies/";
+
+    public static final String PLAYSTORE_URL = "http://bit.ly/Dalal-Street-app";
+    public static final String DALAL_SHARE_MESSAGE = "Install Dalal Street app from playstore - " + PLAYSTORE_URL + "\n\nUse this Referral Code - ";
 
     public static final String REFRESH_MARKET_EVENTS_FOR_HOME_AND_NEWS = "refresh-news-action";
     public static final String REFRESH_PRICE_TICKER_FOR_HOME = "refresh-price-ticker-action";
@@ -58,6 +61,11 @@ public class Constants {
     public static final String PREF_COMP = "COMPANYFRAG_TOUR";
     public static final String PREF_TRADE = "TRADE_TOUR";
     public static final String CANCEL_ORDER_TOUR_KEY = "cancel-order-tour-key";
+    public static final String USER_REFERRAL_CODE = "";
+    public static String USER_FCM_TOKEN = "";
+    public static final String DALAL_COMMON_FCM_REGISTRATION_KEY = "dalal-21-for-all";
+    public static String USER_SPECIFIC_FCM_REGISTRATION_KEY = "";
+    public static final String ENCRYPTED_SHARED_PREF_NAME = "encrypted_shared_pref";
 }
 
 /*  Login response : Constants : Last Checked 02/02/2020

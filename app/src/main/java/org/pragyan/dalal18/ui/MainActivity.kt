@@ -3,7 +3,11 @@ package org.pragyan.dalal18.ui
 import android.animation.ValueAnimator
 import android.app.NotificationChannel
 import android.app.NotificationManager
-import android.content.*
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
+import android.content.SharedPreferences
 import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.net.ConnectivityManager
@@ -23,6 +27,7 @@ import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
+import androidx.core.view.MenuItemCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -33,16 +38,29 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.messaging.FirebaseMessaging
+import com.google.firebase.messaging.ktx.messaging
 import dalalstreet.api.DalalActionServiceGrpc
 import dalalstreet.api.DalalStreamServiceGrpc
 import dalalstreet.api.actions.GetMortgageDetailsRequest
 import dalalstreet.api.actions.LogoutRequest
 import dalalstreet.api.actions.LogoutResponse
-import dalalstreet.api.datastreams.*
+import dalalstreet.api.datastreams.DataStreamType
+import dalalstreet.api.datastreams.GameStateUpdate
+import dalalstreet.api.datastreams.MarketEventUpdate
+import dalalstreet.api.datastreams.NotificationUpdate
+import dalalstreet.api.datastreams.StockExchangeUpdate
+import dalalstreet.api.datastreams.StockPricesUpdate
+import dalalstreet.api.datastreams.SubscribeRequest
+import dalalstreet.api.datastreams.SubscribeResponse
+import dalalstreet.api.datastreams.SubscriptionId
+import dalalstreet.api.datastreams.TransactionUpdate
+import dalalstreet.api.datastreams.UnsubscribeRequest
 import dalalstreet.api.models.GameStateUpdateType
 import dalalstreet.api.models.TransactionType
 import io.grpc.stub.StreamObserver
-import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -56,10 +74,32 @@ import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent
 import org.pragyan.dalal18.data.DalalViewModel
 import org.pragyan.dalal18.data.GameStateDetails
 import org.pragyan.dalal18.data.GlobalStockDetails
+import org.pragyan.dalal18.databinding.ActivityMainBinding
 import org.pragyan.dalal18.notifications.NotificationFragment
 import org.pragyan.dalal18.notifications.PushNotificationService
 import org.pragyan.dalal18.utils.*
-import org.pragyan.dalal18.utils.Constants.*
+import org.pragyan.dalal18.utils.Constants.EMAIL_KEY
+import org.pragyan.dalal18.utils.Constants.HOST
+import org.pragyan.dalal18.utils.Constants.MARKET_OPEN_KEY
+import org.pragyan.dalal18.utils.Constants.NOTIFICATION_NEWS_SHARED_PREF
+import org.pragyan.dalal18.utils.Constants.NOTIFICATION_SHARED_PREF
+import org.pragyan.dalal18.utils.Constants.PASSWORD_KEY
+import org.pragyan.dalal18.utils.Constants.PORT
+import org.pragyan.dalal18.utils.Constants.PREF_COMP
+import org.pragyan.dalal18.utils.Constants.PREF_MAIN
+import org.pragyan.dalal18.utils.Constants.PRICE_FORMAT
+import org.pragyan.dalal18.utils.Constants.REFRESH_MARKET_EVENTS_FOR_HOME_AND_NEWS
+import org.pragyan.dalal18.utils.Constants.REFRESH_OWNED_STOCKS_FOR_ALL
+import org.pragyan.dalal18.utils.Constants.REFRESH_PRICE_TICKER_FOR_HOME
+import org.pragyan.dalal18.utils.Constants.REFRESH_STOCKS_EXCHANGE_FOR_COMPANY
+import org.pragyan.dalal18.utils.Constants.REFRESH_STOCKS_FOR_MORTGAGE
+import org.pragyan.dalal18.utils.Constants.REFRESH_STOCK_PRICES_FOR_ALL
+import org.pragyan.dalal18.utils.Constants.SESSION_KEY
+import org.pragyan.dalal18.utils.Constants.STOP_NOTIFICATION_ACTION
+import org.pragyan.dalal18.utils.Constants.USERNAME_KEY
+import org.pragyan.dalal18.utils.Constants.USER_SPECIFIC_FCM_REGISTRATION_KEY
+import org.pragyan.dalal18.utils.Constants.USER_FCM_TOKEN
+import org.pragyan.dalal18.utils.Constants.DALAL_COMMON_FCM_REGISTRATION_KEY
 import org.pragyan.dalal18.utils.MiscellaneousUtils.buildCounterDrawable
 import java.text.DecimalFormat
 import java.util.*
@@ -67,6 +107,8 @@ import javax.inject.Inject
 
 /* Subscribes to Transactions, Exchange, StockPrices and MarketEvents stream*/
 class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
+
+    private val binding by viewLifecycle(ActivityMainBinding::inflate)
 
     @Inject
     lateinit var actionServiceBlockingStub: DalalActionServiceGrpc.DalalActionServiceBlockingStub
@@ -86,6 +128,8 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
     @Inject
     lateinit var preferences: SharedPreferences
 
+    private lateinit var inAppUpdate: InAppUpdate
+
     lateinit var model: DalalViewModel
 
     private val subscriptionIds = ArrayList<SubscriptionId>()
@@ -98,16 +142,18 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
     private var totalWorth: Long = 0
     private var unreadNotificationsCount = 0
 
+    val TAG = "MainActivity"
+
     private lateinit var networkCallback: ConnectivityManager.NetworkCallback
 
     private val worthNotificationGameStateReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
+            Log.i(TAG, "onReceived() called " + intent.action)
             when (intent.action) {
                 REFRESH_ALL_WORTH_ACTION -> {
-
                     cashWorth += intent.getLongExtra(TRANSACTION_TOTAL_KEY, 0)
                     updateStockWorthViaStreamUpdates()
-                    changeTextViewValue(cashWorthTextView, cashIndicatorImageView, cashWorth)
+                    changeTextViewValue(binding.cashWorthTextView, binding.cashIndicatorImageView, cashWorth)
                 }
 
                 REFRESH_UNREAD_NOTIFICATIONS_COUNT -> {
@@ -118,7 +164,8 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
 
                 GAME_STATE_UPDATE_ACTION -> {
                     val gameStateDetails = intent.getParcelableExtra<GameStateDetails>(GAME_STATE_KEY)
-
+                    if(gameStateDetails != null)
+                        Log.i(TAG, "onReceived() called gameStateType " + gameStateDetails.gameStateUpdateType)
                     if (gameStateDetails != null) when (gameStateDetails.gameStateUpdateType) {
                         GameStateUpdateType.MarketStateUpdate ->
                             displayMarketStatusAlert(gameStateDetails.isMarketOpen ?: true)
@@ -130,6 +177,25 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
                             toast("Your account has been terminated")
                             logout()
                         }
+                        GameStateUpdateType.UserReferredCreditUpdate -> {
+                            toast("Reward claimed!")
+                            val gameState = intent.getParcelableExtra<GameStateDetails>(GAME_STATE_KEY)
+                            totalWorth += gameState.referredCashWorth - cashWorth
+                            cashWorth = gameState.referredCashWorth
+                            changeTextViewValue(binding.cashWorthTextView, binding.cashIndicatorImageView, cashWorth)
+                            changeTextViewValue(binding.totalWorthTextView, binding.totalIndicatorImageView, totalWorth)
+                        }
+                        GameStateUpdateType.UserRewardCreditUpdate->{
+
+                            toast("Reward claimed!")
+                            val gameState = intent.getParcelableExtra<GameStateDetails>(GAME_STATE_KEY)
+                            totalWorth += gameState.userRewardCash - cashWorth
+                            cashWorth = gameState.userRewardCash
+                            model.updateCashWorth(cashWorth)
+                            model.updateNetWorth(totalWorth)
+                            changeTextViewValue(binding.cashWorthTextView, binding.cashIndicatorImageView, cashWorth)
+                            changeTextViewValue(binding.totalWorthTextView, binding.totalIndicatorImageView, totalWorth)
+                        }
                         else ->
                             Log.v(MainActivity::class.java.simpleName, "Game state update unused: $gameStateDetails")
                     }
@@ -140,7 +206,10 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        setContentView(binding.root)
+
+        Log.d("INIT APPUPDATE", "APP UPDATE START")
+        inAppUpdate = InAppUpdate(this@MainActivity)
 
         model = ViewModelProvider(this).get(DalalViewModel::class.java)
 
@@ -185,19 +254,29 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
         }
 
         // Tried to use single view didn't work; It took up toolbar space also
-        cashInHandTextView.setOnClickListener(worthViewClickListener)
-        cashWorthTextView.setOnClickListener(worthViewClickListener)
-        stocksInHandTextView.setOnClickListener(worthViewClickListener)
-        stockWorthTextView.setOnClickListener(worthViewClickListener)
-        totalInHandTextView.setOnClickListener(worthViewClickListener)
-        totalWorthTextView.setOnClickListener(worthViewClickListener)
+        binding.apply {
+            cashInHandTextView.setOnClickListener(worthViewClickListener)
+            cashWorthTextView.setOnClickListener(worthViewClickListener)
+            stocksInHandTextView.setOnClickListener(worthViewClickListener)
+            stockWorthTextView.setOnClickListener(worthViewClickListener)
+            totalInHandTextView.setOnClickListener(worthViewClickListener)
+            totalWorthTextView.setOnClickListener(worthViewClickListener)
+        }
 
         createChannel()
         this.startService(Intent(this.baseContext, PushNotificationService::class.java))
 
-        marketCloseIndicatorTextView.isSelected = true
+        binding.marketCloseIndicatorTextView.isSelected = true
+
+        updateFCMToken()
+        subscribeToCommonFCMStream()
+        subscribeToSpecificUserFCMStream()
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        inAppUpdate.onActivityResult(requestCode,resultCode, data)
+    }
 
     // Adding and setting up Navigation drawer
     private fun setupNavigationDrawer() {
@@ -206,18 +285,18 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
 
         val appBarConfig = AppBarConfiguration.Builder(setOf(R.id.home_dest, R.id.companies_dest, R.id.portfolio_dest,
                 R.id.exchange_dest, R.id.market_depth_dest, R.id.trade_dest, R.id.main_mortgage_dest, R.id.news_dest,
-                R.id.leaderboard_dest, R.id.open_orders_dest, R.id.transactions_dest, R.id.notifications_dest))
-                .setDrawerLayout(mainDrawerLayout)
+                R.id.leaderboard_dest, R.id.dailyChallenge_dest,R.id.open_orders_dest, R.id.transactions_dest, R.id.notifications_dest, R.id.refer_and_earn_dest, R.id.sponsor_dest))
+                .setDrawerLayout(binding.mainDrawerLayout)
                 .build()
 
         setupActionBarWithNavController(host.navController, appBarConfig)
-        navigationViewLeft.setupWithNavController(host.navController)
+        binding.navigationViewLeft.setupWithNavController(host.navController)
 
         MiscellaneousUtils.username = intent.getStringExtra(USERNAME_KEY)
-        val header = navigationViewLeft.getHeaderView(0)
+        val header = binding.navigationViewLeft.getHeaderView(0)
         header.find<TextView>(R.id.usernameTextView).text = MiscellaneousUtils.username
 
-        mainDrawerLayout.addDrawerListener(object : DrawerLayout.DrawerListener {
+        binding.mainDrawerLayout.addDrawerListener(object : DrawerLayout.DrawerListener {
             override fun onDrawerStateChanged(newState: Int) {
             }
 
@@ -231,6 +310,7 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
                 contentView?.hideKeyboard()
             }
         })
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -245,13 +325,13 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        val navController = findNavController(R.id.main_host_fragment)
 
         val id = item.itemId
         contentView?.hideKeyboard()
 
         when (id) {
             R.id.action_notifications -> {
-                val navController = findNavController(R.id.main_host_fragment)
                 unreadNotificationsCount = 0
                 invalidateOptionsMenu()
                 navController.navigate(R.id.notifications_dest, null, NavOptions.Builder().setPopUpTo(R.id.home_dest, false).build())
@@ -259,7 +339,6 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
             }
 
             R.id.action_help -> {
-                val navController = findNavController(R.id.main_host_fragment)
                 navController.navigate(R.id.help_dest, null, NavOptions.Builder().setPopUpTo(R.id.home_dest, false).build())
                 return true
             }
@@ -280,10 +359,10 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
             }
 
             android.R.id.home -> {
-                if (NavHostFragment.findNavController(main_host_fragment).currentDestination?.id in listOf(R.id.company_description_dest, R.id.nav_news_details, R.id.help_dest)) {
+                if (navController.currentDestination?.id in listOf(R.id.company_description_dest, R.id.nav_news_details, R.id.help_dest)) {
                     onBackPressed()
                 } else {
-                    mainDrawerLayout?.openDrawer(GravityCompat.START)
+                    binding.mainDrawerLayout.openDrawer(GravityCompat.START)
                 }
                 return true
             }
@@ -460,7 +539,10 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
                                     stockDividendState?.stockId,
                                     stockDividendState?.givesDividend,
                                     stockBankruptState?.stockId,
-                                    stockBankruptState?.isBankrupt)
+                                    stockBankruptState?.isBankrupt,
+                                    userReferredCredit.cash,
+                                    userRewardCredit.cash,
+                                    dailyChallengeState.isDailyChallengeOpen)
 
                             intent.putExtra(GAME_STATE_KEY, gameStateDetails)
                             LocalBroadcastManager.getInstance(this@MainActivity).sendBroadcast(intent)
@@ -499,8 +581,8 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
             netStockWorth += quantity * model.getPriceFromStockId(stockId)
         }
         stockWorth = netStockWorth
-
-        changeTextViewValue(stockWorthTextView, stockIndicatorImageView, netStockWorth)
+        model.updateStockWorth(stockWorth)
+        changeTextViewValue(binding.stockWorthTextView, binding.stockIndicatorImageView, netStockWorth)
 
         // We need to add reserved stocks worth to calculate total worth
         for ((stockId, quantity) in model.reservedStockDetails) {
@@ -508,8 +590,10 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
         }
         // Backend has it the way TotalWorth = CashWorth + OwnedStockWorth + ReservedStockWorth
         totalWorth = netStockWorth + cashWorth + model.reservedCash
+        model.updateNetWorth(totalWorth)
+        model.updateCashWorth(cashWorth)
 
-        changeTextViewValue(totalWorthTextView, totalIndicatorImageView, totalWorth)
+        changeTextViewValue(binding.totalWorthTextView, binding.totalIndicatorImageView, totalWorth)
     }
 
     // Initial setup, called in activity's onCreate()
@@ -517,9 +601,11 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
 
         // Initial old value is 0; Zero is placeholder
         cashWorth = intent.getLongExtra(CASH_WORTH_KEY, -1)
-        animateWorthChange(0, cashWorth, cashWorthTextView, cashIndicatorImageView)
+        model.updateCashWorth(cashWorth)
+        animateWorthChange(0, cashWorth, binding.cashWorthTextView, binding.cashIndicatorImageView)
 
         totalWorth = intent.getLongExtra(TOTAL_WORTH_KEY, -1)
+        model.updateNetWorth(totalWorth)
 
         // Updates stockWorthTextView and totalWorthTextView
         updateStockWorthViaStreamUpdates()
@@ -554,8 +640,7 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
                 .setPositiveButton(getString(R.string.close)) { dI, _ -> dI.dismiss() }
                 .show()
 
-        marketCloseIndicatorTextView.visibility = if (!isMarketOpen) View.VISIBLE else View.GONE
-
+        binding.marketCloseIndicatorTextView.visibility = if (!isMarketOpen) View.VISIBLE else View.GONE
     }
 
     // Increases/decreases text view value depending on input parameters
@@ -599,8 +684,8 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
     }
 
     override fun onBackPressed() {
-        if (mainDrawerLayout.isDrawerOpen(GravityCompat.START)) {
-            mainDrawerLayout.closeDrawer(GravityCompat.START)
+        if (binding.mainDrawerLayout.isDrawerOpen(GravityCompat.START)) {
+            binding.mainDrawerLayout.closeDrawer(GravityCompat.START)
         } else {
             super.onBackPressed()
         }
@@ -623,6 +708,8 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
     public override fun onPause() {
         super.onPause()
 
+        inAppUpdate.onResume()
+
         unsubscribeFromAllStreams()
 
         preferences.edit().remove(LAST_TRANSACTION_ID).apply()
@@ -634,6 +721,11 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
         LocalBroadcastManager.getInstance(this).unregisterReceiver(worthNotificationGameStateReceiver)
 
         preferences.edit().remove(LAST_TRANSACTION_ID).apply()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        inAppUpdate.onDestroy()
     }
 
     private fun subscribeToStreamsAsynchronously() = lifecycleScope.launch {
@@ -712,6 +804,56 @@ class MainActivity : AppCompatActivity(), ConnectionUtils.OnNetworkDownHandler {
             mChannel.lightColor = Color.RED
             nm.createNotificationChannel(mChannel)
         }
+    }
+
+    private fun updateFCMToken() {
+        FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
+            if (!task.isSuccessful) {
+                Log.w(TAG, "Fetching FCM registration token failed", task.exception)
+                return@OnCompleteListener
+            }
+
+            // Get new FCM registration token
+            val token = task.result
+
+            // Log and toast
+            USER_FCM_TOKEN = token.toString()
+            Log.d("FCM token - ", USER_FCM_TOKEN)
+            // Toast.makeText(this@MainActivity, "Token updated !", Toast.LENGTH_LONG).show()
+        })
+    }
+
+    private fun subscribeToCommonFCMStream() {
+
+        Firebase.messaging.subscribeToTopic(DALAL_COMMON_FCM_REGISTRATION_KEY)
+                .addOnCompleteListener { task ->
+                    if (!task.isSuccessful) {
+                        Log.d("UNABLE TO REGISTER FROM", "COMMON FCM STREAM")
+                    }
+                    Log.d("SUCCESSFULLY REG TO", "COMMON FCM STREAM")
+                }
+
+    }
+
+    private fun subscribeToSpecificUserFCMStream() {
+
+        // will be changed to user_id
+        val username = MiscellaneousUtils.username.toString()
+        USER_SPECIFIC_FCM_REGISTRATION_KEY = this.preferences.getString(EMAIL_KEY, "")
+        val index = USER_SPECIFIC_FCM_REGISTRATION_KEY!!.indexOf("@")
+        USER_SPECIFIC_FCM_REGISTRATION_KEY = USER_SPECIFIC_FCM_REGISTRATION_KEY.substring(0, index).toString() + username.toString()
+
+        Log.d("SUBSTRING", USER_SPECIFIC_FCM_REGISTRATION_KEY.toString())
+
+        if(USER_SPECIFIC_FCM_REGISTRATION_KEY!!.isNotEmpty() and USER_SPECIFIC_FCM_REGISTRATION_KEY!!.isNotBlank())
+            Firebase.messaging.subscribeToTopic(USER_SPECIFIC_FCM_REGISTRATION_KEY.toString())
+                    .addOnCompleteListener { task ->
+                        if (!task.isSuccessful) {
+                            Log.d("UNABLE TO REGISTER TO", "SPECIFIC FCM STREAM")
+                        }
+                        Log.d("SUCCESSFULLY REG TO", "SPECIFIC FCM STREAM")
+                    }
+
     }
 
     companion object {

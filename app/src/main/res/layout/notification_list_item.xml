@@ -1,43 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/black_background"
-    android:paddingStart="8dp"
-    android:paddingEnd="8dp"
-    android:paddingBottom="8dp">
-
-    <TextView
-        android:id="@+id/notification_textView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="hello this is just a example  notification to check it"
-        android:layout_alignParentStart="true"
-        android:layout_marginEnd="12dp"
-        android:layout_marginStart="6dp"
-        android:layout_below="@+id/createdAt_textView"
-        android:layout_marginTop="3dp"
-        android:fontFamily="@font/kreon_light"
-        android:textColor="@color/neutral_font_color"
-        android:textSize="22sp" />
+    android:padding="10dp">
 
     <TextView
         android:id="@+id/createdAt_textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="08:17 PM  feb 17"
-        android:layout_alignParentEnd="true"
         android:layout_alignParentTop="true"
-        android:layout_marginEnd="4dp"
-        android:layout_marginTop="2dp"
+        android:layout_alignParentEnd="true"
+        android:text="08:17 PM  feb 17"
         android:textColor="@color/neutral_font_color"
-        android:textSize="12sp" />
+        android:textSize="12sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/notification_textView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/createdAt_textView"
+        android:layout_marginTop="8dp"
+        android:fontFamily="@font/kreon_light"
+        android:text="hello this is just a example  notification to check it"
+        android:textColor="@color/neutral_font_color"
+        android:textSize="22sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/createdAt_textView" />
 
     <View
         android:layout_width="match_parent"
         android:layout_height="0.75dp"
         android:layout_below="@+id/notification_textView"
-        android:layout_marginTop="12dp"
-        android:background="@color/divider_line_gray" />
-
-</RelativeLayout>
+        android:layout_marginTop="8dp"
+        android:background="@color/divider_line_gray"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/notification_textView" />
+</androidx.constraintlayout.widget.ConstraintLayout>

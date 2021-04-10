@@ -11,20 +11,23 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import kotlinx.android.synthetic.main.fragment_companies.*
 import org.pragyan.dalal18.R
 import org.pragyan.dalal18.adapter.CompanyRecyclerAdapter
 import org.pragyan.dalal18.dagger.ContextModule
 import org.pragyan.dalal18.dagger.DaggerDalalStreetApplicationComponent
 import org.pragyan.dalal18.data.CompanyDetails
 import org.pragyan.dalal18.data.DalalViewModel
+import org.pragyan.dalal18.databinding.FragmentCompaniesBinding
 import org.pragyan.dalal18.ui.MainActivity.Companion.GAME_STATE_UPDATE_ACTION
 import org.pragyan.dalal18.utils.Constants.*
 import org.pragyan.dalal18.utils.DalalTourUtils
+import org.pragyan.dalal18.utils.viewLifecycle
 import java.util.*
 import javax.inject.Inject
 
 class CompanyFragment : Fragment(), CompanyRecyclerAdapter.OnCompanyClickListener {
+
+    private var binding by viewLifecycle<FragmentCompaniesBinding>()
 
     @Inject
     lateinit var preferences: SharedPreferences
@@ -46,12 +49,13 @@ class CompanyFragment : Fragment(), CompanyRecyclerAdapter.OnCompanyClickListene
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View =
-            inflater.inflate(R.layout.fragment_companies, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        binding = FragmentCompaniesBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        (activity as AppCompatActivity).supportActionBar?.title = resources.getString(R.string.companies)
 
         adapter = CompanyRecyclerAdapter(context, null, this)
 
@@ -60,13 +64,15 @@ class CompanyFragment : Fragment(), CompanyRecyclerAdapter.OnCompanyClickListene
 
         DaggerDalalStreetApplicationComponent.builder().contextModule(ContextModule(context!!)).build().inject(this)
         updateValues()
-        portfolioRecyclerView.setHasFixedSize(false)
-        portfolioRecyclerView.adapter = adapter
-        portfolioRecyclerView.layoutManager = LinearLayoutManager(context)
+        binding.apply {
+            portfolioRecyclerView.setHasFixedSize(false)
+            portfolioRecyclerView.adapter = adapter
+            portfolioRecyclerView.layoutManager = LinearLayoutManager(context)
+        }
 
         if (preferences.getBoolean(PREF_COMP, true)) {
             preferences.edit().putBoolean(PREF_COMP, false).apply()
-            DalalTourUtils.genericViewTour(activity as AppCompatActivity, percentageChangeTextView, 100, getString(R.string.percentchange_tour))
+            DalalTourUtils.genericViewTour(activity as AppCompatActivity, binding.percentageChangeTextView, 100, getString(R.string.percentchange_tour))
         }
 
         setupAdminPanelLink(LASAGNE.toInt().toString())
@@ -76,26 +82,27 @@ class CompanyFragment : Fragment(), CompanyRecyclerAdapter.OnCompanyClickListene
 
         companiesList.clear()
 
-        for ((_, currentStock) in model.globalStockDetails) {
+        for ((_, currentStock) in model.globalStockDetails)
             companiesList.add(CompanyDetails(currentStock.stockId, currentStock.fullName, currentStock.shortName,
                     currentStock.price, currentStock.previousDayClose, currentStock.isBankrupt, currentStock.givesDividend))
-        }
 
         adapter.swapData(companiesList)
     }
 
     private fun setupAdminPanelLink(code: String) {
-        stockDetailsTextOne.setOnClickListener {
-            onSecretButtonClick(code, false)
-        }
+        binding.apply {
+            stockDetailsTextOne.setOnClickListener {
+                onSecretButtonClick(code, false)
+            }
 
-        stockDetailsTextTwo.setOnClickListener {
-            onSecretButtonClick(code, true)
-        }
+            stockDetailsTextTwo.setOnClickListener {
+                onSecretButtonClick(code, true)
+            }
 
-        pricePortfolioText.setOnClickListener {
-            index = 0
-            counter = 0
+            pricePortfolioText.setOnClickListener {
+                index = 0
+                counter = 0
+            }
         }
     }
 

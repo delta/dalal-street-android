@@ -44,6 +44,18 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
         sourceCompatibility JavaVersion.VERSION_1_8
     }
+
+    buildFeatures {
+        viewBinding true
+    }
+
+    lintOptions {
+        checkReleaseBuilds false
+        // Or, if you prefer, you can continue to check for errors in release builds,
+        // but continue the build even when errors are found:
+        abortOnError false
+    }
+
 }
 
 protobuf {
@@ -86,6 +98,7 @@ dependencies {
 
     // Support Libraries
     implementation (Libs.appcompat)
+    implementation (Libs.legacySupport)
     implementation (Libs.androidMaterialLibrary)
     implementation (Libs.browser)
     implementation (Libs.preference)
@@ -105,6 +118,7 @@ dependencies {
 
     //Dagger
     implementation (Libs.dagger)
+    implementation (Libs.kotlinStd)
     kapt (Libs.daggerCompiler)
 
     // Gson
@@ -122,6 +136,7 @@ dependencies {
     implementation (Libs.navigationArchUIKtx)
 
     // Lifecycle
+    implementation (Libs.lifecycleCommon)
     implementation (Libs.lifecycleExtensions)
     implementation (Libs.lifecycleRuntime)
 
@@ -140,4 +155,13 @@ dependencies {
     // firebase crashanalytics
     implementation (Libs.crashAnalytics)
 
+    // firebase cloud messaging
+    implementation(Libs.firebasecloudmessaging)
+
+    //security
+    implementation(Libs.security)
+
+    // play core sdk
+    implementation (Libs.playCore)
+    implementation (Libs.playCoreKtx)
 }
